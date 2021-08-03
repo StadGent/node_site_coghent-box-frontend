@@ -1,0 +1,22 @@
+{
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vue-tsc --noEmit && vite build",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "@shopify/draggable": "^1.0.0-beta.8",
+    "axios": "^0.21.1",
+    "fabric": "^4.5.1",
+    "hammerjs": "^2.0.8",
+    "vue": "^3.0.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^1.2.3",
+    "@vue/compiler-sfc": "^3.0.5",
+    "typescript": "^4.3.2",
+    "vite": "^2.3.8",
+    "vue-tsc": "^0.0.24"
+  }
+}
