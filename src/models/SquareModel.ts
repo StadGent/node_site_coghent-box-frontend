@@ -9,6 +9,8 @@ export interface Square {
   fill: string,
   stroke: string,
   strokeWidth: number,
+  scaleX: number,
+  scaleY: number,
   scale: (scaling: number) => void,
   rotate: (rotation: number) => void,
   set: (object: {}) => void,

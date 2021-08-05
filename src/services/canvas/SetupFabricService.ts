@@ -11,6 +11,7 @@ export default class SetupFabricService {
     public setupFabric(): any {
         const canvas = new fabric.Canvas('canvas')
         canvas.preserveObjectStacking = true // keep z-index of selected objects
+        canvas.selection = false // no group selection
 
         return canvas
     }

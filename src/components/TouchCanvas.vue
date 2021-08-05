@@ -40,6 +40,7 @@ export default defineComponent({
 
     const setSquareLineOpacity = (square: Square, opacity: number) => {
       square.lines.going.forEach((line: any) => {
+        // make sure not showing lines to the basket
         if(opacity === 100 && line.top < basketHeight){
           line.opacity = 0
         } else {
@@ -59,37 +60,45 @@ export default defineComponent({
       rect.left = fabric.util.getRandomInt(100, bodyWidth.value - 200)
       rect.top = fabric.util.getRandomInt(basketHeight, 600)
       rect.strokeWidth = 5
-      rect.id = entity._id,
-      rect.data = entity.data,
+      rect.id = entity._id
+      rect.data = entity.data
       rect.metadata = entity.metadata,
       rect.lines = {going: [], coming: []}
     }
 
     const getLine = (prevEntity: Square, entity: Square) => {
-      return new fabric.Line([ prevEntity.left + prevEntity.width/2, prevEntity.top + prevEntity.height/2, entity.left + entity.width/2, entity.top + entity.height/2 ], {
+      return new fabric.Line([ 
+        prevEntity.left + (prevEntity.width*prevEntity.scaleX)/2, 
+        prevEntity.top + (prevEntity.height*prevEntity.scaleY)/2, 
+        entity.left + (entity.width*entity.scaleX)/2, 
+        entity.top + (entity.height*entity.scaleY)/2 ], 
+        {
           fill: prevEntity.stroke,
           stroke: prevEntity.stroke,
           strokeWidth: 3,
           selectable: false,
           evented: false
-      })
+        }
+      )
     }
 
     const loadEntities = (entities: Result[]) => {
       canvas.clear()
       fabricService.drawBasket(canvas, props.basket, basketHeight, bodyWidth.value)
+      // sketchy fix for updating legend: 
+      props.legend.length = 0
+      emit('update:legend', props.legend)
+
       const types = new Map()
-      const legend: any[] = []
       entities.map((entity) => {
         fabric.Image.fromURL(entity.image, function(rect: any) {
           if(entity.image === undefined) {
             rect = new fabric.Rect({
-              width: 100,
+              width: 150,
               height: 100
             })
           } else {
             rect.scaleToHeight(100)
-            //rect.scaleToWidth(100)
           }
           setRect(rect, entity)
           rect.stroke = colorArray[0]
@@ -112,10 +121,9 @@ export default defineComponent({
               } else {
                 rect.stroke = colorArray[types.size] 
                 rect.fill = colorArray[types.size] 
-                legend.push({'type': meta.value, 'color': rect.stroke})
+                props.legend.push({'type': meta.value, 'color': rect.stroke})
                 types.set(meta.value, [rect])
-                console.log(legend)
-                emit('update:legend', legend)
+                emit('update:legend', props.legend)
               }
             }
             
@@ -136,17 +144,6 @@ export default defineComponent({
       })
     }
 
-    const selectedSquares = (squares: any) => {
-      if(squares._objects){
-        squares._objects.forEach((square: Square) => {
-          console.log(square)
-        })
-      } else {
-        console.log(squares)
-        selectedSquare = squares
-      }
-    }
-
     const dropSquare = (basket: Square[], square: Square, height: number, left: number) => {
       let squareAdded = -1
       for(var i = 0; i < basket.length; i++) {
@@ -156,6 +153,7 @@ export default defineComponent({
         }
       }
 
+      // check if the square isn't already in the basket
       if(square.top < height && square.left > left && square.left < (bodyWidth.value - left)) {
         basket.push(square)
         square.set({
@@ -207,7 +205,8 @@ export default defineComponent({
 
       canvas.on('mouse:down', function(options: any) {
         if (options.target) {
-          selectedSquares(options.target)
+          console.log(options.target)
+          selectedSquare = options.target
         }
       })
 
@@ -219,11 +218,12 @@ export default defineComponent({
 
       canvas.on('object:moving', function(e: any) {
         const entity = e.target
+        console.log(entity.width)
         entity.lines.going.map((line: any) => {
-          line.set({ 'x1': entity.left + entity.width/2, 'y1': entity.top + entity.height/2 })
+          line.set({ 'x1': entity.left + (entity.width*entity.scaleX)/2, 'y1': entity.top + (entity.height*entity.scaleY)/2 })
         })
         entity.lines.coming.map((line: any) => {
-          line.set({ 'x2': entity.left + entity.width/2, 'y2': entity.top + entity.height/2 })
+          line.set({ 'x2': entity.left + (entity.width*entity.scaleX)/2, 'y2': entity.top + (entity.height*entity.scaleY)/2 })
         })
         entity.title.set({'top': entity.top, 'left': entity.left})
       })
