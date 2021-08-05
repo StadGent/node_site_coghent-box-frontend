@@ -1,6 +1,6 @@
 <template>
   <div>
-    <TouchTable msg="Touchy touchy" />
+    <TouchTable msg="Touchtable" />
   </div>
 </template>
 

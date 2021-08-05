@@ -30,7 +30,7 @@ export default defineComponent({
   setup: (props, { emit }) => {
     let selectedSquare: Square
     let canvas: any
-    const colorArray = ['green', 'blue', 'yellow', 'orange', 'purple']
+    const colorArray = ['green', 'blue', 'yellow', 'orange', 'purple', 'pink', 'cyan', 'gold', 'grey', 'maroon', 'olive', 'navy', 'teal']
 
     const bodyWidth = computed<number>(() => {
       return document.body.clientWidth
@@ -54,22 +54,13 @@ export default defineComponent({
     const drawBasket = () => {
       const basketRect = new fabric.Rect({
         width : bodyWidth.value - 200,
-        height : 100,
+        height : 130,
         fill : 'red',
         stroke: 'black',
         strokeWidth: 5,
         originX: 'center',
         originY: 'center'
       })
-
-      /*const basketLine = new fabric.Line([ bodyWidth.value/2, 50, 300, 300 ], {
-        fill: 'red',
-        stroke: 'red',
-        strokeWidth: 5,
-        selectable: false,
-        evented: false,
-        opacity: 0
-      })*/
 
       const basketText = new fabric.Text('Basket', { 
         originX: 'center',
@@ -83,14 +74,27 @@ export default defineComponent({
       })
 
       canvas.add(basketSquare)
+
+      props.basket.forEach((rect) => {
+        canvas.add(rect)
+        canvas.add(rect.title)
+      })
     }
 
     const setSquareLineOpacity = (square: Square, opacity: number) => {
       square.lines.going.forEach((line: any) => {
-        line.opacity = opacity
+        if(opacity === 100 && line.top < 100){
+          line.opacity = 0
+        } else {
+          line.opacity = opacity
+        }
       })
       square.lines.coming.forEach((line: any) => {
-        line.opacity = opacity
+        if(opacity === 100 && line.top < 100){
+          line.opacity = 0
+        } else {
+          line.opacity = opacity
+        }
       })
     }
 
@@ -101,11 +105,11 @@ export default defineComponent({
         const legend: any[] = []
         entities.map((entity) => {
             const rect = new fabric.Rect({
-                top : Math.floor(Math.random() * 600) + 100,
+                top : Math.floor(Math.random() * 600) + 130,
                 left : Math.floor(Math.random() * (bodyWidth.value - 200)) + 100,
                 width : 100,
                 height : 100,
-                fill : colorArray[0], //Math.floor(Math.random() * colorArray.length) + 
+                fill : colorArray[0],
                 id : entity._id,
                 source: entity._source,
                 lines: {going: [], coming: []}
@@ -126,11 +130,12 @@ export default defineComponent({
                 }
                 
                 if(meta.key === "title") {
-                  const rectText = new fabric.Text(meta.value, { 
+                  const rectText = new fabric.Textbox(meta.value, { 
                     left: rect.left, 
                     top: rect.top,
                     fontSize: 20,
                     selectable: false,
+                    evented: false,
                     width: 100 })
                   rect.title = rectText
                   canvas.add(rectText)
@@ -153,6 +158,7 @@ export default defineComponent({
                 entity.lines.going.push(line)
                 nextTarget.lines.coming.push(line)
                 canvas.add(line)
+                canvas.sendToBack(line)
             }
           })
         })
@@ -184,7 +190,7 @@ export default defineComponent({
         basket.push(square)
         square.scale(1)
         square.set({
-          left: left + 70 + ((basket.length - 1) * 70) + ((basket.length - 1) * 20),
+          left: left + 20 + ((basket.length - 1) * 100) + ((basket.length - 1) * 20),
           top: 18,
           angle: 0
         })
@@ -194,9 +200,10 @@ export default defineComponent({
         basket.splice(squareAdded, 1)
         for(var i = 0; i < basket.length; i++) {
           basket[i].set({
-            left: left + 70 + (i * 70) + (i * 20),
+            left: left + 20 + (i * 100) + (i * 20),
             top: 18
           })
+          basket[i].title.set({'top': basket[i].top, 'left': basket[i].left})
         }
         setSquareLineOpacity(square, 100)
       }

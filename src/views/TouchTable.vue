@@ -11,7 +11,7 @@
     </p>
     <TouchCanvas v-model:basket="basket" v-model:legend="legend" :entities="entities"/>
     <div class="legend">
-      <div v-for="option in legend" :key="option.type">
+      <div v-for="option in legend" :key="option.type" @click="filterOnType(option.type)">
         <div class="legendDiv" :style="{backgroundColor: option.color}"></div>
         <span>{{option.type}}</span>
       </div>
@@ -55,12 +55,18 @@ export default defineComponent({
       })
     }
 
+    const filterOnType = (type: string) => {
+      keyword.value = type
+      getData()
+    }
+
     return {
       basket,
       legend,
       keyword,
       entities,
-      getData
+      getData,
+      filterOnType
     }
   }
 })
@@ -72,10 +78,19 @@ export default defineComponent({
 h1 {
   color: #42b983;
 }
+p {
+  color: white;
+}
 .legend {
   position: fixed;
   bottom: 20px;
   left: 100px;
+}
+.legend div {
+  cursor: pointer;
+}
+.legend div:hover {
+  font-weight: bold;
 }
 .legendDiv {
   width: 30px;
