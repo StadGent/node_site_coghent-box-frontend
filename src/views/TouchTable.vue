@@ -23,8 +23,8 @@
 import { defineComponent, onMounted, ref } from 'vue'
 import TouchCanvas from '../components/TouchCanvas.vue'
 import { Square } from '../models/SquareModel'
-import { ElasticData, ElasticHit } from '../models/ElasticDataModel'
 import { DataRepository } from '../repositories/DataRepository'
+import { Collection, Result } from '../models/CollectionModel'
 
 export default defineComponent({
   name: 'TouchTable',
@@ -41,7 +41,7 @@ export default defineComponent({
     const basket = ref<Square[]>([])
     const legend = ref<any[]>([])
     const keyword = ref<String>("Strijkijzer")
-    const entities = ref<ElasticHit[]>([])
+    const entities = ref<Result[]>([])
     const dataRepo: DataRepository = new DataRepository()
 
     onMounted(() => {
@@ -49,9 +49,23 @@ export default defineComponent({
     })
 
     const getData = () => {
-      dataRepo.getData(keyword.value).then((response: ElasticData) => {
-        console.log(response.hits.hits)
-        entities.value = response.hits.hits
+      dataRepo.getCollectionData(keyword.value).then((response: Collection) => {
+        const length = response.results.length - 1
+        response.results.forEach((result: Result, index) => {
+          dataRepo.getRelationData(result._id).then((relations: any) => {
+            result.relations = relations
+
+            dataRepo.getMediaData(result._id).then((media: any) => {
+              if(media[0]){
+                result.image = media[0].thumbnail_file_location
+              }
+              
+              if(index === length){
+                entities.value = response.results
+              }
+            })
+          })
+        })
       })
     }
 

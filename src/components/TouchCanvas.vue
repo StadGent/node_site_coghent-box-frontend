@@ -9,6 +9,7 @@ import { fabric } from 'fabric'
 import * as Hammer from 'hammerjs'
 import { Square } from '../models/SquareModel'
 import { ElasticHit } from '../models/ElasticDataModel'
+import { Result } from '../models/CollectionModel'
 
 export default defineComponent({
   name: 'TouchCanvas',
@@ -18,7 +19,7 @@ export default defineComponent({
       required: true
     },
     entities: {
-      type: Array as PropType<ElasticHit[]>,
+      type: Array as PropType<Result[]>,
       required: true
     },
     legend: {
@@ -70,7 +71,8 @@ export default defineComponent({
       const basketSquare = new fabric.Group([ basketRect, basketText ], {
         top : 0,
         left : 100,
-        selectable: false
+        selectable: false,
+        evented: false
       })
 
       canvas.add(basketSquare)
@@ -98,72 +100,84 @@ export default defineComponent({
       })
     }
 
-    const loadEntities = (entities: ElasticHit[]) => {
+    const setRect = (rect: Square, entity: Result) => {
+      rect.left = fabric.util.getRandomInt(100, bodyWidth.value - 200)
+      rect.top = fabric.util.getRandomInt(130, 600)
+      rect.strokeWidth = 5
+      rect.id = entity._id,
+      rect.data = entity.data,
+      rect.metadata = entity.metadata,
+      rect.lines = {going: [], coming: []}
+    }
+
+    const getLine = (prevEntity: Square, entity: Square) => {
+      return new fabric.Line([ prevEntity.left + prevEntity.width/2, prevEntity.top + prevEntity.height/2, entity.left + entity.width/2, entity.top + entity.height/2 ], {
+          fill: prevEntity.stroke,
+          stroke: prevEntity.stroke,
+          strokeWidth: 3,
+          selectable: false,
+          evented: false
+      })
+    }
+
+    const loadEntities = (entities: Result[]) => {
         canvas.clear()
         drawBasket()
         const types = new Map()
         const legend: any[] = []
         entities.map((entity) => {
-            const rect = new fabric.Rect({
-                top : Math.floor(Math.random() * 600) + 130,
-                left : Math.floor(Math.random() * (bodyWidth.value - 200)) + 100,
-                width : 100,
-                height : 100,
-                fill : colorArray[0],
-                id : entity._id,
-                source: entity._source,
-                lines: {going: [], coming: []}
-            })
-
+          fabric.Image.fromURL(entity.image, function(rect: any) {
+            if(entity.image === undefined) {
+              rect = new fabric.Rect({
+                width: 100,
+                height: 100
+              })
+            } else {
+              rect.scaleToHeight(100)
+              //rect.scaleToWidth(100)
+            }
+            setRect(rect, entity)
+            rect.stroke = colorArray[0]
             canvas.add(rect)
 
-            entity._source.metadata.map((meta) => {
-                if(meta.key === "type"){
-                  if(types.get(meta.value)){
-                    rect.fill = types.get(meta.value)[0].fill
-                    types.set(meta.value, [...types.get(meta.value), rect])
-                  } else {
-                    rect.fill = colorArray[types.size] 
-                    legend.push({'type': meta.value, 'color': rect.fill})
-                    types.set(meta.value, [rect])
-                  }
+            entity.metadata.map((meta) => {
+              if(meta.key === "type"){
+                const type = types.get(meta.value)
+                if(type){
+                  rect.stroke = type[0].stroke
+                  rect.fill = type[0].stroke
+                  types.set(meta.value, [...type, rect])
+
+                  const entity = type[type.length - 1]
+                  const line = getLine(entity, rect)
+                  entity.lines.going.push(line)
+                  rect.lines.coming.push(line)
+                  canvas.add(line)
+                  canvas.sendToBack(line)
+                } else {
+                  rect.stroke = colorArray[types.size] 
+                  rect.fill = colorArray[types.size] 
+                  legend.push({'type': meta.value, 'color': rect.stroke})
+                  types.set(meta.value, [rect])
+                  console.log(legend)
+                  emit('update:legend', legend)
                 }
-                
-                if(meta.key === "title") {
-                  const rectText = new fabric.Textbox(meta.value, { 
-                    left: rect.left, 
-                    top: rect.top,
-                    fontSize: 20,
-                    selectable: false,
-                    evented: false,
-                    width: 100 })
-                  rect.title = rectText
-                  canvas.add(rectText)
-                }
+              }
+              
+              if(meta.key === "title") {
+                const rectText = new fabric.Textbox(meta.value, { 
+                  left: rect.left, 
+                  top: rect.top,
+                  fontSize: 20,
+                  selectable: false,
+                  evented: false,
+                  width: 100 })
+                rect.title = rectText
+                canvas.add(rectText)
+              }
             })
-        })
-
-        types.forEach((type) => {
-          type.map((entity: Square, index: number) => {
-            const nextTarget = type[index+1]
-            if(nextTarget){
-                const line = new fabric.Line([ entity.left + entity.width/2, entity.top + entity.height/2, nextTarget.left + nextTarget.width/2, nextTarget.top + nextTarget.height/2 ], {
-                    fill: entity.fill,
-                    stroke: entity.fill,
-                    strokeWidth: 3,
-                    selectable: false,
-                    evented: false
-                })
-
-                entity.lines.going.push(line)
-                nextTarget.lines.coming.push(line)
-                canvas.add(line)
-                canvas.sendToBack(line)
-            }
           })
         })
-
-        emit('update:legend', legend)
     }
 
     const selectedSquares = (squares: any) => {
@@ -188,13 +202,12 @@ export default defineComponent({
 
       if(square.top < height && square.left > left && square.left < (bodyWidth.value - left)) {
         basket.push(square)
-        square.scale(1)
         square.set({
           left: left + 20 + ((basket.length - 1) * 100) + ((basket.length - 1) * 20),
           top: 18,
           angle: 0
         })
-        square.title.set({'top': square.top, 'left': square.left})
+        square.title?.set({'top': square.top, 'left': square.left})
         setSquareLineOpacity(square, 0)
       } else if (squareAdded > -1){
         basket.splice(squareAdded, 1)
@@ -203,7 +216,7 @@ export default defineComponent({
             left: left + 20 + (i * 100) + (i * 20),
             top: 18
           })
-          basket[i].title.set({'top': basket[i].top, 'left': basket[i].left})
+          basket[i].title?.set({'top': basket[i].top, 'left': basket[i].left})
         }
         setSquareLineOpacity(square, 100)
       }
@@ -212,7 +225,7 @@ export default defineComponent({
 
     watch(
       () => props.entities,
-      (newEntities: ElasticHit[]) => {
+      (newEntities: Result[]) => {
         loadEntities(newEntities)
       },
       { deep: true }
@@ -260,10 +273,6 @@ export default defineComponent({
         })
         entity.title.set({'top': entity.top, 'left': entity.left})
       })
-
-      /*canvas.on('object:moved', function(e: any) {
-        basketLine.set({ 'opacity': 0 })
-      })*/
     })
 
     return {
