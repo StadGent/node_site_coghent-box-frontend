@@ -1,8 +1,8 @@
 export interface Collection {
-  count: Number,
-  limit: Number,
+  count: number,
+  limit: number,
   next: string,
-  took: Number,
+  took: number,
   results: Result[]
 }
 

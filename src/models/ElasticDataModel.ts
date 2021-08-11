@@ -1,11 +1,11 @@
 export interface ElasticData {
-  took: Number,
+  took: number,
   hits: {
     total: {
-        value: Number,
+        value: number,
         relation: string
     },
-    max_score: Number,
+    max_score: number,
     hits: ElasticHit[]
   }
 }
@@ -14,7 +14,7 @@ export interface ElasticHit {
   _index: string,
   _type: string,
   _id: string,
-  _score: Number,
+  _score: number,
   _source: {
       identifiers: string[],
       metadata: ElasticMeta[],

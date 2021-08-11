@@ -1,11 +1,27 @@
 <template>
   <div>
-    <TouchHeader :msg="msg" v-model:keyword="keyword" :getData="getData" :basket="basket" />
-    <TouchCanvas v-model:basket="basket" v-model:legend="legend" :entities="entities"/>
+    <TouchHeader
+      v-model="keyword"
+      :msg="msg"
+      :get-data="getData"
+      :basket="basket"
+    />
+    <TouchCanvas
+      v-model:basket="basket"
+      v-model:legend="legend"
+      :entities="entities"
+    />
     <div class="legend">
-      <div v-for="option in legend" :key="option.type" @click="filterOnType(option.type)">
-        <div class="legendDiv" :style="{backgroundColor: option.color}"></div>
-        <span>{{option.type}}</span>
+      <div
+        v-for="option in legend"
+        :key="option.type"
+        @click="filterOnType(option.type)"
+      >
+        <div
+          class="legendDiv"
+          :style="{backgroundColor: option.color}"
+        />
+        <span>{{ option.type }}</span>
       </div>
     </div>
   </div>
@@ -34,12 +50,12 @@ export default defineComponent({
   setup: (props) => {
     const basket = ref<Square[]>([])
     const legend = ref<any[]>([])
-    const keyword = ref<String>("Strijkijzer")
+    const keyword = ref<string>('Strijkijzer')
     const entities = ref<Result[]>([])
     const dataRepo: DataRepository = new DataRepository()
 
     onMounted(() => {
-      
+
     })
 
     const getData = () => {
@@ -50,11 +66,11 @@ export default defineComponent({
             result.relations = relations
 
             dataRepo.getMediaData(result._id).then((media: any) => {
-              if(media[0]){
+              if (media[0]) {
                 result.image = media[0].thumbnail_file_location
               }
-              
-              if(index === length){
+
+              if (index === length) {
                 entities.value = response.results
               }
             })
@@ -78,7 +94,6 @@ export default defineComponent({
     }
   }
 })
-
 
 </script>
 

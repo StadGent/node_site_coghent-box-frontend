@@ -2,16 +2,23 @@
   <div class="bg-main-dark">
     <h1>{{ msg }}</h1>
     <div>
-      <input v-model="keywordInput" placeholder="keyword" />
-      <button @click="getData()">Get data</button>
+      <input
+        v-model="keywordInput"
+        placeholder="keyword"
+      >
+      <button @click="getData()">
+        Get data
+      </button>
     </div>
     <p>Currently in basket:</p>
     <p>
-      <span v-for="square in basket" :key="square.id">{{ square.title.text }}, </span>
+      <span
+        v-for="square in basket"
+        :key="square.id"
+      >{{ square.title.text }}, </span>
     </p>
   </div>
 </template>
-
 
 <script lang="ts">
 import { defineComponent, ref, PropType, watch } from 'vue'
@@ -39,18 +46,18 @@ export default defineComponent({
   },
   emits: ['update:keyword'],
   setup: (props, { emit }) => {
-    const keywordInput = ref<String>(props.keyword)
+    const keywordInput = ref<string>(props.keyword)
 
     watch(
       () => keywordInput.value,
-      (newKeyword: String) => {
+      (newKeyword: any) => {
         emit('update:keyword', newKeyword)
       }
     )
 
     watch(
       () => props.keyword,
-      (newKeyword: String) => {
+      (newKeyword: any) => {
         keywordInput.value = newKeyword
       }
     )
@@ -60,7 +67,6 @@ export default defineComponent({
     }
   }
 })
-
 
 </script>
 

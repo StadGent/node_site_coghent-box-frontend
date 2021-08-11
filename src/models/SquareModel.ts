@@ -1,4 +1,4 @@
-import { Metadata } from "./CollectionModel";
+import { Metadata } from './CollectionModel'
 
 export interface Square {
   id: string,

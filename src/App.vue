@@ -11,7 +11,7 @@ import TouchTable from './views/TouchTable.vue'
 export default defineComponent({
   name: 'App',
   components: {
-    TouchTable,
+    TouchTable
   }
 })
 </script>
