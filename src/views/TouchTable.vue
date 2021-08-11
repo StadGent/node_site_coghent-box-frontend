@@ -1,14 +1,6 @@
 <template>
   <div>
-    <h1>{{ msg }}</h1>
-    <div>
-      <input v-model="keyword" placeholder="keyword" />
-      <button @click="getData()">Get data</button>
-    </div>
-    <p>Currently in basket:</p>
-    <p>
-      <span v-for="square in basket" :key="square.id">{{ square.title.text }}, </span>
-    </p>
+    <TouchHeader :msg="msg" v-model:keyword="keyword" :getData="getData" :basket="basket" />
     <TouchCanvas v-model:basket="basket" v-model:legend="legend" :entities="entities"/>
     <div class="legend">
       <div v-for="option in legend" :key="option.type" @click="filterOnType(option.type)">
@@ -22,6 +14,7 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref } from 'vue'
 import TouchCanvas from '../components/TouchCanvas.vue'
+import TouchHeader from '../components/TouchHeader.vue'
 import { Square } from '../models/SquareModel'
 import { DataRepository } from '../repositories/DataRepository'
 import { Collection, Result } from '../models/CollectionModel'
@@ -30,6 +23,7 @@ export default defineComponent({
   name: 'TouchTable',
   components: {
     TouchCanvas,
+    TouchHeader
   },
   props: {
     msg: {
