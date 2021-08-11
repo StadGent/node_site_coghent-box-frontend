@@ -7,11 +7,12 @@ ENV NPM_AUTH_TOKEN=$NPM_AUTH_TOKEN
 
 WORKDIR /app
 
+ENTRYPOINT ["/entrypoint.sh"]
+COPY docker/entrypoint*.sh /
 COPY package*.json ./
 
 RUN npm install
-CMD npm run serve
-EXPOSE 82
+EXPOSE 8082
 
 ### Build stage
 FROM node:lts-alpine as build-stage
