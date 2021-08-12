@@ -1,16 +1,15 @@
 <template>
-  <div class="bg-background-medium">
-    <h1>{{ msg }}</h1>
+  <div class="bg-background-medium text-center py-3">
+    <BaseTitle :text="msg" />
     <div>
       <input
         v-model="keywordInput"
         placeholder="keyword"
+        class="my-2"
       >
-      <button @click="getData()">
-        Get data
-      </button>
+      <BaseButton :onClick="getData" text="Get data"/>
     </div>
-    <p>Currently in basket:</p>
+    <p class="mt-2">Currently in basket:</p>
     <p>
       <span
         v-for="square in basket"
@@ -23,9 +22,15 @@
 <script lang="ts">
 import { defineComponent, ref, PropType, watch } from 'vue'
 import { Square } from '../models/SquareModel'
+import BaseTitle from './BaseTitle.vue'
+import BaseButton from './BaseButton.vue'
 
 export default defineComponent({
   name: 'TouchHeader',
+  components: {
+    BaseTitle,
+    BaseButton
+  },
   props: {
     basket: {
       type: Array as PropType<Square[]>,
