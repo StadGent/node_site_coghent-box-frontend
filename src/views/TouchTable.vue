@@ -1,7 +1,7 @@
 <template>
   <div>
     <TouchHeader
-      v-model="keyword"
+      v-model:keyword="keyword"
       :msg="msg"
       :get-data="getData"
       :basket="basket"

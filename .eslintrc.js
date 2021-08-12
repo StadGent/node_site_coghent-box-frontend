@@ -7,7 +7,8 @@ module.exports = {
   rules: {
     'vue/no-multiple-template-root': 'off',
     'no-unused-vars': 'off',
-    'one-component-per-file': 'off'
+    'one-component-per-file': 'off',
+    "vue/no-v-model-argument": "off"
   },
   plugins: ['vue']
 }

@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
 import App from './App.vue'
-import './index.css'
+import 'coghent-vue-3-component-library/lib/index.css'
 
 createApp(App).mount('#app')

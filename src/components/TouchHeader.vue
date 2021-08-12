@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-main-dark">
+  <div class="bg-background-medium">
     <h1>{{ msg }}</h1>
     <div>
       <input
