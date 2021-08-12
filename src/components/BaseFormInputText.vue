@@ -1,29 +1,35 @@
 <template>
   <input
-    v-model="keywordInput"
-    :placeholder="placeholder"
+    type="text"
+    :value="value"
+    @input="onChange"
+    :placeholder="[[ placeholder ]]"
   >
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref, watch } from 'vue'
 
 export default defineComponent({
   name: 'BaseFormInputText',
   props: {
-    text: {
+    value: {
       type: String,
       required: true
     },
     placeholder: {
       type: String,
-      required: false
+      required: false,
+      default: ''
+    },
+    onChange: {
+      type: Function,
+      required: true
     }
   },
   emits: [],
   setup: (props, { emit }) => {
     return {
-      
     }
   }
 })

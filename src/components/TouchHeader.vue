@@ -2,14 +2,24 @@
   <div class="bg-background-medium text-center py-3">
     <BaseTitle :text="msg" />
     <div>
-      <input
+      <!-- <input
         v-model="keywordInput"
         placeholder="keyword"
         class="my-2"
-      >
-      <BaseButton :onClick="getData" text="Get data"/>
+      > -->
+      <BaseFormInputText
+        :value="keyword"
+        :onChange="onChange"
+        placeholder="keyword"
+      />
+      <BaseButton 
+        :on-click="getData"
+        text="Get data"
+      />
     </div>
-    <p class="mt-2">Currently in basket:</p>
+    <p class="mt-2">
+      Currently in basket:
+    </p>
     <p>
       <span
         v-for="square in basket"
@@ -24,12 +34,14 @@ import { defineComponent, ref, PropType, watch } from 'vue'
 import { Square } from '../models/SquareModel'
 import BaseTitle from './BaseTitle.vue'
 import BaseButton from './BaseButton.vue'
+import BaseFormInputText from './BaseFormInputText.vue'
 
 export default defineComponent({
   name: 'TouchHeader',
   components: {
     BaseTitle,
-    BaseButton
+    BaseButton,
+    BaseFormInputText
   },
   props: {
     basket: {
@@ -51,24 +63,12 @@ export default defineComponent({
   },
   emits: ['update:keyword'],
   setup: (props, { emit }) => {
-    const keywordInput = ref<string>(props.keyword)
-
-    watch(
-      () => keywordInput.value,
-      (newKeyword: any) => {
-        emit('update:keyword', newKeyword)
-      }
-    )
-
-    watch(
-      () => props.keyword,
-      (newKeyword: any) => {
-        keywordInput.value = newKeyword
-      }
-    )
+    const onChange = (e: any) => {
+      emit('update:keyword', e.currentTarget.value)
+    }
 
     return {
-      keywordInput
+      onChange
     }
   }
 })
