@@ -29,6 +29,9 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, ref } from 'vue'
+import { useMutation, useQuery } from '@vue/apollo-composable'
+
+import { GetEntitiesDocument } from '../../coghent-vue-3-component-library/src/queries'
 import TouchCanvas from '../components/TouchCanvas.vue'
 import TouchHeader from '../components/TouchHeader.vue'
 import { Square } from '../models/SquareModel'
@@ -58,7 +61,12 @@ export default defineComponent({
 
     })
 
+    const { result, loading, fetchMore } = useQuery(
+      GetEntitiesDocument
+    )
+
     const getData = () => {
+      console.log(result)
       dataRepo.getCollectionData(keyword.value).then((response: Collection) => {
         const length = response.results.length - 1
         response.results.forEach((result: Result, index) => {

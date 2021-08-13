@@ -2,11 +2,6 @@
   <div class="bg-background-medium text-center py-3">
     <BaseTitle :text="msg" />
     <div>
-      <!-- <input
-        v-model="keywordInput"
-        placeholder="keyword"
-        class="my-2"
-      > -->
       <BaseFormInputText
         :value="keyword"
         :onChange="onChange"
@@ -14,7 +9,7 @@
       />
       <BaseButton 
         :on-click="getData"
-        text="Get data"
+        text="Get data!"
       />
     </div>
     <p class="mt-2">
