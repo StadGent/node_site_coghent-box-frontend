@@ -64,7 +64,7 @@ export default defineComponent({
       rect.left = fabric.util.getRandomInt(100, bodyWidth.value - 200)
       rect.top = fabric.util.getRandomInt(basketHeight, 600)
       rect.strokeWidth = 5
-      rect.id = entity._id
+      //rect.id = entity.id
       rect.data = entity.data
       rect.metadata = entity.metadata,
       rect.lines = { going: [], coming: [] }

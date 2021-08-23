@@ -7,7 +7,7 @@ export interface Collection {
 }
 
 export interface Result {
-  _id: string,
+  id: string,
   type: string,
   data: {},
   identifiers: string[],

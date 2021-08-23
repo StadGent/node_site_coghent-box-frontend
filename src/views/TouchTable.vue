@@ -29,9 +29,9 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, ref } from 'vue'
-import { useMutation, useQuery } from '@vue/apollo-composable'
+import { useMutation, useQuery, useResult } from '@vue/apollo-composable'
 
-import { GetEntitiesDocument } from '../../coghent-vue-3-component-library/src/queries'
+import { GetFullEntitiesDocument, EntitiesResults } from 'coghent-vue-3-component-library'
 import TouchCanvas from '../components/TouchCanvas.vue'
 import TouchHeader from '../components/TouchHeader.vue'
 import { Square } from '../models/SquareModel'
@@ -55,37 +55,63 @@ export default defineComponent({
     const legend = ref<any[]>([])
     const keyword = ref<string>('Strijkijzer')
     const entities = ref<Result[]>([])
+    
     const dataRepo: DataRepository = new DataRepository()
 
     onMounted(() => {
 
     })
 
-    const { result, loading, fetchMore } = useQuery(
-      GetEntitiesDocument
+
+    const { result, loading, onResult, refetch } = useQuery(
+      GetFullEntitiesDocument, {
+        searchQuery: keyword.value,
+        limit: 100,
+        fetchPolicy: 'no-cache'
+      }
     )
 
     const getData = () => {
-      console.log(result)
-      dataRepo.getCollectionData(keyword.value).then((response: Collection) => {
-        const length = response.results.length - 1
-        response.results.forEach((result: Result, index) => {
-          dataRepo.getRelationData(result._id).then((relations: any) => {
-            result.relations = relations
-
-            dataRepo.getMediaData(result._id).then((media: any) => {
-              if (media[0]) {
-                result.image = media[0].thumbnail_file_location
-              }
-
-              if (index === length) {
-                entities.value = response.results
-              }
-            })
-          })
-        })
+      console.log('refetching')
+      refetch({
+        searchQuery: keyword.value,
+        limit: 100,
+        fetchPolicy: 'no-cache'
       })
     }
+
+    onResult(({ data, error }) => {
+      console.log(result.value)
+      console.log(data)
+      console.log(error)
+      //console.log(error.value)
+      console.log(loading.value)
+      const response : EntitiesResults | undefined | null | any = data?.Entities
+      if(response && response.results){
+        const newEntities: Result[] = []
+        response.results.forEach((result: any, index: number) => {
+          const newEntity: any = {}
+          if(result && result.id !== "noid") {
+            newEntity.id = result.id
+            newEntity.type = result.type
+            newEntity.metadata = result.metadata
+            newEntity.relations = result.relations
+            newEntity.image = result.mediafiles[0].original_file_location
+            newEntities.push(newEntity)
+            //promises.push(dataRepo.getRelationData(result.id))
+            //promises.push(dataRepo.getMediaData(result.id))
+            /*Promise.all(promises).then(([relations, media]) => {
+              newEntity.relations = relations
+              if (media[0]) {
+                newEntity.image = media[0].thumbnail_file_location
+              }
+              newEntities.push(newEntity)
+            })*/
+          }
+        })
+        entities.value = newEntities
+      }
+    })
 
     const filterOnType = (type: string) => {
       keyword.value = type
