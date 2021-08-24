@@ -31,12 +31,12 @@
 import { defineComponent, onMounted, ref } from 'vue'
 import { useMutation, useQuery, useResult } from '@vue/apollo-composable'
 
-import { GetFullEntitiesDocument, EntitiesResults } from 'coghent-vue-3-component-library'
+import { GetFullEntitiesDocument, EntitiesResults, GetEntityByIdDocument } from 'coghent-vue-3-component-library'
 import TouchCanvas from '../components/TouchCanvas.vue'
 import TouchHeader from '../components/TouchHeader.vue'
 import { Square } from '../models/SquareModel'
 import { DataRepository } from '../repositories/DataRepository'
-import { Collection, Result } from '../models/CollectionModel'
+import { Collection, Result, Relation } from '../models/CollectionModel'
 
 export default defineComponent({
   name: 'TouchTable',
@@ -66,47 +66,81 @@ export default defineComponent({
     const { result, loading, onResult, refetch } = useQuery(
       GetFullEntitiesDocument, {
         searchQuery: keyword.value,
-        limit: 100,
+        limit: 10,
         fetchPolicy: 'no-cache'
       }
+    )
+
+    const { result: IdResult, refetch: idRefetch }  = useQuery(
+        GetEntityByIdDocument, {
+            id: ""
+        }
     )
 
     const getData = () => {
       console.log('refetching')
       refetch({
         searchQuery: keyword.value,
-        limit: 100,
+        limit: 10,
         fetchPolicy: 'no-cache'
       })
     }
 
+    const getEntity = (id: string): Promise<any> | undefined => {
+      return idRefetch({
+        id: id,
+      })
+    }
+
     onResult(({ data, error }) => {
-      console.log(result.value)
-      console.log(data)
-      console.log(error)
-      //console.log(error.value)
-      console.log(loading.value)
-      const response : EntitiesResults | undefined | null | any = data?.Entities
+      console.log(data?.Entities)
+      const response : EntitiesResults | undefined | null = data?.Entities
       if(response && response.results){
         const newEntities: Result[] = []
-        response.results.forEach((result: any, index: number) => {
+        const relations = new Map()
+        response.results.forEach((result, index: number) => {
           const newEntity: any = {}
           if(result && result.id !== "noid") {
             newEntity.id = result.id
             newEntity.type = result.type
+            if(result.title && result.title[0]){
+              newEntity.title = result.title[0].value
+            }
             newEntity.metadata = result.metadata
-            newEntity.relations = result.relations
-            newEntity.image = result.mediafiles[0].original_file_location
-            newEntities.push(newEntity)
-            //promises.push(dataRepo.getRelationData(result.id))
-            //promises.push(dataRepo.getMediaData(result.id))
-            /*Promise.all(promises).then(([relations, media]) => {
-              newEntity.relations = relations
-              if (media[0]) {
-                newEntity.image = media[0].thumbnail_file_location
+            if(result.mediafiles && result.mediafiles[0]){
+              newEntity.image = result.mediafiles[0].original_file_location
+            }
+            newEntity.relations = []
+            result.relations?.forEach(relation => {
+              if(relation && relation.key){
+                const entityRel: Relation = {
+                  key: relation.key,
+                  type: relation.type,
+                  entity: undefined
+                }
+                const rel = relations.get(relation.key)
+                if(rel){
+                  entityRel.entity = rel
+                } else {
+                  getEntity(relation.key)?.then((res) => {
+                    const entityData = res.data.Entity
+                    relations.set(relation.key, entityData)
+                    entityRel.entity = {
+                      id: entityData.id,
+                      type: entityData.type,
+                      title: entityData.title[0].value,
+                      data: {},
+                      identifiers: [],
+                      metadata: [],
+                      relations: [],
+                      image: undefined
+                    }
+                  })
+                }
+                newEntity.relations.push(entityRel)
               }
-              newEntities.push(newEntity)
-            })*/
+            })
+            newEntities.push(newEntity)
           }
         })
         entities.value = newEntities
@@ -124,7 +158,8 @@ export default defineComponent({
       keyword,
       entities,
       getData,
-      filterOnType
+      filterOnType,
+      result
     }
   }
 })

@@ -63,8 +63,8 @@ export default defineComponent({
     const setRect = (rect: Square, entity: Result) => {
       rect.left = fabric.util.getRandomInt(100, bodyWidth.value - 200)
       rect.top = fabric.util.getRandomInt(basketHeight, 600)
-      rect.strokeWidth = 5
-      //rect.id = entity.id
+      rect.strokeWidth = 30
+      rect.id = entity.id
       rect.data = entity.data
       rect.metadata = entity.metadata,
       rect.lines = { going: [], coming: [] }
@@ -94,11 +94,12 @@ export default defineComponent({
       emit('update:legend', curLegend)
 
       const types = new Map()
+      const relations = new Map()
       entities.map((entity) => {
         fabric.Image.fromURL(entity.image, function (rect: any) {
           if (entity.image === undefined) {
             rect = new fabric.Rect({
-              width: 150,
+              width: 100,
               height: 100
             })
           } else {
@@ -116,12 +117,12 @@ export default defineComponent({
                 rect.fill = type[0].stroke
                 types.set(meta.value, [...type, rect])
 
-                const entity = type[type.length - 1]
+                /*const entity = type[type.length - 1]
                 const line = getLine(entity, rect)
                 entity.lines.going.push(line)
                 rect.lines.coming.push(line)
                 canvas.add(line)
-                canvas.sendToBack(line)
+                canvas.sendToBack(line)*/
               } else {
                 rect.stroke = colorArray[types.size]
                 rect.fill = colorArray[types.size]
@@ -130,20 +131,53 @@ export default defineComponent({
                 emit('update:legend', curLegend)
               }
             }
+          })
 
-            if (meta.key === 'title') {
-              const rectText = new fabric.Textbox(meta.value, {
-                left: rect.left,
-                top: rect.top,
-                fontSize: 20,
-                selectable: false,
-                evented: false,
-                width: 100
-              })
-              rect.title = rectText
-              canvas.add(rectText)
+          entity.relations.forEach((relation) => {
+            if(relation.entity){
+              let existingRel = relations.get(relation.key)
+              if(!existingRel){
+                existingRel = new fabric.Rect({
+                  width: 100,
+                  height: 100,
+                  fill: 'red',
+                  stroke: 'red',
+                })
+                setRect(existingRel, relation.entity)
+                relations.set(relation.key, existingRel)
+                canvas.add(existingRel)
+
+                const rectText = new fabric.Textbox(relation.entity.title, {
+                  left: existingRel.left,
+                  top: existingRel.top,
+                  fontSize: 20,
+                  selectable: false,
+                  evented: false,
+                  width: 100
+                })
+                existingRel.title = rectText
+                canvas.add(rectText)
+              }
+              const line = getLine(existingRel, rect)
+              existingRel.lines.going.push(line)
+              rect.lines.coming.push(line)
+              canvas.add(line)
+              canvas.sendToBack(line)
             }
           })
+
+          if(entity.title) {
+            const rectText = new fabric.Textbox(entity.title, {
+              left: rect.left,
+              top: rect.top,
+              fontSize: 20,
+              selectable: false,
+              evented: false,
+              width: 100
+            })
+            rect.title = rectText
+            canvas.add(rectText)
+          }
         })
       })
     }
@@ -222,7 +256,6 @@ export default defineComponent({
 
       canvas.on('object:moving', function (e: any) {
         const entity = e.target
-        console.log(entity.width)
         entity.lines.going.map((line: any) => {
           line.set({ x1: entity.left + (entity.width * entity.scaleX) / 2, y1: entity.top + (entity.height * entity.scaleY) / 2 })
         })
