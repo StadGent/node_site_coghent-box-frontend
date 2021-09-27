@@ -65,7 +65,7 @@ export default defineComponent({
 
     const { result, loading, onResult, refetch } = useQuery(
       GetFullEntitiesDocument, {
-        searchQuery: keyword.value,
+        searchValue: {value: keyword.value},
         limit: 10,
         fetchPolicy: 'no-cache'
       }
@@ -80,7 +80,7 @@ export default defineComponent({
     const getData = () => {
       console.log('refetching')
       refetch({
-        searchQuery: keyword.value,
+        searchValue: { value: keyword.value},
         limit: 10,
         fetchPolicy: 'no-cache'
       })
