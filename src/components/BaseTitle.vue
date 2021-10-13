@@ -1,26 +1,25 @@
 <template>
-    <h1 class='py-4 text-2xl font-bold'>{{ text }}</h1>
+  <h1 class="py-4 text-2xl font-bold">
+    {{ text }}
+  </h1>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'BaseTitle',
   props: {
     text: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   emits: [],
   setup: (props, { emit }) => {
-    return {
-      
-    }
-  }
-})
-
+    return {};
+  },
+});
 </script>
 
 <style scoped>

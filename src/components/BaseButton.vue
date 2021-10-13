@@ -1,32 +1,41 @@
 <template>
-  <button @click="onClick()" class="py-2 px-4 mx-2 text-text-white bg-accent-purple rounded-full shadow-lg font-bold">
+  <button
+    class="
+      py-2
+      px-4
+      mx-2
+      text-text-white
+      bg-accent-purple
+      rounded-full
+      shadow-lg
+      font-bold
+    "
+    @click="onClick()"
+  >
     {{ text }}
   </button>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'BaseButton',
   props: {
     text: {
       type: String,
-      required: true
+      required: true,
     },
     onClick: {
       type: Function,
-      required: true
-    }
+      required: true,
+    },
   },
   emits: [],
   setup: (props, { emit }) => {
-    return {
-      
-    }
-  }
-})
-
+    return {};
+  },
+});
 </script>
 
 <style scoped>
