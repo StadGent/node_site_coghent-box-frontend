@@ -1,21 +1,16 @@
 <template>
   <div>
-    <TouchTable msg="Touchtable" />
+    <router-view />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import TouchTable from './views/TouchTable.vue'
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'App',
-  components: {
-    TouchTable
-  },
-  setup: (props) => {
-  }
-})
+  setup: (props) => {},
+});
 </script>
 
 <style>
