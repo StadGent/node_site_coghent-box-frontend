@@ -1,13 +1,12 @@
-import useThreeChapes from '@/composables/Chapes';
+import usePredefined from '@/composables/usePredefined';
 import * as Three from 'three';
-import { Scene } from 'three';
 
 type State = {
   width: number;
   height: number;
-  camera: any;
+  camera: Three.Camera;
   controls: null;
-  scene: Scene;
+  scene: Three.Scene;
   renderer: any;
   axisLines: [];
   pyramids: [];
@@ -16,9 +15,9 @@ type State = {
 export const initState: State = {
   width: 0,
   height: 0,
-  camera: undefined,
+  camera: new Three.Camera(),
   controls: null,
-  scene: new Scene(),
+  scene: new Three.Scene(),
   renderer: null,
   axisLines: [],
   pyramids: [],
@@ -26,16 +25,15 @@ export const initState: State = {
 
 export default class ThreeService {
   state: State;
-  _element: HTMLElement;
-  chapeHelper = useThreeChapes();
+  element: any;
+  predefinedHelper = usePredefined();
 
-  constructor(element: HTMLElement) {
+  constructor(_element: any) {
     this.state = initState;
-    this._element = element;
-    this.SetViewPort(window.innerWidth, 600);
+    this.element = _element;
+    this.SetViewPort(window.innerHeight * (48 / 9), window.innerHeight);
     this.InitializeRenderer();
     this.InitializeCamera();
-    this.AddToScene();
   }
 
   SetViewPort(width: number, height: number) {
@@ -48,7 +46,7 @@ export default class ThreeService {
     this.state.renderer = new Three.WebGLRenderer({ antialias: true });
     this.state.renderer.setPixelRatio(window.devicePixelRatio);
     this.state.renderer.setSize(this.state.width, this.state.height);
-    this._element.appendChild(this.state.renderer.domElement);
+    this.element.appendChild(this.state.renderer.domElement);
   }
 
   InitializeCamera() {
@@ -59,13 +57,13 @@ export default class ThreeService {
       1,
       1000,
     );
-    this.state.camera.position.z = 10;
+    // this.state.camera = new Three.OrthographicCamera(10, 10, 10, 10, 1, 1000);
+    this.state.camera.position.z = 1;
   }
 
-  AddToScene() {
-    console.log('Add circle scene');
-    const circle = this.chapeHelper.Circle(2, 0x02a77f);
-    this.state.scene.add(circle);
+  AddToScene(item: any) {
+    console.log('Add to scene');
+    this.state.scene.add(item);
   }
 
   Animate() {

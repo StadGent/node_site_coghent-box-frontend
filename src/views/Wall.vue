@@ -1,5 +1,4 @@
 <template>
-  <h1>Wall</h1>
   <ViewPort />
 </template>
 <script lang="ts">
