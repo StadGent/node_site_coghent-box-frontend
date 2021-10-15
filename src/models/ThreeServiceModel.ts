@@ -16,6 +16,15 @@ export type CircleParams = {
   thetaStart: number;
 };
 
+export type BoxParams = {
+  width: number;
+  height: number;
+  depth: number;
+  widthSegments: number;
+  heightSegments: number;
+  depthSegments: number;
+};
+
 export type Story = {
   lines: Line<BufferGeometry, LineBasicMaterial>[];
 };

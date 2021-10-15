@@ -5,6 +5,8 @@ import {
   Line,
   BufferGeometry,
   LineBasicMaterial,
+  BoxGeometry,
+  Vector2,
 } from 'three';
 import useBaseChapes from './useBaseChapes';
 import useBaseLines from './useBaseLines';
@@ -14,6 +16,7 @@ const usePredefined = (): {
   BaseStoryCircle: () => (
     | Mesh<CircleGeometry, MeshBasicMaterial>
     | Line<BufferGeometry, LineBasicMaterial>
+    | Mesh<BoxGeometry, MeshBasicMaterial>
   )[];
 } => {
   const baseChapeHelper = useBaseChapes();
@@ -40,6 +43,32 @@ const usePredefined = (): {
     chapeHelper.SetPosition(chapeHelper.GetEndOfLine(line4), circle5);
     chapeHelper.SetPosition(chapeHelper.GetEndOfLine(line5), circle6);
 
+    const imageCube = baseChapeHelper.DrawImageCube(
+      'https://pixy.org/src/21/219269.jpg',
+      new Vector2(2, 2),
+    );
+    const imageCube1 = baseChapeHelper.DrawImageCube(
+      'https://pixy.org/src/21/219269.jpg',
+      new Vector2(2, 2),
+    );
+    const imageCube2 = baseChapeHelper.DrawImageCube(
+      'https://pixy.org/src/21/219269.jpg',
+      new Vector2(2, 2),
+    );
+    const imageCube3 = baseChapeHelper.DrawImageCube(
+      'https://pixy.org/src/21/219269.jpg',
+      new Vector2(2, 2),
+    );
+    const imageCube4 = baseChapeHelper.DrawImageCube(
+      'https://pixy.org/src/21/219269.jpg',
+      new Vector2(2, 2),
+    );
+
+    chapeHelper.SetImageAtEndOfLine(line1, imageCube);
+    chapeHelper.SetImageAtEndOfLine(line2, imageCube1);
+    chapeHelper.SetImageAtEndOfLine(line3, imageCube2);
+    chapeHelper.SetImageAtEndOfLine(line4, imageCube3);
+    chapeHelper.SetImageAtEndOfLine(line5, imageCube4);
     return [
       outerCircle,
       circle,
@@ -53,6 +82,11 @@ const usePredefined = (): {
       circle4,
       circle5,
       circle6,
+      imageCube,
+      imageCube1,
+      imageCube2,
+      imageCube3,
+      imageCube4,
     ];
   };
   return { BaseStoryCircle };

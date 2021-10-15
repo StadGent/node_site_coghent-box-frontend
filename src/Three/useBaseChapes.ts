@@ -8,6 +8,8 @@ import {
   Line,
   LineBasicMaterial,
   LineBasicMaterialParameters,
+  BoxBufferGeometry,
+  TextureLoader,
 } from 'three';
 import useChapeHelpers from './useChapeHelpers';
 
@@ -21,6 +23,10 @@ const useBaseChapes = (): {
     coordinates: Position[],
     materialParams?: LineBasicMaterialParameters,
   ) => Line<BufferGeometry, LineBasicMaterial>;
+  DrawImageCube: (
+    url: string,
+    format: Vector2,
+  ) => Mesh<BoxBufferGeometry, MeshBasicMaterial>;
 } => {
   const DrawCircle = (radius: number, color: any, segments = 50) => {
     const geometry = new CircleGeometry(radius, segments);
@@ -53,10 +59,20 @@ const useBaseChapes = (): {
     return new Line(geometry, material);
   };
 
+  const DrawImageCube = (url: string, format: Vector2) => {
+    const loader = new TextureLoader();
+    const geometry = new BoxBufferGeometry(format.x, format.y, 0);
+    const material = new MeshBasicMaterial({
+      map: loader.load(url),
+    });
+    return new Mesh(geometry, material);
+  };
+
   return {
     DrawCircle,
     DrawOuterCircle,
     DrawLine,
+    DrawImageCube,
   };
 };
 

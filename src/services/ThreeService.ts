@@ -49,7 +49,7 @@ export default class ThreeService {
       1,
       1000,
     );
-    this.state.camera.position.z = 10;
+    this.state.camera.position.z = 15;
   }
 
   AddToScene(item: any) {

@@ -1,4 +1,4 @@
-import { CircleParams, Position } from '@/models/ThreeServiceModel';
+import { BoxParams, CircleParams, Position } from '@/models/ThreeServiceModel';
 import {
   Mesh,
   CircleGeometry,
@@ -7,20 +7,27 @@ import {
   BufferGeometry,
   Line,
   LineBasicMaterial,
+  BoxGeometry,
 } from 'three';
 import { story } from './chapes.config';
 
 const useChapeHelpers = (): {
   CalculatePointOfCircle: (angle: number, radius: number) => Vector2;
   GetCircleparams: (circle: Mesh<CircleGeometry, MeshBasicMaterial>) => CircleParams;
+  GetBoxparams: (box: Mesh<BoxGeometry, MeshBasicMaterial>) => BoxParams;
   GetCirclePointsForCircle: () => Vector2[];
   SetPosition: (
     position: Position,
     chape:
       | Mesh<CircleGeometry, MeshBasicMaterial>
-      | Line<BufferGeometry, LineBasicMaterial>,
+      | Line<BufferGeometry, LineBasicMaterial>
+      | Mesh<BoxGeometry, MeshBasicMaterial>,
   ) => void;
   GetEndOfLine: (line: Line<BufferGeometry, LineBasicMaterial>) => Vector2;
+  SetImageAtEndOfLine: (
+    line: Line<BufferGeometry, LineBasicMaterial>,
+    boxImage: Mesh<BoxGeometry, MeshBasicMaterial>,
+  ) => void;
 } => {
   const CalculatePointOfCircle = (angle: number, radius: number) => {
     const posX = Math.sin(angle * (Math.PI / 180)) * radius;
@@ -39,6 +46,9 @@ const useChapeHelpers = (): {
   const GetCircleparams = (circle: Mesh<CircleGeometry, MeshBasicMaterial>) => {
     return circle.geometry.parameters as CircleParams;
   };
+  const GetBoxparams = (box: Mesh<BoxGeometry, MeshBasicMaterial>) => {
+    return box.geometry.parameters as BoxParams;
+  };
 
   const GetEndOfLine = (line: Line<BufferGeometry, LineBasicMaterial>) => {
     const position = {
@@ -48,11 +58,30 @@ const useChapeHelpers = (): {
     return position as Vector2;
   };
 
+  const SetImageAtEndOfLine = (
+    line: Line<BufferGeometry, LineBasicMaterial>,
+    boxImage: Mesh<BoxGeometry, MeshBasicMaterial>,
+  ) => {
+    const pos = GetEndOfLine(line);
+    if (pos.x > 0) {
+      SetPosition(
+        { x: pos.x + GetBoxparams(boxImage).width / 2 + 0.1, y: pos.y },
+        boxImage,
+      );
+    } else {
+      SetPosition(
+        { x: pos.x - GetBoxparams(boxImage).width / 2 - 0.1, y: pos.y },
+        boxImage,
+      );
+    }
+  };
+
   const SetPosition = (
     position: Position,
     chape:
       | Mesh<CircleGeometry, MeshBasicMaterial>
-      | Line<BufferGeometry, LineBasicMaterial>,
+      | Line<BufferGeometry, LineBasicMaterial>
+      | Mesh<BoxGeometry, MeshBasicMaterial>,
   ) => {
     chape.position.x = position.x;
     chape.position.y = position.y;
@@ -61,9 +90,11 @@ const useChapeHelpers = (): {
   return {
     CalculatePointOfCircle,
     GetCircleparams,
+    GetBoxparams,
     SetPosition,
     GetCirclePointsForCircle,
     GetEndOfLine,
+    SetImageAtEndOfLine,
   };
 };
 
