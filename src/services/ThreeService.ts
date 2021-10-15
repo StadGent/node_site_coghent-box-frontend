@@ -1,34 +1,29 @@
 import usePredefined from '@/composables/usePredefined';
-import * as Three from 'three';
+import { Camera, Scene, PerspectiveCamera, WebGLRenderer } from 'three';
+import { Ref } from 'vue';
 
 type State = {
   width: number;
   height: number;
-  camera: Three.Camera;
-  controls: null;
-  scene: Three.Scene;
+  camera: Camera;
+  scene: Scene;
   renderer: any;
-  axisLines: [];
-  pyramids: [];
 };
 
 export const initState: State = {
   width: 0,
   height: 0,
-  camera: new Three.Camera(),
-  controls: null,
-  scene: new Three.Scene(),
+  camera: new Camera(),
+  scene: new Scene(),
   renderer: null,
-  axisLines: [],
-  pyramids: [],
 };
 
 export default class ThreeService {
   state: State;
-  element: any;
+  element: Ref;
   predefinedHelper = usePredefined();
 
-  constructor(_element: any) {
+  constructor(_element: Ref) {
     this.state = initState;
     this.element = _element;
     this.SetViewPort(window.innerHeight * (48 / 9), window.innerHeight);
@@ -37,32 +32,27 @@ export default class ThreeService {
   }
 
   SetViewPort(width: number, height: number) {
-    console.log(`Viewport set to w: ${width} h: ${height}`);
     this.state.width = width;
     this.state.height = height;
   }
   InitializeRenderer() {
-    console.log('Init Renderer');
-    this.state.renderer = new Three.WebGLRenderer({ antialias: true });
+    this.state.renderer = new WebGLRenderer({ antialias: true });
     this.state.renderer.setPixelRatio(window.devicePixelRatio);
     this.state.renderer.setSize(this.state.width, this.state.height);
-    this.element.appendChild(this.state.renderer.domElement);
+    this.element.value.appendChild(this.state.renderer.domElement);
   }
 
   InitializeCamera() {
-    console.log('Init Camera');
-    this.state.camera = new Three.PerspectiveCamera(
+    this.state.camera = new PerspectiveCamera(
       60,
       this.state.width / this.state.height,
       1,
       1000,
     );
-    // this.state.camera = new Three.OrthographicCamera(10, 10, 10, 10, 1, 1000);
-    this.state.camera.position.z = 1;
+    this.state.camera.position.z = 20;
   }
 
   AddToScene(item: any) {
-    console.log('Add to scene');
     this.state.scene.add(item);
   }
 
