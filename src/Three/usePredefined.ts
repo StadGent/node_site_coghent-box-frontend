@@ -7,6 +7,7 @@ import {
   LineBasicMaterial,
   BoxGeometry,
   Vector2,
+  Vector3,
 } from 'three';
 import useBaseChapes from './useBaseChapes';
 import useBaseLines from './useBaseLines';
@@ -66,9 +67,12 @@ const usePredefined = (): {
 
     chapeHelper.SetImageAtEndOfLine(line1, imageCube);
     chapeHelper.SetImageAtEndOfLine(line2, imageCube1);
-    chapeHelper.SetImageAtEndOfLine(line3, imageCube2);
+
     chapeHelper.SetImageAtEndOfLine(line4, imageCube3);
     chapeHelper.SetImageAtEndOfLine(line5, imageCube4);
+
+    // chapeHelper.scaleBoxImage(imageCube2, new Vector3(1.5, 1.5, 1));
+    chapeHelper.SetImageAtEndOfLine(line3, imageCube2);
     return [
       outerCircle,
       circle,

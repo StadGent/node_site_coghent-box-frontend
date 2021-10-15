@@ -8,6 +8,7 @@ import {
   Line,
   LineBasicMaterial,
   BoxGeometry,
+  Vector3,
 } from 'three';
 import { story } from './chapes.config';
 
@@ -28,6 +29,7 @@ const useChapeHelpers = (): {
     line: Line<BufferGeometry, LineBasicMaterial>,
     boxImage: Mesh<BoxGeometry, MeshBasicMaterial>,
   ) => void;
+  scaleBoxImage: (boxImage: Mesh<BoxGeometry, MeshBasicMaterial>, scale: Vector3) => void;
 } => {
   const CalculatePointOfCircle = (angle: number, radius: number) => {
     const posX = Math.sin(angle * (Math.PI / 180)) * radius;
@@ -56,6 +58,13 @@ const useChapeHelpers = (): {
       y: line.geometry.attributes.position.array[7],
     };
     return position as Vector2;
+  };
+
+  const scaleBoxImage = (
+    boxImage: Mesh<BoxGeometry, MeshBasicMaterial>,
+    scale: Vector3,
+  ) => {
+    boxImage.scale.set(scale.x, scale.y, scale.z);
   };
 
   const SetImageAtEndOfLine = (
@@ -95,6 +104,7 @@ const useChapeHelpers = (): {
     GetCirclePointsForCircle,
     GetEndOfLine,
     SetImageAtEndOfLine,
+    scaleBoxImage,
   };
 };
 
