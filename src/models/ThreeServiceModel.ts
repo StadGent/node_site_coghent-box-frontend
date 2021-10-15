@@ -1,3 +1,5 @@
+import { Line, BufferGeometry, LineBasicMaterial } from 'three';
+
 export type Coordinates = {
   start: Position;
   end: Position;
@@ -12,4 +14,8 @@ export type CircleParams = {
   radius: number;
   segments: number;
   thetaStart: number;
+};
+
+export type Story = {
+  lines: Line<BufferGeometry, LineBasicMaterial>[];
 };

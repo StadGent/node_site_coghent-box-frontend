@@ -1,4 +1,4 @@
-import usePredefined from '@/composables/usePredefined';
+import usePredefined from '@/Three/usePredefined';
 import { Camera, Scene, PerspectiveCamera, WebGLRenderer } from 'three';
 import { Ref } from 'vue';
 
@@ -49,7 +49,7 @@ export default class ThreeService {
       1,
       1000,
     );
-    this.state.camera.position.z = 20;
+    this.state.camera.position.z = 10;
   }
 
   AddToScene(item: any) {

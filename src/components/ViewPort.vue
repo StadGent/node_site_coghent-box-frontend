@@ -1,11 +1,9 @@
 <template>
-  <div ref="viewport">
-    <p class="absolute bg-background-light top-10">dfsonsf</p>
-  </div>
+  <div ref="viewport"></div>
 </template>
 
 <script lang="ts">
-import usePredefined from '@/composables/usePredefined';
+import usePredefined from '@/Three/usePredefined';
 import ThreeService from '@/services/ThreeService';
 import { defineComponent, onMounted, ref } from 'vue';
 
@@ -22,7 +20,7 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      const threeSvc = new ThreeService(viewport.value);
+      const threeSvc = new ThreeService(viewport);
       addBaseStoryToScene(threeSvc);
       threeSvc.Animate();
     });
