@@ -26,7 +26,8 @@ export default class ThreeService {
   constructor(_element: Ref) {
     this.state = initState;
     this.element = _element;
-    this.SetViewPort(window.innerHeight * (48 / 9), window.innerHeight);
+    // this.SetViewPort(window.innerHeight * (48 / 9), window.innerHeight);
+    this.SetViewPort(window.innerWidth, 600);
     this.InitializeRenderer();
     this.InitializeCamera();
   }
