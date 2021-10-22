@@ -1,5 +1,5 @@
 import usePredefined from '@/Three/usePredefined';
-import { Camera, Scene, PerspectiveCamera, WebGLRenderer } from 'three';
+import { Camera, Scene, PerspectiveCamera, WebGLRenderer, Group } from 'three';
 import { Ref } from 'vue';
 
 type State = {
@@ -8,6 +8,7 @@ type State = {
   camera: Camera;
   scene: Scene;
   renderer: any;
+  groups: Array<Group>;
 };
 
 export const initState: State = {
@@ -16,6 +17,7 @@ export const initState: State = {
   camera: new Camera(),
   scene: new Scene(),
   renderer: null,
+  groups: [],
 };
 
 export default class ThreeService {
@@ -55,6 +57,12 @@ export default class ThreeService {
 
   AddToScene(item: any) {
     this.state.scene.add(item);
+  }
+
+  AddGroupsToScene(groups: Array<Group>) {
+    groups.map(group => {
+      this.state.scene.add(group);
+    });
   }
 
   Animate() {

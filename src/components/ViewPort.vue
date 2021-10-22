@@ -16,6 +16,7 @@ export default defineComponent({
     const addBaseStoryToScene = (threeSvc: ThreeService) => {
       predefinedHelper.BaseStoryCircle().forEach((item: any) => {
         threeSvc.state.scene.add(item);
+        threeSvc.state.scene.updateMatrixWorld(true);
       });
     };
 

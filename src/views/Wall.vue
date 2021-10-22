@@ -26,7 +26,7 @@ export default defineComponent({
     console.log(storyTitle);
     const relations = result.value?.Entities?.results?.[0]?.relations;
     console.log(relations);
-    relations?.forEach((relation) => {
+    relations?.forEach((relation: any) => {
       const index = (relation?.key.indexOf('/') as number) + 1;
       const id = relation?.key.slice(index, -1);
       const { result, loading } = useQuery(GetEntityByIdDocument, { id: id });

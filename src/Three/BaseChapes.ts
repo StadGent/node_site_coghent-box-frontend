@@ -1,26 +1,25 @@
-import { Position } from '@/models/ThreeServiceModel';
 import {
+  Mesh,
   CircleGeometry,
   MeshBasicMaterial,
-  Mesh,
-  Vector2,
-  BufferGeometry,
   Line,
+  BufferGeometry,
   LineBasicMaterial,
+  Vector2,
   LineBasicMaterialParameters,
   BoxBufferGeometry,
   TextureLoader,
 } from 'three';
 import useChapeHelpers from './useChapeHelpers';
 
-const useBaseChapes = (): {
+const BaseChapes = (): {
   DrawCircle: (radius: number, color: any) => Mesh<CircleGeometry, MeshBasicMaterial>;
   DrawOuterCircle: (
     radius: number,
     color: any,
   ) => Line<BufferGeometry, LineBasicMaterial>;
   DrawLine: (
-    coordinates: Position[],
+    coordinates: Vector2[],
     materialParams?: LineBasicMaterialParameters,
   ) => Line<BufferGeometry, LineBasicMaterial>;
   DrawImageCube: (
@@ -36,18 +35,18 @@ const useBaseChapes = (): {
   };
   const DrawOuterCircle = (radius: number, color: any) => {
     const chapeHelper = useChapeHelpers();
-    const points: Position[] = [];
+    const points: Vector2[] = [];
     for (let i = 0; i <= 360; i++) {
       const pos = chapeHelper.CalculatePointOfCircle(i, radius);
       points.push({
         x: pos.x,
         y: pos.y,
-      });
+      } as Vector2);
     }
     return DrawLine(points, { color: color });
   };
   const DrawLine = (
-    coordinates: Position[],
+    coordinates: Vector2[],
     materialParams?: LineBasicMaterialParameters,
   ) => {
     const material = new LineBasicMaterial(materialParams);
@@ -71,9 +70,9 @@ const useBaseChapes = (): {
   return {
     DrawCircle,
     DrawOuterCircle,
-    DrawLine,
     DrawImageCube,
+    DrawLine,
   };
 };
 
-export default useBaseChapes;
+export default BaseChapes;

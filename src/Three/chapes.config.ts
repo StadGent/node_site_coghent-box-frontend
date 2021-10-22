@@ -6,4 +6,5 @@ export const story = {
     { angle: 235, radius: 2.5 },
     { angle: 310, radius: 2.5 },
   ],
+  line: {},
 };

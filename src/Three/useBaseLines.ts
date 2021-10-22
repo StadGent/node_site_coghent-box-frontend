@@ -1,6 +1,5 @@
-import { Position } from '@/models/ThreeServiceModel';
 import { Line, BufferGeometry, LineBasicMaterial, Vector2 } from 'three';
-import useBaseChapes from './useBaseChapes';
+import BaseChapes from './BaseChapes';
 
 const useBaseLines = (): {
   DrawLineR1: (pos: Vector2) => Line<BufferGeometry, LineBasicMaterial>;
@@ -9,7 +8,7 @@ const useBaseLines = (): {
   DrawLineL1: (pos: Vector2) => Line<BufferGeometry, LineBasicMaterial>;
   DrawLineL2: (pos: Vector2) => Line<BufferGeometry, LineBasicMaterial>;
 } => {
-  const baseChapeHelper = useBaseChapes();
+  const baseChapeHelper = BaseChapes();
   const DrawLineR1 = (pos: Vector2) => {
     return baseChapeHelper.DrawLine(
       [
