@@ -18,13 +18,13 @@ const useChapeHelpers = (): {
   GetBoxparams: (box: Mesh<BoxGeometry, MeshBasicMaterial>) => BoxParams;
   GetCirclePointsForCircle: () => Vector2[];
   SetPosition: (
-    position: Position,
+    position: Vector3,
     chape:
       | Mesh<CircleGeometry, MeshBasicMaterial>
       | Line<BufferGeometry, LineBasicMaterial>
       | Mesh<BoxGeometry, MeshBasicMaterial>,
   ) => void;
-  GetEndOfLine: (line: Line<BufferGeometry, LineBasicMaterial>) => Vector2;
+  GetEndOfLine: (line: Line<BufferGeometry, LineBasicMaterial>) => Vector3;
   SetImageAtEndOfLine: (
     line: Line<BufferGeometry, LineBasicMaterial>,
     boxImage: Mesh<BoxGeometry, MeshBasicMaterial>,
@@ -57,7 +57,7 @@ const useChapeHelpers = (): {
       x: line.geometry.attributes.position.array[6],
       y: line.geometry.attributes.position.array[7],
     };
-    return position as Vector2;
+    return position as Vector3;
   };
 
   const scaleBoxImage = (
@@ -74,19 +74,19 @@ const useChapeHelpers = (): {
     const pos = GetEndOfLine(line);
     if (pos.x > 0) {
       SetPosition(
-        { x: pos.x + GetBoxparams(boxImage).width / 2 + 0.1, y: pos.y },
+        { x: pos.x + GetBoxparams(boxImage).width / 2 + 0.1, y: pos.y } as Vector3,
         boxImage,
       );
     } else {
       SetPosition(
-        { x: pos.x - GetBoxparams(boxImage).width / 2 - 0.1, y: pos.y },
+        { x: pos.x - GetBoxparams(boxImage).width / 2 - 0.1, y: pos.y } as Vector3,
         boxImage,
       );
     }
   };
 
   const SetPosition = (
-    position: Position,
+    position: Vector3,
     chape:
       | Mesh<CircleGeometry, MeshBasicMaterial>
       | Line<BufferGeometry, LineBasicMaterial>
