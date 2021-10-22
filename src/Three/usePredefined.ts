@@ -14,9 +14,11 @@ import useBaseLines from './useBaseLines';
 import useChapeHelpers from './useChapeHelpers';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
-import useThreeHelper from './useThreeHelper';
 import LineHandler from './Line';
 import BaseChapes from './BaseChapes';
+import SchemaLine from './LineSchema';
+import { main } from './main.config';
+import GroupHelper from './GroupHelper';
 
 const usePredefined = (): {
   BaseStoryCircle: () => (
@@ -25,12 +27,13 @@ const usePredefined = (): {
     | Mesh<BoxGeometry, MeshBasicMaterial>
     | Group
     | Array<Group>
+    | Line<BufferGeometry, LineBasicMaterial>[]
   )[];
 } => {
   const baseChapeHelper = BaseChapes();
   const baseLineHelper = useBaseLines();
   const chapeHelper = useChapeHelpers();
-  const threeHelper = useThreeHelper();
+  const threeHelper = GroupHelper();
 
   const BaseStoryCircle = () => {
     const circle = baseChapeHelper.DrawCircle(2, 0x02a77f);
@@ -156,7 +159,7 @@ const usePredefined = (): {
 
     // creating a group of objects
     const groups: Array<Group> = [];
-    threeHelper.CreateGroup(
+    threeHelper.AddObjectsTogroups(
       [
         outerCircle,
         circle,
@@ -177,8 +180,9 @@ const usePredefined = (): {
       ],
       groups,
     );
-
-    return groups;
+    const line_Schema = SchemaLine();
+    const lines = line_Schema.CreateLines(main.lines);
+    return lines;
   };
   return { BaseStoryCircle };
 };
