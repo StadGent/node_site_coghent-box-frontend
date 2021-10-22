@@ -13,10 +13,10 @@ import {
 import useChapeHelpers from './useChapeHelpers';
 
 const BaseChapes = (): {
-  DrawCircle: (radius: number, color: any) => Mesh<CircleGeometry, MeshBasicMaterial>;
+  DrawCircle: (radius: number, color: number) => Mesh<CircleGeometry, MeshBasicMaterial>;
   DrawOuterCircle: (
     radius: number,
-    color: any,
+    color: number,
   ) => Line<BufferGeometry, LineBasicMaterial>;
   DrawLine: (
     coordinates: Vector2[],
@@ -27,13 +27,13 @@ const BaseChapes = (): {
     format: Vector2,
   ) => Mesh<BoxBufferGeometry, MeshBasicMaterial>;
 } => {
-  const DrawCircle = (radius: number, color: any, segments = 50) => {
+  const DrawCircle = (radius: number, color: number, segments = 50) => {
     const geometry = new CircleGeometry(radius, segments);
     const material = new MeshBasicMaterial({ color: color });
 
     return new Mesh(geometry, material);
   };
-  const DrawOuterCircle = (radius: number, color: any) => {
+  const DrawOuterCircle = (radius: number, color: number) => {
     const chapeHelper = useChapeHelpers();
     const points: Vector2[] = [];
     for (let i = 0; i <= 360; i++) {
