@@ -3,7 +3,6 @@ import Frame1 from '@/frames/Frame1';
 import Defaults from './defaults.config';
 import StoryPaused from '@/frames/StoryPaused';
 import GroupHelper from './GroupHelper';
-import SchemaLine, { LineSchema } from './LineSchema';
 import TestData from './TestData';
 
 const usePredefined = (): {
