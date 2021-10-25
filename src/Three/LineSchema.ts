@@ -13,7 +13,7 @@ import GroupHelper from './GroupHelper';
 
 export type LineSchema = {
   positions: Array<Vector2>;
-  params?: LineBasicMaterialParameters | { color: 0x02a77f };
+  params?: LineBasicMaterialParameters;
   endObject?: Mesh<CircleGeometry, MeshBasicMaterial>;
 };
 
@@ -36,7 +36,7 @@ const SchemaLine = (): {
         schema.endObject,
       );
     }
-    const line = baseChapes.DrawLine(schema.positions, schema.params);
+    const line = baseChapes.DrawLine(schema.positions, schema.params || {color: 0x02a77f});
     const group = grouphelper.CreateGroup([
       line,
       schema.endObject as Mesh<CircleGeometry, MeshBasicMaterial>,
