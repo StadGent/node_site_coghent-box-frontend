@@ -1,4 +1,4 @@
-import { BoxParams, CircleParams, Position } from '@/models/ThreeServiceModel';
+import { BoxParams } from '@/models/ThreeServiceModel';
 import {
   Mesh,
   CircleGeometry,
@@ -10,13 +10,11 @@ import {
   BoxGeometry,
   Vector3,
 } from 'three';
-import { story } from './chapes.config';
+import { CircleParams } from './CircleSchema';
 
 const useChapeHelpers = (): {
-  CalculatePointOfCircle: (angle: number, radius: number) => Vector2;
   GetCircleparams: (circle: Mesh<CircleGeometry, MeshBasicMaterial>) => CircleParams;
   GetBoxparams: (box: Mesh<BoxGeometry, MeshBasicMaterial>) => BoxParams;
-  GetCirclePointsForCircle: () => Vector2[];
   SetPosition: (
     position: Vector3,
     chape:
@@ -31,19 +29,6 @@ const useChapeHelpers = (): {
   ) => void;
   scaleBoxImage: (boxImage: Mesh<BoxGeometry, MeshBasicMaterial>, scale: Vector3) => void;
 } => {
-  const CalculatePointOfCircle = (angle: number, radius: number) => {
-    const posX = Math.sin(angle * (Math.PI / 180)) * radius;
-    const posY = Math.cos(angle * (Math.PI / 180)) * radius;
-    return { x: posX, y: posY } as Vector2;
-  };
-
-  const GetCirclePointsForCircle = () => {
-    const points: Vector2[] = [];
-    story.circlePoints.map((point) => {
-      points.push(CalculatePointOfCircle(point.angle, point.radius));
-    });
-    return points;
-  };
 
   const GetCircleparams = (circle: Mesh<CircleGeometry, MeshBasicMaterial>) => {
     return circle.geometry.parameters as CircleParams;
@@ -97,11 +82,9 @@ const useChapeHelpers = (): {
   };
 
   return {
-    CalculatePointOfCircle,
     GetCircleparams,
     GetBoxparams,
     SetPosition,
-    GetCirclePointsForCircle,
     GetEndOfLine,
     SetImageAtEndOfLine,
     scaleBoxImage,
