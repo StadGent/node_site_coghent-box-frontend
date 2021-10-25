@@ -5,7 +5,7 @@ import GroupHelper from './GroupHelper';
 import Frame1 from '@/frames/Frame1';
 
 const usePredefined = (): {
-  BaseStoryCircle: () => Array<Group>;
+  BaseStoryCircle: () => Array<Group> | Mesh<BoxBufferGeometry, MeshBasicMaterial>[];
 } => {
   const threeHelper = GroupHelper();
 
@@ -18,31 +18,28 @@ const usePredefined = (): {
     });
     const m = new Mesh(geometry, material);
 
-    loader.load(
-      'three/examples/fonts/helvetiker_regular.typeface.json',
-      function (font: any) {
-        const geometry = new TextGeometry('Relations', {
-          font: font,
-          size: 1,
-          height: 2,
-          curveSegments: 12,
-          bevelEnabled: false,
-          bevelThickness: 1,
-          bevelSize: 0.1,
-          bevelSegments: 0.1,
-        });
-        const txt_mat = new MeshBasicMaterial({ color: 0x000000 });
-        const txt_mesh = new Mesh(geometry, txt_mat);
-        txt_mesh.position.y = 5;
-        txt_mesh.position.z = 0.1;
-        m.position.z = 0.1;
-        m.add(txt_mesh);
-      },
-    );
+    loader.load('/Fonts/myFont.json', function (font: any) {
+      const geometry = new TextGeometry('Relations', {
+        font: font,
+        size: 1,
+        height: 0,
+        curveSegments: 90,
+        bevelEnabled: false,
+        bevelThickness: 0,
+        bevelSize: 0,
+        bevelSegments: 0,
+      });
+      const txt_mat = new MeshBasicMaterial({ color: 0x0000000 });
+      const txt_mesh = new Mesh(geometry, txt_mat);
+      txt_mesh.position.y = 0;
+      txt_mesh.position.x = -2;
+      txt_mesh.position.z = 0;
+      m.add(txt_mesh);
+    });
 
     const frame1 = Frame1().Frame();
 
-    return frame1;
+    return [m];
   };
 
   return { BaseStoryCircle };
