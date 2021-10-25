@@ -1,9 +1,7 @@
-import { BoxParams } from '@/models/ThreeServiceModel';
 import {
   Mesh,
   CircleGeometry,
   MeshBasicMaterial,
-  Vector2,
   BufferGeometry,
   Line,
   LineBasicMaterial,
@@ -11,10 +9,10 @@ import {
   Vector3,
 } from 'three';
 import { CircleParams } from './CircleSchema';
+import CubeHelper from './CubeHelper';
 
 const useChapeHelpers = (): {
   GetCircleparams: (circle: Mesh<CircleGeometry, MeshBasicMaterial>) => CircleParams;
-  GetBoxparams: (box: Mesh<BoxGeometry, MeshBasicMaterial>) => BoxParams;
   SetPosition: (
     position: Vector3,
     chape:
@@ -29,12 +27,8 @@ const useChapeHelpers = (): {
   ) => void;
   scaleBoxImage: (boxImage: Mesh<BoxGeometry, MeshBasicMaterial>, scale: Vector3) => void;
 } => {
-
   const GetCircleparams = (circle: Mesh<CircleGeometry, MeshBasicMaterial>) => {
     return circle.geometry.parameters as CircleParams;
-  };
-  const GetBoxparams = (box: Mesh<BoxGeometry, MeshBasicMaterial>) => {
-    return box.geometry.parameters as BoxParams;
   };
 
   const GetEndOfLine = (line: Line<BufferGeometry, LineBasicMaterial>) => {
@@ -59,12 +53,18 @@ const useChapeHelpers = (): {
     const pos = GetEndOfLine(line);
     if (pos.x > 0) {
       SetPosition(
-        { x: pos.x + GetBoxparams(boxImage).width / 2 + 0.1, y: pos.y } as Vector3,
+        {
+          x: pos.x + CubeHelper().GetCubeParams(boxImage).width / 2 + 0.1,
+          y: pos.y,
+        } as Vector3,
         boxImage,
       );
     } else {
       SetPosition(
-        { x: pos.x - GetBoxparams(boxImage).width / 2 - 0.1, y: pos.y } as Vector3,
+        {
+          x: pos.x - CubeHelper().GetCubeParams(boxImage).width / 2 - 0.1,
+          y: pos.y,
+        } as Vector3,
         boxImage,
       );
     }
@@ -83,7 +83,6 @@ const useChapeHelpers = (): {
 
   return {
     GetCircleparams,
-    GetBoxparams,
     SetPosition,
     GetEndOfLine,
     SetImageAtEndOfLine,

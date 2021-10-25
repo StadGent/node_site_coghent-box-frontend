@@ -1,11 +1,10 @@
 import BaseChapes from '@/Three/BaseChapes';
 import ChapeHelper from '@/Three/Chapehelper';
 import SchemaCircle from '@/Three/CircleSchema';
+import CubeHelper from '@/Three/CubeHelper';
 import SchemaCube from '@/Three/CubeSchema';
 import Defaults from '@/Three/defaults.config';
-import LineHelper from '@/Three/LineHelper';
 import SchemaLine from '@/Three/LineSchema';
-import useChapeHelpers from '@/Three/useChapeHelpers';
 import {
   Group,
   Mesh,
@@ -23,10 +22,10 @@ const Frame1 = (): {
   Lines: () => Array<Group>;
   mainCircle: () => Mesh<CircleGeometry, MeshBasicMaterial>;
   outerCircle: () => Line<BufferGeometry, LineBasicMaterial>;
-  ImageCubes: (line:Group) => Mesh<BoxBufferGeometry, MeshBasicMaterial>;
+  ImageCubes: (line: Group) => Mesh<BoxBufferGeometry, MeshBasicMaterial>;
 } => {
   const chapeHelper = ChapeHelper();
-  const lineHelper = LineHelper();
+  const cubeHelper = CubeHelper();
 
   const line_schema = SchemaLine();
   const circle_schema = SchemaCircle();
@@ -56,8 +55,15 @@ const Frame1 = (): {
   };
 
   const ImageCubes = (line: Group) => {
-    const cube = cube_schema.CreateImageCube(defaults.ImageCube)
-    chapeHelper.SetPosition({ x: line.children[1].position.x + useChapeHelpers().GetBoxparams(cube).width / 2 + 0.1, y: line.children[1].position.y, z: 0 } as Vector3, cube);
+    const cube = cube_schema.CreateImageCube(defaults.ImageCube);
+    chapeHelper.SetPosition(
+      {
+        x: line.children[1].position.x + cubeHelper.GetCubeParams(cube).width / 2 + 0.1,
+        y: line.children[1].position.y,
+        z: 0,
+      } as Vector3,
+      cube,
+    );
     return cube;
   };
 
