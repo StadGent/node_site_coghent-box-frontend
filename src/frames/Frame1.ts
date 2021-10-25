@@ -4,6 +4,7 @@ import SchemaCircle from '@/Three/CircleSchema';
 import CubeHelper from '@/Three/CubeHelper';
 import SchemaCube from '@/Three/CubeSchema';
 import Defaults from '@/Three/defaults.config';
+import GroupHelper from '@/Three/GroupHelper';
 import SchemaLine from '@/Three/LineSchema';
 import {
   Group,
@@ -23,9 +24,11 @@ const Frame1 = (): {
   mainCircle: () => Mesh<CircleGeometry, MeshBasicMaterial>;
   outerCircle: () => Line<BufferGeometry, LineBasicMaterial>;
   ImageCubes: (line: Group) => Mesh<BoxBufferGeometry, MeshBasicMaterial>;
+  Frame: () => Array<Group>;
 } => {
   const chapeHelper = ChapeHelper();
   const cubeHelper = CubeHelper();
+  const groupHelper = GroupHelper();
 
   const line_schema = SchemaLine();
   const circle_schema = SchemaCircle();
@@ -67,6 +70,13 @@ const Frame1 = (): {
     return cube;
   };
 
-  return { Lines, mainCircle, outerCircle, ImageCubes };
+  const Frame = () => {
+    const groups: Array<Group> = [];
+    groupHelper.AddObjectsTogroups(Lines(), groups);
+    groupHelper.AddObjectsTogroups([mainCircle(), outerCircle(), ImageCubes(Lines()[0])], groups);
+    return groups;
+  };
+
+  return { Lines, mainCircle, outerCircle, ImageCubes, Frame };
 };
 export default Frame1;

@@ -1,9 +1,4 @@
-import {
-  Mesh,
-  MeshBasicMaterial,
-  BoxBufferGeometry,
-  Group,
-} from 'three';
+import { Mesh, MeshBasicMaterial, BoxBufferGeometry, Group } from 'three';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 import GroupHelper from './GroupHelper';
@@ -45,23 +40,12 @@ const usePredefined = (): {
       },
     );
 
-    const groups: Array<Group> = [];
-    Frame1().Lines().forEach((l: Group) => {
-      groups.push(l);
-    })
-    threeHelper.AddObjectsTogroups(
-      [
-        Frame1().mainCircle(),
-        Frame1().outerCircle(),
-        Frame1().ImageCubes(Frame1().Lines()[0])
-      ],
-      groups,
-    );
-    
-    return groups;
+    const frame1 = Frame1().Frame();
+
+    return frame1;
   };
 
-  return {BaseStoryCircle}
+  return { BaseStoryCircle };
 };
 
 export default usePredefined;
