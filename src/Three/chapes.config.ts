@@ -1,4 +1,4 @@
-export const story = {
+export const defaultValues = {
   circlePoints: [
     { angle: 25, radius: 2.5 },
     { angle: 90, radius: 2.5 },
@@ -6,5 +6,4 @@ export const story = {
     { angle: 235, radius: 2.5 },
     { angle: 310, radius: 2.5 },
   ],
-  line: {},
 };

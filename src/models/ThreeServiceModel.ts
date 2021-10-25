@@ -1,4 +1,4 @@
-import { Line, BufferGeometry, LineBasicMaterial } from 'three';
+import { Line, BufferGeometry, LineBasicMaterial, Mesh, CircleGeometry, MeshBasicMaterial } from 'three';
 
 export type Coordinates = {
   start: Position;
@@ -8,12 +8,6 @@ export type Coordinates = {
 export type Position = {
   x: number;
   y: number;
-};
-
-export type CircleParams = {
-  radius: number;
-  segments: number;
-  thetaStart: number;
 };
 
 export type BoxParams = {
@@ -27,4 +21,5 @@ export type BoxParams = {
 
 export type Story = {
   lines: Line<BufferGeometry, LineBasicMaterial>[];
+  circles: Mesh<CircleGeometry, MeshBasicMaterial>[];
 };
