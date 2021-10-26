@@ -5,11 +5,19 @@
 <script lang="ts">
 import usePredefined from '@/Three/usePredefined';
 import ThreeService from '@/services/ThreeService';
-import { defineComponent, onMounted, ref } from 'vue';
+import { defineComponent, onMounted, PropType, ref } from 'vue';
+import { Story } from '@/views/Wall.vue';
+import Frame1 from '@/frames/Frame1';
 
 export default defineComponent({
   name: 'ViewPort',
-  setup() {
+  props: {
+    story: {
+      type: String as any as PropType<Story>,
+    },
+  },
+  setup(props) {
+    console.log(props.story);
     const viewport = ref(null);
     const predefinedHelper = usePredefined();
 

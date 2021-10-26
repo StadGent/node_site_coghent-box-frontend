@@ -1,37 +1,71 @@
 <template>
-  <ViewPort />
+  <ViewPort :story="story" />
 </template>
 <script lang="ts">
-import { defineComponent, onMounted } from 'vue';
+import { defineComponent, onMounted, reactive, ref } from 'vue';
 import ViewPort from '@/components/ViewPort.vue';
 import { useQuery } from '@vue/apollo-composable';
+import RESTRepository from '@/repositories/RestRepository';
 import {
   GetEntityByIdDocument,
   GetFullEntitiesDocument,
 } from 'coghent-vue-3-component-library/lib';
-import RESTRepository from '@/repositories/RestRepository';
+import { Entity, SearchFilter } from 'coghent-vue-3-component-library/lib/queries';
+
+export type Story = {
+  title: string;
+  items: Record<string, string>;
+};
 
 export default defineComponent({
   name: 'Wall',
   components: { ViewPort },
   setup() {
     const restRepo = new RESTRepository();
-    const { result, loading } = useQuery(GetFullEntitiesDocument, {
-      searchValue: { value: '', type: 'story' },
+    const entities = ref();
+    const items = reactive<Record<string, string>>({});
+    const story = reactive<Story>({
+      title: '',
+      items: {},
+    });
+    const {
+      onResult: onEntities,
+      loading,
+      refetch,
+    } = useQuery(GetFullEntitiesDocument, {
+      searchValue: { value: '', type: 'story' } as SearchFilter,
       limit: 10,
     });
-    console.log('RESULT', result.value?.Entities);
+    const { onResult: onRelation, refetch: refetchRelation } = useQuery(
+      GetEntityByIdDocument,
+      {
+        id: '13532913-b00f-49a9-9382-c0a763654574',
+      },
+    );
+    const getRelation = (id: string) => {
+      return refetchRelation({ id: id });
+    };
 
-    const storyTitle = result.value?.Entities?.results?.[0]?.title?.[0]?.value;
-    console.log(storyTitle);
-    const relations = result.value?.Entities?.results?.[0]?.relations;
-    console.log(relations);
-    relations?.forEach((relation: any) => {
-      const index = (relation?.key.indexOf('/') as number) + 1;
-      const id = relation?.key.slice(index, -1);
-      const { result, loading } = useQuery(GetEntityByIdDocument, { id: id });
-      console.log(result);
+    onEntities((value: any) => {
+      entities.value = value.data.Entities;
+      story.title = entities.value.results?.[0]?.title?.[0]?.value;
+
+      Getrelations(entities.value.results);
     });
+
+    const Getrelations = (allEntities: Entity[]) => {
+      allEntities[0].relations?.forEach((relation: any) => {
+        const index = (relation?.key.indexOf('/') as number) + 1;
+        const id = relation?.key.slice(index);
+        getRelation(String(id))?.then((entity: any) => {
+          items[entity.data.Entity?.title[0]?.value] =
+            entity.data.Entity?.mediafiles?.[0]?.original_file_location;
+        });
+      });
+      story.items = items;
+    };
+
+    return { story };
   },
 });
 </script>
