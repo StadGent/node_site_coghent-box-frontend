@@ -1,30 +1,22 @@
-import BaseChapes from '@/Three/BaseChapes';
 import ChapeHelper from '@/Three/Chapehelper';
-import SchemaCircle, { CirclePoint, CircleSchema } from '@/Three/CircleSchema';
 import CubeHelper from '@/Three/CubeHelper';
 import SchemaCube from '@/Three/CubeSchema';
 import Defaults from '@/Three/defaults.config';
 import GroupHelper from '@/Three/GroupHelper';
 import SchemaLine, { LineSchema } from '@/Three/LineSchema';
 import TextHelper from '@/Three/TextHelper';
-import {
-  Group,
-  Mesh,
-  CircleGeometry,
-  MeshBasicMaterial,
-  Vector3,
-  Line,
-  LineBasicMaterial,
-  BufferGeometry,
-} from 'three';
+import { Group, Mesh, Vector3 } from 'three';
+import StoryCircle from './StoryCircle';
 
 const Frame1 = (): {
   Lines: (schemas: Array<LineSchema>) => Array<Group>;
-  mainCircle: (schema: CircleSchema) => Mesh<CircleGeometry, MeshBasicMaterial>;
-  outerCircle: (schema: CircleSchema) => Line<BufferGeometry, LineBasicMaterial>;
   ImageCubes: (lines: Array<Group>) => Array<Mesh>;
   Words: (words: Record<string, Vector3>) => Array<Mesh>;
-  Frame: (lineSchemas: Array<LineSchema>, words: Record<string, Vector3>, circleSchema: CircleSchema, isTextVisible: boolean) => Array<Group>;
+  Frame: (
+    lineSchemas: Array<LineSchema>,
+    words: Record<string, Vector3>,
+    isTextVisible: boolean,
+  ) => Array<Group>;
 } => {
   const chapeHelper = ChapeHelper();
   const cubeHelper = CubeHelper();
@@ -32,17 +24,9 @@ const Frame1 = (): {
   const textHelper = TextHelper();
 
   const line_schema = SchemaLine();
-  const circle_schema = SchemaCircle();
   const cube_schema = SchemaCube();
 
   const defaults = Defaults();
-
-  const mainCircle = (schema: CircleSchema) => {
-    return circle_schema.CreateCircle(schema);
-  };
-  const outerCircle = (schema: CircleSchema) => {
-    return circle_schema.CreateOuterCircle(schema.params.radius + 1);
-  };
 
   const Lines = (schemas: Array<LineSchema>) => {
     return line_schema.CreateLines(schemas);
@@ -50,7 +34,7 @@ const Frame1 = (): {
 
   const ImageCubes = (lines: Array<Group>) => {
     const cubes: Array<Mesh> = [];
-    lines.forEach(line => {
+    lines.forEach((line) => {
       const cube = cube_schema.CreateImageCube(defaults.ImageCube());
       chapeHelper.SetPosition(
         {
@@ -61,7 +45,7 @@ const Frame1 = (): {
         cube,
       );
       cubes.push(cube);
-    })
+    });
     return cubes;
   };
 
@@ -69,18 +53,22 @@ const Frame1 = (): {
     return textHelper.CreateTextFromRecord(words);
   };
 
-  const Frame = (lineSchemas: Array<LineSchema>,words: Record<string, Vector3>, circleSchema: CircleSchema, isTextVisible = true) => {
+  const Frame = (
+    lineSchemas: Array<LineSchema>,
+    words: Record<string, Vector3>,
+    isTextVisible = true,
+  ) => {
     const groups: Array<Group> = [];
     if (isTextVisible) {
       groupHelper.AddObjectsTogroups(Words(words), groups);
     } else groupHelper.AddObjectsTogroups(ImageCubes(Lines(lineSchemas)), groups);
-    
+
     groupHelper.AddObjectsTogroups(Lines(lineSchemas), groups);
-    groupHelper.AddObjectsTogroups([mainCircle(circleSchema), outerCircle(circleSchema)], groups);
-    
+    groupHelper.AddObjectsTogroups([StoryCircle().Create('My story')], groups);
+
     return groups;
   };
 
-  return { Lines, mainCircle, outerCircle, ImageCubes, Words, Frame };
+  return { Lines, ImageCubes, Words, Frame };
 };
 export default Frame1;

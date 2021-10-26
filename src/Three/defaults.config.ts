@@ -1,16 +1,18 @@
-import { Vector3, Mesh } from 'three';
+import { Vector3 } from 'three';
 import CircleHelper from './CircleHelper';
 import { CirclePoint, CircleSchema } from './CircleSchema';
 import { CubeSchema } from './CubeSchema';
 import DefaultLines from './LinesDefault';
+import { TextSchema } from './Textschema';
 
 const circleHelper = CircleHelper();
 
 const Defaults = (): {
   circlePoints: () => Array<CirclePoint>;
   LinePositions: () => any;
-  Circle:() =>  CircleSchema;
-  ImageCube:() => CubeSchema;
+  Circle: () => CircleSchema;
+  ImageCube: () => CubeSchema;
+  Word: (text: string) => TextSchema;
 } => {
   const circlePoints = () => {
     return [
@@ -19,7 +21,7 @@ const Defaults = (): {
       { angle: 155, radius: 3 },
       { angle: 235, radius: 3 },
       { angle: 310, radius: 3 },
-    ]
+    ];
   };
 
   const LinePositions = () => {
@@ -36,17 +38,34 @@ const Defaults = (): {
     return {
       position: { x: 0, y: 0, z: 0 } as Vector3,
       params: { radius: 2 },
-    }
+    };
   };
 
   const ImageCube = () => {
     return {
-      position: {x:0,y:0,z:0} as Vector3,
+      position: { x: 0, y: 0, z: 0 } as Vector3,
       params: {
         width: 2,
         height: 2,
         url: 'https://pixy.org/src/21/219269.jpg',
-      }
+      },
+    };
+  };
+
+  const Word = (text: string) => {
+    return {
+      text: text,
+      position: { x: 0, y: 0, z: 0 } as Vector3,
+      fontParams: {
+        color: 0xffffff,
+        size: 0.3,
+        path: '/Fonts/myFont.json',
+      },
+      textBoxParams: {
+        height: 1,
+        width: 3,
+        color: 0x02a77f,
+      },
     };
   };
 
@@ -55,6 +74,7 @@ const Defaults = (): {
     LinePositions,
     Circle,
     ImageCube,
+    Word,
   };
 };
 
