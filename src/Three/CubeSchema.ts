@@ -14,6 +14,7 @@ export type CubeParams = {
   widthSegments?: number;
   heightSegments?: number;
   depthSegments?: number;
+  color?: number;
 };
 
 export type ImageCubeParams = CubeParams & {

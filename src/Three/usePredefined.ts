@@ -1,45 +1,29 @@
-import { Mesh, MeshBasicMaterial, BoxBufferGeometry, Group } from 'three';
-import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
-import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
+import { Mesh, MeshBasicMaterial, BoxBufferGeometry, Group, Vector3 } from 'three';
 import GroupHelper from './GroupHelper';
 import Frame1 from '@/frames/Frame1';
+import TextHelper, { TextSchema } from './Textschema';
+import Defaults from './defaults.config';
 
 const usePredefined = (): {
-  BaseStoryCircle: () => Array<Group> | Mesh<BoxBufferGeometry, MeshBasicMaterial>[];
+  BaseStoryCircle: () => Array<Group> | Mesh<BoxBufferGeometry, MeshBasicMaterial>[] | any;
 } => {
   const threeHelper = GroupHelper();
+  const textHelper = TextHelper();
 
   const BaseStoryCircle = () => {
     // Creating text in the viewport
-    const loader = new FontLoader();
-    const geometry = new BoxBufferGeometry(10, 10, 0);
-    const material = new MeshBasicMaterial({
-      color: 0xffffff,
-    });
-    const m = new Mesh(geometry, material);
-
-    loader.load('/Fonts/myFont.json', function (font: any) {
-      const geometry = new TextGeometry('Relations', {
-        font: font,
-        size: 1,
-        height: 0,
-        curveSegments: 90,
-        bevelEnabled: false,
-        bevelThickness: 0,
-        bevelSize: 0,
-        bevelSegments: 0,
-      });
-      const txt_mat = new MeshBasicMaterial({ color: 0x0000000 });
-      const txt_mesh = new Mesh(geometry, txt_mat);
-      txt_mesh.position.y = 0;
-      txt_mesh.position.x = -2;
-      txt_mesh.position.z = 0;
-      m.add(txt_mesh);
-    });
+    const words: Record<string, Vector3> = {
+      'Relations': { x:1, y:0, z:0} as Vector3,
+      'Migration': { x: 3, y: 3, z: 0 } as Vector3,
+      'Stories': { x: -3, y: -1, z: 0 } as Vector3,
+      'More': { x: -5, y: -2, z: 0 } as Vector3,
+      'Text': { x: 5, y: 2, z: 0 } as Vector3,
+    };
+    const txtMeshes = Defaults().TextSchemas(words);
 
     const frame1 = Frame1().Frame();
 
-    return [m];
+    return txtMeshes;
   };
 
   return { BaseStoryCircle };

@@ -1,8 +1,9 @@
-import { Vector3 } from 'three';
+import { Vector3, Mesh } from 'three';
 import CircleHelper from './CircleHelper';
 import { CirclePoint, CircleSchema } from './CircleSchema';
 import { CubeSchema } from './CubeSchema';
 import DefaultLines from './LinesDefault';
+import SchemaText, { TextSchema } from './Textschema';
 
 const circleHelper = CircleHelper();
 
@@ -11,6 +12,7 @@ const Defaults = (): {
   LinePositions: () => any;
   Circle: CircleSchema;
   ImageCube: CubeSchema;
+  TextSchemas: (words: Record<string, Vector3>) => Array<Mesh>;
 } => {
   const circlePoints = [
     { angle: 25, radius: 3 },
@@ -44,11 +46,32 @@ const Defaults = (): {
       }
   };
 
+  const TextSchemas = (words: Record<string, Vector3>) => {
+    const txtMeshes: Array<Mesh>  = [];
+    for (const key in words) {
+      const schema = {
+        text: key,
+        position: words[key] as Vector3,
+        fontParams: {
+          size: 0.3,
+          path: '/Fonts/myFont.json',
+        },
+        textBoxParams: {
+          height: 1,
+          width: 3,
+        },
+      };
+      txtMeshes.push(SchemaText().LoadText(schema));
+    }
+    return txtMeshes;
+  };
+
   return {
     circlePoints,
     LinePositions,
     Circle,
     ImageCube,
+    TextSchemas,
   };
 };
 
