@@ -2,10 +2,9 @@
   <ViewPort :story="story" />
 </template>
 <script lang="ts">
-import { defineComponent, onMounted, reactive, ref } from 'vue';
+import { defineComponent, reactive, ref } from 'vue';
 import ViewPort from '@/components/ViewPort.vue';
 import { useQuery } from '@vue/apollo-composable';
-import RESTRepository from '@/repositories/RestRepository';
 import {
   GetEntityByIdDocument,
   GetFullEntitiesDocument,
@@ -21,7 +20,6 @@ export default defineComponent({
   name: 'Wall',
   components: { ViewPort },
   setup() {
-    const restRepo = new RESTRepository();
     const entities = ref();
     const displayStory = ref(0);
     const items = reactive<Record<string, string>>({});
