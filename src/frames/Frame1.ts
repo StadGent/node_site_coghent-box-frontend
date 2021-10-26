@@ -1,34 +1,35 @@
 import BaseChapes from '@/Three/BaseChapes';
 import ChapeHelper from '@/Three/Chapehelper';
-import SchemaCircle from '@/Three/CircleSchema';
+import SchemaCircle, { CirclePoint, CircleSchema } from '@/Three/CircleSchema';
 import CubeHelper from '@/Three/CubeHelper';
 import SchemaCube from '@/Three/CubeSchema';
 import Defaults from '@/Three/defaults.config';
 import GroupHelper from '@/Three/GroupHelper';
-import SchemaLine from '@/Three/LineSchema';
+import SchemaLine, { LineSchema } from '@/Three/LineSchema';
+import TextHelper from '@/Three/TextHelper';
 import {
   Group,
   Mesh,
   CircleGeometry,
   MeshBasicMaterial,
-  Vector2,
   Vector3,
   Line,
   LineBasicMaterial,
   BufferGeometry,
-  BoxBufferGeometry,
 } from 'three';
 
 const Frame1 = (): {
-  Lines: () => Array<Group>;
-  mainCircle: () => Mesh<CircleGeometry, MeshBasicMaterial>;
-  outerCircle: () => Line<BufferGeometry, LineBasicMaterial>;
-  ImageCubes: (line: Group) => Mesh<BoxBufferGeometry, MeshBasicMaterial>;
-  Frame: () => Array<Group>;
+  Lines: (schemas: Array<LineSchema>) => Array<Group>;
+  mainCircle: (schema: CircleSchema) => Mesh<CircleGeometry, MeshBasicMaterial>;
+  outerCircle: (schema: CircleSchema) => Line<BufferGeometry, LineBasicMaterial>;
+  ImageCubes: (lines: Array<Group>) => Array<Mesh>;
+  Words: (words: Record<string, Vector3>) => Array<Mesh>;
+  Frame: (lineSchemas: Array<LineSchema>, words: Record<string, Vector3>, circleSchema: CircleSchema, isTextVisible: boolean) => Array<Group>;
 } => {
   const chapeHelper = ChapeHelper();
   const cubeHelper = CubeHelper();
   const groupHelper = GroupHelper();
+  const textHelper = TextHelper();
 
   const line_schema = SchemaLine();
   const circle_schema = SchemaCircle();
@@ -36,47 +37,50 @@ const Frame1 = (): {
 
   const defaults = Defaults();
 
-  const lineStartPoints = chapeHelper.GetCirclePointsForCircle(defaults.circlePoints);
-  const lines: Array<Group> = [];
-  const mainCircle = () => {
-    return circle_schema.CreateCircle(defaults.Circle);
+  const mainCircle = (schema: CircleSchema) => {
+    return circle_schema.CreateCircle(schema);
   };
-  const outerCircle = () => {
-    return circle_schema.CreateOuterCircle(defaults.Circle.params.radius + 1);
+  const outerCircle = (schema: CircleSchema) => {
+    return circle_schema.CreateOuterCircle(schema.params.radius + 1);
   };
 
-  const Lines = () => {
-    for (let index = 0; index < lineStartPoints.length; index++) {
-      lines.push(
-        line_schema.CreateLine({
-          positions: defaults.LinePositions()[index] as Vector2[],
-          endObject: BaseChapes().DrawCircle(0.08, 0x02a77f, 50),
-        }),
+  const Lines = (schemas: Array<LineSchema>) => {
+    return line_schema.CreateLines(schemas);
+  };
+
+  const ImageCubes = (lines: Array<Group>) => {
+    const cubes: Array<Mesh> = [];
+    lines.forEach(line => {
+      const cube = cube_schema.CreateImageCube(defaults.ImageCube());
+      chapeHelper.SetPosition(
+        {
+          x: line.children[1].position.x + cubeHelper.GetCubeParams(cube).width / 2 + 0.1,
+          y: line.children[1].position.y,
+          z: 0,
+        } as Vector3,
+        cube,
       );
-    }
-    return lines;
+      cubes.push(cube);
+    })
+    return cubes;
   };
 
-  const ImageCubes = (line: Group) => {
-    const cube = cube_schema.CreateImageCube(defaults.ImageCube);
-    chapeHelper.SetPosition(
-      {
-        x: line.children[1].position.x + cubeHelper.GetCubeParams(cube).width / 2 + 0.1,
-        y: line.children[1].position.y,
-        z: 0,
-      } as Vector3,
-      cube,
-    );
-    return cube;
+  const Words = (words: Record<string, Vector3>) => {
+    return textHelper.CreateTextFromRecord(words);
   };
 
-  const Frame = () => {
+  const Frame = (lineSchemas: Array<LineSchema>,words: Record<string, Vector3>, circleSchema: CircleSchema, isTextVisible = true) => {
     const groups: Array<Group> = [];
-    groupHelper.AddObjectsTogroups(Lines(), groups);
-    groupHelper.AddObjectsTogroups([mainCircle(), outerCircle(), ImageCubes(Lines()[0])], groups);
+    if (isTextVisible) {
+      groupHelper.AddObjectsTogroups(Words(words), groups);
+    } else groupHelper.AddObjectsTogroups(ImageCubes(Lines(lineSchemas)), groups);
+    
+    groupHelper.AddObjectsTogroups(Lines(lineSchemas), groups);
+    groupHelper.AddObjectsTogroups([mainCircle(circleSchema), outerCircle(circleSchema)], groups);
+    
     return groups;
   };
 
-  return { Lines, mainCircle, outerCircle, ImageCubes, Frame };
+  return { Lines, mainCircle, outerCircle, ImageCubes, Words, Frame };
 };
 export default Frame1;

@@ -1,29 +1,46 @@
-import { Mesh, MeshBasicMaterial, BoxBufferGeometry, Group, Vector3 } from 'three';
-import GroupHelper from './GroupHelper';
+import { Mesh, MeshBasicMaterial, BoxBufferGeometry, Group, Vector3, Vector2 } from 'three';
 import Frame1 from '@/frames/Frame1';
-import TextHelper, { TextSchema } from './Textschema';
 import Defaults from './defaults.config';
+import BaseChapes from './BaseChapes';
+import { LineSchema } from './LineSchema';
 
 const usePredefined = (): {
   BaseStoryCircle: () => Array<Group> | Mesh<BoxBufferGeometry, MeshBasicMaterial>[] | any;
 } => {
-  const threeHelper = GroupHelper();
-  const textHelper = TextHelper();
-
   const BaseStoryCircle = () => {
-    // Creating text in the viewport
     const words: Record<string, Vector3> = {
-      'Relations': { x:1, y:0, z:0} as Vector3,
-      'Migration': { x: 3, y: 3, z: 0 } as Vector3,
-      'Stories': { x: -3, y: -1, z: 0 } as Vector3,
-      'More': { x: -5, y: -2, z: 0 } as Vector3,
-      'Text': { x: 5, y: 2, z: 0 } as Vector3,
+      'Migratie': Defaults().LinePositions()[0][2] as Vector3,
+      'Economie': Defaults().LinePositions()[1][2] as Vector3,
+      'Turkije': Defaults().LinePositions()[2][2] as Vector3,
+      'Familie': Defaults().LinePositions()[3][2] as Vector3,
+      'Vakantie': Defaults().LinePositions()[4][2] as Vector3,
     };
-    const txtMeshes = Defaults().TextSchemas(words);
+    const lines: Array<LineSchema> = [
+      {
+        positions: Defaults().LinePositions()[0] as Vector2[],
+        endObject: BaseChapes().DrawCircle(0.08, 0x02a77f, 50),
+      },
+      {
+        positions: Defaults().LinePositions()[1] as Vector2[],
+        endObject: BaseChapes().DrawCircle(0.08, 0x02a77f, 50),
+      },
+      {
+        positions: Defaults().LinePositions()[2] as Vector2[],
+        endObject: BaseChapes().DrawCircle(0.08, 0x02a77f, 50),
+      },
+      {
+        positions: Defaults().LinePositions()[3] as Vector2[],
+        endObject: BaseChapes().DrawCircle(0.08, 0x02a77f, 50),
+      },
+      {
+        positions: Defaults().LinePositions()[4] as Vector2[],
+        endObject: BaseChapes().DrawCircle(0.08, 0x02a77f, 50),
+      },
+    ]
+    const circle = Defaults().Circle();
+    const frame1 = Frame1().Frame(lines, words, circle, true);
 
-    const frame1 = Frame1().Frame();
-
-    return txtMeshes;
+    return frame1;
   };
 
   return { BaseStoryCircle };

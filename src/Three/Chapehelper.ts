@@ -19,6 +19,7 @@ const ChapeHelper = (): {
       | Mesh<CircleGeometry, MeshBasicMaterial>
       | Line<BufferGeometry, LineBasicMaterial>
       | Mesh<BoxGeometry, MeshBasicMaterial>
+      | Mesh
   ) => void;
   GetCirclePointsForCircle: (circlePoints: Array<CirclePoint>) => Array<Vector2>
 } => {
@@ -27,7 +28,8 @@ const ChapeHelper = (): {
     chape:
       | Mesh<CircleGeometry, MeshBasicMaterial>
       | Line<BufferGeometry, LineBasicMaterial>
-      | Mesh<BoxGeometry, MeshBasicMaterial>,
+      | Mesh<BoxGeometry, MeshBasicMaterial>
+      | Mesh
   ) => {
     chape.position.x = position.x;
     chape.position.y = position.y;
