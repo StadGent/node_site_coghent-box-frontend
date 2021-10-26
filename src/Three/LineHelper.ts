@@ -1,7 +1,10 @@
-import { Vector3, Line, LineBasicMaterial, BufferGeometry } from 'three';
+import { Vector3, Line, LineBasicMaterial, BufferGeometry, Vector2 } from 'three';
+import Defaults from './defaults.config';
+import { LineSchema } from './LineSchema';
 
 const LineHelper = (): {
-  GetEndOfLine: (line: Line<BufferGeometry, LineBasicMaterial>) => Vector3
+  GetEndOfLine: (line: Line<BufferGeometry, LineBasicMaterial>) => Vector3;
+  CreateSchema: (positions: Array<Vector2>) => LineSchema;
 } => {
   const GetEndOfLine = (line: Line<BufferGeometry, LineBasicMaterial>) => {
     const position = {
@@ -11,7 +14,14 @@ const LineHelper = (): {
     return position as Vector3;
   };
 
-  return {GetEndOfLine}
+  const CreateSchema = (positions: Array<Vector2>) => {
+    return {
+      positions: positions,
+      endObject: Defaults().EndCircle(),
+    };
+  };
+
+  return { GetEndOfLine, CreateSchema };
 };
 
 export default LineHelper;

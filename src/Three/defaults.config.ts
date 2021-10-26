@@ -1,4 +1,5 @@
-import { Vector3 } from 'three';
+import { CircleGeometry, Mesh, MeshBasicMaterial, Vector3 } from 'three';
+import BaseChapes from './BaseChapes';
 import CircleHelper from './CircleHelper';
 import { CirclePoint, CircleSchema } from './CircleSchema';
 import { CubeSchema } from './CubeSchema';
@@ -13,6 +14,7 @@ const Defaults = (): {
   Circle: () => CircleSchema;
   ImageCube: () => CubeSchema;
   Word: (text: string) => TextSchema;
+  EndCircle: () => Mesh<CircleGeometry, MeshBasicMaterial>;
 } => {
   const circlePoints = () => {
     return [
@@ -69,12 +71,17 @@ const Defaults = (): {
     };
   };
 
+  const EndCircle = () => {
+    return BaseChapes().DrawCircle(0.08, 0x02a77f, 50);
+  };
+
   return {
     circlePoints,
     LinePositions,
     Circle,
     ImageCube,
     Word,
+    EndCircle,
   };
 };
 

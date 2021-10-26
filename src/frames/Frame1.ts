@@ -7,6 +7,7 @@ import SchemaLine, { LineSchema } from '@/Three/LineSchema';
 import TextHelper from '@/Three/TextHelper';
 import { Group, Mesh, Vector3 } from 'three';
 import StoryCircle from './StoryCircle';
+import StoryCircleItems from './StoryCircleItems';
 
 const Frame1 = (): {
   Lines: (schemas: Array<LineSchema>) => Array<Group>;
@@ -59,13 +60,16 @@ const Frame1 = (): {
     isTextVisible = true,
   ) => {
     const groups: Array<Group> = [];
-    if (isTextVisible) {
-      groupHelper.AddObjectsTogroups(Words(words), groups);
-    } else groupHelper.AddObjectsTogroups(ImageCubes(Lines(lineSchemas)), groups);
+    // if (isTextVisible) {
+    //   groupHelper.AddObjectsTogroups(Words(words), groups);
+    // } else groupHelper.AddObjectsTogroups(ImageCubes(Lines(lineSchemas)), groups);
 
-    groupHelper.AddObjectsTogroups(Lines(lineSchemas), groups);
+    // groupHelper.AddObjectsTogroups(Lines(lineSchemas), groups);
     groupHelper.AddObjectsTogroups([StoryCircle().Create('My story')], groups);
-
+    groupHelper.AddObjectsTogroups(
+      StoryCircleItems().Create(['word1', 'word2', 'Word3']),
+      groups,
+    );
     return groups;
   };
 
