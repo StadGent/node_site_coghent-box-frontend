@@ -26,6 +26,7 @@ const SchemaText = (): {
     const material = new MeshBasicMaterial({
       color: params.color || 0x0000000,
     });
+    material.color.convertSRGBToLinear();
     return new Mesh(geometry, material);
   };
 
@@ -55,6 +56,7 @@ const SchemaText = (): {
       const txt_mat = new MeshBasicMaterial({
         color: schema.fontParams.color,
       });
+      txt_mat.color.convertSRGBToLinear();
       const txt_mesh = new Mesh(txtGeometry, txt_mat);
       txt_mesh.position.y = -schema.fontParams.size / 2;
       txt_mesh.position.x = -schema.textBoxParams.width / 2 + 0.7;

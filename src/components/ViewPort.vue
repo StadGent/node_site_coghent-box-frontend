@@ -8,6 +8,7 @@ import ThreeService from '@/services/ThreeService';
 import { defineComponent, onMounted, PropType, ref } from 'vue';
 import { Story } from '@/views/Wall.vue';
 import Frame1 from '@/frames/Frame1';
+import { Color, Scene } from 'three';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -22,10 +23,8 @@ export default defineComponent({
     const predefinedHelper = usePredefined();
 
     const addBaseStoryToScene = (threeSvc: ThreeService) => {
-      predefinedHelper.BaseStoryCircle().forEach((item: any) => {
-        threeSvc.state.scene.add(item);
-        threeSvc.state.scene.updateMatrixWorld(true);
-      });
+      threeSvc.state.scene.background = new Color('white');
+      threeSvc.AddGroupsToScene(predefinedHelper.BaseStoryCircle());
     };
 
     onMounted(() => {

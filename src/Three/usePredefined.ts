@@ -47,7 +47,7 @@ const usePredefined = (): {
         endObject: BaseChapes().DrawCircle(0.08, 0x02a77f, 50),
       },
     ];
-    const frame1 = Frame1().Frame(lines, words, true);
+    const frame1 = Frame1().Create(lines, Defaults().Circle(), words, true);
 
     return frame1;
   };

@@ -12,7 +12,11 @@ import {
 } from 'three';
 
 const BaseChapes = (): {
-  DrawCircle: (radius: number, color: number, segments: number) => Mesh<CircleGeometry, MeshBasicMaterial>;
+  DrawCircle: (
+    radius: number,
+    color: number,
+    segments: number,
+  ) => Mesh<CircleGeometry, MeshBasicMaterial>;
   DrawLine: (
     coordinates: Vector2[],
     materialParams?: LineBasicMaterialParameters,
@@ -25,6 +29,7 @@ const BaseChapes = (): {
   const DrawCircle = (radius: number, color: number, segments: number) => {
     const geometry = new CircleGeometry(radius, segments);
     const material = new MeshBasicMaterial({ color: color });
+    material.color.convertSRGBToLinear();
 
     return new Mesh(geometry, material);
   };
@@ -32,7 +37,8 @@ const BaseChapes = (): {
     coordinates: Vector2[],
     materialParams?: LineBasicMaterialParameters,
   ) => {
-    const material = new LineBasicMaterial(materialParams || {color: 0x02a77f});
+    const material = new LineBasicMaterial(materialParams || { color: 0x02a77f });
+    material.color.convertSRGBToLinear();
     const points: Vector2[] = [];
     coordinates.forEach((point) => {
       points.push(new Vector2(point.x, point.y));
@@ -47,6 +53,7 @@ const BaseChapes = (): {
     const material = new MeshBasicMaterial({
       map: loader.load(url),
     });
+    material.color.convertSRGBToLinear();
     return new Mesh(geometry, material);
   };
 

@@ -1,5 +1,12 @@
 import usePredefined from '@/Three/usePredefined';
-import { Camera, Scene, PerspectiveCamera, WebGLRenderer, Group } from 'three';
+import {
+  Camera,
+  Scene,
+  PerspectiveCamera,
+  WebGLRenderer,
+  Group,
+  sRGBEncoding,
+} from 'three';
 import { Ref } from 'vue';
 
 type State = {
@@ -40,6 +47,8 @@ export default class ThreeService {
   }
   InitializeRenderer() {
     this.state.renderer = new WebGLRenderer({ antialias: true });
+    this.state.renderer.gammaFactor = 2;
+    this.state.renderer.outputEncoding = sRGBEncoding;
     this.state.renderer.setPixelRatio(window.devicePixelRatio);
     this.state.renderer.setSize(this.state.width, this.state.height);
     this.element.value.appendChild(this.state.renderer.domElement);
@@ -50,7 +59,7 @@ export default class ThreeService {
       60,
       this.state.width / this.state.height,
       1,
-      1000,
+      100,
     );
     this.state.camera.position.z = 15;
   }
@@ -60,8 +69,9 @@ export default class ThreeService {
   }
 
   AddGroupsToScene(groups: Array<Group>) {
-    groups.map(group => {
+    groups.map((group) => {
       this.state.scene.add(group);
+      this.state.scene.updateMatrixWorld(true);
     });
   }
 

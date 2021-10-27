@@ -1,4 +1,5 @@
 import ChapeHelper from '@/Three/Chapehelper';
+import { CircleSchema } from '@/Three/CircleSchema';
 import CubeHelper from '@/Three/CubeHelper';
 import SchemaCube from '@/Three/CubeSchema';
 import Defaults from '@/Three/defaults.config';
@@ -13,8 +14,9 @@ const Frame1 = (): {
   Lines: (schemas: Array<LineSchema>) => Array<Group>;
   ImageCubes: (lines: Array<Group>) => Array<Mesh>;
   Words: (words: Record<string, Vector3>) => Array<Mesh>;
-  Frame: (
+  Create: (
     lineSchemas: Array<LineSchema>,
+    middleCircleSchema: CircleSchema,
     words: Record<string, Vector3>,
     isTextVisible: boolean,
   ) => Array<Group>;
@@ -54,8 +56,9 @@ const Frame1 = (): {
     return textHelper.CreateTextFromRecord(words);
   };
 
-  const Frame = (
+  const Create = (
     lineSchemas: Array<LineSchema>,
+    circleSchema: CircleSchema,
     words: Record<string, Vector3>,
     isTextVisible = true,
   ) => {
@@ -65,14 +68,14 @@ const Frame1 = (): {
     // } else groupHelper.AddObjectsTogroups(ImageCubes(Lines(lineSchemas)), groups);
 
     // groupHelper.AddObjectsTogroups(Lines(lineSchemas), groups);
-    groupHelper.AddObjectsTogroups([StoryCircle().Create('My story')], groups);
     groupHelper.AddObjectsTogroups(
-      StoryCircleItems().Create(['word1', 'word2', 'Word3', 'word', 'word', 'word']),
+      [StoryCircle().Create('My story', circleSchema)],
       groups,
     );
+    groupHelper.AddObjectsTogroups(StoryCircleItems().Create(Object.keys(words)), groups);
     return groups;
   };
 
-  return { Lines, ImageCubes, Words, Frame };
+  return { Lines, ImageCubes, Words, Create };
 };
 export default Frame1;

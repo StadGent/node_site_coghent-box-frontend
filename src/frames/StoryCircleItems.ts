@@ -1,4 +1,3 @@
-import CircleHelper from '@/Three/CircleHelper';
 import Defaults from '@/Three/defaults.config';
 import LineHelper from '@/Three/LineHelper';
 import SchemaLine, { LineSchema } from '@/Three/LineSchema';
