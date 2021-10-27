@@ -5,10 +5,10 @@ import {
   Line,
   BufferGeometry,
   LineBasicMaterial,
-  Vector2,
   LineBasicMaterialParameters,
   BoxBufferGeometry,
   TextureLoader,
+  Vector3,
 } from 'three';
 
 const BaseChapes = (): {
@@ -18,12 +18,12 @@ const BaseChapes = (): {
     segments: number,
   ) => Mesh<CircleGeometry, MeshBasicMaterial>;
   DrawLine: (
-    coordinates: Vector2[],
+    coordinates: Array<Vector3>,
     materialParams?: LineBasicMaterialParameters,
   ) => Line<BufferGeometry, LineBasicMaterial>;
   DrawImageCube: (
     url: string,
-    format: Vector2,
+    format: Vector3,
   ) => Mesh<BoxBufferGeometry, MeshBasicMaterial>;
 } => {
   const DrawCircle = (radius: number, color: number, segments: number) => {
@@ -34,22 +34,22 @@ const BaseChapes = (): {
     return new Mesh(geometry, material);
   };
   const DrawLine = (
-    coordinates: Vector2[],
+    coordinates: Array<Vector3>,
     materialParams?: LineBasicMaterialParameters,
   ) => {
     const material = new LineBasicMaterial(materialParams || { color: 0x02a77f });
     material.color.convertSRGBToLinear();
-    const points: Vector2[] = [];
+    const points: Array<Vector3> = [];
     coordinates.forEach((point) => {
-      points.push(new Vector2(point.x, point.y));
+      points.push(new Vector3(point.x, point.y, point.z));
     });
     const geometry = new BufferGeometry().setFromPoints(points);
     return new Line(geometry, material);
   };
 
-  const DrawImageCube = (url: string, format: Vector2) => {
+  const DrawImageCube = (url: string, format: Vector3) => {
     const loader = new TextureLoader();
-    const geometry = new BoxBufferGeometry(format.x, format.y, 0);
+    const geometry = new BoxBufferGeometry(format.x, format.y, format.z);
     const material = new MeshBasicMaterial({
       map: loader.load(url),
     });

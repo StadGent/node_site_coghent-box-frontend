@@ -4,36 +4,25 @@ import CubeHelper from '@/Three/CubeHelper';
 import SchemaCube from '@/Three/CubeSchema';
 import Defaults from '@/Three/defaults.config';
 import GroupHelper from '@/Three/GroupHelper';
-import SchemaLine, { LineSchema } from '@/Three/LineSchema';
-import TextHelper from '@/Three/TextHelper';
 import { Group, Mesh, Vector3 } from 'three';
 import StoryCircle from './StoryCircle';
 import StoryCircleItems from './StoryCircleItems';
 
 const Frame1 = (): {
-  Lines: (schemas: Array<LineSchema>) => Array<Group>;
   ImageCubes: (lines: Array<Group>) => Array<Mesh>;
-  Words: (words: Record<string, Vector3>) => Array<Mesh>;
   Create: (
-    lineSchemas: Array<LineSchema>,
+    title: string,
     middleCircleSchema: CircleSchema,
-    words: Record<string, Vector3>,
-    isTextVisible: boolean,
+    words: Array<string>,
   ) => Array<Group>;
 } => {
   const chapeHelper = ChapeHelper();
   const cubeHelper = CubeHelper();
   const groupHelper = GroupHelper();
-  const textHelper = TextHelper();
 
-  const line_schema = SchemaLine();
   const cube_schema = SchemaCube();
 
   const defaults = Defaults();
-
-  const Lines = (schemas: Array<LineSchema>) => {
-    return line_schema.CreateLines(schemas);
-  };
 
   const ImageCubes = (lines: Array<Group>) => {
     const cubes: Array<Mesh> = [];
@@ -52,30 +41,13 @@ const Frame1 = (): {
     return cubes;
   };
 
-  const Words = (words: Record<string, Vector3>) => {
-    return textHelper.CreateTextFromRecord(words);
-  };
-
-  const Create = (
-    lineSchemas: Array<LineSchema>,
-    circleSchema: CircleSchema,
-    words: Record<string, Vector3>,
-    isTextVisible = true,
-  ) => {
+  const Create = (title: string, circleSchema: CircleSchema, words: Array<string>) => {
     const groups: Array<Group> = [];
-    // if (isTextVisible) {
-    //   groupHelper.AddObjectsTogroups(Words(words), groups);
-    // } else groupHelper.AddObjectsTogroups(ImageCubes(Lines(lineSchemas)), groups);
-
-    // groupHelper.AddObjectsTogroups(Lines(lineSchemas), groups);
-    groupHelper.AddObjectsTogroups(
-      [StoryCircle().Create('My story', circleSchema)],
-      groups,
-    );
-    groupHelper.AddObjectsTogroups(StoryCircleItems().Create(Object.keys(words)), groups);
+    groupHelper.AddObjectsTogroups([StoryCircle().Create(title, circleSchema)], groups);
+    groupHelper.AddObjectsTogroups(StoryCircleItems().Create(words), groups);
     return groups;
   };
 
-  return { Lines, ImageCubes, Words, Create };
+  return { ImageCubes, Create };
 };
 export default Frame1;

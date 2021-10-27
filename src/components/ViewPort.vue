@@ -7,8 +7,7 @@ import usePredefined from '@/Three/usePredefined';
 import ThreeService from '@/services/ThreeService';
 import { defineComponent, onMounted, PropType, ref } from 'vue';
 import { Story } from '@/views/Wall.vue';
-import Frame1 from '@/frames/Frame1';
-import { Color, Scene } from 'three';
+import { Color } from 'three';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -22,9 +21,19 @@ export default defineComponent({
     const viewport = ref(null);
     const predefinedHelper = usePredefined();
 
+    const ExtractWords = () => {
+      const words: Array<string> = [];
+      for (const key in props.story?.items) {
+        words.push(key);
+      }
+      return words;
+    };
+
     const addBaseStoryToScene = (threeSvc: ThreeService) => {
-      threeSvc.state.scene.background = new Color('white');
-      threeSvc.AddGroupsToScene(predefinedHelper.BaseStoryCircle());
+      threeSvc.state.scene.background = new Color(0x00000);
+      threeSvc.AddGroupsToScene(
+        predefinedHelper.BaseStoryCircle(props.story?.title as string, ExtractWords()),
+      );
     };
 
     onMounted(() => {
@@ -40,7 +49,6 @@ export default defineComponent({
 
 <style scoped>
 .viewport {
-  background: rgb(41, 182, 140);
   height: 100vw;
   width: 100vh;
 }

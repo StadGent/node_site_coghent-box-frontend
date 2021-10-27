@@ -4,15 +4,15 @@ import {
   LineBasicMaterialParameters,
   Mesh,
   MeshBasicMaterial,
-  Vector2,
   Vector3,
 } from 'three';
 import BaseChapes from './BaseChapes';
 import ChapeHelper from './Chapehelper';
 import GroupHelper from './GroupHelper';
+import LineHelper from './LineHelper';
 
 export type LineSchema = {
-  positions: Array<Vector2>;
+  positions: Array<Vector3>;
   params?: LineBasicMaterialParameters;
   endObject: Mesh<CircleGeometry, MeshBasicMaterial> | Mesh;
 };
@@ -36,11 +36,11 @@ const SchemaLine = (): {
         schema.endObject,
       );
     }
-    const line = baseChapes.DrawLine(schema.positions, schema.params || {color: 0x02a77f});
-    const group = grouphelper.CreateGroup([
-      line,
-      schema.endObject,
-    ]);
+    const line = baseChapes.DrawLine(
+      schema.positions as Array<Vector3>,
+      schema.params || { color: 0x02a77f },
+    );
+    const group = grouphelper.CreateGroup([line, schema.endObject]);
 
     return group;
   };
@@ -48,7 +48,8 @@ const SchemaLine = (): {
   const CreateLines = (schemas: Array<LineSchema>) => {
     const lines: Array<Group> = [];
     schemas.forEach((schema: LineSchema) => {
-      lines.push(CreateLine(schema));
+      const line = CreateLine(schema);
+      lines.push(line);
     });
     return lines;
   };

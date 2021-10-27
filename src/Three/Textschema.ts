@@ -59,7 +59,7 @@ const SchemaText = (): {
       txt_mat.color.convertSRGBToLinear();
       const txt_mesh = new Mesh(txtGeometry, txt_mat);
       txt_mesh.position.y = -schema.fontParams.size / 2;
-      txt_mesh.position.x = -schema.textBoxParams.width / 2 + 0.7;
+      txt_mesh.position.x = -0.7;
       txt_mesh.position.z = 0;
       txtBox.add(txt_mesh);
     });

@@ -1,5 +1,4 @@
 import {
-  Vector2,
   Vector3,
   Mesh,
   CircleGeometry,
@@ -58,7 +57,7 @@ const SchemaCircle = (): {
   };
 
   const CreateOuterCircle = (radius: number) => {
-    const points: Vector2[] = [];
+    const points: Array<Vector3> = [];
     for (let i = 0; i <= 360; i++) {
       const pos = circleHelper.CalculatePointOfCircle({
         angle: i,
@@ -67,7 +66,7 @@ const SchemaCircle = (): {
       points.push({
         x: pos.x,
         y: pos.y,
-      } as Vector2);
+      } as Vector3);
     }
     return baseChapes.DrawLine(points);
   };
