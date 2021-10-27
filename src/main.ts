@@ -5,13 +5,14 @@ import { DefaultApolloClient } from '@vue/apollo-composable';
 
 import 'coghent-vue-3-component-library/lib/index.css';
 import { router } from './router';
+import { environment as env } from './environments';
 
 createApp(App)
   .use(router)
   .provide(
     DefaultApolloClient,
     new ApolloClient({
-      link: createHttpLink({ uri: 'http://localhost:8071/api/graphql' }),
+      link: createHttpLink({ uri: env.graphqlService }),
       cache: new InMemoryCache(),
     }),
   )
