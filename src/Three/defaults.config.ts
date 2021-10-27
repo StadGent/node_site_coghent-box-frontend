@@ -11,6 +11,8 @@ const circleHelper = CircleHelper();
 const Defaults = (): {
   circlePoints: () => Array<CirclePoint>;
   LinePositions: () => any;
+  EndOfLineObjectPositionsRight: (index: number) => Vector3;
+  EndOfLineObjectPositionsLeft: (index: number) => Vector3;
   Circle: () => CircleSchema;
   ImageCube: () => CubeSchema;
   Word: (text: string) => TextSchema;
@@ -34,6 +36,21 @@ const Defaults = (): {
       DefaultLines().line4(circleHelper.CalculatePointOfCircle(circlePoints()[3])),
       DefaultLines().line5(circleHelper.CalculatePointOfCircle(circlePoints()[4])),
     ];
+  };
+
+  const EndOfLineObjectPositionsRight = (index: number) => {
+    return {
+      x: Defaults().LinePositions()[index][2].x + 1.6,
+      y: Defaults().LinePositions()[index][2].y,
+      z: Defaults().LinePositions()[index][2].z,
+    } as Vector3;
+  };
+  const EndOfLineObjectPositionsLeft = (index: number) => {
+    return {
+      x: Defaults().LinePositions()[index][2].x - 1.6,
+      y: Defaults().LinePositions()[index][2].y,
+      z: Defaults().LinePositions()[index][2].z,
+    } as Vector3;
   };
 
   const Circle = () => {
@@ -78,6 +95,8 @@ const Defaults = (): {
   return {
     circlePoints,
     LinePositions,
+    EndOfLineObjectPositionsRight,
+    EndOfLineObjectPositionsLeft,
     Circle,
     ImageCube,
     Word,

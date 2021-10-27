@@ -5,11 +5,16 @@ import Defaults from './defaults.config';
 const usePredefined = (): {
   BaseStoryCircle: (
     title: string,
-    words: Array<string>,
+    storyItems: Record<string, string>,
+    showWords: true | false,
   ) => Array<Group> | Mesh<BoxBufferGeometry, MeshBasicMaterial>[] | any;
 } => {
-  const BaseStoryCircle = (title: string, words: Array<string>) => {
-    const frame1 = Frame1().Create(title, Defaults().Circle(), words);
+  const BaseStoryCircle = (
+    title: string,
+    storyItems: Record<string, string>,
+    showWords: true | false,
+  ) => {
+    const frame1 = Frame1().Create(title, storyItems, showWords, Defaults().Circle());
 
     return frame1;
   };

@@ -17,22 +17,17 @@ export default defineComponent({
     },
   },
   setup(props) {
-    console.log(props.story);
     const viewport = ref(null);
     const predefinedHelper = usePredefined();
-
-    const ExtractWords = () => {
-      const words: Array<string> = [];
-      for (const key in props.story?.items) {
-        words.push(key);
-      }
-      return words;
-    };
 
     const addBaseStoryToScene = (threeSvc: ThreeService) => {
       threeSvc.state.scene.background = new Color(0x00000);
       threeSvc.AddGroupsToScene(
-        predefinedHelper.BaseStoryCircle(props.story?.title as string, ExtractWords()),
+        predefinedHelper.BaseStoryCircle(
+          props.story?.title as string,
+          props.story?.items as Record<string, string>,
+          false,
+        ),
       );
     };
 

@@ -12,8 +12,9 @@ const Frame1 = (): {
   ImageCubes: (lines: Array<Group>) => Array<Mesh>;
   Create: (
     title: string,
+    storyitems: Record<string, string>,
+    showWords: true | false,
     middleCircleSchema: CircleSchema,
-    words: Array<string>,
   ) => Array<Group>;
 } => {
   const chapeHelper = ChapeHelper();
@@ -41,10 +42,18 @@ const Frame1 = (): {
     return cubes;
   };
 
-  const Create = (title: string, circleSchema: CircleSchema, words: Array<string>) => {
+  const Create = (
+    title: string,
+    storyitems: Record<string, string>,
+    showWords: true | false,
+    circleSchema: CircleSchema,
+  ) => {
     const groups: Array<Group> = [];
     groupHelper.AddObjectsTogroups([StoryCircle().Create(title, circleSchema)], groups);
-    groupHelper.AddObjectsTogroups(StoryCircleItems().Create(words), groups);
+    groupHelper.AddObjectsTogroups(
+      StoryCircleItems().Create(storyitems, showWords),
+      groups,
+    );
     return groups;
   };
 
