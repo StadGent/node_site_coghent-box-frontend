@@ -67,7 +67,7 @@ const Frame1 = (): {
     // groupHelper.AddObjectsTogroups(Lines(lineSchemas), groups);
     groupHelper.AddObjectsTogroups([StoryCircle().Create('My story')], groups);
     groupHelper.AddObjectsTogroups(
-      StoryCircleItems().Create(['word1', 'word2', 'Word3']),
+      StoryCircleItems().Create(['word1', 'word2', 'Word3', 'word', 'word', 'word']),
       groups,
     );
     return groups;

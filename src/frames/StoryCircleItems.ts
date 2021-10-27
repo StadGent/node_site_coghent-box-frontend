@@ -16,7 +16,11 @@ const StoryCircleItems = (): {
   };
 
   const Create = (words: Array<string>) => {
-    const lines = SchemaLine().CreateLines(Lines(words.length));
+    let lines;
+    if (words.length > 5)
+      lines = SchemaLine().CreateLines(Lines(Defaults().LinePositions().length));
+    else lines = SchemaLine().CreateLines(Lines(words.length));
+
     return lines;
   };
 
