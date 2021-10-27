@@ -11,6 +11,7 @@ const circleHelper = CircleHelper();
 const Defaults = (): {
   circlePoints: () => Array<CirclePoint>;
   LinePositions: () => any;
+  Lines: (position: Vector3) => any;
   EndOfLineObjectPositionsRight: (index: number) => Vector3;
   EndOfLineObjectPositionsLeft: (index: number) => Vector3;
   Circle: () => CircleSchema;
@@ -35,6 +36,16 @@ const Defaults = (): {
       DefaultLines().line3(circleHelper.CalculatePointOfCircle(circlePoints()[2])),
       DefaultLines().line4(circleHelper.CalculatePointOfCircle(circlePoints()[3])),
       DefaultLines().line5(circleHelper.CalculatePointOfCircle(circlePoints()[4])),
+    ];
+  };
+
+  const Lines = (position: Vector3) => {
+    return [
+      DefaultLines().line1(position),
+      DefaultLines().line2(position),
+      DefaultLines().line3(position),
+      DefaultLines().line4(position),
+      DefaultLines().line5(position),
     ];
   };
 
@@ -95,6 +106,7 @@ const Defaults = (): {
   return {
     circlePoints,
     LinePositions,
+    Lines,
     EndOfLineObjectPositionsRight,
     EndOfLineObjectPositionsLeft,
     Circle,

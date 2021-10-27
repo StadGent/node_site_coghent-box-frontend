@@ -59,7 +59,8 @@ export default defineComponent({
         const id = relation?.key.slice(index);
         getRelation(String(id))?.then((entity: any) => {
           items[entity.data.Entity?.title[0]?.value] =
-            entity.data.Entity?.mediafiles?.[0]?.original_file_location;
+            entity.data.Entity?.mediafiles?.[0]?.original_file_location ||
+            'http://localhost:8001/download/9ce891fe75a8e75d82019665d2585a83-2005-0025_1.JPG';
         });
       });
       story.items = items;

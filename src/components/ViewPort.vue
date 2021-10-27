@@ -17,11 +17,13 @@ export default defineComponent({
     },
   },
   setup(props) {
+    console.log(props.story?.items);
     const viewport = ref(null);
     const predefinedHelper = usePredefined();
 
     const addBaseStoryToScene = (threeSvc: ThreeService) => {
       threeSvc.state.scene.background = new Color(0x00000);
+
       threeSvc.AddGroupsToScene(
         predefinedHelper.BaseStoryCircle(
           props.story?.title as string,
@@ -29,6 +31,7 @@ export default defineComponent({
           false,
         ),
       );
+      threeSvc.state.scene.updateMatrixWorld(true);
     };
 
     onMounted(() => {
@@ -41,10 +44,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style scoped>
-.viewport {
-  height: 100vw;
-  width: 100vh;
-}
-</style>

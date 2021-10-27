@@ -6,6 +6,7 @@ import LineHelper from '@/Three/LineHelper';
 import SchemaLine, { LineSchema } from '@/Three/LineSchema';
 import TextHelper from '@/Three/TextHelper';
 import { Group, Mesh } from 'three';
+import StoryCircleChild from './StoryCircleChild';
 
 const StoryCircleItems = (): {
   Create: (storyItems: Record<string, string>, showWords: true | false) => Array<Group>;
@@ -50,7 +51,10 @@ const StoryCircleItems = (): {
         cubes.push(SchemaCube().CreateImageCube(schema));
       }
     }
-    return cubes;
+    const lines = StoryCircleChild().ConnectPointsWithLine(
+      CubeHelper().GetCubesPositions(cubes),
+    );
+    return { cubes: cubes, lines: lines };
   };
 
   const Create = (storyItems: Record<string, string>, showWords: true | false) => {
@@ -64,11 +68,14 @@ const StoryCircleItems = (): {
       GroupHelper().AddObjectsTogroups(AddWordsToLine(Object.keys(storyItems)), groups);
     } else {
       GroupHelper().AddObjectsTogroups(
-        AddImagesToLine(Object.values(storyItems)),
+        AddImagesToLine(Object.values(storyItems)).cubes,
+        groups,
+      );
+      GroupHelper().AddObjectsTogroups(
+        AddImagesToLine(Object.values(storyItems)).lines,
         groups,
       );
     }
-
     return groups;
   };
 

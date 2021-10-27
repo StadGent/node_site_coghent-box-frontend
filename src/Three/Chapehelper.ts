@@ -1,6 +1,5 @@
 import {
   Vector3,
-  Vector2,
   Mesh,
   CircleGeometry,
   MeshBasicMaterial,
@@ -19,9 +18,9 @@ const ChapeHelper = (): {
       | Mesh<CircleGeometry, MeshBasicMaterial>
       | Line<BufferGeometry, LineBasicMaterial>
       | Mesh<BoxGeometry, MeshBasicMaterial>
-      | Mesh
+      | Mesh,
   ) => void;
-  GetCirclePointsForCircle: (circlePoints: Array<CirclePoint>) => Array<Vector2>
+  GetCirclePointsForCircle: (circlePoints: Array<CirclePoint>) => Array<Vector3>;
 } => {
   const SetPosition = (
     position: Vector3,
@@ -29,14 +28,14 @@ const ChapeHelper = (): {
       | Mesh<CircleGeometry, MeshBasicMaterial>
       | Line<BufferGeometry, LineBasicMaterial>
       | Mesh<BoxGeometry, MeshBasicMaterial>
-      | Mesh
+      | Mesh,
   ) => {
     chape.position.x = position.x;
     chape.position.y = position.y;
   };
 
   const GetCirclePointsForCircle = (circlePoints: Array<CirclePoint>) => {
-    const points: Array<Vector2> = [];
+    const points: Array<Vector3> = [];
     circlePoints.map((point: CirclePoint) => {
       points.push(CircleHelper().CalculatePointOfCircle(point));
     });
