@@ -1,3 +1,4 @@
+import Correction from '@/Three/Correction';
 import CubeHelper from '@/Three/CubeHelper';
 import SchemaCube from '@/Three/CubeSchema';
 import Defaults from '@/Three/defaults.config';
@@ -25,14 +26,14 @@ const StoryCircleItems = (): {
       if (i < 3) {
         const t = TextHelper().CreateText(
           words[i],
-          Defaults().EndOfLineObjectPositionsRight(i),
+          Correction().EndOfLineObjectPositionsRight(i),
         );
         t.position.z = -1;
         allWords.push(t);
       } else {
         const t = TextHelper().CreateText(
           words[i],
-          Defaults().EndOfLineObjectPositionsRight(i),
+          Correction().EndOfLineObjectPositionsRight(i),
         );
         t.position.z = -1;
         allWords.push(t);
@@ -46,13 +47,13 @@ const StoryCircleItems = (): {
     for (let i = 0; i < links.length; i++) {
       if (i < 3) {
         const schema = CubeHelper().CreateSchema(
-          Defaults().EndOfLineObjectPositionsRight(i),
+          Correction().CorrectImageBoxPositionRight(i),
           links[i],
         );
         cubes.push(SchemaCube().CreateImageCube(schema));
       } else {
         const schema = CubeHelper().CreateSchema(
-          Defaults().EndOfLineObjectPositionsLeft(i),
+          Correction().CorrectImageBoxPositionLeft(i),
           links[i],
         );
         cubes.push(SchemaCube().CreateImageCube(schema));

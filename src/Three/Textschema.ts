@@ -4,6 +4,7 @@ import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 import ChapeHelper from './Chapehelper';
 import { CubeParams } from './CubeSchema';
 import Defaults from './defaults.config';
+import Correction from './Correction';
 
 export type FontParams = {
   path: string;
@@ -51,7 +52,7 @@ const SchemaText = (): {
       width: schema.textBoxParams.width,
       color: schema.textBoxParams.color,
     });
-    Defaults().CorrectTextBoxPosition(schema.position, txtBox);
+    Correction().CorrectTextBoxPosition(schema.position, txtBox);
     loader.load(schema.fontParams.path, function (font: any) {
       const txtGeometry = CreateTextGeometry(schema.text, schema.fontParams.size, font);
       const txt_mat = new MeshBasicMaterial({
