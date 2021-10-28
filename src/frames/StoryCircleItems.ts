@@ -23,13 +23,20 @@ const StoryCircleItems = (): {
     const allWords: Array<Mesh> = [];
     for (let i = 0; i < words.length; i++) {
       if (i < 3) {
-        allWords.push(
-          TextHelper().CreateText(words[i], Defaults().EndOfLineObjectPositionsRight(i)),
+        const t = TextHelper().CreateText(
+          words[i],
+          Defaults().EndOfLineObjectPositionsRight(i),
         );
-      } else
-        allWords.push(
-          TextHelper().CreateText(words[i], Defaults().EndOfLineObjectPositionsLeft(i)),
+        t.position.z = -1;
+        allWords.push(t);
+      } else {
+        const t = TextHelper().CreateText(
+          words[i],
+          Defaults().EndOfLineObjectPositionsRight(i),
         );
+        t.position.z = -1;
+        allWords.push(t);
+      }
     }
     return allWords;
   };

@@ -18,7 +18,10 @@ const StoryCircle = (): {
   };
 
   const title = (title: string) => {
-    return text_schema.LoadText(Defaults().Word(title));
+    const storyTitle = text_schema.LoadText(Defaults().Word(title));
+    storyTitle.position.x += 1.4;
+    storyTitle.position.y += 0.3;
+    return storyTitle;
   };
 
   const Create = (storyTitle: string, circleSchema: CircleSchema) => {

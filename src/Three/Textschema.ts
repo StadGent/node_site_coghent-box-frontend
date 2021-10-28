@@ -3,6 +3,7 @@ import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 import ChapeHelper from './Chapehelper';
 import { CubeParams } from './CubeSchema';
+import Defaults from './defaults.config';
 
 export type FontParams = {
   path: string;
@@ -50,7 +51,7 @@ const SchemaText = (): {
       width: schema.textBoxParams.width,
       color: schema.textBoxParams.color,
     });
-    ChapeHelper().SetPosition(schema.position, txtBox);
+    Defaults().CorrectTextBoxPosition(schema.position, txtBox);
     loader.load(schema.fontParams.path, function (font: any) {
       const txtGeometry = CreateTextGeometry(schema.text, schema.fontParams.size, font);
       const txt_mat = new MeshBasicMaterial({
@@ -58,8 +59,8 @@ const SchemaText = (): {
       });
       txt_mat.color.convertSRGBToLinear();
       const txt_mesh = new Mesh(txtGeometry, txt_mat);
-      txt_mesh.position.y = -schema.fontParams.size / 2;
-      txt_mesh.position.x = -0.7;
+      txt_mesh.position.y = 0;
+      txt_mesh.position.x = -1;
       txt_mesh.position.z = 0;
       txtBox.add(txt_mesh);
     });
