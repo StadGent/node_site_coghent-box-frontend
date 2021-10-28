@@ -20,16 +20,18 @@ export type TextSchema = {
 };
 
 const SchemaText = (): {
-  LoadText: (schema: TextSchema) => Mesh;
+  LoadText: (schema: TextSchema, position?: Vector3) => Mesh;
 } => {
   const loader = new FontLoader();
-  const CreateTextBox = (params: CubeParams) => {
+  const CreateTextBox = (params: CubeParams, position?: Vector3) => {
     const geometry = new BoxBufferGeometry(params.width, params.height, 0);
     const material = new MeshBasicMaterial({
       color: params.color || 0x0000000,
     });
     material.color.convertSRGBToLinear();
-    return new Mesh(geometry, material);
+    const textBox = new Mesh(geometry, material);
+    ChapeHelper().SetPosition(position || new Vector3(0, 0, 0), textBox);
+    return textBox;
   };
 
   const CreateTextGeometry = (text: string, size: number, font: any) => {

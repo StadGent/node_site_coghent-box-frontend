@@ -32,7 +32,11 @@ const SchemaCircle = (): {
   CreateCircles: (
     schemas: Array<CircleSchema>,
   ) => Array<Mesh<CircleGeometry, MeshBasicMaterial>>;
-  CreateOuterCircle: (radius: number) => Line<BufferGeometry, LineBasicMaterial>;
+  CreateOuterCircle: (
+    radius: number,
+    position: Vector3,
+    color?: number,
+  ) => Line<BufferGeometry, LineBasicMaterial>;
 } => {
   const baseChapes = BaseChapes();
   const chapeHelper = ChapeHelper();
@@ -56,19 +60,22 @@ const SchemaCircle = (): {
     return circles;
   };
 
-  const CreateOuterCircle = (radius: number) => {
+  const CreateOuterCircle = (radius: number, position: Vector3, color?: number) => {
     const points: Array<Vector3> = [];
     for (let i = 0; i <= 360; i++) {
-      const pos = circleHelper.CalculatePointOfCircle({
-        angle: i,
-        radius: radius,
-      } as CirclePoint);
+      const pos = circleHelper.CalculatePointOfCircle(
+        {
+          angle: i,
+          radius: radius,
+        } as CirclePoint,
+        position as Vector3,
+      );
       points.push({
         x: pos.x,
         y: pos.y,
       } as Vector3);
     }
-    return baseChapes.DrawLine(points);
+    return baseChapes.DrawLine(points, { color: color || 0x02a77f });
   };
 
   return {

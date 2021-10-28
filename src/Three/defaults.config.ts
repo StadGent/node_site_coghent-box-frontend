@@ -1,6 +1,5 @@
 import { CircleGeometry, Mesh, MeshBasicMaterial, Vector3 } from 'three';
 import BaseChapes from './BaseChapes';
-import ChapeHelper from './Chapehelper';
 import CircleHelper from './CircleHelper';
 import { CirclePoint, CircleSchema } from './CircleSchema';
 import { CubeSchema } from './CubeSchema';
@@ -11,11 +10,13 @@ const circleHelper = CircleHelper();
 
 const Defaults = (): {
   circlePoints: () => Array<CirclePoint>;
-  LinePositions: () => any;
+  StoryPausePositions: () => Array<Vector3>;
+  StoryColors: () => Array<number>;
+  LinePositions: (position: Vector3) => any;
   Lines: (position: Vector3) => any;
   Circle: () => CircleSchema;
   ImageCube: () => CubeSchema;
-  Word: (text: string) => TextSchema;
+  Word: (text: string, position: Vector3) => TextSchema;
   EndCircle: () => Mesh<CircleGeometry, MeshBasicMaterial>;
 } => {
   const circlePoints = () => {
@@ -28,13 +29,36 @@ const Defaults = (): {
     ];
   };
 
-  const LinePositions = () => {
+  const StoryPausePositions = () => {
     return [
-      DefaultLines().line1(circleHelper.CalculatePointOfCircle(circlePoints()[0])),
-      DefaultLines().line2(circleHelper.CalculatePointOfCircle(circlePoints()[1])),
-      DefaultLines().line3(circleHelper.CalculatePointOfCircle(circlePoints()[2])),
-      DefaultLines().line4(circleHelper.CalculatePointOfCircle(circlePoints()[3])),
-      DefaultLines().line5(circleHelper.CalculatePointOfCircle(circlePoints()[4])),
+      new Vector3(-24, 0, 0),
+      new Vector3(-14, 0, 0),
+      new Vector3(10, 0, 0),
+      new Vector3(20, 0, 0),
+    ];
+  };
+
+  const StoryColors = () => {
+    return [0xfdc20b, 0xb65099, 0x02a77f, 0x9fcdd];
+  };
+
+  const LinePositions = (position: Vector3) => {
+    return [
+      DefaultLines().line1(
+        circleHelper.CalculatePointOfCircle(circlePoints()[0], position),
+      ),
+      DefaultLines().line2(
+        circleHelper.CalculatePointOfCircle(circlePoints()[1], position),
+      ),
+      DefaultLines().line3(
+        circleHelper.CalculatePointOfCircle(circlePoints()[2], position),
+      ),
+      DefaultLines().line4(
+        circleHelper.CalculatePointOfCircle(circlePoints()[3], position),
+      ),
+      DefaultLines().line5(
+        circleHelper.CalculatePointOfCircle(circlePoints()[4], position),
+      ),
     ];
   };
 
@@ -66,10 +90,10 @@ const Defaults = (): {
     };
   };
 
-  const Word = (text: string) => {
+  const Word = (text: string, position: Vector3) => {
     return {
       text: text,
-      position: { x: 0, y: 0, z: 0 } as Vector3,
+      position: position as Vector3,
       fontParams: {
         color: 0xffffff,
         size: 0.3,
@@ -89,6 +113,8 @@ const Defaults = (): {
 
   return {
     circlePoints,
+    StoryPausePositions,
+    StoryColors,
     LinePositions,
     Lines,
     Circle,

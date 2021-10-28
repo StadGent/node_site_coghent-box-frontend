@@ -1,26 +1,38 @@
 import { Vector3, Mesh } from 'three';
-import SchemaText from './Textschema';
+import { CubeParams } from './CubeSchema';
+import SchemaText, { FontParams } from './Textschema';
 
 const TextHelper = (): {
   CreateTextFromRecord: (words: Record<string, Vector3>) => Array<Mesh>;
-  CreateText: (words: string, position: Vector3) => Mesh;
+  CreateText: (
+    words: string,
+    position: Vector3,
+    textBox?: CubeParams,
+    params?: FontParams,
+  ) => Mesh;
 } => {
   const textSchema = SchemaText();
-  const CreateText = (word: string, position: Vector3) => {
+  const CreateText = (
+    word: string,
+    position: Vector3,
+    textBox?: CubeParams,
+    params?: FontParams,
+  ) => {
     const schema = {
       text: word,
-      position: position as Vector3,
+      position: { x: position.x - 0.5, y: position.y, z: position.z } as Vector3,
       fontParams: {
-        color: 0x02a77f,
-        size: 0.3,
+        color: 0xfffffff,
+        size: params?.size || 0.3,
         path: '/Fonts/myFont.json',
       },
       textBoxParams: {
-        height: 1,
-        width: 3,
+        height: textBox?.height || 2,
+        width: textBox?.width || 3,
+        color: textBox?.color || 0x000000,
       },
     };
-    return textSchema.LoadText(schema);
+    return textSchema.LoadText(schema, position);
   };
   const CreateTextFromRecord = (words: Record<string, Vector3>) => {
     const txtMeshes: Array<Mesh> = [];
@@ -34,7 +46,7 @@ const TextHelper = (): {
           path: '/Fonts/myFont.json',
         },
         textBoxParams: {
-          height: 1,
+          height: 2,
           width: 3,
         },
       };

@@ -9,6 +9,7 @@ import {
   BoxBufferGeometry,
   TextureLoader,
   Vector3,
+  DoubleSide,
 } from 'three';
 
 const BaseChapes = (): {

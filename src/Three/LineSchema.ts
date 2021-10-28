@@ -9,7 +9,6 @@ import {
 import BaseChapes from './BaseChapes';
 import ChapeHelper from './Chapehelper';
 import GroupHelper from './GroupHelper';
-import LineHelper from './LineHelper';
 
 export type LineSchema = {
   positions: Array<Vector3>;

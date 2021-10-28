@@ -37,7 +37,7 @@ const ChapeHelper = (): {
   const GetCirclePointsForCircle = (circlePoints: Array<CirclePoint>) => {
     const points: Array<Vector3> = [];
     circlePoints.map((point: CirclePoint) => {
-      points.push(CircleHelper().CalculatePointOfCircle(point));
+      points.push(CircleHelper().CalculatePointOfCircle(point, new Vector3(0, 0, 0)));
     });
     return points;
   };

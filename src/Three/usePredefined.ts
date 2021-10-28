@@ -1,9 +1,8 @@
-import { Mesh, MeshBasicMaterial, BoxBufferGeometry, Group, Vector3 } from 'three';
+import { Group } from 'three';
 import Frame1 from '@/frames/Frame1';
 import Defaults from './defaults.config';
-import LineHelper from './LineHelper';
-import SchemaLine from './LineSchema';
-import StoryCircleChild from '@/frames/StoryCircleChild';
+import StoryPaused from '@/frames/StoryPaused';
+import GroupHelper from './GroupHelper';
 
 const usePredefined = (): {
   BaseStoryCircle: (
@@ -11,6 +10,7 @@ const usePredefined = (): {
     storyItems: Record<string, string>,
     showWords: true | false,
   ) => Array<Group>;
+  PausedStories: () => Array<Group>;
 } => {
   const BaseStoryCircle = (
     title: string,
@@ -22,7 +22,19 @@ const usePredefined = (): {
     return frame1;
   };
 
-  return { BaseStoryCircle };
+  const PausedStories = () => {
+    const titles = [
+      'Het belang van\n godsdienst in\n het dagelijkse\n leven',
+      'De komst van\n de Turkse\n handelaar',
+      'Het Gravesteen\n doorheen de\n tijd',
+      'Invloed van de\n Textielfabriek\n vroeger en nu',
+    ];
+    const groups: Array<Group> = [];
+    GroupHelper().AddObjectsTogroups(StoryPaused().Create(titles), groups);
+    return groups;
+  };
+
+  return { BaseStoryCircle, PausedStories };
 };
 
 export default usePredefined;

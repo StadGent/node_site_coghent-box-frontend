@@ -6,7 +6,7 @@ import GroupHelper from '@/Three/GroupHelper';
 import LineHelper from '@/Three/LineHelper';
 import SchemaLine, { LineSchema } from '@/Three/LineSchema';
 import TextHelper from '@/Three/TextHelper';
-import { Group, Mesh } from 'three';
+import { Group, Mesh, Vector3 } from 'three';
 import StoryCircleChild from './StoryCircleChild';
 
 const StoryCircleItems = (): {
@@ -15,7 +15,9 @@ const StoryCircleItems = (): {
   const Lines = (items: number) => {
     const schemas: Array<LineSchema> = [];
     for (let i = 0; i < items; i++) {
-      schemas.push(LineHelper().CreateSchema(Defaults().LinePositions()[i]));
+      schemas.push(
+        LineHelper().CreateSchema(Defaults().LinePositions(new Vector3(0, 0, 0))[i]),
+      );
     }
     return schemas;
   };
@@ -70,7 +72,9 @@ const StoryCircleItems = (): {
     const groups: Array<Group> = [];
     let lines;
     if (Object.keys(storyItems).length > 5)
-      lines = SchemaLine().CreateLines(Lines(Defaults().LinePositions().length));
+      lines = SchemaLine().CreateLines(
+        Lines(Defaults().LinePositions(new Vector3(0, 0, 0)).length),
+      );
     else lines = SchemaLine().CreateLines(Lines(Object.keys(storyItems).length));
     GroupHelper().AddObjectsTogroups(lines, groups);
     if (showWords) {
