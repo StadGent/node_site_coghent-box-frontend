@@ -23,6 +23,7 @@ export default defineComponent({
   setup() {
     const restRepo = new RESTRepository();
     const entities = ref();
+    const displayStory = ref(0);
     const items = reactive<Record<string, string>>({});
     const story = reactive<Story>({
       title: '',
@@ -48,7 +49,7 @@ export default defineComponent({
 
     onEntities((value: any) => {
       entities.value = value.data.Entities;
-      story.title = entities.value.results?.[0]?.title?.[0]?.value;
+      story.title = entities.value.results?.[displayStory.value]?.title?.[0]?.value;
 
       Getrelations(entities.value.results);
     });
