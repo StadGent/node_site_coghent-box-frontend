@@ -7,7 +7,7 @@ const Correction = (): {
   EndOfLineObjectPositionsLeft: (index: number) => Vector3;
   CorrectImageBoxPositionRight: (index: number) => Vector3;
   CorrectImageBoxPositionLeft: (index: number) => Vector3;
-  CorrectTextBoxPosition: (position: Vector3, textBox: Mesh) => void;
+  CorrectTextBoxPosition: (position: Vector3, textBox: Mesh, correctX?: number) => void;
 } => {
   const EndOfLineObjectPositionsRight = (index: number) => {
     return {
@@ -39,11 +39,11 @@ const Correction = (): {
     } as Vector3;
   };
 
-  const CorrectTextBoxPosition = (position: Vector3, textBox: Mesh) => {
+  const CorrectTextBoxPosition = (position: Vector3, textBox: Mesh, correctX = 1.7) => {
     if (position.x > 0) {
       ChapeHelper().SetPosition(
         {
-          x: position.x + 1.7,
+          x: position.x + correctX,
           y: position.y,
           z: position.z,
         } as Vector3,
@@ -52,7 +52,7 @@ const Correction = (): {
     } else {
       ChapeHelper().SetPosition(
         {
-          x: position.x - 1.5,
+          x: position.x - correctX,
           y: position.y,
           z: position.z,
         } as Vector3,

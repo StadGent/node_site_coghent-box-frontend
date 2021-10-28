@@ -59,10 +59,11 @@ const StoryCircleItems = (): {
         cubes.push(SchemaCube().CreateImageCube(schema));
       }
     }
-    const lines = StoryCircleChild().ConnectPointsWithLine(
+    const val = StoryCircleChild().ConnectPointsNextImage(
       CubeHelper().GetCubesPositions(cubes),
     );
-    return { cubes: cubes, lines: lines };
+    const alcubes = cubes.concat(val.cubes);
+    return { cubes: alcubes, lines: val.lines };
   };
 
   const Create = (storyItems: Record<string, string>, showWords: true | false) => {

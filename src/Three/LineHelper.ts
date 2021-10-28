@@ -1,13 +1,14 @@
-import { Vector3, Line, LineBasicMaterial, BufferGeometry } from 'three';
+import { Vector3, Line, LineBasicMaterial, BufferGeometry, Group, Object3D } from 'three';
 import BaseChapes from './BaseChapes';
-import Defaults from './defaults.config';
 import { LineSchema } from './LineSchema';
 
 const LineHelper = (): {
-  GetEndOfLine: (line: Line<BufferGeometry, LineBasicMaterial>) => Vector3;
+  GetEndOfLine: (
+    line: Line<BufferGeometry, LineBasicMaterial> | Object3D<Event>,
+  ) => Vector3;
   CreateSchema: (positions: Array<Vector3>, color?: number) => LineSchema;
 } => {
-  const GetEndOfLine = (line: Line<BufferGeometry, LineBasicMaterial>) => {
+  const GetEndOfLine = (line: any) => {
     const position = {
       x: line.geometry.attributes.position.array[6],
       y: line.geometry.attributes.position.array[7],
