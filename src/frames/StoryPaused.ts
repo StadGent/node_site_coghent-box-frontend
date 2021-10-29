@@ -30,9 +30,16 @@ const StoryPaused = (): {
   };
 
   const middleText = () => {
+    const positions: Array<Vector3> = [
+      new Vector3(-3.2, 3, 0),
+      new Vector3(-0.02, 2, 0),
+      new Vector3(-3, 0, 0),
+      new Vector3(-3.5, -1, 0),
+      new Vector3(-0.2, -2, 0),
+    ];
     const first = TextHelper().CreateText(
       'Je beluisterde het volledige',
-      new Vector3(-3.4, 5, 0),
+      positions[0],
       {
         width: 10,
         height: 2,
@@ -41,7 +48,7 @@ const StoryPaused = (): {
     );
     const hoofdstuk = TextHelper().CreateText(
       'hoofdstuk',
-      new Vector3(-0.9, 4, 0),
+      positions[1],
       {
         width: 10,
         height: 2,
@@ -50,7 +57,7 @@ const StoryPaused = (): {
     );
     const second = TextHelper().CreateText(
       'Kies een van de oplichtende',
-      new Vector3(-3.5, 2.5, 0),
+      positions[2],
       {
         width: 10,
         height: 2,
@@ -59,7 +66,7 @@ const StoryPaused = (): {
     );
     const third = TextHelper().CreateText(
       'bollen om een nieuw hoofdstuk',
-      new Vector3(-4.1, 1.5, 0),
+      positions[3],
       {
         width: 10,
         height: 2,
@@ -68,7 +75,7 @@ const StoryPaused = (): {
     );
     const fourth = TextHelper().CreateText(
       'te starten.',
-      new Vector3(-0.9, 0.5, 0),
+      positions[4],
       {
         width: 10,
         height: 2,
@@ -78,9 +85,10 @@ const StoryPaused = (): {
     return GroupHelper().CreateGroup([first, hoofdstuk, second, third, fourth]);
   };
   const bottomText = () => {
+    const positions: Array<Vector3> = [new Vector3(0, -5, 0), new Vector3(-3.4, -6, 0)];
     const first = TextHelper().CreateText(
       'Je beluisterde net:',
-      new Vector3(-1, -5, 0),
+      positions[0],
       {
         width: 10,
         height: 5,
@@ -89,7 +97,7 @@ const StoryPaused = (): {
     );
     const second = TextHelper().CreateText(
       'De komst van de turkse handelaar 1/3',
-      new Vector3(-4, -6, 0),
+      positions[1],
       {
         width: 10,
         height: 5,

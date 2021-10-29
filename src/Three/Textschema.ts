@@ -3,8 +3,6 @@ import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 import ChapeHelper from './Chapehelper';
 import { CubeParams } from './CubeSchema';
-import Defaults from './defaults.config';
-import Correction from './Correction';
 
 export type FontParams = {
   path: string;
@@ -23,14 +21,14 @@ const SchemaText = (): {
   LoadText: (schema: TextSchema, position?: Vector3) => Mesh;
 } => {
   const loader = new FontLoader();
-  const CreateTextBox = (params: CubeParams, position?: Vector3) => {
+  const CreateTextBox = (params: CubeParams, position: Vector3) => {
     const geometry = new BoxBufferGeometry(params.width, params.height, 0);
     const material = new MeshBasicMaterial({
-      color: params.color || 0x0000000,
+      color: params.color || 0x00000,
     });
     material.color.convertSRGBToLinear();
     const textBox = new Mesh(geometry, material);
-    ChapeHelper().SetPosition(position || new Vector3(0, 0, 0), textBox);
+    ChapeHelper().SetPosition(position, textBox);
     return textBox;
   };
 
@@ -49,12 +47,14 @@ const SchemaText = (): {
   };
 
   const LoadText = (schema: TextSchema) => {
-    const txtBox = CreateTextBox({
-      height: schema.textBoxParams.height,
-      width: schema.textBoxParams.width,
-      color: schema.textBoxParams.color,
-    });
-    Correction().CorrectTextBoxPosition(schema.position, txtBox);
+    const txtBox = CreateTextBox(
+      {
+        height: schema.textBoxParams.height,
+        width: schema.textBoxParams.width,
+        color: schema.textBoxParams.color,
+      },
+      schema.position,
+    );
     loader.load(schema.fontParams.path, function (font: any) {
       const txtGeometry = CreateTextGeometry(schema.text, schema.fontParams.size, font);
       const txt_mat = new MeshBasicMaterial({
@@ -62,8 +62,8 @@ const SchemaText = (): {
       });
       txt_mat.color.convertSRGBToLinear();
       const txt_mesh = new Mesh(txtGeometry, txt_mat);
-      txt_mesh.position.y = 0;
-      txt_mesh.position.x = -1;
+      txt_mesh.position.y = 0.5;
+      txt_mesh.position.x = -1.5;
       txt_mesh.position.z = 0;
       txtBox.add(txt_mesh);
     });

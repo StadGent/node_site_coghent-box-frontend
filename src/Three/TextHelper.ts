@@ -20,7 +20,7 @@ const TextHelper = (): {
   ) => {
     const schema = {
       text: word,
-      position: { x: position.x - 0.5, y: position.y, z: position.z } as Vector3,
+      position: position as Vector3,
       fontParams: {
         color: 0xfffffff,
         size: params?.size || 0.3,

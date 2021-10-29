@@ -1,9 +1,7 @@
 import SchemaCircle, { CircleSchema } from '@/Three/CircleSchema';
 import { CubeParams } from '@/Three/CubeSchema';
-import Defaults from '@/Three/defaults.config';
 import GroupHelper from '@/Three/GroupHelper';
 import TextHelper from '@/Three/TextHelper';
-import SchemaText, { TextSchema } from '@/Three/Textschema';
 import { Group, Vector3 } from 'three';
 
 const StoryCircle = (): {
@@ -14,7 +12,6 @@ const StoryCircle = (): {
   ) => Group;
 } => {
   const circle_schema = SchemaCircle();
-  const text_schema = SchemaText();
 
   const main = (schema: CircleSchema) => {
     return circle_schema.CreateCircle(schema);
@@ -32,7 +29,6 @@ const StoryCircle = (): {
       color: color,
       width: 0,
     } as CubeParams);
-    storyTitle.position.x += 2;
     return storyTitle;
   };
 

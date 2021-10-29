@@ -36,7 +36,7 @@ export default defineComponent({
       // );
       threeSvc.AddGroupsToScene(predefinedHelper.PausedStories());
       // threeSvc.AddGroupsToScene(TestData().story(false));
-      threeSvc.AddToScene(Tools().Grid());
+      // threeSvc.AddToScene(Tools().Grid());
       threeSvc.state.scene.updateMatrixWorld(true);
     };
 

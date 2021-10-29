@@ -43,7 +43,7 @@ const Correction = (): {
     if (position.x > 0) {
       ChapeHelper().SetPosition(
         {
-          x: position.x + correctX,
+          x: position.x - correctX,
           y: position.y,
           z: position.z,
         } as Vector3,
@@ -52,7 +52,7 @@ const Correction = (): {
     } else {
       ChapeHelper().SetPosition(
         {
-          x: position.x - correctX,
+          x: position.x + correctX,
           y: position.y,
           z: position.z,
         } as Vector3,

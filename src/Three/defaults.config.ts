@@ -2,6 +2,7 @@ import { CircleGeometry, Mesh, MeshBasicMaterial, Vector3 } from 'three';
 import BaseChapes from './BaseChapes';
 import { CirclePoint, CircleSchema } from './CircleSchema';
 import { CubeSchema } from './CubeSchema';
+import DefaultLines from './LinesDefault';
 import { TextSchema } from './Textschema';
 
 const Defaults = (): {
@@ -25,10 +26,10 @@ const Defaults = (): {
 
   const StoryPausePositions = () => {
     return [
-      new Vector3(-24, 0, 0),
+      new Vector3(-29, 0, 0),
       new Vector3(-14, 0, 0),
-      new Vector3(10, 0, 0),
-      new Vector3(20, 0, 0),
+      new Vector3(14, 0, 0),
+      new Vector3(29, 0, 0),
     ];
   };
 
