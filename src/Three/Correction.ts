@@ -1,6 +1,6 @@
 import { Vector3, Mesh } from 'three';
 import ChapeHelper from './Chapehelper';
-import Defaults from './defaults.config';
+import DefaultsHelper from './DefaultsHelper';
 
 const Correction = (): {
   EndOfLineObjectPositionsRight: (index: number) => Vector3;
@@ -11,31 +11,31 @@ const Correction = (): {
 } => {
   const EndOfLineObjectPositionsRight = (index: number) => {
     return {
-      x: Defaults().LinePositions(new Vector3(0, 0, 0))[index][2].x,
-      y: Defaults().LinePositions(new Vector3(0, 0, 0))[index][2].y,
-      z: Defaults().LinePositions(new Vector3(0, 0, 0))[index][2].z,
+      x: DefaultsHelper().CircleConnectPoints(new Vector3(0, 0, 0))[index][2].x,
+      y: DefaultsHelper().CircleConnectPoints(new Vector3(0, 0, 0))[index][2].y,
+      z: DefaultsHelper().CircleConnectPoints(new Vector3(0, 0, 0))[index][2].z,
     } as Vector3;
   };
   const EndOfLineObjectPositionsLeft = (index: number) => {
     return {
-      x: Defaults().LinePositions(new Vector3(0, 0, 0))[index][2].x - 3,
-      y: Defaults().LinePositions(new Vector3(0, 0, 0))[index][2].y,
-      z: Defaults().LinePositions(new Vector3(0, 0, 0))[index][2].z,
+      x: DefaultsHelper().CircleConnectPoints(new Vector3(0, 0, 0))[index][2].x - 3,
+      y: DefaultsHelper().CircleConnectPoints(new Vector3(0, 0, 0))[index][2].y,
+      z: DefaultsHelper().CircleConnectPoints(new Vector3(0, 0, 0))[index][2].z,
     } as Vector3;
   };
 
   const CorrectImageBoxPositionRight = (index: number) => {
     return {
-      x: Defaults().LinePositions(new Vector3(0, 0, 0))[index][2].x + 1.1,
-      y: Defaults().LinePositions(new Vector3(0, 0, 0))[index][2].y - 1,
-      z: Defaults().LinePositions(new Vector3(0, 0, 0))[index][2].z,
+      x: DefaultsHelper().CircleConnectPoints(new Vector3(0, 0, 0))[index][2].x + 1.1,
+      y: DefaultsHelper().CircleConnectPoints(new Vector3(0, 0, 0))[index][2].y - 1,
+      z: DefaultsHelper().CircleConnectPoints(new Vector3(0, 0, 0))[index][2].z,
     } as Vector3;
   };
   const CorrectImageBoxPositionLeft = (index: number) => {
     return {
-      x: Defaults().LinePositions(new Vector3(0, 0, 0))[index][2].x - 1.1,
-      y: Defaults().LinePositions(new Vector3(0, 0, 0))[index][2].y - 1,
-      z: Defaults().LinePositions(new Vector3(0, 0, 0))[index][2].z,
+      x: DefaultsHelper().CircleConnectPoints(new Vector3(0, 0, 0))[index][2].x - 1.1,
+      y: DefaultsHelper().CircleConnectPoints(new Vector3(0, 0, 0))[index][2].y - 1,
+      z: DefaultsHelper().CircleConnectPoints(new Vector3(0, 0, 0))[index][2].z,
     } as Vector3;
   };
 

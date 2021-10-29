@@ -1,11 +1,10 @@
 import Correction from '@/Three/Correction';
 import CubeHelper from '@/Three/CubeHelper';
 import SchemaCube from '@/Three/CubeSchema';
-import Defaults from '@/Three/defaults.config';
+import DefaultsHelper from '@/Three/DefaultsHelper';
 import LineHelper from '@/Three/LineHelper';
 import SchemaLine from '@/Three/LineSchema';
-import { BufferGeometry, Group, Material, Mesh, Object3D, Vector3 } from 'three';
-import StoryCircleItems from './StoryCircleItems';
+import { Group, Mesh, Object3D, Vector3 } from 'three';
 
 const StoryCircleChild = (): {
   ConnectPointsNextImage: (positions: Array<Vector3>) => {
@@ -19,7 +18,7 @@ const StoryCircleChild = (): {
     for (let i = 0; i < positions.length; i++) {
       if (i < 3) {
         const lineSchema = LineHelper().CreateSchema(
-          Defaults().Lines({
+          DefaultsHelper().Lines({
             x: positions[i].x + 1,
             y: positions[i].y + 1,
             z: positions[i].z,
@@ -31,7 +30,7 @@ const StoryCircleChild = (): {
         lines.push(line);
       } else {
         const lineSchema = LineHelper().CreateSchema(
-          Defaults().Lines({
+          DefaultsHelper().Lines({
             x: positions[i].x - 1,
             y: positions[i].y + 1,
             z: positions[i].z,

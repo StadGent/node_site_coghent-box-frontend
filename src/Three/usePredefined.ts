@@ -1,8 +1,10 @@
-import { Group } from 'three';
+import { Group, Vector3 } from 'three';
 import Frame1 from '@/frames/Frame1';
 import Defaults from './defaults.config';
 import StoryPaused from '@/frames/StoryPaused';
 import GroupHelper from './GroupHelper';
+import SchemaLine, { LineSchema } from './LineSchema';
+import TestData from './TestData';
 
 const usePredefined = (): {
   BaseStoryCircle: (
@@ -23,14 +25,8 @@ const usePredefined = (): {
   };
 
   const PausedStories = () => {
-    const titles = [
-      'Het belang van\n godsdienst in\n het dagelijkse\n leven',
-      'De komst van\n de Turkse\n handelaar',
-      'Het Gravesteen\n doorheen de\n tijd',
-      'Invloed van de\n Textielfabriek\n vroeger en nu',
-    ];
     const groups: Array<Group> = [];
-    GroupHelper().AddObjectsTogroups(StoryPaused().Create(titles), groups);
+    GroupHelper().AddObjectsTogroups(StoryPaused().Create(TestData().titles()), groups);
     return groups;
   };
 

@@ -41,7 +41,7 @@ const StoryPaused = (): {
     );
     const hoofdstuk = TextHelper().CreateText(
       'hoofdstuk',
-      new Vector3(-1, 4, 0),
+      new Vector3(-0.9, 4, 0),
       {
         width: 10,
         height: 2,
@@ -50,7 +50,7 @@ const StoryPaused = (): {
     );
     const second = TextHelper().CreateText(
       'Kies een van de oplichtende',
-      new Vector3(-3.4, 2.5, 0),
+      new Vector3(-3.5, 2.5, 0),
       {
         width: 10,
         height: 2,
@@ -59,7 +59,7 @@ const StoryPaused = (): {
     );
     const third = TextHelper().CreateText(
       'bollen om een nieuw hoofdstuk',
-      new Vector3(-4, 1.5, 0),
+      new Vector3(-4.1, 1.5, 0),
       {
         width: 10,
         height: 2,
@@ -68,7 +68,7 @@ const StoryPaused = (): {
     );
     const fourth = TextHelper().CreateText(
       'te starten.',
-      new Vector3(-1, 0.5, 0),
+      new Vector3(-0.9, 0.5, 0),
       {
         width: 10,
         height: 2,

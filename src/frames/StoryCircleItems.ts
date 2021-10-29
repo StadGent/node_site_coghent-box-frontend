@@ -2,6 +2,7 @@ import Correction from '@/Three/Correction';
 import CubeHelper from '@/Three/CubeHelper';
 import SchemaCube from '@/Three/CubeSchema';
 import Defaults from '@/Three/defaults.config';
+import DefaultsHelper from '@/Three/DefaultsHelper';
 import GroupHelper from '@/Three/GroupHelper';
 import LineHelper from '@/Three/LineHelper';
 import SchemaLine, { LineSchema } from '@/Three/LineSchema';
@@ -16,7 +17,9 @@ const StoryCircleItems = (): {
     const schemas: Array<LineSchema> = [];
     for (let i = 0; i < items; i++) {
       schemas.push(
-        LineHelper().CreateSchema(Defaults().LinePositions(new Vector3(0, 0, 0))[i]),
+        LineHelper().CreateSchema(
+          DefaultsHelper().CircleConnectPoints(new Vector3(0, 0, 0))[i],
+        ),
       );
     }
     return schemas;
@@ -73,7 +76,7 @@ const StoryCircleItems = (): {
     let lines;
     if (Object.keys(storyItems).length > 5)
       lines = SchemaLine().CreateLines(
-        Lines(Defaults().LinePositions(new Vector3(0, 0, 0)).length),
+        Lines(DefaultsHelper().CircleConnectPoints(new Vector3(0, 0, 0)).length),
       );
     else lines = SchemaLine().CreateLines(Lines(Object.keys(storyItems).length));
     GroupHelper().AddObjectsTogroups(lines, groups);
