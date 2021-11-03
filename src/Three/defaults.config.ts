@@ -2,7 +2,6 @@ import { CircleGeometry, Mesh, MeshBasicMaterial, Vector3 } from 'three';
 import BaseChapes from './BaseChapes';
 import { CirclePoint, CircleSchema } from './CircleSchema';
 import { CubeSchema } from './CubeSchema';
-import DefaultLines from './LinesDefault';
 import { TextSchema } from './Textschema';
 
 const Defaults = (): {

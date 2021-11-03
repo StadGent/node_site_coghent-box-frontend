@@ -35,6 +35,7 @@ const StoryPaused = (
 
   const Create = (titles: Array<string>) => {
     const groups: Array<Group> = [];
+    // groups.push(PauseState1().Create('pauseState1'));
     groups.push(PauseState2().Create('pauseState2'));
     for (let i = 0; i < titles.length; i++) {
       GroupHelper().AddObjectsTogroups(
@@ -50,7 +51,6 @@ const StoryPaused = (
     }
     return groups;
   };
-
   return { Create };
 };
 

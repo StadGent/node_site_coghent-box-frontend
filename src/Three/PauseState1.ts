@@ -1,91 +1,31 @@
-import { Group, Vector3 } from 'three';
+import { Group } from 'three';
+import DefaultsPauseState from './defaults.pauseState';
 import GroupHelper from './GroupHelper';
 import TextHelper from './TextHelper';
-import { FontParams } from './Textschema';
 
 const PauseState1 = (): {
   Create: (name: string) => Group;
 } => {
-  const middleText = () => {
-    const positions: Array<Vector3> = [
-      new Vector3(-3, 3, 0),
-      new Vector3(0, 2, 0),
-      new Vector3(-3, 0, 0),
-      new Vector3(-3.5, -1, 0),
-      new Vector3(0, -2, 0),
-    ];
-    const first = TextHelper().CreateText(
-      'Je beluisterde het volledige',
-      positions[0],
-      {
-        width: 10,
-        height: 2,
-      },
-      { size: 0.5 } as FontParams,
-    );
-    const hoofdstuk = TextHelper().CreateText(
-      'hoofdstuk',
-      positions[1],
-      {
-        width: 10,
-        height: 2,
-      },
-      { size: 0.5 } as FontParams,
-    );
-    const second = TextHelper().CreateText(
-      'Kies een van de oplichtende',
-      positions[2],
-      {
-        width: 10,
-        height: 2,
-      },
-      { size: 0.5 } as FontParams,
-    );
-    const third = TextHelper().CreateText(
-      'bollen om een nieuw hoofdstuk',
-      positions[3],
-      {
-        width: 10,
-        height: 2,
-      },
-      { size: 0.5 } as FontParams,
-    );
-    const fourth = TextHelper().CreateText(
-      'te starten.',
-      positions[4],
-      {
-        width: 10,
-        height: 2,
-      },
-      { size: 0.5 } as FontParams,
-    );
-    return GroupHelper().CreateGroup([first, hoofdstuk, second, third, fourth]);
-  };
-  const bottomText = () => {
-    const positions: Array<Vector3> = [new Vector3(0, -6, 0), new Vector3(-3.4, -7, 0)];
-    const first = TextHelper().CreateText(
-      'Je beluisterde net:',
-      positions[0],
-      {
-        width: 10,
-        height: 5,
-      },
-      { size: 0.3 } as FontParams,
-    );
-    const second = TextHelper().CreateText(
-      'De komst van de turkse handelaar 1/3',
-      positions[1],
-      {
-        width: 10,
-        height: 5,
-      },
-      { size: 0.4 } as FontParams,
-    );
-    return GroupHelper().CreateGroup([first, second]);
+  const topText = () => {
+    const group = new Group();
+    for (const key in DefaultsPauseState().topTextState1) {
+      group.add(
+        TextHelper().CreateText(
+          key,
+          DefaultsPauseState().topTextState1[key],
+          DefaultsPauseState().textBoxSize(),
+          DefaultsPauseState().textSize(),
+        ),
+      );
+    }
+    return group;
   };
 
   const Create = (name: string) => {
-    const group = GroupHelper().CreateGroup([middleText(), bottomText()]);
+    const group = GroupHelper().CreateGroup([
+      topText(),
+      DefaultsPauseState().bottomText('1/3'),
+    ]);
     group.name = name;
     return group;
   };
