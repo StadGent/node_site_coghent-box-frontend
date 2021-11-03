@@ -62,7 +62,7 @@ const PauseState1 = (): {
     return GroupHelper().CreateGroup([first, hoofdstuk, second, third, fourth]);
   };
   const bottomText = () => {
-    const positions: Array<Vector3> = [new Vector3(0, -5, 0), new Vector3(-3.4, -6, 0)];
+    const positions: Array<Vector3> = [new Vector3(0, -6, 0), new Vector3(-3.4, -7, 0)];
     const first = TextHelper().CreateText(
       'Je beluisterde net:',
       positions[0],

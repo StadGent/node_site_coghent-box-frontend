@@ -1,10 +1,12 @@
 import ThreeService from '@/services/ThreeService';
 import CircleHelper from '@/Three/CircleHelper';
 import { CirclePoint } from '@/Three/CircleSchema';
+import SchemaCube, { CubeParams, ImageCubeParams } from '@/Three/CubeSchema';
 import Defaults from '@/Three/defaults.config';
 import GroupHelper from '@/Three/GroupHelper';
 import SchemaLine from '@/Three/LineSchema';
 import PauseState1 from '@/Three/PauseState1';
+import PauseState2 from '@/Three/PauseState2';
 import { Group, Vector3 } from 'three';
 import StoryCircle from './StoryCircle';
 
@@ -31,12 +33,9 @@ const StoryPaused = (
     return GroupHelper().CreateGroup([line, circle]);
   };
 
-  const Create = (titles: Array<string>, color?: number) => {
+  const Create = (titles: Array<string>) => {
     const groups: Array<Group> = [];
-    groups.push(PauseState1().Create('pauseState1'));
-    threeSvc.state.scene.remove(groups.filter((er) => er.name == 'pauseState1')[0]);
-    threeSvc.state.scene.remove(groups.filter((er) => er.name == 'pauseState1')[1]);
-
+    groups.push(PauseState2().Create('pauseState2'));
     for (let i = 0; i < titles.length; i++) {
       GroupHelper().AddObjectsTogroups(
         [

@@ -40,11 +40,12 @@ export default defineComponent({
       );
 
       // threeSvc.AddGroupsToScene(TestData().story(false));
-      // threeSvc.AddToScene(Tools().Grid());
+      threeSvc.AddToScene(Tools().Grid());
       threeSvc.state.scene.updateMatrixWorld(true);
     };
     const showPauseScreen = (threeSvc: ThreeService) => {
       threeSvc.ClearScene();
+      threeSvc.AddToScene(Tools().Grid());
       threeSvc.AddGroupsToScene(usePredefined().PausedStories(threeSvc));
     };
 
