@@ -75,6 +75,12 @@ export default class ThreeService {
     });
   }
 
+  ClearScene() {
+    while (this.state.scene.children.length > 0) {
+      this.state.scene.remove(this.state.scene.children[0]);
+    }
+  }
+
   Animate() {
     requestAnimationFrame(() => {
       this.Animate();

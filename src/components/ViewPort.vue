@@ -1,5 +1,6 @@
 <template>
   <div ref="viewport"></div>
+  <button @click="pause = !pause">pause</button>
 </template>
 
 <script lang="ts">
@@ -7,7 +8,7 @@ import usePredefined from '@/Three/usePredefined';
 import Tools from '@/Three/Tools';
 import TestData from '@/Three/TestData';
 import ThreeService from '@/services/ThreeService';
-import { defineComponent, onMounted, PropType, ref } from 'vue';
+import { defineComponent, onMounted, PropType, ref, watch } from 'vue';
 import { Story } from '@/views/Wall.vue';
 import { Color } from 'three';
 
@@ -21,32 +22,47 @@ export default defineComponent({
   setup(props) {
     console.log(props.story?.items);
 
+    const pause = ref(false);
     const viewport = ref(null);
     const predefinedHelper = usePredefined();
+    let threeSvc: ThreeService;
 
     const addBaseStoryToScene = (threeSvc: ThreeService) => {
       threeSvc.state.scene.background = new Color(0x00000);
-      // threeSvc.AddGroupsToScene(
-      //   usePredefined().BaseStoryCircle(
-      //     // `De komst van \n de Turkse \n handelaar`,
-      //     props.story?.title as string,
-      //     props.story?.items as Record<string, string>,
-      //     true,
-      //   ),
-      // );
-      threeSvc.AddGroupsToScene(predefinedHelper.PausedStories());
+      threeSvc.ClearScene();
+      threeSvc.AddGroupsToScene(
+        usePredefined().BaseStoryCircle(
+          `De komst van \n de Turkse \n handelaar`,
+          TestData().storyWordLinks,
+          // props.story?.title as string,
+          // props.story?.items as Record<string, string>,
+          true,
+        ),
+      );
+
       // threeSvc.AddGroupsToScene(TestData().story(false));
       // threeSvc.AddToScene(Tools().Grid());
       threeSvc.state.scene.updateMatrixWorld(true);
     };
+    const showPauseScreen = (threeSvc: ThreeService) => {
+      threeSvc.ClearScene();
+      threeSvc.AddGroupsToScene(predefinedHelper.PausedStories());
+    };
+
+    watch(pause, (e) => {
+      showPauseScreen(threeSvc);
+      if (!pause.value) {
+        addBaseStoryToScene(threeSvc);
+      }
+    });
 
     onMounted(() => {
-      const threeSvc = new ThreeService(viewport);
+      threeSvc = new ThreeService(viewport);
       addBaseStoryToScene(threeSvc);
       threeSvc.Animate();
     });
 
-    return { viewport };
+    return { viewport, pause };
   },
 });
 </script>
