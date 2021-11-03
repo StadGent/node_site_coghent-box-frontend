@@ -24,7 +24,6 @@ export default defineComponent({
 
     const pause = ref(false);
     const viewport = ref(null);
-    const predefinedHelper = usePredefined();
     let threeSvc: ThreeService;
 
     const addBaseStoryToScene = (threeSvc: ThreeService) => {
@@ -46,7 +45,7 @@ export default defineComponent({
     };
     const showPauseScreen = (threeSvc: ThreeService) => {
       threeSvc.ClearScene();
-      threeSvc.AddGroupsToScene(predefinedHelper.PausedStories());
+      threeSvc.AddGroupsToScene(usePredefined().PausedStories(threeSvc));
     };
 
     watch(pause, (e) => {
@@ -58,7 +57,8 @@ export default defineComponent({
 
     onMounted(() => {
       threeSvc = new ThreeService(viewport);
-      addBaseStoryToScene(threeSvc);
+      showPauseScreen(threeSvc);
+      // addBaseStoryToScene(threeSvc);
       threeSvc.Animate();
     });
 

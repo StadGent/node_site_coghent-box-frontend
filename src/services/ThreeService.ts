@@ -1,4 +1,3 @@
-import usePredefined from '@/Three/usePredefined';
 import {
   Camera,
   Scene,
@@ -30,7 +29,6 @@ export const initState: State = {
 export default class ThreeService {
   state: State;
   element: Ref;
-  predefinedHelper = usePredefined();
 
   constructor(_element: Ref) {
     this.state = initState;
