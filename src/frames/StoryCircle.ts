@@ -3,7 +3,9 @@ import { CubeParams } from '@/Three/CubeSchema';
 import DefaultColors from '@/Three/defaults.color';
 import GroupHelper from '@/Three/GroupHelper';
 import TextHelper from '@/Three/TextHelper';
+import { FontParams } from '@/Three/Textschema';
 import { Group, Vector3 } from 'three';
+// import { CurveModifier } from 'three/examples/jsm/modifiers/CurveModifier.js';
 
 const StoryCircle = (): {
   Create: (
@@ -35,6 +37,13 @@ const StoryCircle = (): {
   };
 
   const MiddleWords = (centerWords: Record<string, Vector3>) => {
+    // const word = TextHelper().CreateText(
+    //   'words',
+    //   new Vector3(-4, 0, 0) as Vector3,
+    //   { width: 2, height: 1 } as CubeParams,
+    //   { color: DefaultColors().white } as FontParams,
+    // );
+    // return GroupHelper().CreateGroup([word]);
     return GroupHelper().CreateGroup(
       TextHelper().CreateTextFromRecord(centerWords, DefaultColors().white),
     );
