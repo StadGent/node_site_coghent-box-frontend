@@ -1,5 +1,6 @@
 import { Vector3, Line, LineBasicMaterial, BufferGeometry, Group, Object3D } from 'three';
 import BaseChapes from './BaseChapes';
+import DefaultColors from './defaults.color';
 import { LineSchema } from './LineSchema';
 
 const LineHelper = (): {
@@ -19,8 +20,8 @@ const LineHelper = (): {
   const CreateSchema = (positions: Array<Vector3>, color?: number) => {
     return {
       positions: positions as Array<Vector3>,
-      params: { color: color || 0x02a77f },
-      endObject: BaseChapes().DrawCircle(0.08, color || 0x02a77f, 50),
+      params: { color: color || DefaultColors().green },
+      endObject: BaseChapes().DrawCircle(0.08, color || DefaultColors().green, 50),
     } as LineSchema;
   };
 

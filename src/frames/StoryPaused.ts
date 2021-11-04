@@ -1,7 +1,7 @@
 import ThreeService from '@/services/ThreeService';
 import CircleHelper from '@/Three/CircleHelper';
 import { CirclePoint } from '@/Three/CircleSchema';
-import SchemaCube, { CubeParams, ImageCubeParams } from '@/Three/CubeSchema';
+import DefaultColors from '@/Three/defaults.color';
 import Defaults from '@/Three/defaults.config';
 import GroupHelper from '@/Three/GroupHelper';
 import SchemaLine from '@/Three/LineSchema';
@@ -16,7 +16,11 @@ const StoryPaused = (
   Create: (titles: Array<string>, color?: number) => Array<Group>;
 } => {
   const Lollipop = (title: string, position: Vector3, color?: number) => {
-    const schema = CircleHelper().CreateSchema(position, 2, color || 0x02a77f);
+    const schema = CircleHelper().CreateSchema(
+      position,
+      2,
+      color || DefaultColors().green,
+    );
     const startpositionForLine = CircleHelper().CalculatePointOfCircle(
       { angle: 180, radius: 2.3 } as CirclePoint,
       schema.position,
@@ -28,7 +32,7 @@ const StoryPaused = (
         new Vector3(startpositionForLine.x, startpositionForLine.y - 20, 0),
       ],
       endObject: Defaults().EndCircle(),
-      params: { color: color || 0x02a77f },
+      params: { color: color || DefaultColors().green },
     });
     return GroupHelper().CreateGroup([line, circle]);
   };

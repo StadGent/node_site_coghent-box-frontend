@@ -1,12 +1,14 @@
 import Correction from '@/Three/Correction';
 import CubeHelper from '@/Three/CubeHelper';
-import SchemaCube from '@/Three/CubeSchema';
+import SchemaCube, { CubeParams } from '@/Three/CubeSchema';
+import DefaultColors from '@/Three/defaults.color';
 import Defaults from '@/Three/defaults.config';
 import DefaultsHelper from '@/Three/DefaultsHelper';
 import GroupHelper from '@/Three/GroupHelper';
 import LineHelper from '@/Three/LineHelper';
 import SchemaLine, { LineSchema } from '@/Three/LineSchema';
 import TextHelper from '@/Three/TextHelper';
+import { FontParams } from '@/Three/Textschema';
 import { Group, Mesh, Vector3 } from 'three';
 import StoryCircleChild from './StoryCircleChild';
 
@@ -32,6 +34,8 @@ const StoryCircleItems = (): {
         const t = TextHelper().CreateText(
           words[i],
           Correction().EndOfLineObjectPositionsRight(i),
+          { width: 2, height: 1 } as CubeParams,
+          { color: DefaultColors().green } as FontParams,
         );
         t.position.z = -1;
         allWords.push(t);
@@ -39,6 +43,8 @@ const StoryCircleItems = (): {
         const t = TextHelper().CreateText(
           words[i],
           Correction().EndOfLineObjectPositionsRight(i),
+          { width: 2, height: 1 } as CubeParams,
+          { color: DefaultColors().green } as FontParams,
         );
         t.position.z = -1;
         allWords.push(t);

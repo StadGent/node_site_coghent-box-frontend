@@ -3,6 +3,7 @@ import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 import ChapeHelper from './Chapehelper';
 import { CubeParams } from './CubeSchema';
+import DefaultColors from './defaults.color';
 
 export type FontParams = {
   path: string;
@@ -24,7 +25,7 @@ const SchemaText = (): {
   const CreateTextBox = (params: CubeParams, position: Vector3) => {
     const geometry = new BoxBufferGeometry(params.width, params.height, 0);
     const material = new MeshBasicMaterial({
-      color: params.color || 0x00000,
+      color: params.color || DefaultColors().black,
     });
     material.color.convertSRGBToLinear();
     const textBox = new Mesh(geometry, material);

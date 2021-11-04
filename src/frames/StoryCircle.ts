@@ -1,5 +1,6 @@
 import SchemaCircle, { CircleSchema } from '@/Three/CircleSchema';
 import { CubeParams } from '@/Three/CubeSchema';
+import DefaultColors from '@/Three/defaults.color';
 import GroupHelper from '@/Three/GroupHelper';
 import TextHelper from '@/Three/TextHelper';
 import { Group, Vector3 } from 'three';
@@ -9,6 +10,7 @@ const StoryCircle = (): {
     title: string,
     middleCircleSchema: CircleSchema,
     distanceFromCircle?: number,
+    centerWords?: Record<string, Vector3>,
   ) => Group;
 } => {
   const circle_schema = SchemaCircle();
@@ -32,14 +34,26 @@ const StoryCircle = (): {
     return storyTitle;
   };
 
+  const MiddleWords = (centerWords: Record<string, Vector3>) => {
+    return GroupHelper().CreateGroup(
+      TextHelper().CreateTextFromRecord(centerWords, DefaultColors().white),
+    );
+  };
+
   const Create = (
     storyTitle: string,
     circleSchema: CircleSchema,
     distanceFromCircle?: number,
+    centerWords?: Record<string, Vector3>,
   ) => {
     const group: Group = GroupHelper().CreateGroup([
+      MiddleWords(centerWords || {}),
       main(circleSchema),
-      title(storyTitle, circleSchema.position, circleSchema.params.color || 0x02a77f),
+      title(
+        storyTitle,
+        circleSchema.position,
+        circleSchema.params.color || DefaultColors().green,
+      ),
       outer(circleSchema, distanceFromCircle),
     ]);
     return group;

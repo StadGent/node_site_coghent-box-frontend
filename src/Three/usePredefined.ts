@@ -1,4 +1,4 @@
-import { Group } from 'three';
+import { Group, Vector3 } from 'three';
 import Frame1 from '@/frames/Frame1';
 import Defaults from './defaults.config';
 import StoryPaused from '@/frames/StoryPaused';
@@ -10,6 +10,7 @@ const usePredefined = (): {
   BaseStoryCircle: (
     title: string,
     storyItems: Record<string, string>,
+    centerWords: Record<string, Vector3>,
     showWords: true | false,
   ) => Array<Group>;
   PausedStories: (threeSvc: ThreeService) => Array<Group>;
@@ -17,9 +18,16 @@ const usePredefined = (): {
   const BaseStoryCircle = (
     title: string,
     storyItems: Record<string, string>,
+    centerWords: Record<string, Vector3>,
     showWords: true | false,
   ) => {
-    const frame1 = Frame1().Create(title, storyItems, showWords, Defaults().Circle());
+    const frame1 = Frame1().Create(
+      title,
+      storyItems,
+      centerWords,
+      showWords,
+      Defaults().Circle(),
+    );
 
     return frame1;
   };

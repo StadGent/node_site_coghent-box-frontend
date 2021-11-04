@@ -1,9 +1,10 @@
 import { Vector3, Mesh } from 'three';
 import { CubeParams } from './CubeSchema';
+import DefaultColors from './defaults.color';
 import SchemaText, { FontParams } from './Textschema';
 
 const TextHelper = (): {
-  CreateTextFromRecord: (words: Record<string, Vector3>) => Array<Mesh>;
+  CreateTextFromRecord: (words: Record<string, Vector3>, color?: number) => Array<Mesh>;
   CreateText: (
     words: string,
     position: Vector3,
@@ -22,26 +23,26 @@ const TextHelper = (): {
       text: word,
       position: position as Vector3,
       fontParams: {
-        color: 0xfffffff,
+        color: params?.color || DefaultColors().white,
         size: params?.size || 0.3,
         path: '/Fonts/myFont.json',
       },
       textBoxParams: {
         height: textBox?.height || 2,
         width: textBox?.width || 3,
-        color: textBox?.color || 0x000000,
+        color: textBox?.color || DefaultColors().black,
       },
     };
     return textSchema.LoadText(schema, position);
   };
-  const CreateTextFromRecord = (words: Record<string, Vector3>) => {
+  const CreateTextFromRecord = (words: Record<string, Vector3>, color?: number) => {
     const txtMeshes: Array<Mesh> = [];
     for (const key in words) {
       const schema = {
         text: key,
         position: words[key] as Vector3,
         fontParams: {
-          color: 0x02a77f,
+          color: color || DefaultColors().green,
           size: 0.3,
           path: '/Fonts/myFont.json',
         },

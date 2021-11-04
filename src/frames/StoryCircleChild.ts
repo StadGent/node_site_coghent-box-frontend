@@ -1,6 +1,7 @@
 import Correction from '@/Three/Correction';
 import CubeHelper from '@/Three/CubeHelper';
 import SchemaCube from '@/Three/CubeSchema';
+import DefaultColors from '@/Three/defaults.color';
 import DefaultsHelper from '@/Three/DefaultsHelper';
 import LineHelper from '@/Three/LineHelper';
 import SchemaLine from '@/Three/LineSchema';
@@ -23,7 +24,7 @@ const StoryCircleChild = (): {
             y: positions[i].y + 1,
             z: positions[i].z,
           } as Vector3)[i] as Array<Vector3>,
-          0xffffff,
+          DefaultColors().white,
         );
         const line = SchemaLine().CreateLine(lineSchema);
         endPositions.push(LineHelper().GetEndOfLine(line.children[0] as Object3D<Event>));
@@ -35,7 +36,7 @@ const StoryCircleChild = (): {
             y: positions[i].y + 1,
             z: positions[i].z,
           } as Vector3)[i] as Array<Vector3>,
-          0xffffff,
+          DefaultColors().white,
         );
         const line = SchemaLine().CreateLine(lineSchema);
         endPositions.push(LineHelper().GetEndOfLine(line.children[0] as Object3D<Event>));

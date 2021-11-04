@@ -11,6 +11,7 @@ import {
   Vector3,
 } from 'three';
 import { CubeParams } from './CubeSchema';
+import DefaultColors from './defaults.color';
 
 const BaseChapes = (): {
   DrawCircle: (
@@ -39,7 +40,9 @@ const BaseChapes = (): {
     coordinates: Array<Vector3>,
     materialParams?: LineBasicMaterialParameters,
   ) => {
-    const material = new LineBasicMaterial(materialParams || { color: 0x02a77f });
+    const material = new LineBasicMaterial(
+      materialParams || { color: DefaultColors().green },
+    );
     material.color.convertSRGBToLinear();
     const points: Array<Vector3> = [];
     coordinates.forEach((point) => {
@@ -61,7 +64,9 @@ const BaseChapes = (): {
 
   const DrawCube = (params: CubeParams) => {
     const geometry = new BoxBufferGeometry(params.width, params.height, 0);
-    const material = new MeshBasicMaterial({ color: params.color || 0xffffff });
+    const material = new MeshBasicMaterial({
+      color: params.color || DefaultColors().white,
+    });
     material.color.convertSRGBToLinear();
     return new Mesh(geometry, material);
   };

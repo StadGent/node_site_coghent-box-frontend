@@ -1,9 +1,10 @@
 import usePredefined from '@/Three/usePredefined';
-import { Group } from 'three';
+import { Group, Vector3 } from 'three';
 
 const TestData = (): {
   story: (showWords: true | false) => Array<Group>;
   storyWordLinks: Record<string, string>;
+  centerWords: Record<string, Vector3>;
   titles: () => Array<string>;
 } => {
   const storyWordLinks: Record<string, string> = {
@@ -19,10 +20,20 @@ const TestData = (): {
       'http://localhost:8001/download/9ce891fe75a8e75d82019665d2585a83-2005-0025_1.JPG',
   };
 
+  const centerWords: Record<string, Vector3> = {
+    Relations: new Vector3(0.5, 2, 0),
+    Economie: new Vector3(-1.5, 1, 0),
+    Vacation: new Vector3(-2, -1.5, 0),
+    Turkije: new Vector3(3, 1, 0),
+    School: new Vector3(3, -1.5, 0),
+    Other: new Vector3(1, -3, 0),
+  };
+
   const story = (showWords: true | false) => {
     const story = usePredefined().BaseStoryCircle(
       `De komst van \n de Turkse \n handelaar`,
       storyWordLinks,
+      centerWords,
       showWords,
     );
     story[0].scale.set(0.5, 0.5, 0.5);
@@ -49,7 +60,7 @@ const TestData = (): {
     ];
   };
 
-  return { story, storyWordLinks, titles };
+  return { story, storyWordLinks, centerWords, titles };
 };
 
 export default TestData;

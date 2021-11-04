@@ -11,6 +11,7 @@ import ThreeService from '@/services/ThreeService';
 import { defineComponent, onMounted, PropType, ref, watch } from 'vue';
 import { Story } from '@/views/Wall.vue';
 import { Color } from 'three';
+import DefaultColors from '@/Three/defaults.color';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -27,12 +28,13 @@ export default defineComponent({
     let threeSvc: ThreeService;
 
     const addBaseStoryToScene = (threeSvc: ThreeService) => {
-      threeSvc.state.scene.background = new Color(0x00000);
+      threeSvc.state.scene.background = new Color(DefaultColors().black);
       threeSvc.ClearScene();
       threeSvc.AddGroupsToScene(
         usePredefined().BaseStoryCircle(
           `De komst van \n de Turkse \n handelaar`,
           TestData().storyWordLinks,
+          TestData().centerWords,
           // props.story?.title as string,
           // props.story?.items as Record<string, string>,
           true,
@@ -50,16 +52,17 @@ export default defineComponent({
     };
 
     watch(pause, (e) => {
-      showPauseScreen(threeSvc);
-      if (!pause.value) {
+      if (!e) {
         addBaseStoryToScene(threeSvc);
+      }else{
+        showPauseScreen(threeSvc);
       }
     });
 
     onMounted(() => {
       threeSvc = new ThreeService(viewport);
-      showPauseScreen(threeSvc);
-      // addBaseStoryToScene(threeSvc);
+      // showPauseScreen(threeSvc);
+      addBaseStoryToScene(threeSvc);
       threeSvc.Animate();
     });
 

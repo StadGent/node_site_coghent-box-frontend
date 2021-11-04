@@ -8,6 +8,7 @@ import {
 } from 'three';
 import BaseChapes from './BaseChapes';
 import ChapeHelper from './Chapehelper';
+import DefaultColors from './defaults.color';
 import GroupHelper from './GroupHelper';
 
 export type LineSchema = {
@@ -37,7 +38,7 @@ const SchemaLine = (): {
     }
     const line = baseChapes.DrawLine(
       schema.positions as Array<Vector3>,
-      schema.params || { color: 0x02a77f },
+      schema.params || { color: DefaultColors().green },
     );
     const group = grouphelper.CreateGroup([line, schema.endObject]);
 

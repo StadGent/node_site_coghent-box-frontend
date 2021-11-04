@@ -10,6 +10,7 @@ import {
 import BaseChapes from './BaseChapes';
 import ChapeHelper from './Chapehelper';
 import CircleHelper from './CircleHelper';
+import DefaultColors from './defaults.color';
 
 export type CirclePoint = {
   angle: number;
@@ -45,7 +46,7 @@ const SchemaCircle = (): {
   const CreateCircle = (schema: CircleSchema) => {
     const circle = baseChapes.DrawCircle(
       schema.params.radius,
-      schema.params.color || 0x02a77f,
+      schema.params.color || DefaultColors().green,
       schema.params.segments || 50,
     );
     chapeHelper.SetPosition(schema.position, circle);
@@ -75,7 +76,7 @@ const SchemaCircle = (): {
         y: pos.y,
       } as Vector3);
     }
-    return baseChapes.DrawLine(points, { color: color || 0x02a77f });
+    return baseChapes.DrawLine(points, { color: color || DefaultColors().green });
   };
 
   return {
