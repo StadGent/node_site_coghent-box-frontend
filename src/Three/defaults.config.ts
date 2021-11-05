@@ -9,6 +9,7 @@ const Defaults = (): {
   circlePoints: () => Array<CirclePoint>;
   StoryPausePositions: () => Array<Vector3>;
   StoryColors: () => Array<number>;
+  CenterWordPositions: () => Array<Vector3>;
   Circle: () => CircleSchema;
   ImageCube: () => CubeSchema;
   Word: (text: string, position: Vector3) => TextSchema;
@@ -39,6 +40,16 @@ const Defaults = (): {
       DefaultColors().yellow,
       DefaultColors().green,
       DefaultColors().lightBlue,
+    ];
+  };
+  const CenterWordPositions = () => {
+    return [
+      new Vector3(0.5, 2, 0),
+      new Vector3(-1.5, 1, 0),
+      new Vector3(-2, -1.5, 0),
+      new Vector3(3, 1, 0),
+      new Vector3(3, -1.5, 0),
+      new Vector3(1, -3, 0),
     ];
   };
 
@@ -85,6 +96,7 @@ const Defaults = (): {
     circlePoints,
     StoryPausePositions,
     StoryColors,
+    CenterWordPositions,
     Circle,
     ImageCube,
     Word,

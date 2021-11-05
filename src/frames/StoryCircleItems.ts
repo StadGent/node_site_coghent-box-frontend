@@ -70,11 +70,11 @@ const StoryCircleItems = (): {
         cubes.push(SchemaCube().CreateImageCube(schema));
       }
     }
-    const val = StoryCircleChild().ConnectPointsNextImage(
-      CubeHelper().GetCubesPositions(cubes),
-    );
-    const alcubes = cubes.concat(val.cubes);
-    return { cubes: alcubes, lines: val.lines };
+    // const val = StoryCircleChild().ConnectPointsNextImage(
+    //   CubeHelper().GetCubesPositions(cubes),
+    // );
+    // const alcubes = cubes.concat(val.cubes);
+    return { cubes: cubes, lines: undefined };
   };
 
   const Create = (storyItems: Record<string, string>, showWords: true | false) => {
@@ -93,10 +93,10 @@ const StoryCircleItems = (): {
         AddImagesToLine(Object.values(storyItems)).cubes,
         groups,
       );
-      GroupHelper().AddObjectsTogroups(
-        AddImagesToLine(Object.values(storyItems)).lines,
-        groups,
-      );
+      // GroupHelper().AddObjectsTogroups(
+      //   AddImagesToLine(Object.values(storyItems)).lines,
+      //   groups,
+      // );
     }
     return groups;
   };

@@ -13,3 +13,9 @@ export type FullEntitiesQuery = {
   searchValue: SearchFilter;
   fetchPolicy?: string | null | undefined;
 };
+
+export type ComponentRelation = {
+  key: string;
+  type: string;
+  order: number;
+};
