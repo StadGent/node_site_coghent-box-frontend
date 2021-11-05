@@ -42,7 +42,7 @@ export default defineComponent({
           Story().Title(stories.value[currentStory-1]),
           story.frames,
           story.centerWords,
-// `De komst van \n de Turkse \n handelaar`,
+          // `De komst van \n de Turkse \n handelaar`,
           // TestData().storyWordLinks,
           // TestData().centerWords,
 

@@ -39,7 +39,9 @@ const Story = (): {
     return `${env.storageAPI}${link}`;
   };
   const Title = (entity: Entity) => {
-    return entity.title[0]?.value || 'no title';
+    return (entity.title[0]?.value as string)
+      ? (entity.title[0]?.value as string)
+      : ('no title' as string);
   };
 
   const FrameIds = (story: Entity) => {
