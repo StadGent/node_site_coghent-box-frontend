@@ -9,10 +9,12 @@ const Story = (): {
   Title: (entity: Entity) => string;
   GetEntity: (id: string) => Promise<any>;
   GetFrameTitle: (entity: Entity) => string;
-  FrameIds: (story: Entity) => Array<string>;
+  GetFrames: (ids: Array<string>) => Promise<Array<Entity>>;
+  RelationIds: (story: Entity) => Array<string>;
   GetOrderComponents: (story: Entity, frame: number) => Promise<any>;
-  GetFrameWithAssets: (frame: Entity) => void;
-  SetFrameTitles: (story: Entity, frame: number) => Array<Entity>;
+  GetFrameTitles: (frames: Array<Entity>) => Array<string>;
+  CreateCenterWords: (words: Array<string>) => Record<string, Vector3>;
+  CreateFrameRecord: (frames: any) => Record<string, string>;
 } => {
   const FilterOutIdAfterSlash = (str: string) => {
     const index = (str.indexOf('/') as number) + 1;
@@ -36,15 +38,11 @@ const Story = (): {
     }
   };
 
-  const GetMediafileLink = (link: string) => {
-    return `${env.storageAPI}${link}`;
-  };
-
   const Title = (entity: Entity) => {
     return entity.title[0]?.value ? entity.title[0]?.value : 'no title';
   };
 
-  const FrameIds = (story: Entity) => {
+  const RelationIds = (story: Entity) => {
     const ids: Array<string> = [];
     story.relations?.forEach((str) => {
       ids.push(FilterOutIdAfterSlash(str?.key as string));
@@ -56,30 +54,27 @@ const Story = (): {
     return frame.metadata.filter((meta) => meta?.key == 'title')[0]?.value as string;
   };
 
-  const GetFrames = (ids: Array<string>) => {
+  const GetFrames = async (ids: Array<string>) => {
     const frames: Array<Entity> = [];
-    ids.forEach(async (id) => {
-      frames.push(await GetEntity(id));
-    });
+    for (const id of ids) {
+      const frame = await GetEntity(id);
+      frames.push(frame);
+    }
     return frames;
   };
 
-  const SetFrameTitles = (story: Entity, frame: number) => {
-    // const frames: Record<string, string> = {};
-    const ids = FrameIds(story) as Array<string>;
-    const frames = GetFrames(ids);
-    console.log('frames', frames);
-    return frames;
+  const GetFrameTitles = (frames: Array<Entity>) => {
+    const centerWords: Array<string> = [];
+    for (const frame of frames) {
+      centerWords.push(GetFrameTitle(frame));
+    }
+    return centerWords;
   };
 
   const GetOrderComponents = async (story: Entity, frame: number) => {
-    console.log('story ', story);
-    console.log('frame number', frame);
-
     const components: Array<ComponentRelation> = await GetRelationComponents(
-      FrameIds(story)[frame],
+      RelationIds(story)[frame],
     );
-    console.log('component IDS', components);
     const frames: Record<string, string> = {};
     for (const component of components) {
       const entity = await GetEntity(FilterOutIdAfterSlash(component.key));
@@ -89,9 +84,19 @@ const Story = (): {
         : undefined;
       frames[title] = imageLink;
     }
-    console.log('frames', frames);
-    console.log('centerWords', CreateCenterWords(Object.keys(frames)));
     return { frames: frames, centerWords: CreateCenterWords(Object.keys(frames)) };
+  };
+
+  const CreateFrameRecord = (frames: any) => {
+    const record: Record<string, string> = {};
+    for (const frame of frames) {
+      const title = GetFrameTitle(frame);
+      const imageLink = frame.primary_mediafile_location
+        ? frame.primary_mediafile_location
+        : undefined;
+      record[title] = imageLink;
+    }
+    return record;
   };
 
   const CreateCenterWords = (words: Array<string>) => {
@@ -102,18 +107,16 @@ const Story = (): {
     return centerWords;
   };
 
-  const GetFrameWithAssets = (frame: Entity) => {
-    const assets: Array<Entity> = [];
-  };
-
   return {
     Title,
-    FrameIds,
+    RelationIds,
     GetEntity,
     GetFrameTitle,
+    GetFrames,
     GetOrderComponents,
-    GetFrameWithAssets,
-    SetFrameTitles,
+    GetFrameTitles,
+    CreateCenterWords,
+    CreateFrameRecord,
   };
 };
 
