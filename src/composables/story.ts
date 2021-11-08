@@ -12,6 +12,7 @@ const Story = (): {
   FrameIds: (story: Entity) => Array<string>;
   GetOrderComponents: (story: Entity, frame: number) => Promise<any>;
   GetFrameWithAssets: (frame: Entity) => void;
+  SetFrameTitles: (story: Entity, frame: number) => Array<Entity>;
 } => {
   const FilterOutIdAfterSlash = (str: string) => {
     const index = (str.indexOf('/') as number) + 1;
@@ -38,10 +39,9 @@ const Story = (): {
   const GetMediafileLink = (link: string) => {
     return `${env.storageAPI}${link}`;
   };
+
   const Title = (entity: Entity) => {
-    return (entity.title[0]?.value as string)
-      ? (entity.title[0]?.value as string)
-      : ('no title' as string);
+    return entity.title[0]?.value ? entity.title[0]?.value : 'no title';
   };
 
   const FrameIds = (story: Entity) => {
@@ -56,10 +56,30 @@ const Story = (): {
     return frame.metadata.filter((meta) => meta?.key == 'title')[0]?.value as string;
   };
 
+  const GetFrames = (ids: Array<string>) => {
+    const frames: Array<Entity> = [];
+    ids.forEach(async (id) => {
+      frames.push(await GetEntity(id));
+    });
+    return frames;
+  };
+
+  const SetFrameTitles = (story: Entity, frame: number) => {
+    // const frames: Record<string, string> = {};
+    const ids = FrameIds(story) as Array<string>;
+    const frames = GetFrames(ids);
+    console.log('frames', frames);
+    return frames;
+  };
+
   const GetOrderComponents = async (story: Entity, frame: number) => {
+    console.log('story ', story);
+    console.log('frame number', frame);
+
     const components: Array<ComponentRelation> = await GetRelationComponents(
       FrameIds(story)[frame],
     );
+    console.log('component IDS', components);
     const frames: Record<string, string> = {};
     for (const component of components) {
       const entity = await GetEntity(FilterOutIdAfterSlash(component.key));
@@ -69,6 +89,8 @@ const Story = (): {
         : undefined;
       frames[title] = imageLink;
     }
+    console.log('frames', frames);
+    console.log('centerWords', CreateCenterWords(Object.keys(frames)));
     return { frames: frames, centerWords: CreateCenterWords(Object.keys(frames)) };
   };
 
@@ -91,6 +113,7 @@ const Story = (): {
     GetFrameTitle,
     GetOrderComponents,
     GetFrameWithAssets,
+    SetFrameTitles,
   };
 };
 
