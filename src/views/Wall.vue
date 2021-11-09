@@ -14,10 +14,9 @@ export type Story = {
 };
 
 export default defineComponent({
-
   name: 'Wall',
   components: { ViewPort },
-
+  
   setup() {
     const searchValue: SearchFilter = {value: 'story', key: 'type', isAsc: true, relation_filter: []};
     let stories = ref<Array<any>>();

@@ -1,34 +1,44 @@
 import { Entity } from 'coghent-vue-3-component-library/lib/queries';
 import axios from 'axios';
-import { environment as env } from '@/environments';
-import { ComponentRelation } from '@/models/GraphqlModel';
+import { environment as env, environment } from '@/environments';
 import { Vector3 } from 'three';
 import Defaults from '@/Three/defaults.config';
+import { ComponentRelation, Entity as LocalEntity } from '@/models/GraphqlModel';
+import { GetFullEntity } from '@/models/GraphqlQueries';
 
 const Story = (): {
-  Title: (entity: Entity) => string;
-  GetEntity: (id: string) => Promise<any>;
-  GetFrameTitle: (entity: Entity) => string;
+  Title: (entity: LocalEntity) => string;
   GetFrames: (ids: Array<string>) => Promise<Array<Entity>>;
   RelationIds: (story: Entity) => Array<string>;
-  GetOrderComponents: (story: Entity, frame: number) => Promise<any>;
   GetFrameTitles: (frames: Array<Entity>) => Array<string>;
   CreateCenterWords: (words: Array<string>) => Record<string, Vector3>;
   CreateFrameRecord: (frames: any) => Record<string, string>;
+  GetAssetsFromFrame: (frameId: string) => Promise<Record<string, string>>;
 } => {
   const FilterOutIdAfterSlash = (str: string) => {
     const index = (str.indexOf('/') as number) + 1;
     const id = str.slice(index);
     return id;
   };
-  const GetEntity = async (id: string) => {
+
+  const GetEntityById = async (id: string) => {
     try {
-      const response = await axios.get(`${env.collectionAPI}/entities/${id}`);
+      const response = await axios({
+        url: `${environment.graphqlService}`,
+        method: 'post',
+        data: {
+          query: GetFullEntity,
+          variables: {
+            id: id,
+          },
+        },
+      });
       return response.data;
     } catch (e) {
       return await Promise.reject();
     }
   };
+
   const GetRelationComponents = async (id: string) => {
     try {
       const response = await axios.get(`${env.collectionAPI}/entities/${id}/components`);
@@ -38,8 +48,8 @@ const Story = (): {
     }
   };
 
-  const Title = (entity: Entity) => {
-    return entity.title[0]?.value ? entity.title[0]?.value : 'no title';
+  const Title = (entity: LocalEntity) => {
+    return entity.title?.[0]?.value ? entity.title?.[0]?.value : 'no title';
   };
 
   const RelationIds = (story: Entity) => {
@@ -50,15 +60,19 @@ const Story = (): {
     return ids;
   };
 
-  const GetFrameTitle = (frame: Entity) => {
-    return frame.metadata.filter((meta) => meta?.key == 'title')[0]?.value as string;
+  const ComponentIds = (components: Array<ComponentRelation>) => {
+    const ids: Array<string> = [];
+    components.forEach((str) => {
+      ids.push(FilterOutIdAfterSlash(str?.key as string));
+    });
+    return ids;
   };
 
   const GetFrames = async (ids: Array<string>) => {
     const frames: Array<Entity> = [];
     for (const id of ids) {
-      const frame = await GetEntity(id);
-      frames.push(frame);
+      const frame = await GetEntityById(id);
+      frames.push(frame.data.Entity);
     }
     return frames;
   };
@@ -66,35 +80,19 @@ const Story = (): {
   const GetFrameTitles = (frames: Array<Entity>) => {
     const centerWords: Array<string> = [];
     for (const frame of frames) {
-      centerWords.push(GetFrameTitle(frame));
+      centerWords.push(Title(frame as LocalEntity));
     }
     return centerWords;
   };
 
-  const GetOrderComponents = async (story: Entity, frame: number) => {
-    const components: Array<ComponentRelation> = await GetRelationComponents(
-      RelationIds(story)[frame],
-    );
-    const frames: Record<string, string> = {};
-    for (const component of components) {
-      const entity = await GetEntity(FilterOutIdAfterSlash(component.key));
-      const title = GetFrameTitle(entity);
-      const imageLink = entity.primary_mediafile_location
-        ? entity.primary_mediafile_location
-        : undefined;
-      frames[title] = imageLink;
-    }
-    return { frames: frames, centerWords: CreateCenterWords(Object.keys(frames)) };
-  };
-
-  const CreateFrameRecord = (frames: any) => {
+  const CreateFrameRecord = (frames: Array<Entity>) => {
     const record: Record<string, string> = {};
     for (const frame of frames) {
-      const title = GetFrameTitle(frame);
-      const imageLink = frame.primary_mediafile_location
-        ? frame.primary_mediafile_location
+      const title = Title(frame as LocalEntity);
+      const imageLink = frame.mediafiles?.[0]?.original_file_location
+        ? frame.mediafiles?.[0]?.original_file_location
         : undefined;
-      record[title] = imageLink;
+      record[title] = imageLink as string;
     }
     return record;
   };
@@ -107,16 +105,26 @@ const Story = (): {
     return centerWords;
   };
 
+  const GetAssetsFromFrame = async (frameId: string) => {
+    const story = await GetEntityById(frameId);
+    const components = await GetRelationComponents(story.data.Entity.id);
+    const assetIds = ComponentIds(components);
+    const assets: Array<Entity> = [];
+    for (const id of assetIds) {
+      const asset = await GetEntityById(id);
+      assets.push(asset.data.Entity);
+    }
+    return CreateFrameRecord(assets);
+  };
+
   return {
     Title,
     RelationIds,
-    GetEntity,
-    GetFrameTitle,
     GetFrames,
-    GetOrderComponents,
     GetFrameTitles,
     CreateCenterWords,
     CreateFrameRecord,
+    GetAssetsFromFrame,
   };
 };
 

@@ -8,6 +8,7 @@ import usePredefined from '@/Three/usePredefined';
 import Story from '@/composables/story';
 import Tools from '@/Three/Tools';
 import TestData from '@/Three/TestData';
+import {Entity as LocalEntity} from '@/models/GraphqlModel';
 import ThreeService from '@/services/ThreeService';
 import { defineComponent, onMounted, PropType, reactive, ref, watch } from 'vue';
 import { Color, Vector3 } from 'three';
@@ -34,15 +35,14 @@ export default defineComponent({
     let threeSvc: ThreeService;
 
     const addBaseStoryToScene = (threeSvc: ThreeService) => {
-      console.log('stories', stories.value);
       threeSvc.state.scene.background = new Color(DefaultColors().black);
       threeSvc.ClearScene();
       threeSvc.AddGroupsToScene(
         usePredefined().BaseStoryCircle(
-          Story().Title(stories.value[currentStory-1]),
+          Story().Title(stories.value[currentStory-1] as LocalEntity),
           story.frames || {},
           story.centerWords || {},
-
+          
           // `De komst van \n de Turkse \n handelaar`,
           // TestData().storyWordLinks,
           // TestData().centerWords,
@@ -51,7 +51,6 @@ export default defineComponent({
       );
       // threeSvc.AddGroupsToScene(TestData().story(false));
       // threeSvc.AddToScene(Tools().Grid());
-    
       threeSvc.state.scene.updateMatrixWorld(true);
     };
     const showPauseScreen = (threeSvc: ThreeService) => {
@@ -66,20 +65,16 @@ export default defineComponent({
       // }else{
       //   showPauseScreen(threeSvc);
       // }
-
     });
 
     const buildStory = async () => {
-      console.log('current story',stories.value[currentStory-1])
-      const storyFramesIds = Story().RelationIds(stories.value[0]);
-      console.log("StoryFrame ids =>",storyFramesIds);
+      const storyFramesIds = Story().RelationIds(stories.value[currentStory-1]);
       const frames = await Story().GetFrames(storyFramesIds);
-      console.log('FRAMES',frames);
       const frameTitles = Story().GetFrameTitles(frames);
       const centerWords = Story().CreateCenterWords(frameTitles);
-      console.log("Centerwords", centerWords);
       const frameRecord = Story().CreateFrameRecord(frames);
-    
+      const assetsFromFrame = await Story().GetAssetsFromFrame(frames[0].id);
+      console.log('assets from frame',assetsFromFrame);
 
       story.frames = frameRecord;
       story.centerWords = centerWords as Record<string, Vector3>;
@@ -88,6 +83,7 @@ export default defineComponent({
     onMounted(async () => {
       threeSvc = new ThreeService(viewport);
       if(stories.value){
+        console.log('stories => ', stories.value)
         await buildStory();
         addBaseStoryToScene(threeSvc);
       }
