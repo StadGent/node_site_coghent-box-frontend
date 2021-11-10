@@ -6,7 +6,6 @@ import Defaults from '@/Three/defaults.config';
 import GroupHelper from '@/Three/GroupHelper';
 import SchemaLine from '@/Three/LineSchema';
 import PauseState1 from '@/Three/PauseState1';
-import PauseState2 from '@/Three/PauseState2';
 import { Group, Vector3 } from 'three';
 import StoryCircle from './StoryCircle';
 
@@ -39,8 +38,7 @@ const StoryPaused = (
 
   const Create = (titles: Array<string>) => {
     const groups: Array<Group> = [];
-    // groups.push(PauseState1().Create('pauseState1'));
-    groups.push(PauseState2().Create('pauseState2'));
+    groups.push(PauseState1().Create('pauseState1'));
     for (let i = 0; i < titles.length; i++) {
       GroupHelper().AddObjectsTogroups(
         [
