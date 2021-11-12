@@ -7,6 +7,7 @@ const Common = (): {
   GetEntityById: (id: string) => Promise<any>;
   GetRelationComponents: (id: string) => Promise<Array<ComponentRelation>>;
   FilterOutIdAfterSlash: (str: string) => string;
+  RemoveEntersFromString: (str: string) => string;
 } => {
   const GetEntityById = async (id: string) => {
     try {
@@ -40,10 +41,15 @@ const Common = (): {
     const id = str.slice(index);
     return id;
   };
+
+  const RemoveEntersFromString = (str: string) => {
+    return str.replace(/\n/g, '');
+  };
   return {
     GetEntityById,
     GetRelationComponents,
     FilterOutIdAfterSlash,
+    RemoveEntersFromString,
   };
 };
 

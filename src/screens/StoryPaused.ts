@@ -9,7 +9,7 @@ import StoryCircle from '../Three/SectionStoryCircle';
 import EndOfStoryText from '@/Three/EndOfStoryText';
 
 const StoryPaused = (): {
-  Create: (titles: Array<string>, color?: number) => Array<Group>;
+  Create: (currentStory: string, titles: Array<string>, color?: number) => Array<Group>;
 } => {
   const Lollipop = (title: string, position: Vector3, color?: number) => {
     const schema = CircleHelper().CreateSchema(
@@ -33,9 +33,9 @@ const StoryPaused = (): {
     return GroupHelper().CreateGroup([line, circle]);
   };
 
-  const Create = (titles: Array<string>) => {
+  const Create = (currentStory: string, titles: Array<string>) => {
     const groups: Array<Group> = [];
-    groups.push(EndOfStoryText().Create('endOfstorytext'));
+    groups.push(EndOfStoryText().Create(currentStory, 'endOfstorytext'));
     for (let i = 0; i < titles.length; i++) {
       GroupHelper().AddObjectsTogroups(
         [

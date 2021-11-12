@@ -16,7 +16,7 @@ const usePredefined = (): {
     story: StoryType,
     showWords: true | false,
   ) => { storyOverview: Array<Group>; imagePositions: Array<Vector3> };
-  PausedStories: (storyTitles: Array<string>) => Array<Group>;
+  PausedStories: (currentStory: string, storyTitles: Array<string>) => Array<Group>;
 } => {
   const BaseStoryCircle = (story: StoryType, showWords: true | false) => {
     const storyOverview = StoryOverview().Create(
@@ -33,9 +33,12 @@ const usePredefined = (): {
     };
   };
 
-  const PausedStories = (storyTitles: Array<string>) => {
+  const PausedStories = (currentStory: string, storyTitles: Array<string>) => {
     const groups: Array<Group> = [];
-    GroupHelper().AddObjectsTogroups(StoryPaused().Create(storyTitles), groups);
+    GroupHelper().AddObjectsTogroups(
+      StoryPaused().Create(currentStory, storyTitles),
+      groups,
+    );
     return groups;
   };
 

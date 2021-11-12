@@ -7,7 +7,7 @@ import { FontParams } from './Textschema';
 const DefaultsPauseState = (): {
   topTextState1: Record<string, Vector3>;
   topTextState2: Record<string, Vector3>;
-  bottomText: (progress: string) => Group;
+  bottomText: (currentStory: string, progress: string) => Group;
   textBoxSize: () => CubeParams;
   textSize: () => FontParams;
   pauseIcon: () => Group;
@@ -25,7 +25,7 @@ const DefaultsPauseState = (): {
     'van de oplichtende bollen om': new Vector3(-3, -3.5, 0),
     'een nieuw verhaal te starten.': new Vector3(-3, -4.5, 0),
   };
-  const bottomText = (progress: string) => {
+  const bottomText = (currentStory: string, progress: string) => {
     const positions: Array<Vector3> = [new Vector3(0, -6, 0), new Vector3(-3.4, -7, 0)];
     const first = TextHelper().CreateText(
       'Je beluisterde net:',
@@ -37,7 +37,7 @@ const DefaultsPauseState = (): {
       { size: 0.3 } as FontParams,
     );
     const second = TextHelper().CreateText(
-      `De komst van de turkse handelaar ${progress}`,
+      `${currentStory} ${progress}`,
       positions[1],
       {
         width: 10,

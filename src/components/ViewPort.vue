@@ -15,11 +15,12 @@ import { Color, Vector3 } from 'three';
 import DefaultColors from '@/Three/defaults.color';
 import { Entity } from 'coghent-vue-3-component-library/lib/queries';
 import CubeHelper from '@/Three/CubeHelper';
+import Common from '@/composables/common';
 
 export default defineComponent({
   name: 'ViewPort',
   props: {
-    stories:{
+    stories: {
       type: Array as PropType<Array<Entity>>,
       required: true,
     },
@@ -27,7 +28,9 @@ export default defineComponent({
   setup(props) {
     const stories = ref(props.stories);
     const currentStory = 1;
-    const story = reactive<StoryType>({title: Story().Title(stories.value[currentStory-1])} as StoryType); 
+    const story = reactive<StoryType>({
+      title: Story().Title(stories.value[currentStory - 1]),
+    } as StoryType);
     const pause = ref(false);
     const viewport = ref(null);
     let threeSvc: ThreeService;
@@ -35,54 +38,49 @@ export default defineComponent({
     const addBaseStoryToScene = (threeSvc: ThreeService) => {
       threeSvc.state.scene.background = new Color(DefaultColors().black);
       threeSvc.ClearScene();
-      const storyOverview = usePredefined().BaseStoryCircle(
-          story,
-          false,
-        );
-      threeSvc.AddGroupsToScene(
-       storyOverview.storyOverview
+      const storyOverview = usePredefined().BaseStoryCircle(story, false);
+      threeSvc.AddGroupsToScene(storyOverview.storyOverview);
+      threeSvc.AddToScene(
+        CubeHelper().HighlightImage(story.frameImagePositions?.[2] as Vector3),
       );
-      threeSvc.AddToScene(CubeHelper().HighlightImage(story.frameImagePositions?.[2] as Vector3));
       // threeSvc.AddToScene(Tools().Grid());
       threeSvc.state.scene.updateMatrixWorld(true);
     };
     const showPauseScreen = (threeSvc: ThreeService) => {
       threeSvc.ClearScene();
       // threeSvc.AddToScene(Tools().Grid());
-      threeSvc.AddGroupsToScene(usePredefined().PausedStories(Story().GetStoryTitles(stories.value)));
+      threeSvc.AddGroupsToScene(
+        usePredefined().PausedStories(Common().RemoveEntersFromString(story.title),Story().GetStoryTitles(stories.value)),
+      );
     };
-    
 
     watch(pause, (e) => {
       if (!e && stories) {
         addBaseStoryToScene(threeSvc);
-      }else{
+      } else {
         showPauseScreen(threeSvc);
       }
     });
 
     const buildStory = async () => {
-      const storyFramesIds = Story().RelationIds(stories.value[currentStory-1]);
+      const storyFramesIds = Story().RelationIds(stories.value[currentStory - 1]);
       const frames = await Frame().GetFrames(storyFramesIds);
       const frameTitles = Frame().GetFrameTitles(frames);
       const centerWords = Story().CreateCenterWords(frameTitles);
       const frameRecord = Frame().CreateFrameRecord(frames);
       const assetsFromFrame = await Frame().GetAssetsFromFrame(frames[0].id);
-      console.log('assets from frame',assetsFromFrame);
 
       story.frames = frameRecord;
       story.centerWords = centerWords as Record<string, Vector3>;
       story.frameImagePositions = usePredefined().BaseStoryCircle(
-          story,
-          false,
-        ).imagePositions;
-
-      console.log('imagepositions',story.frameImagePositions);
+        story,
+        false,
+      ).imagePositions;
     };
 
     onMounted(async () => {
       threeSvc = new ThreeService(viewport);
-      if(stories.value){
+      if (stories.value) {
         console.log('stories => ', stories.value)
         await buildStory();
         addBaseStoryToScene(threeSvc);

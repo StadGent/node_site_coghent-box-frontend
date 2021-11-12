@@ -4,7 +4,7 @@ import GroupHelper from './GroupHelper';
 import TextHelper from './TextHelper';
 
 const EndOfStoryText = (): {
-  Create: (name: string) => Group;
+  Create: (currentStory: string, name: string) => Group;
 } => {
   const topText = () => {
     const group = new Group();
@@ -21,10 +21,10 @@ const EndOfStoryText = (): {
     return group;
   };
 
-  const Create = (name: string) => {
+  const Create = (currentStory: string, name: string) => {
     const group = GroupHelper().CreateGroup([
       topText(),
-      DefaultsPauseState().bottomText('1/3'),
+      DefaultsPauseState().bottomText(currentStory, '1/3'),
     ]);
     group.name = name;
     return group;
