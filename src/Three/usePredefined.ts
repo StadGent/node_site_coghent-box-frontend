@@ -3,7 +3,6 @@ import Defaults from './defaults.config';
 import StoryPaused from '@/screens/StoryPaused';
 import GroupHelper from './GroupHelper';
 import TestData from './TestData';
-import ThreeService from '@/services/ThreeService';
 import StoryOverview from '@/screens/StoryOverview';
 
 const usePredefined = (): {
@@ -13,7 +12,7 @@ const usePredefined = (): {
     centerWords: Record<string, Vector3>,
     showWords: true | false,
   ) => Array<Group>;
-  PausedStories: () => Array<Group>;
+  PausedStories: (storyTitles: Array<string>) => Array<Group>;
 } => {
   const BaseStoryCircle = (
     title: string,
@@ -32,9 +31,9 @@ const usePredefined = (): {
     return frame1;
   };
 
-  const PausedStories = () => {
+  const PausedStories = (storyTitles: Array<string>) => {
     const groups: Array<Group> = [];
-    GroupHelper().AddObjectsTogroups(StoryPaused().Create(TestData().titles()), groups);
+    GroupHelper().AddObjectsTogroups(StoryPaused().Create(storyTitles), groups);
     return groups;
   };
 

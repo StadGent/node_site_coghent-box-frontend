@@ -8,30 +8,32 @@ import { useQuery } from '@vue/apollo-composable';
 import { GetFullEntitiesDocument } from 'coghent-vue-3-component-library/lib';
 import { SearchFilter } from 'coghent-vue-3-component-library/lib/queries';
 
-export type Story = {
-  title: string;
-  items: Record<string, string>;
-};
-
 export default defineComponent({
   name: 'Wall',
   components: { ViewPort },
-  
+
   setup() {
-    const searchValue: SearchFilter = {value: 'story', key: 'type', isAsc: true, relation_filter: []};
+    const searchValue: SearchFilter = {
+      value: 'story',
+      key: 'type',
+      isAsc: true,
+      relation_filter: [],
+    };
     let stories = ref<Array<any>>();
-    const {onResult: onStoryResults} = useQuery(GetFullEntitiesDocument, {searchValue: searchValue})
-    
+    const { onResult: onStoryResults } = useQuery(GetFullEntitiesDocument, {
+      searchValue: searchValue,
+    });
+
     onStoryResults((result) => {
       const entities = result.data.Entities?.results;
-      if(entities){
+      if (entities) {
         stories.value = [...entities];
       }
     });
 
     return {
       stories,
-    }; 
+    };
   },
 });
 </script>

@@ -8,7 +8,6 @@ import usePredefined from '@/Three/usePredefined';
 import Story from '@/composables/story';
 import Tools from '@/Three/Tools';
 import TestData from '@/Three/TestData';
-import {Entity as LocalEntity} from '@/models/GraphqlModel';
 import ThreeService from '@/services/ThreeService';
 import { defineComponent, onMounted, PropType, reactive, ref, watch } from 'vue';
 import { Color, Vector3 } from 'three';
@@ -21,7 +20,7 @@ export default defineComponent({
     stories:{
       type: Array as PropType<Array<Entity>>,
       required: true,
-    }
+    },
   },
   setup(props) {
     const stories = ref(props.stories);
@@ -39,7 +38,7 @@ export default defineComponent({
       threeSvc.ClearScene();
       threeSvc.AddGroupsToScene(
         usePredefined().BaseStoryCircle(
-          Story().Title(stories.value[currentStory-1] as LocalEntity),
+          Story().Title(stories.value[currentStory-1]),
           story.frames || {},
           story.centerWords || {},
           
@@ -49,6 +48,7 @@ export default defineComponent({
           true,
         ),
       );
+      
       // threeSvc.AddGroupsToScene(TestData().story(false));
       // threeSvc.AddToScene(Tools().Grid());
       threeSvc.state.scene.updateMatrixWorld(true);
@@ -56,7 +56,7 @@ export default defineComponent({
     const showPauseScreen = () => {
       threeSvc.ClearScene();
       threeSvc.AddToScene(Tools().Grid());
-      threeSvc.AddGroupsToScene(usePredefined().PausedStories());
+      threeSvc.AddGroupsToScene(usePredefined().PausedStories(Story().GetStoryTitles(stories.value)));
     };
     
 
