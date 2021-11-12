@@ -12,5 +12,5 @@ include:
 variables:
   CUSTOMER: 'coghent'
   APPLICATION: 'coghent-box-frontend'
-  TERRAFORM_IMAGE: 'coghent-terraform'
+  TERRAFORM_IMAGE: 'box-terraform'
   TERRAFORM_TAG: 'latest'
