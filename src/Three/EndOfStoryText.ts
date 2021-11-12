@@ -3,7 +3,7 @@ import DefaultsPauseState from './defaults.pauseState';
 import GroupHelper from './GroupHelper';
 import TextHelper from './TextHelper';
 
-const PauseState1 = (): {
+const EndOfStoryText = (): {
   Create: (name: string) => Group;
 } => {
   const topText = () => {
@@ -34,4 +34,4 @@ const PauseState1 = (): {
   };
 };
 
-export default PauseState1;
+export default EndOfStoryText;

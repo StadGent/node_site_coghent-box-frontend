@@ -53,18 +53,19 @@ export default defineComponent({
       // threeSvc.AddToScene(Tools().Grid());
       threeSvc.state.scene.updateMatrixWorld(true);
     };
-    const showPauseScreen = (threeSvc: ThreeService) => {
+    const showPauseScreen = () => {
       threeSvc.ClearScene();
       threeSvc.AddToScene(Tools().Grid());
-      threeSvc.AddGroupsToScene(usePredefined().PausedStories(threeSvc));
+      threeSvc.AddGroupsToScene(usePredefined().PausedStories());
     };
+    
 
     watch(pause, (e) => {
-      // if (!e && stories) {
-      //   addBaseStoryToScene(threeSvc);
-      // }else{
-      //   showPauseScreen(threeSvc);
-      // }
+      if (!e && stories) {
+        addBaseStoryToScene(threeSvc);
+      }else{
+        showPauseScreen();
+      }
     });
 
     const buildStory = async () => {

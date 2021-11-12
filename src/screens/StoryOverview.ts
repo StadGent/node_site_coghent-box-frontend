@@ -1,10 +1,10 @@
 import { CircleSchema } from '@/Three/CircleSchema';
 import GroupHelper from '@/Three/GroupHelper';
 import { Group, Vector3 } from 'three';
-import StoryCircle from './StoryCircle';
-import StoryCircleItems from './StoryCircleItems';
+import StoryCircle from '@/Three/SectionStoryCircle';
+import StoryCircleItems from '@/Three/SectionStoryCircleItems';
 
-const Frame1 = (): {
+const StoryOverview = (): {
   Create: (
     title: string,
     storyitems: Record<string, string>,
@@ -36,4 +36,4 @@ const Frame1 = (): {
 
   return { Create };
 };
-export default Frame1;
+export default StoryOverview;

@@ -10,7 +10,7 @@ import SchemaLine, { LineSchema } from '@/Three/LineSchema';
 import TextHelper from '@/Three/TextHelper';
 import { FontParams } from '@/Three/Textschema';
 import { Group, Mesh, Vector3 } from 'three';
-import StoryCircleChild from './StoryCircleChild';
+import StoryCircleChild from './SectionStoryCircleChild';
 
 const StoryCircleItems = (): {
   Create: (storyItems: Record<string, string>, showWords: true | false) => Array<Group>;

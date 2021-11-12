@@ -1,10 +1,10 @@
 import { Group, Vector3 } from 'three';
-import Frame1 from '@/frames/Frame1';
 import Defaults from './defaults.config';
-import StoryPaused from '@/frames/StoryPaused';
+import StoryPaused from '@/screens/StoryPaused';
 import GroupHelper from './GroupHelper';
 import TestData from './TestData';
 import ThreeService from '@/services/ThreeService';
+import StoryOverview from '@/screens/StoryOverview';
 
 const usePredefined = (): {
   BaseStoryCircle: (
@@ -13,7 +13,7 @@ const usePredefined = (): {
     centerWords: Record<string, Vector3>,
     showWords: true | false,
   ) => Array<Group>;
-  PausedStories: (threeSvc: ThreeService) => Array<Group>;
+  PausedStories: () => Array<Group>;
 } => {
   const BaseStoryCircle = (
     title: string,
@@ -21,7 +21,7 @@ const usePredefined = (): {
     centerWords: Record<string, Vector3>,
     showWords: true | false,
   ) => {
-    const frame1 = Frame1().Create(
+    const frame1 = StoryOverview().Create(
       title,
       storyItems,
       centerWords,
@@ -32,12 +32,9 @@ const usePredefined = (): {
     return frame1;
   };
 
-  const PausedStories = (threeSvc: ThreeService) => {
+  const PausedStories = () => {
     const groups: Array<Group> = [];
-    GroupHelper().AddObjectsTogroups(
-      StoryPaused(threeSvc).Create(TestData().titles()),
-      groups,
-    );
+    GroupHelper().AddObjectsTogroups(StoryPaused().Create(TestData().titles()), groups);
     return groups;
   };
 
