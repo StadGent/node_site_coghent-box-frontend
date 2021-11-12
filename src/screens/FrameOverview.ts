@@ -18,9 +18,13 @@ const FrameOverview = (
     const cubes: Array<Mesh> = [];
     let pos = 0;
     for (const key in assets) {
-      const schema = CubeHelper().CreateSchema(new Vector3(pos, 0, 0), assets[key]);
+      const schema = CubeHelper().CreateSchema(
+        new Vector3(pos, 0, 0),
+        assets[key],
+        new Vector3(4, 4, 0),
+      );
       cubes.push(SchemaCube().CreateImageCube(schema));
-      pos += 3;
+      pos += 6;
     }
 
     return {

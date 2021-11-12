@@ -6,9 +6,9 @@ const CubeHelper = (): {
   GetCubeParams: (cube: Mesh<BoxGeometry, MeshBasicMaterial>) => CubeParams;
   GetCubePosition: (cube: Mesh) => Vector3;
   GetCubePositions: (cubes: Array<Mesh>) => Array<Vector3>;
-  CreateSchema: (position: Vector3, url: string) => CubeSchema;
+  CreateSchema: (position: Vector3, url: string, dimensions?: Vector3) => CubeSchema;
   GetCubesPositions: (cubes: Array<Mesh>) => Array<Vector3>;
-  HighlightImage: (imageCubePosition: Vector3) => Mesh;
+  HighlightImage: (imageCubePosition: Vector3, dimensions?: Vector3) => Mesh;
 } => {
   const GetCubeParams = (cube: Mesh<BoxGeometry, MeshBasicMaterial>) => {
     return cube.geometry.parameters as CubeParams;
@@ -26,12 +26,12 @@ const CubeHelper = (): {
     return positions;
   };
 
-  const CreateSchema = (position: Vector3, url: string) => {
+  const CreateSchema = (position: Vector3, url: string, dimensions?: Vector3) => {
     return {
       position: position as Vector3,
       params: {
-        width: 2,
-        height: 2,
+        width: dimensions?.x || 2,
+        height: dimensions?.y || 2,
         url: url,
       },
     };
@@ -45,12 +45,12 @@ const CubeHelper = (): {
     return positions;
   };
 
-  const HighlightImage = (imageCubePosition: Vector3) => {
+  const HighlightImage = (imageCubePosition: Vector3, dimensions?: Vector3) => {
     const cube = SchemaCube().CreateCube({
       position: imageCubePosition,
       params: {
-        width: 2.2,
-        height: 2.2,
+        width: (dimensions?.x as number) + 0.2 || 2.2,
+        height: (dimensions?.y as number) + 0.2 || 2.2,
         color: DefaultColors().pink,
       },
     });

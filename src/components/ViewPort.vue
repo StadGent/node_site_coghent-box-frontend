@@ -60,7 +60,7 @@ export default defineComponent({
       threeSvc.ClearScene();
       threeSvc.AddGroupsToScene((await FrameOverview(frame).Create()).groups);
       threeSvc.AddToScene(
-        CubeHelper().HighlightImage((await FrameOverview(frame).Create()).positions[2] as Vector3),
+        CubeHelper().HighlightImage((await FrameOverview(frame).Create()).positions[2] as Vector3, new Vector3(4,4,0)),
       );
     };
 
@@ -94,7 +94,7 @@ export default defineComponent({
         console.log('stories => ', stories.value)
         await buildStory();
         // addBaseStoryToScene(threeSvc);
-        await addFrameOverviewToScene(threeSvc, story.frames[0] as Entity);
+        await addFrameOverviewToScene(threeSvc, story.frames[1] as Entity);
       }
       threeSvc.Animate();
     });
