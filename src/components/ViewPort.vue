@@ -14,6 +14,7 @@ import { defineComponent, onMounted, PropType, reactive, ref, watch } from 'vue'
 import { Color, Vector3 } from 'three';
 import DefaultColors from '@/Three/defaults.color';
 import { Entity } from 'coghent-vue-3-component-library/lib/queries';
+import CubeHelper from '@/Three/CubeHelper';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -41,6 +42,7 @@ export default defineComponent({
       threeSvc.AddGroupsToScene(
        storyOverview.storyOverview
       );
+      threeSvc.AddToScene(CubeHelper().HighlightImage(story.frameImagePositions?.[2] as Vector3));
       // threeSvc.AddToScene(Tools().Grid());
       threeSvc.state.scene.updateMatrixWorld(true);
     };
