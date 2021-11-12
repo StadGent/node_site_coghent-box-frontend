@@ -2,7 +2,6 @@ import Correction from '@/Three/Correction';
 import CubeHelper from '@/Three/CubeHelper';
 import SchemaCube, { CubeParams } from '@/Three/CubeSchema';
 import DefaultColors from '@/Three/defaults.color';
-import Defaults from '@/Three/defaults.config';
 import DefaultsHelper from '@/Three/DefaultsHelper';
 import GroupHelper from '@/Three/GroupHelper';
 import LineHelper from '@/Three/LineHelper';
@@ -13,7 +12,10 @@ import { Group, Mesh, Vector3 } from 'three';
 import StoryCircleChild from './SectionStoryCircleChild';
 
 const StoryCircleItems = (): {
-  Create: (storyItems: Record<string, string>, showWords: true | false) => Array<Group>;
+  Create: (
+    storyItems: Record<string, string>,
+    showWords: true | false,
+  ) => { groups: Array<Group>; imagePositions: Array<Vector3> };
 } => {
   const Lines = (items: number) => {
     const schemas: Array<LineSchema> = [];
@@ -56,17 +58,12 @@ const StoryCircleItems = (): {
   const AddImagesToLine = (links: Array<string>) => {
     const cubes: Array<Mesh> = [];
     for (let i = 0; i < links.length; i++) {
+      const position = Correction().CorrectImageBoxPositionRight(i);
       if (i < 3) {
-        const schema = CubeHelper().CreateSchema(
-          Correction().CorrectImageBoxPositionRight(i),
-          links[i],
-        );
+        const schema = CubeHelper().CreateSchema(position, links[i]);
         cubes.push(SchemaCube().CreateImageCube(schema));
       } else {
-        const schema = CubeHelper().CreateSchema(
-          Correction().CorrectImageBoxPositionLeft(i),
-          links[i],
-        );
+        const schema = CubeHelper().CreateSchema(position, links[i]);
         cubes.push(SchemaCube().CreateImageCube(schema));
       }
     }
@@ -98,7 +95,12 @@ const StoryCircleItems = (): {
       //   groups,
       // );
     }
-    return groups;
+    return {
+      groups: groups,
+      imagePositions: CubeHelper().GetCubePositions(
+        AddImagesToLine(Object.values(storyItems)).cubes,
+      ),
+    };
   };
 
   return { Create };

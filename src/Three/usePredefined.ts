@@ -2,33 +2,35 @@ import { Group, Vector3 } from 'three';
 import Defaults from './defaults.config';
 import StoryPaused from '@/screens/StoryPaused';
 import GroupHelper from './GroupHelper';
-import TestData from './TestData';
 import StoryOverview from '@/screens/StoryOverview';
+
+export type StoryType = {
+  title: string;
+  frames: Record<string, string>;
+  centerWords: Record<string, Vector3>;
+  frameImagePositions?: Array<Vector3>;
+};
 
 const usePredefined = (): {
   BaseStoryCircle: (
-    title: string,
-    storyItems: Record<string, string>,
-    centerWords: Record<string, Vector3>,
+    story: StoryType,
     showWords: true | false,
-  ) => Array<Group>;
+  ) => { storyOverview: Array<Group>; imagePositions: Array<Vector3> };
   PausedStories: (storyTitles: Array<string>) => Array<Group>;
 } => {
-  const BaseStoryCircle = (
-    title: string,
-    storyItems: Record<string, string>,
-    centerWords: Record<string, Vector3>,
-    showWords: true | false,
-  ) => {
-    const frame1 = StoryOverview().Create(
-      title,
-      storyItems,
-      centerWords,
+  const BaseStoryCircle = (story: StoryType, showWords: true | false) => {
+    const storyOverview = StoryOverview().Create(
+      story.title,
+      story.frames,
+      story.centerWords,
       showWords,
       Defaults().Circle(),
     );
 
-    return frame1;
+    return {
+      storyOverview: storyOverview.groups,
+      imagePositions: storyOverview.imagePositions,
+    };
   };
 
   const PausedStories = (storyTitles: Array<string>) => {

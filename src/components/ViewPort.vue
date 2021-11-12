@@ -4,7 +4,7 @@
 </template>
 
 <script lang="ts">
-import usePredefined from '@/Three/usePredefined';
+import usePredefined, { StoryType } from '@/Three/usePredefined';
 import Story from '@/composables/story';
 import Frame from '@/composables/frame';
 import Tools from '@/Three/Tools';
@@ -25,11 +25,8 @@ export default defineComponent({
   },
   setup(props) {
     const stories = ref(props.stories);
-    const story = reactive({
-      frames: {},
-      centerWords: {},
-    });
     const currentStory = 1;
+    const story = reactive<StoryType>({title: Story().Title(stories.value[currentStory-1])} as StoryType); 
     const pause = ref(false);
     const viewport = ref(null);
     let threeSvc: ThreeService;
@@ -37,26 +34,19 @@ export default defineComponent({
     const addBaseStoryToScene = (threeSvc: ThreeService) => {
       threeSvc.state.scene.background = new Color(DefaultColors().black);
       threeSvc.ClearScene();
+      const storyOverview = usePredefined().BaseStoryCircle(
+          story,
+          false,
+        );
       threeSvc.AddGroupsToScene(
-        usePredefined().BaseStoryCircle(
-          Story().Title(stories.value[currentStory-1]),
-          story.frames || {},
-          story.centerWords || {},
-          
-          // `De komst van \n de Turkse \n handelaar`,
-          // TestData().storyWordLinks,
-          // TestData().centerWords,
-          true,
-        ),
+       storyOverview.storyOverview
       );
-
-      // threeSvc.AddGroupsToScene(TestData().story(false));
       // threeSvc.AddToScene(Tools().Grid());
       threeSvc.state.scene.updateMatrixWorld(true);
     };
-    const showPauseScreen = () => {
+    const showPauseScreen = (threeSvc: ThreeService) => {
       threeSvc.ClearScene();
-      threeSvc.AddToScene(Tools().Grid());
+      // threeSvc.AddToScene(Tools().Grid());
       threeSvc.AddGroupsToScene(usePredefined().PausedStories(Story().GetStoryTitles(stories.value)));
     };
     
@@ -65,7 +55,7 @@ export default defineComponent({
       if (!e && stories) {
         addBaseStoryToScene(threeSvc);
       }else{
-        showPauseScreen();
+        showPauseScreen(threeSvc);
       }
     });
 
@@ -80,6 +70,12 @@ export default defineComponent({
 
       story.frames = frameRecord;
       story.centerWords = centerWords as Record<string, Vector3>;
+      story.frameImagePositions = usePredefined().BaseStoryCircle(
+          story,
+          false,
+        ).imagePositions;
+
+      console.log('imagepositions',story.frameImagePositions);
     };
 
     onMounted(async () => {

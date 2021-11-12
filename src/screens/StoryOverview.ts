@@ -11,7 +11,7 @@ const StoryOverview = (): {
     centerWords: Record<string, Vector3>,
     showWords: true | false,
     middleCircleSchema: CircleSchema,
-  ) => Array<Group>;
+  ) => { groups: Array<Group>; imagePositions: Array<Vector3> };
 } => {
   const groupHelper = GroupHelper();
 
@@ -28,10 +28,13 @@ const StoryOverview = (): {
       groups,
     );
     groupHelper.AddObjectsTogroups(
-      StoryCircleItems().Create(storyitems, showWords),
+      StoryCircleItems().Create(storyitems, showWords).groups,
       groups,
     );
-    return groups;
+    return {
+      groups: groups,
+      imagePositions: StoryCircleItems().Create(storyitems, showWords).imagePositions,
+    };
   };
 
   return { Create };
