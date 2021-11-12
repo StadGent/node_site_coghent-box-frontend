@@ -3,10 +3,12 @@ import Defaults from './defaults.config';
 import StoryPaused from '@/screens/StoryPaused';
 import GroupHelper from './GroupHelper';
 import StoryOverview from '@/screens/StoryOverview';
+import { Entity } from '@/models/GraphqlModel';
 
 export type StoryType = {
   title: string;
-  frames: Record<string, string>;
+  frames: Array<Entity>;
+  framesRecord: Record<string, string>;
   centerWords: Record<string, Vector3>;
   frameImagePositions?: Array<Vector3>;
 };
@@ -21,7 +23,7 @@ const usePredefined = (): {
   const BaseStoryCircle = (story: StoryType, showWords: true | false) => {
     const storyOverview = StoryOverview().Create(
       story.title,
-      story.frames,
+      story.framesRecord,
       story.centerWords,
       showWords,
       Defaults().Circle(),
