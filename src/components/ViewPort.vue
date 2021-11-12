@@ -6,6 +6,7 @@
 <script lang="ts">
 import usePredefined from '@/Three/usePredefined';
 import Story from '@/composables/story';
+import Frame from '@/composables/frame';
 import Tools from '@/Three/Tools';
 import TestData from '@/Three/TestData';
 import ThreeService from '@/services/ThreeService';
@@ -48,7 +49,7 @@ export default defineComponent({
           true,
         ),
       );
-      
+
       // threeSvc.AddGroupsToScene(TestData().story(false));
       // threeSvc.AddToScene(Tools().Grid());
       threeSvc.state.scene.updateMatrixWorld(true);
@@ -70,11 +71,11 @@ export default defineComponent({
 
     const buildStory = async () => {
       const storyFramesIds = Story().RelationIds(stories.value[currentStory-1]);
-      const frames = await Story().GetFrames(storyFramesIds);
-      const frameTitles = Story().GetFrameTitles(frames);
+      const frames = await Frame().GetFrames(storyFramesIds);
+      const frameTitles = Frame().GetFrameTitles(frames);
       const centerWords = Story().CreateCenterWords(frameTitles);
-      const frameRecord = Story().CreateFrameRecord(frames);
-      const assetsFromFrame = await Story().GetAssetsFromFrame(frames[0].id);
+      const frameRecord = Frame().CreateFrameRecord(frames);
+      const assetsFromFrame = await Frame().GetAssetsFromFrame(frames[0].id);
       console.log('assets from frame',assetsFromFrame);
 
       story.frames = frameRecord;
