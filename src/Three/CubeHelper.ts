@@ -8,7 +8,7 @@ const CubeHelper = (): {
   GetCubePositions: (cubes: Array<Mesh>) => Array<Vector3>;
   CreateSchema: (position: Vector3, url: string, dimensions?: Vector3) => CubeSchema;
   GetCubesPositions: (cubes: Array<Mesh>) => Array<Vector3>;
-  HighlightImage: (imageCubePosition: Vector3, dimensions?: Vector3) => Mesh;
+  HighlightImage: (schema: CubeSchema) => Mesh;
 } => {
   const GetCubeParams = (cube: Mesh<BoxGeometry, MeshBasicMaterial>) => {
     return cube.geometry.parameters as CubeParams;
@@ -45,12 +45,12 @@ const CubeHelper = (): {
     return positions;
   };
 
-  const HighlightImage = (imageCubePosition: Vector3, dimensions?: Vector3) => {
+  const HighlightImage = (schema: CubeSchema) => {
     const cube = SchemaCube().CreateCube({
-      position: imageCubePosition,
+      position: schema.position,
       params: {
-        width: (dimensions?.x as number) + 0.2 || 2.2,
-        height: (dimensions?.y as number) + 0.2 || 2.2,
+        width: schema.params.width + 0.2 || 2.2,
+        height: schema.params.height + 0.2 || 2.2,
         color: DefaultColors().pink,
       },
     });

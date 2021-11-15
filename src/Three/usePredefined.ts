@@ -4,10 +4,12 @@ import StoryPaused from '@/screens/StoryPaused';
 import GroupHelper from './GroupHelper';
 import StoryOverview from '@/screens/StoryOverview';
 import { Entity } from '@/models/GraphqlModel';
+import { CubeSchema } from './CubeSchema';
 
 export type StoryType = {
   title: string;
   frames: Array<Entity>;
+  frameSchemas?: Array<CubeSchema>;
   framesRecord: Record<string, string>;
   centerWords: Record<string, Vector3>;
   frameImagePositions?: Array<Vector3>;
@@ -17,7 +19,7 @@ const usePredefined = (): {
   BaseStoryCircle: (
     story: StoryType,
     showWords: true | false,
-  ) => { storyOverview: Array<Group>; imagePositions: Array<Vector3> };
+  ) => { storyOverview: Array<Group>; schemas: Array<CubeSchema> };
   PausedStories: (currentStory: string, storyTitles: Array<string>) => Array<Group>;
 } => {
   const BaseStoryCircle = (story: StoryType, showWords: true | false) => {
@@ -31,7 +33,7 @@ const usePredefined = (): {
 
     return {
       storyOverview: storyOverview.groups,
-      imagePositions: storyOverview.imagePositions,
+      schemas: storyOverview.schemas as Array<CubeSchema>,
     };
   };
 

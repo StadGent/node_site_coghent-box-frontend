@@ -3,6 +3,7 @@ import GroupHelper from '@/Three/GroupHelper';
 import { Group, Vector3 } from 'three';
 import StoryCircle from '@/Three/SectionStoryCircle';
 import StoryCircleItems from '@/Three/SectionStoryCircleItems';
+import { CubeSchema } from '@/Three/CubeSchema';
 
 const StoryOverview = (): {
   Create: (
@@ -11,7 +12,7 @@ const StoryOverview = (): {
     centerWords: Record<string, Vector3>,
     showWords: true | false,
     middleCircleSchema: CircleSchema,
-  ) => { groups: Array<Group>; imagePositions: Array<Vector3> };
+  ) => { groups: Array<Group>; schemas: Array<CubeSchema> };
 } => {
   const groupHelper = GroupHelper();
 
@@ -33,7 +34,7 @@ const StoryOverview = (): {
     );
     return {
       groups: groups,
-      imagePositions: StoryCircleItems().Create(storyitems, showWords).imagePositions,
+      schemas: StoryCircleItems().Create(storyitems, showWords).schemas,
     };
   };
 

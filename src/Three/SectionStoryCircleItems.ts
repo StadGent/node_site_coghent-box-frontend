@@ -1,6 +1,6 @@
 import Correction from '@/Three/Correction';
 import CubeHelper from '@/Three/CubeHelper';
-import SchemaCube, { CubeParams } from '@/Three/CubeSchema';
+import SchemaCube, { CubeParams, CubeSchema } from '@/Three/CubeSchema';
 import DefaultColors from '@/Three/defaults.color';
 import DefaultsHelper from '@/Three/DefaultsHelper';
 import GroupHelper from '@/Three/GroupHelper';
@@ -15,7 +15,7 @@ const StoryCircleItems = (): {
   Create: (
     storyItems: Record<string, string>,
     showWords: true | false,
-  ) => { groups: Array<Group>; imagePositions: Array<Vector3> };
+  ) => { groups: Array<Group>; schemas: Array<CubeSchema> };
 } => {
   const Lines = (items: number) => {
     const schemas: Array<LineSchema> = [];
@@ -57,10 +57,12 @@ const StoryCircleItems = (): {
 
   const AddImagesToLine = (links: Array<string>) => {
     const cubes: Array<Mesh> = [];
+    const schemas: Array<CubeSchema> = [];
     for (let i = 0; i < links.length; i++) {
       const position = Correction().CorrectImageBoxPositionRight(i);
       if (i < 3) {
         const schema = CubeHelper().CreateSchema(position, links[i]);
+        schemas.push(schema);
         cubes.push(SchemaCube().CreateImageCube(schema));
       } else {
         const schema = CubeHelper().CreateSchema(position, links[i]);
@@ -71,7 +73,7 @@ const StoryCircleItems = (): {
     //   CubeHelper().GetCubesPositions(cubes),
     // );
     // const alcubes = cubes.concat(val.cubes);
-    return { cubes: cubes, lines: undefined };
+    return { cubes: cubes, lines: undefined, schemas: schemas };
   };
 
   const Create = (storyItems: Record<string, string>, showWords: true | false) => {
@@ -97,9 +99,7 @@ const StoryCircleItems = (): {
     }
     return {
       groups: groups,
-      imagePositions: CubeHelper().GetCubePositions(
-        AddImagesToLine(Object.values(storyItems)).cubes,
-      ),
+      schemas: AddImagesToLine(Object.values(storyItems)).schemas,
     };
   };
 

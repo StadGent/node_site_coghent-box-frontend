@@ -17,6 +17,7 @@ import { Entity } from 'coghent-vue-3-component-library/lib/queries';
 import CubeHelper from '@/Three/CubeHelper';
 import Common from '@/composables/common';
 import FrameOverview from '@/screens/FrameOverview';
+import { CubeSchema } from '@/Three/CubeSchema';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -41,9 +42,9 @@ export default defineComponent({
       threeSvc.ClearScene();
       const storyOverview = usePredefined().BaseStoryCircle(story, false);
       threeSvc.AddGroupsToScene(storyOverview.storyOverview);
-      threeSvc.AddToScene(
-        CubeHelper().HighlightImage(story.frameImagePositions?.[2] as Vector3),
-      );
+      // threeSvc.AddToScene(
+      //   CubeHelper().HighlightImage(story.frameSchemas?.[0] as CubeSchema),
+      // );
       // threeSvc.AddToScene(Tools().Grid());
       threeSvc.state.scene.updateMatrixWorld(true);
     };
@@ -58,9 +59,10 @@ export default defineComponent({
 
     const addFrameOverviewToScene = async (threeSvc: ThreeService, frame: Entity) => {
       threeSvc.ClearScene();
-      threeSvc.AddGroupsToScene((await FrameOverview(frame).Create()).groups);
+      const overviewFrame = await FrameOverview(frame).Create();
+      threeSvc.AddGroupsToScene(overviewFrame.groups);
       threeSvc.AddToScene(
-        CubeHelper().HighlightImage((await FrameOverview(frame).Create()).positions[2] as Vector3, new Vector3(4,4,0)),
+        CubeHelper().HighlightImage(overviewFrame.schemas[2] as CubeSchema),
       );
     };
 
@@ -82,10 +84,11 @@ export default defineComponent({
       story.frames = frames;
       story.framesRecord = frameRecord;
       story.centerWords = centerWords as Record<string, Vector3>;
-      story.frameImagePositions = usePredefined().BaseStoryCircle(
+      story.frameSchemas = usePredefined().BaseStoryCircle(
         story,
         false,
-      ).imagePositions;
+      ).schemas as Array<CubeSchema>;
+      console.log(story.frameSchemas);
     };
 
     onMounted(async () => {
