@@ -17,7 +17,7 @@ const FrameOverview = (
   const CreateImageCubes = (assets: Record<string, string>) => {
     const cubes: Array<Mesh> = [];
     const schemas: Array<CubeSchema> = [];
-    let pos = 0;
+    let pos = -15;
     for (const key in assets) {
       const schema = CubeHelper().CreateSchema(
         new Vector3(pos, 0, 0),

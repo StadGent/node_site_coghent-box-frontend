@@ -13,6 +13,7 @@ export type StoryType = {
   framesRecord: Record<string, string>;
   centerWords: Record<string, Vector3>;
   frameImagePositions?: Array<Vector3>;
+  HighlightAssetSchemas?: Array<CubeSchema>;
 };
 
 const usePredefined = (): {
