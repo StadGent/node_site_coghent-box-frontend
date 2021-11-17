@@ -9,6 +9,7 @@ const CubeHelper = (): {
   CreateSchema: (position: Vector3, url: string, dimensions?: Vector3) => CubeSchema;
   GetCubesPositions: (cubes: Array<Mesh>) => Array<Vector3>;
   HighlightImage: (schema: CubeSchema) => Mesh;
+  ScaleBoxImage: (boxImage: Mesh, scale: Vector3) => void;
 } => {
   const GetCubeParams = (cube: Mesh<BoxGeometry, MeshBasicMaterial>) => {
     return cube.geometry.parameters as CubeParams;
@@ -58,6 +59,11 @@ const CubeHelper = (): {
     return cube;
   };
 
+  const ScaleBoxImage = (boxImage: Mesh, scale: Vector3) => {
+    console.log(boxImage);
+    boxImage.scale.set(scale.x, scale.y, scale.z);
+  };
+
   return {
     GetCubeParams,
     GetCubePosition,
@@ -65,6 +71,7 @@ const CubeHelper = (): {
     CreateSchema,
     GetCubesPositions,
     HighlightImage,
+    ScaleBoxImage,
   };
 };
 
