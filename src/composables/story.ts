@@ -22,7 +22,10 @@ const Story = (): {
   };
   const RelationIds = (story: Entity) => {
     const ids: Array<string> = [];
-    story.relations?.forEach((str) => {
+    const components = story.relations?.filter(
+      (relation) => relation?.type == 'components',
+    );
+    components?.forEach((str) => {
       ids.push(Common().FilterOutIdAfterSlash(str?.key as string));
     });
     return ids;

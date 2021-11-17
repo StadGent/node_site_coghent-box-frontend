@@ -16,6 +16,7 @@ import { defineComponent, onMounted, PropType, reactive, ref, watch } from 'vue'
 import { BufferGeometry, Color, Material, Mesh, Vector3 } from 'three';
 import DefaultColors from '@/Three/defaults.color';
 import { Entity } from 'coghent-vue-3-component-library/lib/queries';
+import { Entity as _Entity } from '@/models/GraphqlModel';
 import CubeHelper from '@/Three/CubeHelper';
 import Common from '@/composables/common';
 import FrameOverview from '@/screens/FrameOverview';
@@ -35,22 +36,21 @@ export default defineComponent({
   setup(props) {
     const stories = ref(props.stories);
     const currentStory = 1;
-    const story = reactive<StoryType>({
-      title: Story().Title(stories.value[currentStory - 1]),
-    } as StoryType);
+    const currentFrame = 1;
+    const story = reactive<StoryType>({} as StoryType);
     const pause = ref(false);
     const viewport = ref(null);
     let threeSvc: ThreeService;
     let audioSchema: any;
     let audioHelper: any;
-    let toRemove: Mesh<BufferGeometry, Material|Material[]>[] = [];
+    let toRemove: Mesh<BufferGeometry, Material | Material[]>[] = [];
     const storyService = new StoryService();
-
 
     const addBaseStoryToScene = (threeSvc: ThreeService) => {
       threeSvc.state.scene.background = new Color(DefaultColors().black);
       threeSvc.ClearScene();
       const storyOverview = usePredefined().BaseStoryCircle(story, false);
+      console.log('Storyoverview', storyOverview);
       threeSvc.AddGroupsToScene(storyOverview.storyOverview);
       threeSvc.AddToScene(
         CubeHelper().HighlightImage(story.frameSchemas?.[0] as CubeSchema),
@@ -82,35 +82,46 @@ export default defineComponent({
     };
     const PauseAudio = () => {
       audioHelper.Pause();
-      console.log('PAUSE')
-      console.log('CURRENTIME', audioSchema.audio.context.currentTime)
+      console.log('PAUSE');
+
+      console.log('CURRENTIME', audioSchema.audio.context.currentTime);
     };
 
-    const buildStory = async () => {
+    const buildStory = () => {
+      story.title = storyService.activeStoryTitle;
       story.frames = storyService.frames;
+      console.log('FRAMES =>', story.frames);
+      console.log('assets =>', storyService.activeAssets);
       story.framesRecord = storyService.activeAssets;
-      story.centerWords =  storyService.centerWords;
+      story.centerWords = storyService.centerWords;
       story.frameSchemas = usePredefined().BaseStoryCircle(story, false)
         .schemas as Array<CubeSchema>;
-      console.log('STORY',story);
     };
 
     const hightlightFrameAsset = async (schema: CubeSchema) => {
-      toRemove.forEach((obj) => threeSvc.state.scene.remove(obj))
+      toRemove.forEach((obj) => threeSvc.state.scene.remove(obj));
       const highlight = CubeHelper().HighlightImage(schema);
       threeSvc.AddToScene(highlight);
       toRemove.push(highlight);
     };
+
     const startStory = () => {
       const funcs = [
-        async () => await addFrameOverviewToScene(threeSvc, story.frames[1] as Entity),
-        async () => await hightlightFrameAsset(story.HighlightAssetSchemas?.[0] as CubeSchema),
-        async () => await hightlightFrameAsset(story.HighlightAssetSchemas?.[1] as CubeSchema),
+        async () =>
+          await addFrameOverviewToScene(threeSvc, storyService.activeFrame as Entity),
+        async () =>
+          await hightlightFrameAsset(story.HighlightAssetSchemas?.[0] as CubeSchema),
+        async () =>
+          await hightlightFrameAsset(story.HighlightAssetSchemas?.[1] as CubeSchema),
         // async () =>  CubeHelper().ScaleBoxImage(toRemove[0], new Vector3(4,4,0)),
-        async () => await hightlightFrameAsset(story.HighlightAssetSchemas?.[2] as CubeSchema),
-        async () => await hightlightFrameAsset(story.HighlightAssetSchemas?.[3] as CubeSchema),
-        async () => await hightlightFrameAsset(story.HighlightAssetSchemas?.[4] as CubeSchema),
-        async () => await hightlightFrameAsset(story.HighlightAssetSchemas?.[5] as CubeSchema),
+        async () =>
+          await hightlightFrameAsset(story.HighlightAssetSchemas?.[2] as CubeSchema),
+        async () =>
+          await hightlightFrameAsset(story.HighlightAssetSchemas?.[3] as CubeSchema),
+        async () =>
+          await hightlightFrameAsset(story.HighlightAssetSchemas?.[4] as CubeSchema),
+        async () =>
+          await hightlightFrameAsset(story.HighlightAssetSchemas?.[5] as CubeSchema),
       ];
       audioHelper.Play();
       let current = 0;
@@ -128,17 +139,15 @@ export default defineComponent({
     };
 
     onMounted(async () => {
-      
       threeSvc = new ThreeService(viewport);
       audioSchema = AudioSchema(threeSvc);
-      audioHelper = AudioHelper(audioSchema);
       audioSchema.loadAudioFile('/Audio/example.mp3');
+      audioHelper = AudioHelper(audioSchema);
       if (stories.value) {
-        await storyService.addStories(stories.value)
-        console.log('stories => ', stories.value);
-        await buildStory();
-        // startStory();
-        addBaseStoryToScene(threeSvc);
+        await storyService.addStories(stories.value, currentStory - 1);
+        buildStory();
+        startStory();
+        // addBaseStoryToScene(threeSvc);
         // await addFrameOverviewToScene(threeSvc, storyService.activeFrame as Entity);
       }
       threeSvc.Animate();

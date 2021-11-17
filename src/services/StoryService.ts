@@ -37,7 +37,7 @@ export default class StoryService {
     this.activeStoryNumber = activeStoryNumber;
     this.setActiveStory(this.stories[activeStoryNumber]);
     await this.setStoryData();
-    this.getAssetsFromOtherFrames();
+    // this.getAssetsFromOtherFrames();
   }
   async setStoryData() {
     await this.getFramesFromCurrentStory();
