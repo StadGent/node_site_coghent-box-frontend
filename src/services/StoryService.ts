@@ -24,19 +24,22 @@ export default class StoryService {
   stories: Array<Entity> = [];
   frames: Array<_Entity> = [];
   activeStory: Entity = {} as Entity;
+  activeStoryNumber: number = 0;
+  activeStoryTitle: string = '';
   activeFrame: _Entity = {} as _Entity;
   activeAssets: Record<string, string> = {};
   activeFrameTitles: Array<string> = [];
   centerWords: Record<string, Vector3> = {};
 
-  async addStories(stories: Array<Entity>) {
+  async addStories(stories: Array<Entity>, activeStoryNumber: number) {
     this.stories = [...stories];
-    this.activeStory = stories[0];
     console.log(`Added ${this.stories.length} stories to StoryData`);
+    this.activeStoryNumber = activeStoryNumber;
+    this.setActiveStory(this.stories[activeStoryNumber]);
     await this.setStoryData();
+    this.getAssetsFromOtherFrames();
   }
   async setStoryData() {
-    this.setActiveStory(this.stories[0]);
     await this.getFramesFromCurrentStory();
     await this.activeFrameAssets();
     this.setActiveFrameTitles();
@@ -45,6 +48,8 @@ export default class StoryService {
 
   setActiveStory(activeStory: Entity) {
     this.activeStory = activeStory as Entity;
+    this.activeStoryTitle = Story().Title(this.activeStory);
+    console.log('Activestory => ', this.activeStory);
   }
 
   async getFramesFromCurrentStory() {
@@ -72,5 +77,23 @@ export default class StoryService {
   setCenterWords() {
     this.centerWords = Story().CreateCenterWords(this.activeFrameTitles);
     console.log('center words => ', this.centerWords);
+  }
+
+  async getAssetsFromFrame(frameNumber: number) {
+    const indexOfCurrentStorie = this.stories.indexOf(this.activeStory);
+    if (frameNumber == indexOfCurrentStorie)
+      console.log(`Assets for frame ${frameNumber} are already get`);
+    const assets = await Frame().GetAssetsFromFrame(this.frames[frameNumber].id);
+    console.log(`Assets from frame ${frameNumber} =>`, assets);
+    return assets;
+  }
+
+  getAssetsFromOtherFrames() {
+    const otherFrames = [...Array(this.frames.length).keys()];
+    otherFrames.splice(otherFrames.indexOf(0, 1));
+    otherFrames.forEach(async (frameNumber) => {
+      const assets = await this.getAssetsFromFrame(frameNumber);
+      console.log('assets from other frames', assets);
+    });
   }
 }
