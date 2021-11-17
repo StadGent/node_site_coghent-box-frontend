@@ -22,6 +22,7 @@ import FrameOverview from '@/screens/FrameOverview';
 import { CubeSchema } from '@/Three/CubeSchema';
 import AudioSchema from '@/Three/AudioSchema';
 import AudioHelper from '@/Three/AudioHelper';
+import StoryService from '@/services/StoryService';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -43,6 +44,8 @@ export default defineComponent({
     let audioSchema: any;
     let audioHelper: any;
     let toRemove: Mesh<BufferGeometry, Material|Material[]>[] = [];
+    const storyService = new StoryService();
+
 
     const addBaseStoryToScene = (threeSvc: ThreeService) => {
       threeSvc.state.scene.background = new Color(DefaultColors().black);
@@ -72,28 +75,24 @@ export default defineComponent({
       const overviewFrame = await FrameOverview(frame).Create();
       threeSvc.AddGroupsToScene(overviewFrame.groups);
       story.HighlightAssetSchemas = overviewFrame.schemas;
+      hightlightFrameAsset(overviewFrame.schemas[0]);
     };
     const PlayAudio = () => {
       audioHelper.Play();
     };
     const PauseAudio = () => {
       audioHelper.Pause();
+      console.log('PAUSE')
+      console.log('CURRENTIME', audioSchema.audio.context.currentTime)
     };
 
     const buildStory = async () => {
-      const storyFramesIds = Story().RelationIds(stories.value[currentStory - 1]);
-      const frames = await Frame().GetFrames(storyFramesIds);
-      const assetsFromFrame = await Frame().GetAssetsFromFrame(frames[0].id);
-      console.log('assets from frame 1', assetsFromFrame);
-      const frameTitles = Frame().GetFrameTitles(frames);
-      const centerWords = Story().CreateCenterWords(frameTitles);
-      const frameRecord = Frame().CreateFrameRecord(frames);
-
-      story.frames = frames;
-      story.framesRecord = assetsFromFrame;
-      story.centerWords = centerWords as Record<string, Vector3>;
+      story.frames = storyService.frames;
+      story.framesRecord = storyService.activeAssets;
+      story.centerWords =  storyService.centerWords;
       story.frameSchemas = usePredefined().BaseStoryCircle(story, false)
         .schemas as Array<CubeSchema>;
+      console.log('STORY',story);
     };
 
     const hightlightFrameAsset = async (schema: CubeSchema) => {
@@ -107,8 +106,11 @@ export default defineComponent({
         async () => await addFrameOverviewToScene(threeSvc, story.frames[1] as Entity),
         async () => await hightlightFrameAsset(story.HighlightAssetSchemas?.[0] as CubeSchema),
         async () => await hightlightFrameAsset(story.HighlightAssetSchemas?.[1] as CubeSchema),
+        // async () =>  CubeHelper().ScaleBoxImage(toRemove[0], new Vector3(4,4,0)),
         async () => await hightlightFrameAsset(story.HighlightAssetSchemas?.[2] as CubeSchema),
         async () => await hightlightFrameAsset(story.HighlightAssetSchemas?.[3] as CubeSchema),
+        async () => await hightlightFrameAsset(story.HighlightAssetSchemas?.[4] as CubeSchema),
+        async () => await hightlightFrameAsset(story.HighlightAssetSchemas?.[5] as CubeSchema),
       ];
       audioHelper.Play();
       let current = 0;
@@ -119,23 +121,25 @@ export default defineComponent({
           audioHelper.DoEvent(Math.floor(audioSchema.audio.context.currentTime), time)
         ) {
           funcs[current]();
-          time += 2;
+          time += 4;
           current++;
         }
       }, 1000);
     };
 
     onMounted(async () => {
+      
       threeSvc = new ThreeService(viewport);
       audioSchema = AudioSchema(threeSvc);
       audioHelper = AudioHelper(audioSchema);
       audioSchema.loadAudioFile('/Audio/example.mp3');
       if (stories.value) {
+        await storyService.addStories(stories.value)
         console.log('stories => ', stories.value);
         await buildStory();
-        startStory();
-        // addBaseStoryToScene(threeSvc);
-        // await addFrameOverviewToScene(threeSvc, story.frames[1] as Entity);
+        // startStory();
+        addBaseStoryToScene(threeSvc);
+        // await addFrameOverviewToScene(threeSvc, storyService.activeFrame as Entity);
       }
       threeSvc.Animate();
     });
