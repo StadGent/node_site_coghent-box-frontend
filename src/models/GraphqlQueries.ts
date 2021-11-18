@@ -1,4 +1,4 @@
-export const GetFullEntity = `query getEntityById($id: String!) {
+export const GetAssetEntity = `query getEntityById($id: String!) {
                                 Entity(id: $id) {
                                   id
                                   type
@@ -13,11 +13,6 @@ export const GetFullEntity = `query getEntityById($id: String!) {
                                   mediafiles {
                                     _id
                                     original_file_location
-                                  }
-                                  relations {
-                                    key
-                                    type
-                                    label
                                   }
                                 }
                               }`;

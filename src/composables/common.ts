@@ -1,6 +1,6 @@
 import { environment as env } from '@/environments';
 import { ComponentRelation } from '@/models/GraphqlModel';
-import { GetFullEntity } from '@/models/GraphqlQueries';
+import { GetAssetEntity } from '@/models/GraphqlQueries';
 import axios from 'axios';
 
 const Common = (): {
@@ -8,6 +8,7 @@ const Common = (): {
   GetRelationComponents: (id: string) => Promise<Array<ComponentRelation>>;
   FilterOutIdAfterSlash: (str: string) => string;
   RemoveEntersFromString: (str: string) => string;
+  ComponentIds: (components: Array<ComponentRelation>) => Array<string>;
 } => {
   const GetEntityById = async (id: string) => {
     try {
@@ -15,7 +16,7 @@ const Common = (): {
         url: `${env.graphqlService}`,
         method: 'post',
         data: {
-          query: GetFullEntity,
+          query: GetAssetEntity,
           variables: {
             id: id,
           },
@@ -45,11 +46,21 @@ const Common = (): {
   const RemoveEntersFromString = (str: string) => {
     return str.replace(/\n/g, '');
   };
+
+  const ComponentIds = (components: Array<ComponentRelation>) => {
+    const ids: Array<string> = [];
+    components.forEach((str) => {
+      ids.push(Common().FilterOutIdAfterSlash(str?.key as string));
+    });
+    return ids;
+  };
+
   return {
     GetEntityById,
     GetRelationComponents,
     FilterOutIdAfterSlash,
     RemoveEntersFromString,
+    ComponentIds,
   };
 };
 

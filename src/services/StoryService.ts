@@ -4,15 +4,11 @@ import { Entity } from 'coghent-vue-3-component-library/lib/queries';
 import { Entity as _Entity } from '@/models/GraphqlModel';
 import Frame from '@/composables/frame';
 import { Vector3 } from 'three';
+import Common from '@/composables/common';
 
 type FrameData = {
-  frame: Entity;
-  assets: [
-    {
-      asset: Entity;
-      schema: CubeSchema;
-    },
-  ];
+  frame: _Entity;
+  assets: Array<_Entity>;
 };
 type StoryData = {
   title: string;
@@ -20,80 +16,73 @@ type StoryData = {
 };
 
 export default class StoryService {
-  storyData: StoryData = {} as StoryData;
-  stories: Array<Entity> = [];
-  frames: Array<_Entity> = [];
+  stories: Entity[] = [];
   activeStory: Entity = {} as Entity;
-  activeStoryNumber: number = 0;
-  activeStoryTitle: string = '';
+  storyFrames: Array<_Entity> = [];
   activeFrame: _Entity = {} as _Entity;
-  activeAssets: Record<string, string> = {};
-  activeFrameTitles: Array<string> = [];
-  centerWords: Record<string, Vector3> = {};
+  frameAssets: Array<_Entity> = [];
 
-  async addStories(stories: Array<Entity>, activeStoryNumber: number) {
+  async init(stories: Array<Entity>) {
+    this.addStories(stories);
+    this.activeStory = stories[0];
+
+    console.log('storyTitle()');
+    this.storyFrames = await this.getFramesFromStory(this.activeStory);
+    this.activeFrame = this.storyFrames[0];
+    console.log('getFramesFromStory()', frames);
+    console.log('GetFrameTitles()', Frame().GetFrameTitles(this.storyFrames));
+    console.log('GetFrameMainImage()', Frame().GetFrameMainImage(this.activeFrame));
+    console.log('getAssetsFromFrame()');
+    this.frameAssets = await this.getAssetsFromFrame(this.activeFrame);
+    console.log('createStoryData()', this.createStoryData());
+  }
+
+  async addStories(stories: Array<Entity>) {
     this.stories = [...stories];
-    console.log(`Added ${this.stories.length} stories to StoryData`);
-    this.activeStoryNumber = activeStoryNumber;
-    this.setActiveStory(this.stories[activeStoryNumber]);
-    await this.setStoryData();
-    // this.getAssetsFromOtherFrames();
-  }
-  async setStoryData() {
-    await this.getFramesFromCurrentStory();
-    await this.activeFrameAssets();
-    this.setActiveFrameTitles();
-    this.setCenterWords();
+    console.info('addStories()', this.stories);
   }
 
-  setActiveStory(activeStory: Entity) {
-    this.activeStory = activeStory as Entity;
-    this.activeStoryTitle = Story().Title(this.activeStory);
-    console.log('Activestory => ', this.activeStory);
+  storyTitle(story: Entity) {
+    return Story().Title(story);
   }
 
-  async getFramesFromCurrentStory() {
-    const frameIds = Story().RelationIds(this.activeStory);
-    let frames: Array<_Entity> = [];
-    console.log('Frame IDS => ', frameIds);
-    if (frameIds.length > 0) {
-      frames = await Frame().GetFrames(frameIds);
-      this.frames = frames;
-      this.activeFrame = frames[0];
-      console.log('Frames => ', frames);
-    }
+  async getFramesFromStory(story: Entity) {
+    const frameIds = Story().RelationIds(story);
+    console.log('RelationIds()', frameIds);
+    return await Frame().GetFrames(frameIds);
   }
 
-  async activeFrameAssets() {
-    this.activeAssets = await Frame().GetAssetsFromFrame(this.activeFrame.id);
-    console.log('ActiveAssets => ', this.activeAssets);
-  }
-
-  setActiveFrameTitles() {
-    this.activeFrameTitles = Frame().GetFrameTitles(this.frames);
-    console.log('ActiveFrameTitles => ', this.activeFrameTitles);
-  }
-
-  setCenterWords() {
-    this.centerWords = Story().CreateCenterWords(this.activeFrameTitles);
-    console.log('center words => ', this.centerWords);
-  }
-
-  async getAssetsFromFrame(frameNumber: number) {
-    const indexOfCurrentStorie = this.stories.indexOf(this.activeStory);
-    if (frameNumber == indexOfCurrentStorie)
-      console.log(`Assets for frame ${frameNumber} are already get`);
-    const assets = await Frame().GetAssetsFromFrame(this.frames[frameNumber].id);
-    console.log(`Assets from frame ${frameNumber} =>`, assets);
+  async getAssetsFromFrame(frame: _Entity) {
+    const components = await Common().GetRelationComponents(frame.id);
+    const ids = Common().ComponentIds(components);
+    const assets: Array<_Entity> = [];
+    console.log('components', ids);
+    ids.forEach(async (id) => {
+      const asset = await Common().GetEntityById(id);
+      assets.push(asset.data.Entity);
+    });
     return assets;
   }
 
-  getAssetsFromOtherFrames() {
-    const otherFrames = [...Array(this.frames.length).keys()];
-    otherFrames.splice(otherFrames.indexOf(0, 1));
-    otherFrames.forEach(async (frameNumber) => {
-      const assets = await this.getAssetsFromFrame(frameNumber);
-      console.log('assets from other frames', assets);
+  async createFrameDataForFrame(frame: _Entity) {
+    return {
+      frame: frame,
+      assets: await this.getAssetsFromFrame(frame),
+    } as FrameData;
+  }
+
+  createFrameDataForFrames(frames: Array<_Entity>) {
+    const frameDatas: Array<FrameData> = [];
+    frames.forEach(async (frame) => {
+      frameDatas.push(await this.createFrameDataForFrame(frame));
     });
+    return frameDatas;
+  }
+
+  createStoryData() {
+    return {
+      title: this.storyTitle(this.activeStory),
+      frames: this.createFrameDataForFrames(this.storyFrames),
+    } as StoryData;
   }
 }

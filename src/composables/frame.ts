@@ -54,18 +54,12 @@ const Frame = (): {
     return record;
   };
 
-  const ComponentIds = (components: Array<ComponentRelation>) => {
-    const ids: Array<string> = [];
-    components.forEach((str) => {
-      ids.push(Common().FilterOutIdAfterSlash(str?.key as string));
-    });
-    return ids;
-  };
+
 
   const GetAssetsFromFrame = async (frameId: string) => {
     const story = await Common().GetEntityById(frameId);
     const components = await Common().GetRelationComponents(story.data.Entity.id);
-    const assetIds = ComponentIds(components);
+    const assetIds = Common().ComponentIds(components);
     const assets: Array<Entity> = [];
     for (const id of assetIds) {
       const asset = await Common().GetEntityById(id);
