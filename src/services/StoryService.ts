@@ -24,9 +24,9 @@ export default class StoryService {
   activeStory: Entity = {} as Entity;
   storyFrames: Array<_Entity> = [];
 
-  async init(stories: Array<Entity>) {
+  async init(stories: Array<Entity>, story: number) {
     this.addStories(stories);
-    this.activeStory = stories[0];
+    this.activeStory = stories[story];
     this.storyFrames = await this.getFramesFromStory(this.activeStory);
     return this.createStoryData();
   }

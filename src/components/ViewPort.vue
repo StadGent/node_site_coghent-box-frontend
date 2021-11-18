@@ -144,7 +144,7 @@ export default defineComponent({
       audioSchema.loadAudioFile('/Audio/example.mp3');
       audioHelper = AudioHelper(audioSchema);
       if (stories.value) {
-        const storyData = await storyService.init(stories.value);
+        const storyData = await storyService.init(stories.value, currentStory -1);
         console.log('storyData in viewport =>', storyData);
         // buildStory();
         // startStory();
