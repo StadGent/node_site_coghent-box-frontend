@@ -88,14 +88,14 @@ export default defineComponent({
     };
 
     const buildStory = () => {
-      story.title = storyService.activeStoryTitle;
-      story.frames = storyService.frames;
-      console.log('FRAMES =>', story.frames);
-      console.log('assets =>', storyService.activeAssets);
-      story.framesRecord = storyService.activeAssets;
-      story.centerWords = storyService.centerWords;
-      story.frameSchemas = usePredefined().BaseStoryCircle(story, false)
-        .schemas as Array<CubeSchema>;
+      // story.title = storyService.activeStoryTitle;
+      // story.frames = storyService.frames;
+      // console.log('FRAMES =>', story.frames);
+      // console.log('assets =>', storyService.activeAssets);
+      // story.framesRecord = storyService.activeAssets;
+      // story.centerWords = storyService.centerWords;
+      // story.frameSchemas = usePredefined().BaseStoryCircle(story, false)
+      //   .schemas as Array<CubeSchema>;
     };
 
     const hightlightFrameAsset = async (schema: CubeSchema) => {
@@ -107,8 +107,8 @@ export default defineComponent({
 
     const startStory = () => {
       const funcs = [
-        async () =>
-          await addFrameOverviewToScene(threeSvc, storyService.activeFrame as Entity),
+        // async () =>
+        //   await addFrameOverviewToScene(threeSvc, storyService.activeFrame as Entity),
         async () =>
           await hightlightFrameAsset(story.HighlightAssetSchemas?.[0] as CubeSchema),
         async () =>
@@ -144,9 +144,10 @@ export default defineComponent({
       audioSchema.loadAudioFile('/Audio/example.mp3');
       audioHelper = AudioHelper(audioSchema);
       if (stories.value) {
-        await storyService.addStories(stories.value, currentStory - 1);
-        buildStory();
-        startStory();
+        const storyData = await storyService.init(stories.value);
+        console.log('storyData in viewport =>', storyData);
+        // buildStory();
+        // startStory();
         // addBaseStoryToScene(threeSvc);
         // await addFrameOverviewToScene(threeSvc, storyService.activeFrame as Entity);
       }

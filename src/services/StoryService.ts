@@ -1,13 +1,17 @@
 import Story from '@/composables/story';
-import { CubeSchema } from '@/Three/CubeSchema';
 import { Entity } from 'coghent-vue-3-component-library/lib/queries';
 import { Entity as _Entity } from '@/models/GraphqlModel';
 import Frame from '@/composables/frame';
-import { Vector3 } from 'three';
 import Common from '@/composables/common';
 
+type FrameItems = {
+  entity: _Entity;
+  title: string;
+  image: string;
+};
+
 type FrameData = {
-  frame: _Entity;
+  frame: FrameItems;
   assets: Array<_Entity>;
 };
 type StoryData = {
@@ -19,27 +23,16 @@ export default class StoryService {
   stories: Entity[] = [];
   activeStory: Entity = {} as Entity;
   storyFrames: Array<_Entity> = [];
-  activeFrame: _Entity = {} as _Entity;
-  frameAssets: Array<_Entity> = [];
 
   async init(stories: Array<Entity>) {
     this.addStories(stories);
     this.activeStory = stories[0];
-
-    console.log('storyTitle()');
     this.storyFrames = await this.getFramesFromStory(this.activeStory);
-    this.activeFrame = this.storyFrames[0];
-    console.log('getFramesFromStory()', frames);
-    console.log('GetFrameTitles()', Frame().GetFrameTitles(this.storyFrames));
-    console.log('GetFrameMainImage()', Frame().GetFrameMainImage(this.activeFrame));
-    console.log('getAssetsFromFrame()');
-    this.frameAssets = await this.getAssetsFromFrame(this.activeFrame);
-    console.log('createStoryData()', this.createStoryData());
+    return this.createStoryData();
   }
 
   async addStories(stories: Array<Entity>) {
     this.stories = [...stories];
-    console.info('addStories()', this.stories);
   }
 
   storyTitle(story: Entity) {
@@ -48,7 +41,6 @@ export default class StoryService {
 
   async getFramesFromStory(story: Entity) {
     const frameIds = Story().RelationIds(story);
-    console.log('RelationIds()', frameIds);
     return await Frame().GetFrames(frameIds);
   }
 
@@ -56,7 +48,6 @@ export default class StoryService {
     const components = await Common().GetRelationComponents(frame.id);
     const ids = Common().ComponentIds(components);
     const assets: Array<_Entity> = [];
-    console.log('components', ids);
     ids.forEach(async (id) => {
       const asset = await Common().GetEntityById(id);
       assets.push(asset.data.Entity);
@@ -66,7 +57,11 @@ export default class StoryService {
 
   async createFrameDataForFrame(frame: _Entity) {
     return {
-      frame: frame,
+      frame: {
+        entity: frame,
+        title: Story().Title(frame),
+        image: Frame().GetFrameMainImage(frame),
+      },
       assets: await this.getAssetsFromFrame(frame),
     } as FrameData;
   }
