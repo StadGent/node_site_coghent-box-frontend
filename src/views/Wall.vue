@@ -6,7 +6,8 @@ import { defineComponent, ref } from 'vue';
 import ViewPort from '@/components/ViewPort.vue';
 import { useQuery } from '@vue/apollo-composable';
 import { GetFullEntitiesDocument } from 'coghent-vue-3-component-library/lib';
-import { SearchFilter } from 'coghent-vue-3-component-library/lib/queries';
+import { SearchFilter  } from 'coghent-vue-3-component-library/lib/queries';
+import { GetStoriesDocument  } from 'coghent-vue-3-component-library';
 
 export default defineComponent({
   name: 'Wall',
@@ -20,14 +21,13 @@ export default defineComponent({
       relation_filter: [],
     };
     let stories = ref<Array<any>>();
-    const { onResult: onStoryResults } = useQuery(GetFullEntitiesDocument, {
-      searchValue: searchValue,
-    });
 
-    onStoryResults((result) => {
-      const entities = result.data.Entities?.results;
-      if (entities) {
-        stories.value = [...entities];
+    const { onResult: Stories } = useQuery(GetStoriesDocument,{searchValue: searchValue})
+
+    Stories((entities) => {
+      const activeStories = entities.data.Entities?.results;
+      if (activeStories) {
+        stories.value = [...activeStories];
       }
     });
 

@@ -22,8 +22,10 @@ import Common from '@/composables/common';
 import FrameOverview from '@/screens/FrameOverview';
 import { CubeSchema } from '@/Three/CubeSchema';
 import AudioSchema from '@/Three/AudioSchema';
+import Spot from '@/Three/Spotlight';
 import AudioHelper from '@/Three/AudioHelper';
-import StoryService from '@/services/StoryService';
+import StoryService, { AssetItems, FrameData, FrameItems, StoryData } from '@/services/StoryService';
+import StoryPaused from '@/screens/StoryPaused';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -44,7 +46,19 @@ export default defineComponent({
     let audioSchema: any;
     let audioHelper: any;
     let toRemove: Mesh<BufferGeometry, Material | Material[]>[] = [];
-    const storyService = new StoryService();
+    let storyData = reactive<Array<any>>([]);
+
+    const spotlight = () => {
+      const spot = Spot();
+      spot.create(new Vector3(-5,1,0))
+      threeSvc.AddToScene(spot.SpotLight());
+      threeSvc.AddToScene(Spot().block(new Vector3(0,1,0),5));
+      setTimeout(() => {
+        spot.move(new Vector3(0,1,0),5)
+      threeSvc.AddToScene(spot.SpotLight());
+      }, 1000);
+      
+    }
 
     const addBaseStoryToScene = (threeSvc: ThreeService) => {
       threeSvc.state.scene.background = new Color(DefaultColors().black);
@@ -88,14 +102,12 @@ export default defineComponent({
     };
 
     const buildStory = () => {
-      // story.title = storyService.activeStoryTitle;
-      // story.frames = storyService.frames;
-      // console.log('FRAMES =>', story.frames);
-      // console.log('assets =>', storyService.activeAssets);
-      // story.framesRecord = storyService.activeAssets;
-      // story.centerWords = storyService.centerWords;
+      console.log('buildStory()', storyData);
+   
+    
       // story.frameSchemas = usePredefined().BaseStoryCircle(story, false)
       //   .schemas as Array<CubeSchema>;
+
     };
 
     const hightlightFrameAsset = async (schema: CubeSchema) => {
@@ -103,6 +115,7 @@ export default defineComponent({
       const highlight = CubeHelper().HighlightImage(schema);
       threeSvc.AddToScene(highlight);
       toRemove.push(highlight);
+
     };
 
     const startStory = () => {
@@ -138,15 +151,15 @@ export default defineComponent({
       }, 1000);
     };
 
-    onMounted(async () => {
+    onMounted( () => {
       threeSvc = new ThreeService(viewport);
       audioSchema = AudioSchema(threeSvc);
       audioSchema.loadAudioFile('/Audio/example.mp3');
       audioHelper = AudioHelper(audioSchema);
       if (stories.value) {
-        const storyData = await storyService.init(stories.value, currentStory -1);
-        console.log('storyData in viewport =>', storyData);
-        // buildStory();
+        storyData = stories.value;
+        console.log('=> ACTIVE STORIES <=', stories)
+        buildStory();
         // startStory();
         // addBaseStoryToScene(threeSvc);
         // await addFrameOverviewToScene(threeSvc, storyService.activeFrame as Entity);
