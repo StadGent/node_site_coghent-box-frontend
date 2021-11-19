@@ -30,3 +30,34 @@ export type Entity = {
   relations?: Array<Relation[]>;
   mediafiles?: Array<MediaFile>;
 };
+
+export type Story = {
+  id: string;
+  type: string;
+  title: Array<Metadata>;
+  metadata: Array<Metadata>;
+  mediafiles: Array<Mediafiles>;
+  frames: Array<Frame>;
+};
+
+export type Mediafiles = {
+  _id: string;
+  original_file_location: string;
+  thumbnail_file_location: string;
+  entities: Array<string>;
+};
+
+export type Frame = {
+  id: string;
+  type: string;
+  title: Array<Metadata>;
+  metadata: Array<Metadata>;
+  mediafiles: Array<Mediafiles>;
+  assets: Array<Asset>;
+};
+export type Asset = {
+  id: string;
+  title: Array<Metadata>;
+  metadata: Array<Metadata>;
+  mediafiles: Array<Mediafiles>;
+};
