@@ -78,60 +78,60 @@ export default defineComponent({
       });
     };
 
-    onResult(({ data, error }) => {
-      console.log(data?.Entities);
-      const response: EntitiesResults | undefined | null = data?.Entities;
-      if (response && response.results) {
-        const newEntities: Result[] = [];
-        const relations = new Map();
-        response.results.forEach((result, index: number) => {
-          const newEntity: any = {};
-          if (result && result.id !== 'noid') {
-            newEntity.id = result.id;
-            newEntity.type = result.type;
-            // if(result.title && result.title[0]){
-            //   newEntity.title = result.title[0].value
-            // }
-            newEntity.metadata = result.metadata;
-            if (result.mediafiles && result.mediafiles[0]) {
-              newEntity.image = result.mediafiles[0].original_file_location;
-            }
-            newEntity.relations = [];
-            result.relations?.forEach((relation) => {
-              if (relation && relation.key) {
-                const entityRel: Relation = {
-                  key: relation.key,
-                  type: relation.type,
-                  entity: undefined,
-                };
-                const rel = relations.get(relation.key);
-                if (rel) {
-                  entityRel.entity = rel;
-                } else {
-                  getEntity(relation.key)?.then((res) => {
-                    const entityData = res.data.Entity;
-                    relations.set(relation.key, entityData);
-                    entityRel.entity = {
-                      id: entityData.id,
-                      type: entityData.type,
-                      title: entityData.title[0].value,
-                      data: {},
-                      identifiers: [],
-                      metadata: [],
-                      relations: [],
-                      image: undefined,
-                    };
-                  });
-                }
-                newEntity.relations.push(entityRel);
-              }
-            });
-            newEntities.push(newEntity);
-          }
-        });
-        entities.value = newEntities;
-      }
-    });
+    // onResult(({ data, error }) => {
+    //   console.log(data?.Entities);
+    //   const response: EntitiesResults | undefined | null = data?.Entities;
+    //   if (response && response.results) {
+    //     const newEntities: Result[] = [];
+    //     const relations = new Map();
+    //     response.results.forEach((result, index: number) => {
+    //       const newEntity: any = {};
+    //       if (result && result.id !== 'noid') {
+    //         newEntity.id = result.id;
+    //         newEntity.type = result.type;
+    //         // if(result.title && result.title[0]){
+    //         //   newEntity.title = result.title[0].value
+    //         // }
+    //         newEntity.metadata = result.metadata;
+    //         if (result.mediafiles && result.mediafiles[0]) {
+    //           newEntity.image = result.mediafiles[0].original_file_location;
+    //         }
+    //         newEntity.relations = [];
+    //         result.relations?.forEach((relation) => {
+    //           if (relation && relation.key) {
+    //             const entityRel: Relation = {
+    //               key: relation.key,
+    //               type: relation.type,
+    //               entity: undefined,
+    //             };
+    //             const rel = relations.get(relation.key);
+    //             if (rel) {
+    //               entityRel.entity = rel;
+    //             } else {
+    //               getEntity(relation.key)?.then((res) => {
+    //                 const entityData = res.data.Entity;
+    //                 relations.set(relation.key, entityData);
+    //                 entityRel.entity = {
+    //                   id: entityData.id,
+    //                   type: entityData.type,
+    //                   title: entityData.title[0].value,
+    //                   data: {},
+    //                   identifiers: [],
+    //                   metadata: [],
+    //                   relations: [],
+    //                   image: undefined,
+    //                 };
+    //               });
+    //             }
+    //             newEntity.relations.push(entityRel);
+    //           }
+    //         });
+    //         newEntities.push(newEntity);
+    //       }
+    //     });
+    //     entities.value = newEntities;
+    //   }
+    // });
 
     const filterOnType = (type: string) => {
       keyword.value = type;
