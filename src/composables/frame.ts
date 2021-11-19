@@ -1,6 +1,6 @@
-import { ComponentRelation, Entity } from '@/models/GraphqlModel';
+import { Entity } from '@/models/GraphqlModel';
 import Common from './common';
-import Story from './story';
+import Story from './useStory';
 
 const Frame = (): {
   GetFrames: (ids: Array<string>) => Promise<Array<Entity>>;
@@ -48,13 +48,11 @@ const Frame = (): {
       const title = Story().Title(frame);
       const imageLink = frame.mediafiles?.[0]?.original_file_location
         ? frame.mediafiles?.[0]?.original_file_location
-        : undefined;
+        : 'http://localhost:8001/download/4226243bcfd8986cc128e5f5241589b9-2015-0070.JPG';
       record[title] = imageLink as string;
     }
     return record;
   };
-
-
 
   const GetAssetsFromFrame = async (frameId: string) => {
     const story = await Common().GetEntityById(frameId);
