@@ -1,4 +1,4 @@
-import { Color, Mesh, Vector3 } from 'three';
+import { Mesh, Vector3 } from 'three';
 import CircleHelper from './CircleHelper';
 import SchemaCircle from './CircleSchema';
 import SchemaCube from './CubeSchema';
@@ -26,7 +26,7 @@ const Spot = (): {
 
   const move = (position: Vector3, widestLenght: number) => {
     spotlight.position.set(position.x, position.y, Layers.scene);
-    spotlight.scale.set(widestLenght / 2 + 0.5, widestLenght / 2 + 0.5, Layers.scene);
+    spotlight.scale.set(widestLenght / 2 + 1, widestLenght / 2 + 1, Layers.scene);
   };
   const block = (startPosition: Vector3, height: number) => {
     return SchemaCube().CreateCube({

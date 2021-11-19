@@ -12,20 +12,19 @@ import Frame from '@/composables/frame';
 import Tools from '@/Three/Tools';
 import TestData from '@/Three/TestData';
 import ThreeService from '@/services/ThreeService';
-import { defineComponent, onMounted, PropType, reactive, ref, watch } from 'vue';
+import { defineComponent, onMounted, PropType, reactive, ref } from 'vue';
 import { BufferGeometry, Color, Material, Mesh, Vector3 } from 'three';
 import DefaultColors from '@/Three/defaults.color';
 import { Entity } from 'coghent-vue-3-component-library/lib/queries';
 import { Entity as _Entity, Story } from '@/models/GraphqlModel';
-import CubeHelper from '@/Three/CubeHelper';
-import Common from '@/composables/common';
 import FrameOverview from '@/screens/FrameOverview';
 import { CubeSchema } from '@/Three/CubeSchema';
 import AudioSchema from '@/Three/AudioSchema';
 import Spot from '@/Three/Spotlight';
 import AudioHelper from '@/Three/AudioHelper';
 import StoryPaused from '@/screens/StoryPaused';
-
+import Layers from '@/Three/defaults.layers';
+import PlayBook from '@/composables/playbook';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -38,26 +37,21 @@ export default defineComponent({
   setup(props) {
     const stories = ref(props.stories);
     const currentStory = 1;
-    const currentFrame = 1;
     const pause = ref(false);
     const viewport = ref(null);
     let threeSvc: ThreeService;
     let audioSchema: any;
     let audioHelper: any;
-    let toRemove: Mesh<BufferGeometry, Material | Material[]>[] = [];
     let storyData = reactive<Array<Story>>([]);
+    let activeStoryData = reactive<Story>({} as Story);
+    const spot = Spot();
+    const playBook = PlayBook();
+    let frameAssetSchemas: Array<CubeSchema> = [];
 
-    const spotlight = () => {
-      const spot = Spot();
-      spot.create(new Vector3(-5,1,0))
+    const moveSpotlight = (position: Vector3, widestLength: number) => {
+      spot.move(position, widestLength);
       threeSvc.AddToScene(spot.SpotLight());
-      threeSvc.AddToScene(Spot().block(new Vector3(0,1,0),5));
-      setTimeout(() => {
-        spot.move(new Vector3(0,1,0),5)
-      threeSvc.AddToScene(spot.SpotLight());
-      }, 1000);
-      
-    }
+    };
 
     const addBaseStoryToScene = (threeSvc: ThreeService) => {
       threeSvc.state.scene.background = new Color(DefaultColors().black);
@@ -84,13 +78,16 @@ export default defineComponent({
       // );
     };
 
-    const addFrameOverviewToScene = async (threeSvc: ThreeService, frame: Entity) => {
+    const addFrameOverviewToScene = (
+      threeSvc: ThreeService,
+      assets: Record<string, string>,
+    ) => {
       threeSvc.ClearScene();
-      const overviewFrame = await FrameOverview(frame).Create();
+      const overviewFrame = FrameOverview().Create(assets);
+      frameAssetSchemas = overviewFrame.schemas;
       threeSvc.AddGroupsToScene(overviewFrame.groups);
-      // story.HighlightAssetSchemas = overviewFrame.schemas;
-      // hightlightFrameAsset(overviewFrame.schemas[0]);
     };
+
     const PlayAudio = () => {
       audioHelper.Play();
     };
@@ -101,75 +98,60 @@ export default defineComponent({
       console.log('CURRENTIME', audioSchema.audio.context.currentTime);
     };
 
-    const buildStory = () => {
+    const buildFrameAssetOverview = (currentFrame: number) => {
+      playBook.addToPlayBook(() =>
+        addFrameOverviewToScene(
+          threeSvc,
+          useStory().setFrameAssets(activeStoryData, currentFrame - 1),
+        ),
+      );
+
+      playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[0].position, 4))
+      playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[1].position, 4))
+      playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[2].position, 4))
+
+
+    };
+
+    const buildStory = (currentStory: number) => {
       console.log('buildStory()', storyData);
-      const activeStory = useStory().setActiveStory(storyData, currentStory-1);
-      const activeStoryTitle = useStory().title(activeStory);
-      const frameTitles = useStory().setFrameTitles(activeStory);
-      const frameAssets = useStory().setFrameAssets(activeStory, currentFrame-1);
-      console.log('const activeStory = ', activeStory);    
-      console.log('const activeStoryTitle = ', activeStoryTitle);
-      console.log('const frameTitles = ', frameTitles);
-      console.log('const frameAssets = ', frameAssets);
-            
-      // story.frameSchemas = usePredefined().BaseStoryCircle(story, false)
-      //   .schemas as Array<CubeSchema>;
+      activeStoryData = useStory().setActiveStory(storyData, currentStory - 1);
+      // const activeStoryTitle = useStory().title(activeStoryData);
+      // const frameTitles = useStory().setFrameTitles(activeStoryData);
+      // const frameAssets = useStory().setFrameAssets(activeStoryData, currentFrame - 1);
 
-    };
-
-    const hightlightFrameAsset = async (schema: CubeSchema) => {
-      toRemove.forEach((obj) => threeSvc.state.scene.remove(obj));
-      const highlight = CubeHelper().HighlightImage(schema);
-      threeSvc.AddToScene(highlight);
-      toRemove.push(highlight);
-
-    };
+      spot.create(new Vector3(0, 0, Layers.scene));
+      buildFrameAssetOverview(1)
+      buildFrameAssetOverview(2)
+      buildFrameAssetOverview(3)
+    }
 
     const startStory = () => {
-      const funcs = [
-        // async () =>
-        //   await addFrameOverviewToScene(threeSvc, storyService.activeFrame as Entity),
-        // async () =>
-        //   await hightlightFrameAsset(story.HighlightAssetSchemas?.[0] as CubeSchema),
-        // async () =>
-        //   await hightlightFrameAsset(story.HighlightAssetSchemas?.[1] as CubeSchema),
-        // // async () =>  CubeHelper().ScaleBoxImage(toRemove[0], new Vector3(4,4,0)),
-        // async () =>
-        //   await hightlightFrameAsset(story.HighlightAssetSchemas?.[2] as CubeSchema),
-        // async () =>
-        //   await hightlightFrameAsset(story.HighlightAssetSchemas?.[3] as CubeSchema),
-        // async () =>
-        //   await hightlightFrameAsset(story.HighlightAssetSchemas?.[4] as CubeSchema),
-        // async () =>
-        //   await hightlightFrameAsset(story.HighlightAssetSchemas?.[5] as CubeSchema),
-      ];
-      audioHelper.Play();
       let current = 0;
-      let time = 3;
+      let time = 2;
       setInterval(() => {
         console.log(Math.floor(audioSchema.audio.context.currentTime));
         if (
-          audioHelper.DoEvent(Math.floor(audioSchema.audio.context.currentTime), time)
+          audioHelper.DoEvent(audioSchema.audio.context.currentTime, time)
         ) {
-          // funcs[current]();
-          time += 4;
+          playBook.getPlayBookFunctions()[current]();
+          time += 1.5;
           current++;
         }
-      }, 1000);
+      }, 500);
     };
 
-    onMounted( () => {
+    onMounted(() => {
       threeSvc = new ThreeService(viewport);
       audioSchema = AudioSchema(threeSvc);
       audioSchema.loadAudioFile('/Audio/example.mp3');
       audioHelper = AudioHelper(audioSchema);
       if (stories.value) {
+        // PlayAudio();
         storyData = stories.value;
-        console.log('=> ACTIVE STORIES <=', stories)
-        buildStory();
-        // startStory();
-        // addBaseStoryToScene(threeSvc);
-        // await addFrameOverviewToScene(threeSvc, storyService.activeFrame as Entity);
+        console.log('=> ACTIVE STORIES <=', stories);
+        buildStory(currentStory);
+        startStory();
       }
       threeSvc.Animate();
     });

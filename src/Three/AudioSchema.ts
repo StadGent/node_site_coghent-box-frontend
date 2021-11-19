@@ -29,7 +29,7 @@ const AudioSchema = (
         audio.setLoop(false);
         const end = audio.context.getOutputTimestamp().performanceTime as number;
         setInterval(() => {
-          percentageInAudio = audio.context.currentTime - 6;
+          percentageInAudio = audio.context.currentTime;
         }, 4);
       },
       (xhr) => load(xhr),
