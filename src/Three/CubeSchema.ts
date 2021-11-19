@@ -7,6 +7,7 @@ import {
 } from 'three';
 import BaseChapes from './BaseChapes';
 import ChapeHelper from './Chapehelper';
+import Layers from './defaults.layers';
 
 export type CubeParams = {
   width: number;
@@ -51,7 +52,7 @@ const SchemaCube = (): {
     });
     const cube = new Mesh(geometry, material);
     chapeHelper.SetPosition(schema.position, cube);
-    cube.position.z = 0;
+    cube.position.z = Layers.presentation;
     return cube;
   };
 
