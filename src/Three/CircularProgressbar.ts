@@ -61,7 +61,7 @@ const CircularProgressBar = (): {
     const progressDots: Array<Group> = [];
     for (let i = 0; i < schemas.length; i++) {
       let innerSchema: CircleSchema = {} as CircleSchema;
-      if(progress - 1 > i){
+      if(progress > i){
         innerSchema = CircleHelper().CreateSchema(schemas[i].position, 0.2, color || Colors().white);
       }else{
         innerSchema = CircleHelper().CreateSchema(schemas[i].position, 0.2, Colors().white);

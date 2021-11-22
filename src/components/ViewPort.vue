@@ -6,11 +6,9 @@
 </template>
 
 <script lang="ts">
-import usePredefined, { StoryType } from '@/Three/usePredefined';
 import useStory from '@/composables/useStory';
 import Frame from '@/composables/frame';
 import Tools from '@/Three/Tools';
-import TestData from '@/Three/TestData';
 import ThreeService from '@/services/ThreeService';
 import { defineComponent, onMounted, PropType, reactive, ref } from 'vue';
 import { BufferGeometry, Color, Material, Mesh, Vector3 } from 'three';
@@ -30,6 +28,7 @@ import CircularProgressBar from '@/Three/CircularProgressbar';
 import Colors from '@/Three/defaults.color';
 import StoryCircleItems from '@/Three/SectionStoryCircleItems';
 import DefaultLines from '@/Three/LinesDefault';
+import GroupHelper from '@/Three/GroupHelper';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -43,6 +42,7 @@ export default defineComponent({
 
     const stories = ref(props.stories);
     const currentStory = 1;
+    const currentFrame = 2;
     const pause = ref(false);
     const viewport = ref(null);
     let threeSvc: ThreeService;
@@ -62,26 +62,25 @@ export default defineComponent({
     const buildStoryCircle = (threeSvc: ThreeService) => {
       threeSvc.state.scene.background = new Color(Colors().black);
       threeSvc.ClearScene();
-      const circle = StoryCircle().Create('Opkomst van de\n cinema',CircleHelper().CreateSchema(new Vector3(0,0,0),2,Colors().yellow), [1,5], 'https://cdn-icons-png.flaticon.com/512/844/844994.png', true);
+      const circle = StoryCircle().Create('Opkomst van de\n cinema',CircleHelper().CreateSchema(new Vector3(0,0,0),2,Colors().yellow), [currentFrame -1,5], 'https://cdn-icons-png.flaticon.com/512/844/844994.png', true);
       threeSvc.AddGroupsToScene(circle);
 
-      const active = CircularProgressBar().createActiveSegment(new Vector3(0,0,0),2.5,3,2,Colors().pink);
+      const active = CircularProgressBar().createActiveSegment(new Vector3(0,0,0),2.5,3,currentFrame-1,Colors().pink);
       threeSvc.AddGroupsToScene(active.object);
-      const activeFrameLine = StoryCircleItems().CreateDashedLineWithWord(DefaultLines().line3(active.dotSchemas[1].position),useStory().setFrameTitles(activeStoryData)[1]);
+      const activeFrameLine = StoryCircleItems().CreateDashedLineWithWord(DefaultLines().line3(active.dotSchemas[currentFrame -1].position),useStory().setFrameTitles(activeStoryData)[currentFrame -1]);
       threeSvc.AddToScene(activeFrameLine);
-      threeSvc.AddToScene(Tools().Grid());
+
+      // const updated = GroupHelper().CreateGroup(circle);
+      // updated.position.set(-5,0,0);
+      // updated.scale.set(.5,0.5,0);
+
+      // threeSvc.AddGroupsToScene([updated]);
+      // threeSvc.AddToScene(Tools().Grid());
       threeSvc.state.scene.updateMatrixWorld(true);
     };
 
     const showPauseScreen = (threeSvc: ThreeService) => {
       threeSvc.ClearScene();      
-      // threeSvc.AddToScene(Tools().Grid());
-      // threeSvc.AddGroupsToScene(
-      //   usePredefined().PausedStories(
-      //     Common().RemoveEntersFromString(story.title),
-      //     Story().GetStoryTitles(stories.value),
-      //   ),
-      // );
     };
 
     const addFrameOverviewToScene = (
@@ -121,10 +120,6 @@ export default defineComponent({
     const buildStory = (currentStory: number) => {
       console.log('buildStory()', storyData);
       activeStoryData = useStory().setActiveStory(storyData, currentStory - 1);
-      // const activeStoryTitle = useStory().title(activeStoryData);
-      // const frameTitles = useStory().setFrameTitles(activeStoryData);
-      // const frameAssets = useStory().setFrameAssets(activeStoryData, currentFrame - 1);
-
 
       spot.create(new Vector3(0, 0, Layers.scene));
       buildStoryCircle(threeSvc);

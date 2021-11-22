@@ -34,7 +34,7 @@ const PauseState2 = (): {
   const Create = (name: string) => {
     const group = GroupHelper().CreateGroup([
       topText,
-      DefaultsPauseState().bottomText('1/3'),
+      DefaultsPauseState().bottomText('title','1/3'),
       middleText(),
       DefaultsPauseState().pauseIcon(),
     ]);

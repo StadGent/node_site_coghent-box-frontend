@@ -1,8 +1,6 @@
-import usePredefined from '@/Three/usePredefined';
-import { Group, Vector3 } from 'three';
+import { Vector3 } from 'three';
 
 const TestData = (): {
-  story: (showWords: true | false) => Array<Group>;
   storyWordLinks: Record<string, string>;
   centerWords: Record<string, Vector3>;
   titles: () => Array<string>;
@@ -29,28 +27,6 @@ const TestData = (): {
     Other: new Vector3(1, -3, 0),
   };
 
-  const story = (showWords: true | false) => {
-    const story = usePredefined().BaseStoryCircle(
-      `De komst van \n de Turkse \n handelaar`,
-      storyWordLinks,
-      centerWords,
-      showWords,
-    );
-    story[0].scale.set(0.5, 0.5, 0.5);
-    story[1].scale.set(0.5, 0.5, 0.5);
-    story[0].position.set(
-      story[0].position.x - 24,
-      story[0].position.y,
-      story[0].position.z,
-    );
-    story[1].position.set(
-      story[1].position.x - 24,
-      story[1].position.y,
-      story[1].position.z,
-    );
-    return story as Array<Group>;
-  };
-
   const titles = () => {
     return [
       'Het belang van\n godsdienst in\n het dagelijkse\n leven',
@@ -60,7 +36,7 @@ const TestData = (): {
     ];
   };
 
-  return { story, storyWordLinks, centerWords, titles };
+  return { storyWordLinks, centerWords, titles };
 };
 
 export default TestData;
