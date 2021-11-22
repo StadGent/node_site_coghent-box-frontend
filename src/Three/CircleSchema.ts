@@ -11,6 +11,7 @@ import BaseChapes from './BaseChapes';
 import ChapeHelper from './Chapehelper';
 import CircleHelper from './CircleHelper';
 import DefaultColors from './defaults.color';
+import Layers from './defaults.layers';
 
 export type CirclePoint = {
   angle: number;
@@ -39,17 +40,14 @@ const SchemaCircle = (): {
     color?: number,
   ) => Line<BufferGeometry, LineBasicMaterial>;
 } => {
-  const baseChapes = BaseChapes();
-  const chapeHelper = ChapeHelper();
-  const circleHelper = CircleHelper();
-
   const CreateCircle = (schema: CircleSchema) => {
-    const circle = baseChapes.DrawCircle(
+    const circle = BaseChapes().DrawCircle(
       schema.params.radius,
       schema.params.color || DefaultColors().green,
       schema.params.segments || 50,
     );
-    chapeHelper.SetPosition(schema.position, circle);
+    ChapeHelper().SetPosition(schema.position, circle);
+    circle.position.z = Layers.presentation;
     return circle;
   };
 
@@ -64,7 +62,7 @@ const SchemaCircle = (): {
   const CreateOuterCircle = (radius: number, position: Vector3, color?: number) => {
     const points: Array<Vector3> = [];
     for (let i = 0; i <= 360; i++) {
-      const pos = circleHelper.CalculatePointOfCircle(
+      const pos = CircleHelper().CalculatePointOfCircle(
         {
           angle: i,
           radius: radius,
@@ -76,7 +74,7 @@ const SchemaCircle = (): {
         y: pos.y,
       } as Vector3);
     }
-    return baseChapes.DrawLine(points, { color: color || DefaultColors().green });
+    return BaseChapes().DrawLine(points, { color: color || DefaultColors().green });
   };
 
   return {

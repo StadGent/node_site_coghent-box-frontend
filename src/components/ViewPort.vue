@@ -25,6 +25,8 @@ import AudioHelper from '@/Three/AudioHelper';
 import StoryPaused from '@/screens/StoryPaused';
 import Layers from '@/Three/defaults.layers';
 import PlayBook from '@/composables/playbook';
+import StoryCircle from '@/Three/SectionStoryCircle';
+import CircleHelper from '@/Three/CircleHelper';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -35,6 +37,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+
     const stories = ref(props.stories);
     const currentStory = 1;
     const pause = ref(false);
@@ -53,22 +56,20 @@ export default defineComponent({
       threeSvc.AddToScene(spot.SpotLight());
     };
 
-    const addBaseStoryToScene = (threeSvc: ThreeService) => {
+    const buildStoryCircle = (threeSvc: ThreeService) => {
       threeSvc.state.scene.background = new Color(DefaultColors().black);
       threeSvc.ClearScene();
 
-      // const storyOverview = usePredefined().BaseStoryCircle(story, false);
-      // console.log('Storyoverview', storyOverview);
-      // threeSvc.AddGroupsToScene(storyOverview.storyOverview);
-      // threeSvc.AddToScene(
-      //   CubeHelper().HighlightImage(story.frameSchemas?.[0] as CubeSchema),
-      // );
-      // threeSvc.AddToScene(Tools().Grid());
+      const circle = StoryCircle().Create('Opkomst van de\n cinema',CircleHelper().CreateSchema(new Vector3(0,0,0),2,DefaultColors().yellow), [1,5], '/src/assets/icon_bucket.svg');
+      const circle2 = StoryCircle().Create('Opkomst van de\n cinema',CircleHelper().CreateSchema(new Vector3(-10,1,0),2,DefaultColors().green), [3,5], '/src/assets/icon_bucket.svg');
+      threeSvc.AddGroupsToScene([circle, circle2]);
+      threeSvc.AddToScene(Tools().Grid());
       threeSvc.state.scene.updateMatrixWorld(true);
-    };
+      };
 
     const showPauseScreen = (threeSvc: ThreeService) => {
-      threeSvc.ClearScene();
+      threeSvc.ClearScene();      
+      
       // threeSvc.AddToScene(Tools().Grid());
       // threeSvc.AddGroupsToScene(
       //   usePredefined().PausedStories(
@@ -106,11 +107,10 @@ export default defineComponent({
         ),
       );
 
-      playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[0].position, 4))
-      playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[1].position, 4))
-      playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[2].position, 4))
-
-
+      playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[0].position, 4));
+      playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[1].position, 4));
+      playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[2].position, 4));
+      playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[2].position, 4)); 
     };
 
     const buildStory = (currentStory: number) => {
@@ -120,10 +120,13 @@ export default defineComponent({
       // const frameTitles = useStory().setFrameTitles(activeStoryData);
       // const frameAssets = useStory().setFrameAssets(activeStoryData, currentFrame - 1);
 
+
       spot.create(new Vector3(0, 0, Layers.scene));
-      buildFrameAssetOverview(1)
-      buildFrameAssetOverview(2)
-      buildFrameAssetOverview(3)
+      buildStoryCircle(threeSvc);
+
+      // buildFrameAssetOverview(1)
+      // buildFrameAssetOverview(2)
+      // buildFrameAssetOverview(3)
     }
 
     const startStory = () => {
@@ -144,14 +147,20 @@ export default defineComponent({
     onMounted(() => {
       threeSvc = new ThreeService(viewport);
       audioSchema = AudioSchema(threeSvc);
-      audioSchema.loadAudioFile('/Audio/example.mp3');
+      // audioSchema.loadAudioFile('/Audio/example.mp3');
       audioHelper = AudioHelper(audioSchema);
       if (stories.value) {
         // PlayAudio();
         storyData = stories.value;
         console.log('=> ACTIVE STORIES <=', stories);
         buildStory(currentStory);
-        startStory();
+        // startStory();
+        // const pos = spot.moveTo(new Vector3(-3,2,Layers.scene), new Vector3(3,-2,Layers.scene))
+        // console.log(pos);
+        // for (let index = 0; index < pos.length; index++) {
+        //   moveSpotlight(pos[index], 4)
+        // }
+
       }
       threeSvc.Animate();
     });

@@ -4,6 +4,7 @@ import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 import ChapeHelper from './Chapehelper';
 import { CubeParams } from './CubeSchema';
 import DefaultColors from './defaults.color';
+import Layers from './defaults.layers';
 
 export type FontParams = {
   path: string;
@@ -65,8 +66,9 @@ const SchemaText = (): {
       const txt_mesh = new Mesh(txtGeometry, txt_mat);
       txt_mesh.position.y = 0.5;
       txt_mesh.position.x = -1.5;
-      txt_mesh.position.z = 0;
+      txt_mesh.position.z = Layers.presentation;
       txtBox.add(txt_mesh);
+      txtBox.position.z = Layers.presentation;
     });
     return txtBox;
   };

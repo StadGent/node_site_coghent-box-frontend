@@ -28,7 +28,7 @@ const TextHelper = (): {
         path: '/Fonts/myFont.json',
       },
       textBoxParams: {
-        height: textBox?.height || 2,
+        height: textBox?.height || 0.5,
         width: textBox?.width || 3,
         color: textBox?.color || DefaultColors().black,
       },

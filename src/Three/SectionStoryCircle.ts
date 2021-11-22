@@ -1,69 +1,86 @@
 import SchemaCircle, { CircleSchema } from '@/Three/CircleSchema';
-import { CubeParams } from '@/Three/CubeSchema';
+import SchemaCube, { CubeParams } from '@/Three/CubeSchema';
 import DefaultColors from '@/Three/defaults.color';
 import GroupHelper from '@/Three/GroupHelper';
 import TextHelper from '@/Three/TextHelper';
 import { FontParams } from '@/Three/Textschema';
 import { Group, Vector3 } from 'three';
+import CubeHelper from './CubeHelper';
+import customText from './defaults.text';
 // import { CurveModifier } from 'three/examples/jsm/modifiers/CurveModifier.js';
 
 const StoryCircle = (): {
   Create: (
     title: string,
-    middleCircleSchema: CircleSchema,
-    distanceFromCircle?: number,
-    centerWords?: Record<string, Vector3>,
+    circleSchema: CircleSchema,
+    progressState: [number, number],
+    iconUrl: string,
   ) => Group;
 } => {
-  const circle_schema = SchemaCircle();
-
   const main = (schema: CircleSchema) => {
-    return circle_schema.CreateCircle(schema);
+    return SchemaCircle().CreateCircle(schema);
   };
-  const outer = (schema: CircleSchema, distanceFromCircle = 1) => {
-    return circle_schema.CreateOuterCircle(
-      schema.params.radius + distanceFromCircle,
+  const outer = (schema: CircleSchema) => {
+    return SchemaCircle().CreateOuterCircle(
+      schema.params.radius + 1,
       schema.position,
       schema.params.color,
     );
   };
 
-  const title = (title: string, position: Vector3, color: number) => {
-    const storyTitle = TextHelper().CreateText(title, position, {
-      color: color,
-      width: 0,
-    } as CubeParams);
-    return storyTitle;
+  const icon = (position: Vector3, url: string) => {
+    const schema = CubeHelper().CreateSchema(position, url, new Vector3(1, 1, 0));
+    return SchemaCube().CreateImageCube(schema);
   };
 
-  const MiddleWords = (centerWords: Record<string, Vector3>) => {
-    // const word = TextHelper().CreateText(
-    //   'words',
-    //   new Vector3(-4, 0, 0) as Vector3,
-    //   { width: 2, height: 1 } as CubeParams,
-    //   { color: DefaultColors().white } as FontParams,
-    // );
-    // return GroupHelper().CreateGroup([word]);
-    return GroupHelper().CreateGroup(
-      TextHelper().CreateTextFromRecord(centerWords, DefaultColors().white),
+  const progress = (title: string, position: Vector3, color: number) => {
+    const progress = TextHelper().CreateText(
+      title,
+      position,
+      {
+        color: color,
+        width: 0,
+      } as CubeParams,
+      { size: customText.size.smaller } as FontParams,
     );
+    return progress;
+  };
+
+  const title = (title: string, position: Vector3, color: number) => {
+    const storyTitle = TextHelper().CreateText(
+      title,
+      position,
+      {
+        color: color,
+        width: 0,
+      } as CubeParams,
+      { size: customText.size.small } as FontParams,
+    );
+    return storyTitle;
   };
 
   const Create = (
     storyTitle: string,
     circleSchema: CircleSchema,
-    distanceFromCircle?: number,
-    centerWords?: Record<string, Vector3>,
+    progressState: [number, number],
+    iconUrl: string,
   ) => {
     const group: Group = GroupHelper().CreateGroup([
-      MiddleWords(centerWords || {}),
       main(circleSchema),
       title(
         storyTitle,
-        circleSchema.position,
+        new Vector3(circleSchema.position.x, circleSchema.position.y - 1, 0),
         circleSchema.params.color || DefaultColors().green,
       ),
-      outer(circleSchema, distanceFromCircle),
+      progress(
+        `Deel ${progressState[0]} van ${progressState[1]}`,
+        new Vector3(circleSchema.position.x, circleSchema.position.y - 0.5, 0),
+        circleSchema.params.color || DefaultColors().green,
+      ),
+      icon(
+        new Vector3(circleSchema.position.x, circleSchema.position.y + 1.2, 0),
+        iconUrl,
+      ),
     ]);
     return group;
   };
