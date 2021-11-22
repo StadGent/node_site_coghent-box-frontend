@@ -28,6 +28,8 @@ import StoryCircle from '@/Three/SectionStoryCircle';
 import CircleHelper from '@/Three/CircleHelper';
 import CircularProgressBar from '@/Three/CircularProgressbar';
 import Colors from '@/Three/defaults.color';
+import StoryCircleItems from '@/Three/SectionStoryCircleItems';
+import DefaultLines from '@/Three/LinesDefault';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -63,13 +65,13 @@ export default defineComponent({
       const circle = StoryCircle().Create('Opkomst van de\n cinema',CircleHelper().CreateSchema(new Vector3(0,0,0),2,Colors().yellow), [1,5], 'https://cdn-icons-png.flaticon.com/512/844/844994.png', true);
       threeSvc.AddGroupsToScene(circle);
 
-      const active = CircularProgressBar().createActiveSegment(new Vector3(0,0,0),2.5,3,1,Colors().pink);
-
-      threeSvc.AddGroupsToScene(active);
-    
+      const active = CircularProgressBar().createActiveSegment(new Vector3(0,0,0),2.5,3,2,Colors().pink);
+      threeSvc.AddGroupsToScene(active.object);
+      const activeFrameLine = StoryCircleItems().CreateDashedLineWithWord(DefaultLines().line3(active.dotSchemas[1].position),useStory().setFrameTitles(activeStoryData)[1]);
+      threeSvc.AddToScene(activeFrameLine);
       threeSvc.AddToScene(Tools().Grid());
       threeSvc.state.scene.updateMatrixWorld(true);
-      };
+    };
 
     const showPauseScreen = (threeSvc: ThreeService) => {
       threeSvc.ClearScene();      

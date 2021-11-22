@@ -21,7 +21,7 @@ const CircularProgressBar = (): {
     segments: number,
     progress: number,
     color?: number,
-  ) => Array<Group>;
+  ) => {object: Array<Group>, dotSchemas: Array<CircleSchema>};
 } => {
   const create = (
     position: Vector3,
@@ -58,7 +58,7 @@ const CircularProgressBar = (): {
     const mesh = create(position, radius, segments, progress, color || Colors().white);
     const points = CircleHelper().SplitCircleInSegments(position, radius, segments);
     const schemas = CircleHelper().CreateSchemas(points, 0.4, color || Colors().white);
-    const circles: Array<Group> = [];
+    const progressDots: Array<Group> = [];
     for (let i = 0; i < schemas.length; i++) {
       let innerSchema: CircleSchema = {} as CircleSchema;
       if(progress - 1 > i){
@@ -73,10 +73,10 @@ const CircularProgressBar = (): {
       );
       const circle = SchemaCircle().CreateCircle(schemas[i], Layers.presentation);
       const innerCircle = SchemaCircle().CreateCircle(innerSchema, Layers.presentation);
-      circles.push(GroupHelper().CreateGroup([circle, innerCircle]))
+      progressDots.push(GroupHelper().CreateGroup([circle, innerCircle]))
     }
-    GroupHelper().AddObjectsTogroups([mesh], circles)
-    return circles;
+    GroupHelper().AddObjectsTogroups([mesh], progressDots)
+    return {object: progressDots, dotSchemas: schemas};
   };
 
   return { create, createActiveSegment };

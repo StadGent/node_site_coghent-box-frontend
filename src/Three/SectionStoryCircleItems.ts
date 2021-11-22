@@ -1,6 +1,7 @@
 import Correction from '@/Three/Correction';
 import CubeHelper from '@/Three/CubeHelper';
 import SchemaCube, { CubeParams, CubeSchema } from '@/Three/CubeSchema';
+import Colors from '@/Three/defaults.color';
 import DefaultColors from '@/Three/defaults.color';
 import DefaultsHelper from '@/Three/DefaultsHelper';
 import GroupHelper from '@/Three/GroupHelper';
@@ -8,7 +9,9 @@ import LineHelper from '@/Three/LineHelper';
 import SchemaLine, { LineSchema } from '@/Three/LineSchema';
 import TextHelper from '@/Three/TextHelper';
 import { FontParams } from '@/Three/Textschema';
-import { Group, Mesh, Vector3 } from 'three';
+import { Group, Line, Mesh, Vector3 } from 'three';
+import BaseChapes from './BaseChapes';
+import Layers from './defaults.layers';
 import StoryCircleChild from './SectionStoryCircleChild';
 
 const StoryCircleItems = (): {
@@ -16,7 +19,21 @@ const StoryCircleItems = (): {
     storyItems: Record<string, string>,
     showWords: true | false,
   ) => { groups: Array<Group>; schemas: Array<CubeSchema> };
+  CreateDashedLineWithWord:(positions: Array<Vector3>, word: string) => Group;
 } => {
+  const CreateDashedLineWithWord = (positions: Array<Vector3>, word: string) => {
+    const line = BaseChapes().DrawDashedLine(positions, {
+      color: Colors().white,
+      linewidth: 3,
+      scale: 2,
+      dashSize: 0.1,
+      gapSize: 1,
+    });
+    line.position.z = Layers.presentation;
+    const enddOfLine = LineHelper().GetEndOfLine(line);
+    const text  = TextHelper().CreateText(word, enddOfLine);
+    return GroupHelper().CreateGroup([line, text]);
+  };
   const Lines = (items: number) => {
     const schemas: Array<LineSchema> = [];
     for (let i = 0; i < items; i++) {
@@ -103,7 +120,7 @@ const StoryCircleItems = (): {
     };
   };
 
-  return { Create };
+  return { Create, CreateDashedLineWithWord };
 };
 
 export default StoryCircleItems;
