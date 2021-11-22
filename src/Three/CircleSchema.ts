@@ -22,6 +22,7 @@ export type CircleParams = {
   radius: number;
   segments?: number;
   color?: number;
+  opacity?: number
 };
 
 export type CircleSchema = {
@@ -30,7 +31,10 @@ export type CircleSchema = {
 };
 
 const SchemaCircle = (): {
-  CreateCircle: (schema: CircleSchema) => Mesh<CircleGeometry, MeshBasicMaterial>;
+  CreateCircle: (
+    schema: CircleSchema,
+    layer: number,
+  ) => Mesh<CircleGeometry, MeshBasicMaterial>;
   CreateCircles: (
     schemas: Array<CircleSchema>,
   ) => Array<Mesh<CircleGeometry, MeshBasicMaterial>>;
@@ -40,21 +44,22 @@ const SchemaCircle = (): {
     color?: number,
   ) => Line<BufferGeometry, LineBasicMaterial>;
 } => {
-  const CreateCircle = (schema: CircleSchema) => {
+  const CreateCircle = (schema: CircleSchema, layer: number) => {
     const circle = BaseChapes().DrawCircle(
       schema.params.radius,
       schema.params.color || DefaultColors().green,
       schema.params.segments || 50,
+      schema.params.opacity || 1,
     );
     ChapeHelper().SetPosition(schema.position, circle);
-    circle.position.z = Layers.presentation;
+    circle.position.z = layer;
     return circle;
   };
 
   const CreateCircles = (schemas: Array<CircleSchema>) => {
     const circles: Array<Mesh<CircleGeometry, MeshBasicMaterial>> = [];
     schemas.forEach((schema: CircleSchema) => {
-      circles.push(CreateCircle(schema));
+      circles.push(CreateCircle(schema, Layers.presentation));
     });
     return circles;
   };
