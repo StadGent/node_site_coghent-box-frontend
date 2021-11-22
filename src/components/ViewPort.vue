@@ -14,7 +14,6 @@ import TestData from '@/Three/TestData';
 import ThreeService from '@/services/ThreeService';
 import { defineComponent, onMounted, PropType, reactive, ref } from 'vue';
 import { BufferGeometry, Color, Material, Mesh, Vector3 } from 'three';
-import DefaultColors from '@/Three/defaults.color';
 import { Entity } from 'coghent-vue-3-component-library/lib/queries';
 import { Entity as _Entity, Story } from '@/models/GraphqlModel';
 import FrameOverview from '@/screens/FrameOverview';
@@ -27,7 +26,8 @@ import Layers from '@/Three/defaults.layers';
 import PlayBook from '@/composables/playbook';
 import StoryCircle from '@/Three/SectionStoryCircle';
 import CircleHelper from '@/Three/CircleHelper';
-import CircularprogressBar from '@/Three/CircularProgressbar';
+import CircularProgressBar from '@/Three/CircularProgressbar';
+import Colors from '@/Three/defaults.color';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -58,20 +58,21 @@ export default defineComponent({
     };
 
     const buildStoryCircle = (threeSvc: ThreeService) => {
-      threeSvc.state.scene.background = new Color(DefaultColors().black);
+      threeSvc.state.scene.background = new Color(Colors().black);
       threeSvc.ClearScene();
-
-      const circle = StoryCircle().Create('Opkomst van de\n cinema',CircleHelper().CreateSchema(new Vector3(0,0,0),2,DefaultColors().yellow), [1,5], 'https://cdn-icons-png.flaticon.com/512/844/844994.png', true);
-      const circle2 = StoryCircle().Create('Opkomst van de\n cinema',CircleHelper().CreateSchema(new Vector3(-10,1,0),2,DefaultColors().green), [5,5], 'https://cdn-icons-png.flaticon.com/512/844/844994.png', true);
+      const circle = StoryCircle().Create('Opkomst van de\n cinema',CircleHelper().CreateSchema(new Vector3(0,0,0),2,Colors().yellow), [1,5], 'https://cdn-icons-png.flaticon.com/512/844/844994.png', true);
       threeSvc.AddGroupsToScene(circle);
-      threeSvc.AddGroupsToScene(circle2);
+
+      const active = CircularProgressBar().createActiveSegment(new Vector3(0,0,0),2.5,3,1,Colors().pink);
+
+      threeSvc.AddGroupsToScene(active);
     
       threeSvc.AddToScene(Tools().Grid());
       threeSvc.state.scene.updateMatrixWorld(true);
       };
 
     const showPauseScreen = (threeSvc: ThreeService) => {
-      threeSvc.ClearScene();
+      threeSvc.ClearScene();      
       // threeSvc.AddToScene(Tools().Grid());
       // threeSvc.AddGroupsToScene(
       //   usePredefined().PausedStories(

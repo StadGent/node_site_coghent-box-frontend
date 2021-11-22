@@ -6,6 +6,7 @@ const Correction = (): {
   EndOfLineObjectPositionsRight: (index: number) => Vector3;
   EndOfLineObjectPositionsLeft: (index: number) => Vector3;
   CorrectTextBoxPosition: (position: Vector3, textBox: Mesh, correctX?: number) => void;
+  CorrectionForDotOnProgressBar: (position: Vector3, width: number) => Vector3;
 } => {
   const EndOfLineObjectPositionsRight = (index: number) => {
     return {
@@ -43,10 +44,26 @@ const Correction = (): {
       );
     }
   };
+
+  const CorrectionForDotOnProgressBar = (position: Vector3, width: number) => {
+    const correction = position;
+    if(position.x > 0.01){
+      correction.x = position.x + width/2
+    }else if(position.x < 0){
+      correction.x = position.x - width/2
+    }
+    if(position.y > 0.01){
+      correction.y = position.y + width/2
+    }else if(position.x < 0){
+      correction.y = position.y - width/2
+    }
+    return correction;
+  }
   return {
     EndOfLineObjectPositionsRight,
     EndOfLineObjectPositionsLeft,
     CorrectTextBoxPosition,
+    CorrectionForDotOnProgressBar,
   };
 };
 
