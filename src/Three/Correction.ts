@@ -7,6 +7,9 @@ const Correction = (): {
   EndOfLineObjectPositionsLeft: (index: number) => Vector3;
   CorrectTextBoxPosition: (position: Vector3, textBox: Mesh, correctX?: number) => void;
   CorrectionForDotOnProgressBar: (position: Vector3, width: number) => Vector3;
+  CorrectImageBoxPositionRight: (index: number) => Vector3;
+  CorrectImageBoxPositionLeft: (index: number) => Vector3;
+
 } => {
   const EndOfLineObjectPositionsRight = (index: number) => {
     return {
@@ -58,12 +61,30 @@ const Correction = (): {
       correction.y = position.y - width/2
     }
     return correction;
-  }
+  };
+
+  const CorrectImageBoxPositionRight = (index: number) => {
+    return {
+      x: DefaultsHelper().CircleConnectPoints(new Vector3(0, 0, 0))[index][2].x + 1.1,
+      y: DefaultsHelper().CircleConnectPoints(new Vector3(0, 0, 0))[index][2].y - 1,
+      z: DefaultsHelper().CircleConnectPoints(new Vector3(0, 0, 0))[index][2].z,
+    } as Vector3;
+  };
+  const CorrectImageBoxPositionLeft = (index: number) => {
+    return {
+      x: DefaultsHelper().CircleConnectPoints(new Vector3(0, 0, 0))[index][2].x - 1.1,
+      y: DefaultsHelper().CircleConnectPoints(new Vector3(0, 0, 0))[index][2].y - 1,
+      z: DefaultsHelper().CircleConnectPoints(new Vector3(0, 0, 0))[index][2].z,
+    } as Vector3;
+  };
+
   return {
     EndOfLineObjectPositionsRight,
     EndOfLineObjectPositionsLeft,
     CorrectTextBoxPosition,
     CorrectionForDotOnProgressBar,
+    CorrectImageBoxPositionRight,
+    CorrectImageBoxPositionLeft,
   };
 };
 
