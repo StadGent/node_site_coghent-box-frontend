@@ -1,14 +1,13 @@
 import { Mesh, Vector3 } from 'three';
 import CircleHelper from './CircleHelper';
 import SchemaCircle from './CircleSchema';
-import SchemaCube from './CubeSchema';
 import Layers from './defaults.layers';
 
 const Spot = (): {
   SpotLight: () => Mesh;
   create: (startPosition: Vector3) => Mesh;
   move: (position: Vector3, height: number) => void;
-  block: (startPosition: Vector3, height: number) => Mesh;
+  moveTo: (from: Vector3, to: Vector3) => Array<Vector3>;
 } => {
   let spotlight: Mesh;
 
@@ -28,14 +27,16 @@ const Spot = (): {
     spotlight.position.set(position.x, position.y, Layers.scene);
     spotlight.scale.set(widestLenght / 2 + 1, widestLenght / 2 + 1, Layers.scene);
   };
-  const block = (startPosition: Vector3, height: number) => {
-    return SchemaCube().CreateCube({
-      position: startPosition,
-      params: { width: height, height: 2 },
-    });
+
+  const moveTo = (from: Vector3, to: Vector3) => {
+    const positions: Array<Vector3> = [];
+    for (let i = 0; i < 60; i++) {
+      positions.push(new Vector3(from.x - to.x / 60, from.y - to.y / 60, Layers.scene));
+    }
+    return positions;
   };
 
-  return { SpotLight, create, block, move };
+  return { SpotLight, create, move, moveTo };
 };
 
 export default Spot;
