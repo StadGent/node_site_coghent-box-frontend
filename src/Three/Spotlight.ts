@@ -19,6 +19,7 @@ const Spot = (): {
         1,
         color || 0xc4c4c4,
       ),
+      Layers.presentation,
     );
     return spotlight;
   };

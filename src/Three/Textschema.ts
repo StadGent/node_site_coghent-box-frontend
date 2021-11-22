@@ -68,7 +68,7 @@ const SchemaText = (): {
       txt_mesh.position.x = -1.5;
       txt_mesh.position.z = Layers.presentation;
       txtBox.add(txt_mesh);
-      txtBox.position.z = Layers.presentation;
+      txtBox.position.z = Layers.scene;
     });
     return txtBox;
   };
