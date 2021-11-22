@@ -9,6 +9,8 @@ import {
   BoxBufferGeometry,
   TextureLoader,
   Vector3,
+  LineDashedMaterial,
+  LineDashedMaterialParameters,
 } from 'three';
 import { CubeParams } from './CubeSchema';
 import DefaultColors from './defaults.color';
@@ -24,6 +26,10 @@ const BaseChapes = (): {
     coordinates: Array<Vector3>,
     materialParams?: LineBasicMaterialParameters,
   ) => Line<BufferGeometry, LineBasicMaterial>;
+  DrawDashedLine: (
+    coordinates: Array<Vector3>,
+    materialParams?: LineDashedMaterialParameters,
+  ) => Line<BufferGeometry, LineDashedMaterial>;
   DrawImageCube: (
     url: string,
     format: Vector3,
@@ -42,6 +48,22 @@ const BaseChapes = (): {
     materialParams?: LineBasicMaterialParameters,
   ) => {
     const material = new LineBasicMaterial(
+      materialParams || { color: DefaultColors().green },
+    );
+    material.color.convertSRGBToLinear();
+    const points: Array<Vector3> = [];
+    coordinates.forEach((point) => {
+      points.push(new Vector3(point.x, point.y, point.z));
+    });
+    const geometry = new BufferGeometry().setFromPoints(points);
+    return new Line(geometry, material);
+  };
+
+  const DrawDashedLine = (
+    coordinates: Array<Vector3>,
+    materialParams?: LineDashedMaterialParameters,
+  ) => {
+    const material = new LineDashedMaterial(
       materialParams || { color: DefaultColors().green },
     );
     material.color.convertSRGBToLinear();
@@ -76,6 +98,7 @@ const BaseChapes = (): {
     DrawCircle,
     DrawImageCube,
     DrawLine,
+    DrawDashedLine,
     DrawCube,
   };
 };
