@@ -1,4 +1,4 @@
-const DefaultColors = (): {
+const Colors = (): {
   green: number;
   pink: number;
   yellow: number;
@@ -23,4 +23,4 @@ const DefaultColors = (): {
   };
 };
 
-export default DefaultColors;
+export default Colors;

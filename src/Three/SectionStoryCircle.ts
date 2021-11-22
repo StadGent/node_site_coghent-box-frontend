@@ -6,8 +6,9 @@ import TextHelper from '@/Three/TextHelper';
 import { FontParams } from '@/Three/Textschema';
 import { Group, Vector3 } from 'three';
 import CubeHelper from './CubeHelper';
+import Layers from './defaults.layers';
 import customText from './defaults.text';
-// import { CurveModifier } from 'three/examples/jsm/modifiers/CurveModifier.js';
+import CircularprogressBar from '@/Three/CircularProgressbar';
 
 const StoryCircle = (): {
   Create: (
@@ -15,17 +16,17 @@ const StoryCircle = (): {
     circleSchema: CircleSchema,
     progressState: [number, number],
     iconUrl: string,
-  ) => Group;
+    showProgress: true | false,
+  ) => Array<Group>;
 } => {
   const main = (schema: CircleSchema) => {
-    return SchemaCircle().CreateCircle(schema);
+    return SchemaCircle().CreateCircle(schema, Layers.presentation);
   };
-  const outer = (schema: CircleSchema) => {
-    return SchemaCircle().CreateOuterCircle(
-      schema.params.radius + 1,
-      schema.position,
-      schema.params.color,
-    );
+  const shadedCircle = (schema: CircleSchema) => {
+    schema.params.radius = schema.params.radius + 2;
+    schema.params.color = 0xf03fa;
+    schema.params.opacity = 0.9;
+    return SchemaCircle().CreateCircle(schema, Layers.scene);
   };
 
   const icon = (position: Vector3, url: string) => {
@@ -33,7 +34,7 @@ const StoryCircle = (): {
     return SchemaCube().CreateImageCube(schema);
   };
 
-  const progress = (title: string, position: Vector3, color: number) => {
+  const progressText = (title: string, position: Vector3, color: number) => {
     const progress = TextHelper().CreateText(
       title,
       position,
@@ -64,15 +65,18 @@ const StoryCircle = (): {
     circleSchema: CircleSchema,
     progressState: [number, number],
     iconUrl: string,
+    showProgress: true | false,
   ) => {
-    const group: Group = GroupHelper().CreateGroup([
+    const groups: Array<Group> = [];
+    GroupHelper().AddObjectsTogroups([
       main(circleSchema),
+      shadedCircle(circleSchema),
       title(
         storyTitle,
         new Vector3(circleSchema.position.x, circleSchema.position.y - 1, 0),
         circleSchema.params.color || DefaultColors().green,
       ),
-      progress(
+      progressText(
         `Deel ${progressState[0]} van ${progressState[1]}`,
         new Vector3(circleSchema.position.x, circleSchema.position.y - 0.5, 0),
         circleSchema.params.color || DefaultColors().green,
@@ -81,8 +85,14 @@ const StoryCircle = (): {
         new Vector3(circleSchema.position.x, circleSchema.position.y + 1.2, 0),
         iconUrl,
       ),
-    ]);
-    return group;
+    ], groups);
+    if (showProgress) {
+      GroupHelper().AddObjectsTogroups(
+        [CircularprogressBar().create(circleSchema.position, 2.5, 1, 1)],
+        groups,
+      );
+    }
+    return groups;
   };
 
   return { Create };

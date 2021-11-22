@@ -27,6 +27,7 @@ import Layers from '@/Three/defaults.layers';
 import PlayBook from '@/composables/playbook';
 import StoryCircle from '@/Three/SectionStoryCircle';
 import CircleHelper from '@/Three/CircleHelper';
+import CircularprogressBar from '@/Three/CircularProgressbar';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -60,16 +61,17 @@ export default defineComponent({
       threeSvc.state.scene.background = new Color(DefaultColors().black);
       threeSvc.ClearScene();
 
-      const circle = StoryCircle().Create('Opkomst van de\n cinema',CircleHelper().CreateSchema(new Vector3(0,0,0),2,DefaultColors().yellow), [1,5], '/src/assets/icon_bucket.svg');
-      const circle2 = StoryCircle().Create('Opkomst van de\n cinema',CircleHelper().CreateSchema(new Vector3(-10,1,0),2,DefaultColors().green), [3,5], '/src/assets/icon_bucket.svg');
-      threeSvc.AddGroupsToScene([circle, circle2]);
+      const circle = StoryCircle().Create('Opkomst van de\n cinema',CircleHelper().CreateSchema(new Vector3(0,0,0),2,DefaultColors().yellow), [1,5], 'https://cdn-icons-png.flaticon.com/512/844/844994.png', true);
+      const circle2 = StoryCircle().Create('Opkomst van de\n cinema',CircleHelper().CreateSchema(new Vector3(-10,1,0),2,DefaultColors().green), [5,5], 'https://cdn-icons-png.flaticon.com/512/844/844994.png', true);
+      threeSvc.AddGroupsToScene(circle);
+      threeSvc.AddGroupsToScene(circle2);
+    
       threeSvc.AddToScene(Tools().Grid());
       threeSvc.state.scene.updateMatrixWorld(true);
       };
 
     const showPauseScreen = (threeSvc: ThreeService) => {
-      threeSvc.ClearScene();      
-      
+      threeSvc.ClearScene();
       // threeSvc.AddToScene(Tools().Grid());
       // threeSvc.AddGroupsToScene(
       //   usePredefined().PausedStories(
