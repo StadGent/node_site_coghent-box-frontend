@@ -1,7 +1,7 @@
 import { MeshBasicMaterial, Mesh, RingGeometry, Vector3, Group } from 'three';
 import ChapeHelper from './Chapehelper';
 import CircleHelper from './CircleHelper';
-import SchemaCircle from './CircleSchema';
+import SchemaCircle, { CircleSchema } from './CircleSchema';
 import Correction from './Correction';
 import Colors from './defaults.color';
 import Layers from './defaults.layers';
@@ -60,7 +60,12 @@ const CircularProgressBar = (): {
     const schemas = CircleHelper().CreateSchemas(points, 0.4, color || Colors().white);
     const circles: Array<Group> = [];
     for (let i = 0; i < schemas.length; i++) {
-      const innerSchema = CircleHelper().CreateSchema(schemas[i].position, 0.2, Colors().white);
+      let innerSchema: CircleSchema = {} as CircleSchema;
+      if(progress - 1 > i){
+        innerSchema = CircleHelper().CreateSchema(schemas[i].position, 0.2, color || Colors().white);
+      }else{
+        innerSchema = CircleHelper().CreateSchema(schemas[i].position, 0.2, Colors().white);
+      }
       schemas[i].position = Correction().CorrectionForDotOnProgressBar(schemas[i].position, 0.15);
       innerSchema.position = Correction().CorrectionForDotOnProgressBar(
         schemas[i].position,
