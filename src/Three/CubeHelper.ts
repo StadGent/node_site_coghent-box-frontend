@@ -14,7 +14,7 @@ const CubeHelper = (): {
     isTransparant?: true | false,
   ) => CubeSchema;
   GetCubesPositions: (cubes: Array<Mesh>) => Array<Vector3>;
-  HighlightImage: (schema: CubeSchema) => Mesh;
+  HighlightImage: (schema: CubeSchema, storyColor: number) => Mesh;
   ScaleBoxImage: (boxImage: Mesh, scale: Vector3) => void;
 } => {
   const GetCubeParams = (cube: Mesh<BoxGeometry, MeshBasicMaterial>) => {
@@ -60,16 +60,17 @@ const CubeHelper = (): {
     return positions;
   };
 
-  const HighlightImage = (schema: CubeSchema) => {
+  const HighlightImage = (schema: CubeSchema, storyColor: number) => {
     const cube = SchemaCube().CreateCube({
       position: schema.position,
       params: {
-        width: schema.params.width + 0.2 || 2.2,
-        height: schema.params.height + 0.2 || 2.2,
-        color: DefaultColors().pink,
+        width: schema.params.width + 0.4 || 2.2,
+        height: schema.params.height + 0.4 || 2.2,
+        color: storyColor,
+        opacity: 1,
+        isTransparant: true,
       },
     });
-    cube.position.z = -0.01;
     return cube;
   };
 
