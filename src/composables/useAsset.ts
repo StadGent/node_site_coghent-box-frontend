@@ -14,6 +14,7 @@ const useAsset = (): {
   getDimensions: (asset: Asset) => Array<Metadata>;
   getImage: (asset: Asset) => string;
   zoom: (assetImageCube: Mesh<BoxBufferGeometry, any>, screenHeight: number) => void;
+  setInactive: (assetImageCube: Mesh<BoxBufferGeometry, any>) => void;
   addMetadataToZoomedImage: (
     asset: Asset,
     assetImageCube: Mesh<BoxBufferGeometry, any>,
@@ -65,6 +66,7 @@ const useAsset = (): {
       assetImageCube.scale.y,
       assetImageCube.scale.z,
     );
+    assetImageCube.material.opacity = 1;
     const textPosition = new Vector3(
       assetImageCube.position.x - cubeParams.width /2.5 * cube.scale.x,
       assetImageCube.position.y + cubeParams.height / 2* cube.scale.y,
@@ -74,6 +76,11 @@ const useAsset = (): {
       color: storyColor,
     } as FontParams);
     return GroupHelper().CreateGroup([text, cube]);
+  };
+
+  const setInactive = (assetImageCube: Mesh<BoxBufferGeometry, any>) => {
+    assetImageCube.material.opacity = 0.5;
+    assetImageCube.position.z = Layers.scene;
   };
 
   const getAssetsFromFrame = (activeStory: Story, frame: number) => {
@@ -86,6 +93,7 @@ const useAsset = (): {
     getImage,
     zoom,
     addMetadataToZoomedImage,
+    setInactive,
     getAssetsFromFrame,
   };
 };

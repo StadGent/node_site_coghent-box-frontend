@@ -119,8 +119,7 @@ export default defineComponent({
 
     const showAsset = () => {
       threeSvc.ClearScene();
-      threeSvc.AddToScene(Tools().Grid());
-
+      // threeSvc.AddToScene(Tools().Grid());
       const assetsFromFrame = Asset().getAssetsFromFrame(
         activeStoryData,
         currentFrame - 1,
@@ -131,11 +130,17 @@ export default defineComponent({
         asset,
         new Vector3(0, 0, Layers.presentation),
       );
+      const image2 = FrameOverview().addImage(
+        asset,
+        new Vector3(-8, 0, Layers.presentation),
+      );
 
       threeSvc.AddToScene(image);
+      threeSvc.AddToScene(image2);
     
       setTimeout(() => {
         useAsset().zoom(image as Mesh<BoxBufferGeometry, any>, threeSvc.state.height);
+        useAsset().setInactive(image2 as Mesh<BoxBufferGeometry, any>);
         threeSvc.AddToScene(useAsset().addMetadataToZoomedImage(asset,image as Mesh<BoxBufferGeometry, any>,storyColor));
       }, 1000);
     };

@@ -47,6 +47,7 @@ const SchemaCube = (): {
     const loader = new TextureLoader();
     const geometry = new BoxBufferGeometry(schema.params.width, schema.params.height, 0);
     const material = new MeshBasicMaterial({
+      transparent: true,
       map: loader.load(
         schema.params.url ||
           'http://localhost:8001/download/9ce891fe75a8e75d82019665d2585a83-2005-0025_1.JPG',
