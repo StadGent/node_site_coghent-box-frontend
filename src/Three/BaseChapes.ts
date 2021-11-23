@@ -21,6 +21,7 @@ const BaseChapes = (): {
     color: number,
     segments: number,
     opacity?: number,
+    isTransparant?: true | false
   ) => Mesh<CircleGeometry, MeshBasicMaterial>;
   DrawLine: (
     coordinates: Array<Vector3>,
@@ -36,10 +37,11 @@ const BaseChapes = (): {
   ) => Mesh<BoxBufferGeometry, MeshBasicMaterial>;
   DrawCube: (params: CubeParams) => Mesh<BoxBufferGeometry, MeshBasicMaterial>;
 } => {
-  const DrawCircle = (radius: number, color: number, segments: number, opacity?: number) => {
+  const DrawCircle = (radius: number, color: number, segments: number, opacity?: number, isTransparant?: true | false) => {
     const geometry = new CircleGeometry(radius, segments);
     const material = new MeshBasicMaterial({ color: color, opacity: opacity || 1});
     material.color.convertSRGBToLinear();
+    material.transparent = isTransparant || false;
 
     return new Mesh(geometry, material);
   };

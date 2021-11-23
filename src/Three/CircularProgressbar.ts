@@ -32,7 +32,7 @@ const CircularProgressBar = (): {
   ) => {
     const geometry = new RingGeometry(
       radius,
-      radius + 0.3,
+      radius + 0.2,
       360 / segments,
       45,
       6.3 / 360 - (6.3 / 360 / segments) * progress,
@@ -40,11 +40,13 @@ const CircularProgressBar = (): {
     );
     const material = new MeshBasicMaterial({
       color: color || Colors().white,
-      opacity: 0.1,
+      opacity: 0.4,
+      transparent: true,
     });
+    material.color.convertSRGBToLinear();
     const mesh = new Mesh(geometry, material);
     ChapeHelper().SetPosition(position, mesh);
-    mesh.position.z = Layers.presentation;
+    mesh.position.z = Layers.presentation - 0.1;
     return mesh;
   };
 
@@ -66,10 +68,10 @@ const CircularProgressBar = (): {
       }else{
         innerSchema = CircleHelper().CreateSchema(schemas[i].position, 0.2, Colors().white);
       }
-      schemas[i].position = Correction().CorrectionForDotOnProgressBar(schemas[i].position, 0.15);
+      schemas[i].position = Correction().CorrectionForDotOnProgressBar(schemas[i].position, 0.10);
       innerSchema.position = Correction().CorrectionForDotOnProgressBar(
         schemas[i].position,
-        0.15,
+        0.10,
       );
       const circle = SchemaCircle().CreateCircle(schemas[i], Layers.presentation);
       const innerCircle = SchemaCircle().CreateCircle(innerSchema, Layers.presentation);

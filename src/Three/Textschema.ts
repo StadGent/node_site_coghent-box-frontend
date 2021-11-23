@@ -27,6 +27,8 @@ const SchemaText = (): {
     const geometry = new BoxBufferGeometry(params.width, params.height, 0);
     const material = new MeshBasicMaterial({
       color: params.color || DefaultColors().black,
+      opacity: 0,
+      transparent: true,
     });
     material.color.convertSRGBToLinear();
     const textBox = new Mesh(geometry, material);

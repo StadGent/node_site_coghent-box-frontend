@@ -7,12 +7,10 @@
 
 <script lang="ts">
 import useStory from '@/composables/useStory';
-import Frame from '@/composables/frame';
 import Tools from '@/Three/Tools';
 import ThreeService from '@/services/ThreeService';
 import { defineComponent, onMounted, PropType, reactive, ref } from 'vue';
-import { BufferGeometry, Color, Material, Mesh, Vector3 } from 'three';
-import { Entity } from 'coghent-vue-3-component-library/lib/queries';
+import { Color, Vector3 } from 'three';
 import { Entity as _Entity, Story } from '@/models/GraphqlModel';
 import FrameOverview from '@/screens/FrameOverview';
 import { CubeSchema } from '@/Three/CubeSchema';
@@ -39,7 +37,6 @@ export default defineComponent({
     },
   },
   setup(props) {
-
     const stories = ref(props.stories);
     const currentStory = 1;
     const currentFrame = 2;
@@ -62,14 +59,34 @@ export default defineComponent({
     const buildStoryCircle = (threeSvc: ThreeService) => {
       threeSvc.state.scene.background = new Color(Colors().black);
       threeSvc.ClearScene();
-      const circle = StoryCircle().Create('Opkomst van de\n cinema',CircleHelper().CreateSchema(new Vector3(0,0,0),2,Colors().yellow), [currentFrame -1,5], 'https://cdn-icons-png.flaticon.com/512/844/844994.png', true);
+      const circle = StoryCircle().Create(
+        'Opkomst van de\n cinema',
+        CircleHelper().CreateSchema(new Vector3(0, 0, 0), 2, Colors().yellow),
+        [currentFrame - 1, 5],
+        'https://cdn-icons-png.flaticon.com/512/844/844994.png',
+        true,
+      );
       threeSvc.AddGroupsToScene(circle);
 
-      const active = CircularProgressBar().createActiveSegment(new Vector3(0,0,0),2.5,3,currentFrame-1,Colors().pink);
+      const active = CircularProgressBar().createActiveSegment(
+        new Vector3(0, 0, 0),
+        2.5,
+        3,
+        currentFrame - 1,
+        Colors().yellow,
+      );
       threeSvc.AddGroupsToScene(active.object);
-      const activeFrameLine = StoryCircleItems().CreateDashedLineWithWord(DefaultLines().line3(active.dotSchemas[currentFrame -1].position),useStory().setFrameTitles(activeStoryData)[currentFrame -1]);
-      threeSvc.AddToScene(activeFrameLine);
-
+      const activeFrameLine = StoryCircleItems().CreateDashedLineWithWord(
+        DefaultLines().line3(active.dotSchemas[currentFrame - 1].position),
+        useStory().setFrameTitles(activeStoryData)[currentFrame - 1],
+      );
+      threeSvc.AddToScene(activeFrameLine.object);
+      const progressOfFrame = StoryCircle().progressText(
+        [1, 5],
+        new Vector3(activeFrameLine.endOfLine.x,activeFrameLine.endOfLine.y + 0.8,Layers.presentation),
+        Colors().white,
+      );
+      threeSvc.AddToScene(progressOfFrame);
       // const updated = GroupHelper().CreateGroup(circle);
       // updated.position.set(-5,0,0);
       // updated.scale.set(.5,0.5,0);
@@ -80,7 +97,7 @@ export default defineComponent({
     };
 
     const showPauseScreen = (threeSvc: ThreeService) => {
-      threeSvc.ClearScene();      
+      threeSvc.ClearScene();
     };
 
     const addFrameOverviewToScene = (
@@ -114,7 +131,7 @@ export default defineComponent({
       playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[0].position, 4));
       playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[1].position, 4));
       playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[2].position, 4));
-      playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[2].position, 4)); 
+      playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[2].position, 4));
     };
 
     const buildStory = (currentStory: number) => {
@@ -127,16 +144,14 @@ export default defineComponent({
       // buildFrameAssetOverview(1)
       // buildFrameAssetOverview(2)
       // buildFrameAssetOverview(3)
-    }
+    };
 
     const startStory = () => {
       let current = 0;
       let time = 2;
       setInterval(() => {
         console.log(Math.floor(audioSchema.audio.context.currentTime));
-        if (
-          audioHelper.DoEvent(audioSchema.audio.context.currentTime, time)
-        ) {
+        if (audioHelper.DoEvent(audioSchema.audio.context.currentTime, time)) {
           playBook.getPlayBookFunctions()[current]();
           time += 1.5;
           current++;
@@ -151,6 +166,7 @@ export default defineComponent({
       audioHelper = AudioHelper(audioSchema);
       if (stories.value) {
         // PlayAudio();
+
         storyData = stories.value;
         console.log('=> ACTIVE STORIES <=', stories);
         buildStory(currentStory);
@@ -160,7 +176,6 @@ export default defineComponent({
         // for (let index = 0; index < pos.length; index++) {
         //   moveSpotlight(pos[index], 4)
         // }
-
       }
       threeSvc.Animate();
     });

@@ -34,6 +34,7 @@ const SchemaCircle = (): {
   CreateCircle: (
     schema: CircleSchema,
     layer: number,
+    isTransparant?: true | false,
   ) => Mesh<CircleGeometry, MeshBasicMaterial>;
   CreateCircles: (
     schemas: Array<CircleSchema>,
@@ -44,12 +45,13 @@ const SchemaCircle = (): {
     color?: number,
   ) => Line<BufferGeometry, LineBasicMaterial>;
 } => {
-  const CreateCircle = (schema: CircleSchema, layer: number) => {
+  const CreateCircle = (schema: CircleSchema, layer: number, isTransparant?: true | false) => {
     const circle = BaseChapes().DrawCircle(
       schema.params.radius,
       schema.params.color || DefaultColors().green,
       schema.params.segments || 50,
       schema.params.opacity || 1,
+      isTransparant || false,
     );
     ChapeHelper().SetPosition(schema.position, circle);
     circle.position.z = layer;

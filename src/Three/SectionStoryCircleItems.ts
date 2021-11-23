@@ -9,17 +9,17 @@ import LineHelper from '@/Three/LineHelper';
 import SchemaLine, { LineSchema } from '@/Three/LineSchema';
 import TextHelper from '@/Three/TextHelper';
 import { FontParams } from '@/Three/Textschema';
-import { Group, Line, Mesh, Vector3 } from 'three';
+import { Group, Mesh, Vector3 } from 'three';
 import BaseChapes from './BaseChapes';
 import Layers from './defaults.layers';
-import StoryCircleChild from './SectionStoryCircleChild';
 
 const StoryCircleItems = (): {
   Create: (
     storyItems: Record<string, string>,
+    progressState: [number, number],
     showWords: true | false,
   ) => { groups: Array<Group>; schemas: Array<CubeSchema> };
-  CreateDashedLineWithWord:(positions: Array<Vector3>, word: string) => Group;
+  CreateDashedLineWithWord:(positions: Array<Vector3>, word: string) => {object: Group, endOfLine: Vector3};
 } => {
   const CreateDashedLineWithWord = (positions: Array<Vector3>, word: string) => {
     const line = BaseChapes().DrawDashedLine(positions, {
@@ -31,8 +31,9 @@ const StoryCircleItems = (): {
     });
     line.position.z = Layers.presentation;
     const enddOfLine = LineHelper().GetEndOfLine(line);
-    const text  = TextHelper().CreateText(word, enddOfLine);
-    return GroupHelper().CreateGroup([line, text]);
+    const frameTitle  = TextHelper().CreateText(word, enddOfLine);
+
+    return {object: GroupHelper().CreateGroup([line, frameTitle]), endOfLine: enddOfLine};
   };
   const Lines = (items: number) => {
     const schemas: Array<LineSchema> = [];
@@ -93,7 +94,7 @@ const StoryCircleItems = (): {
     return { cubes: cubes, lines: undefined, schemas: schemas };
   };
 
-  const Create = (storyItems: Record<string, string>, showWords: true | false) => {
+  const Create = (storyItems: Record<string, string>, progressState: [number, number], showWords: true | false) => {
     const groups: Array<Group> = [];
     let lines;
     if (Object.keys(storyItems).length > 5)
