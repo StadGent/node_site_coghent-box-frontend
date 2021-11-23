@@ -40,6 +40,7 @@ export default defineComponent({
   setup(props) {
     const stories = ref(props.stories);
     const currentStory = 1;
+    const storyColor = Colors().yellow;
     const currentFrame = 2;
     const pause = ref(false);
     const viewport = ref(null);
@@ -62,7 +63,7 @@ export default defineComponent({
       threeSvc.ClearScene();
       const circle = StoryCircle().Create(
         'Opkomst van de\n cinema',
-        CircleHelper().CreateSchema(new Vector3(0, 0, 0), 2, Colors().yellow),
+        CircleHelper().CreateSchema(new Vector3(0, 0, 0), 2, storyColor),
         [currentFrame - 1, 5],
         'https://cdn-icons-png.flaticon.com/512/844/844994.png',
         true,
@@ -74,7 +75,7 @@ export default defineComponent({
         2.5,
         3,
         currentFrame - 1,
-        Colors().yellow,
+       storyColor,
       );
       threeSvc.AddGroupsToScene(active.object);
       const activeFrameLine = StoryCircleItems().CreateDashedLineWithWord(
@@ -128,7 +129,8 @@ export default defineComponent({
           useStory().setFrameAssets(activeStoryData, currentFrame - 1),
         ),
       );
-      threeSvc.AddGroupsToScene(HorizontalProgressBar().create(new Vector3(0,-7,Layers.scene),[1000,2000,3000],5000,2500,Colors().yellow));
+
+      playBook.addToPlayBook(() => threeSvc.AddGroupsToScene(HorizontalProgressBar().create(new Vector3(0,-7,Layers.scene),[1000,2000,3000],5000,2500,storyColor)));
       playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[0].position, 4));
       playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[1].position, 4));
       playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[2].position, 4));
@@ -142,9 +144,10 @@ export default defineComponent({
       spot.create(new Vector3(0, 0, Layers.scene));
       buildStoryCircle(threeSvc);
 
-      // buildFrameAssetOverview(1)
-      // buildFrameAssetOverview(2)
-      // buildFrameAssetOverview(3)
+      buildFrameAssetOverview(1)
+      buildFrameAssetOverview(2)
+      buildFrameAssetOverview(3)
+      
     };
 
     const startStory = () => {
@@ -170,7 +173,7 @@ export default defineComponent({
         storyData = stories.value;
         console.log('=> ACTIVE STORIES <=', stories);
         buildStory(currentStory);
-        threeSvc.AddGroupsToScene(HorizontalProgressBar().create(new Vector3(0,-7,Layers.scene),[1000,2000,3000],5000,2500,Colors().yellow));
+        // threeSvc.AddGroupsToScene(HorizontalProgressBar().create(new Vector3(0,-7,Layers.scene),[1000,2000,3000],5000,2500,storyColor));
         // startStory();
         // const pos = spot.moveTo(new Vector3(-3,2,Layers.scene), new Vector3(3,-2,Layers.scene))
         // console.log(pos);

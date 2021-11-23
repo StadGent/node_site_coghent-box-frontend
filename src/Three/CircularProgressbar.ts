@@ -50,6 +50,16 @@ const CircularProgressBar = (): {
     return mesh;
   };
 
+  const innerDotSchema = (schema: CircleSchema, storyColor: number, progress: number, currentProgress: number) => {
+    let innerSchema: CircleSchema = {} as CircleSchema;
+    if(progress > currentProgress){
+      innerSchema = CircleHelper().CreateSchema(schema.position, 0.2, storyColor || Colors().white);
+    }else{
+      innerSchema = CircleHelper().CreateSchema(schema.position, 0.2, Colors().white);
+    }
+    return innerSchema
+  }
+
   const createActiveSegment = (
     position: Vector3,
     radius: number,
@@ -62,12 +72,7 @@ const CircularProgressBar = (): {
     const schemas = CircleHelper().CreateSchemas(points, 0.4, color || Colors().white);
     const progressDots: Array<Group> = [];
     for (let i = 0; i < schemas.length; i++) {
-      let innerSchema: CircleSchema = {} as CircleSchema;
-      if(progress > i){
-        innerSchema = CircleHelper().CreateSchema(schemas[i].position, 0.2, color || Colors().white);
-      }else{
-        innerSchema = CircleHelper().CreateSchema(schemas[i].position, 0.2, Colors().white);
-      }
+      const innerSchema = innerDotSchema(schemas[i],color|| Colors().white,progress,i);
       schemas[i].position = Correction().CorrectionForDotOnProgressBar(schemas[i].position, 0.10);
       innerSchema.position = Correction().CorrectionForDotOnProgressBar(
         schemas[i].position,

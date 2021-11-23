@@ -27,6 +27,38 @@ const HorizontalProgressBar = (): {
     return cube;
   }
 
+  const createTimingDots = (timings: Array<number>, currentTime: number,startPosition: Vector3, dividing:number, radius: number, storyColor: number) => {
+    const timingDots: Array<Mesh> = [];
+    for (const timing of timings) {
+      if (timing <= currentTime) {
+        const timeDot = CircleHelper().CreateSchema(
+          new Vector3(
+            startPosition.x + timing / dividing - radius * 2,
+            startPosition.y + 0.47,
+            Layers.presentation,
+          ),
+          radius,
+          storyColor,
+        );
+        const circle = SchemaCircle().CreateCircle(timeDot, Layers.presentation)
+        timingDots.push(circle);
+      } else {
+        const timeDot = CircleHelper().CreateSchema(
+          new Vector3(
+            startPosition.x + timing / dividing - radius * 2,
+            startPosition.y + 0.47,
+            Layers.presentation,
+          ),
+          radius,
+          Colors().white,
+        );
+        const circle = SchemaCircle().CreateCircle(timeDot, Layers.presentation)
+        timingDots.push(circle);
+      }
+    }
+    return timingDots
+  }
+
   const create = (
     position: Vector3,
     timings: Array<number>,
@@ -38,7 +70,7 @@ const HorizontalProgressBar = (): {
     const radius = 0.08;
     const length = 10;
     const dividing = endtime / 10;
-    const startPos = position.x - length / 2 + radius;
+    const startPos = new Vector3(position.x - length / 2 + radius, position.y,position.z);
     const schema = CubeHelper().CreateSchema(
       position,
       '',
@@ -48,36 +80,8 @@ const HorizontalProgressBar = (): {
     );
     const cube = SchemaCube().CreateCube(schema);
     const groups: Array<Group> = [];
-    const timingDots: Array<Mesh> = [];
-    for (const timing of timings) {
-      if (timing <= currentTime) {
-        const timeDot = CircleHelper().CreateSchema(
-          new Vector3(
-            startPos + timing / dividing - radius * 2,
-            position.y + 0.47,
-            Layers.presentation,
-          ),
-          radius,
-          storyColor,
-        );
-        const circle = SchemaCircle().CreateCircle(timeDot, Layers.presentation)
-        timingDots.push(circle);
-      } else {
-        const timeDot = CircleHelper().CreateSchema(
-          new Vector3(
-            startPos + timing / dividing - radius * 2,
-            position.y + 0.47,
-            Layers.presentation,
-          ),
-          radius,
-          Colors().white,
-        );
-        const circle = SchemaCircle().CreateCircle(timeDot, Layers.presentation)
-        timingDots.push(circle);
-      }
-    }
-
-    const currenttimeBar = CurrentTimeProgress(new Vector3(startPos, position.y,Layers.presentation),currentTime/dividing - 0.16);
+    const timingDots = createTimingDots(timings,currentTime,startPos,dividing,radius,storyColor);
+    const currenttimeBar = CurrentTimeProgress(new Vector3(startPos.x, startPos.y,Layers.presentation),currentTime/dividing - 0.16);
     GroupHelper().AddObjectsTogroups(timingDots, groups);
     GroupHelper().AddObjectsTogroups([cube, currenttimeBar], groups);
     return groups;
