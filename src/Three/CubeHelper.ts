@@ -6,7 +6,13 @@ const CubeHelper = (): {
   GetCubeParams: (cube: Mesh<BoxGeometry, MeshBasicMaterial>) => CubeParams;
   GetCubePosition: (cube: Mesh) => Vector3;
   GetCubePositions: (cubes: Array<Mesh>) => Array<Vector3>;
-  CreateSchema: (position: Vector3, url: string, dimensions?: Vector3) => CubeSchema;
+  CreateSchema: (
+    position: Vector3,
+    url: string,
+    dimensions?: Vector3,
+    opacity?: number,
+    isTransparant?: true | false,
+  ) => CubeSchema;
   GetCubesPositions: (cubes: Array<Mesh>) => Array<Vector3>;
   HighlightImage: (schema: CubeSchema) => Mesh;
   ScaleBoxImage: (boxImage: Mesh, scale: Vector3) => void;
@@ -27,15 +33,23 @@ const CubeHelper = (): {
     return positions;
   };
 
-  const CreateSchema = (position: Vector3, url: string, dimensions?: Vector3) => {
+  const CreateSchema = (
+    position: Vector3,
+    url: string,
+    dimensions?: Vector3,
+    opacity?: number,
+    isTransparant?: true | false,
+  ) => {
     return {
       position: position as Vector3,
       params: {
         width: dimensions?.x || 2,
         height: dimensions?.y || 2,
         url: url,
+        opacity: opacity || 1,
+        isTransparant: isTransparant || false,
       },
-    };
+    } as CubeSchema;
   };
 
   const GetCubesPositions = (cubes: Array<Mesh>) => {

@@ -18,6 +18,8 @@ export type CubeParams = {
   depthSegments?: number;
   color?: number;
   url?: string;
+  opacity?: number;
+  isTransparant?: true | false;
 };
 
 export type ImageCubeParams = CubeParams & {
