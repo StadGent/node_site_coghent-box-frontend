@@ -23,6 +23,7 @@ import PlayBook from '@/composables/playbook';
 import StoryCircle from '@/Three/SectionStoryCircle';
 import CircleHelper from '@/Three/CircleHelper';
 import CircularProgressBar from '@/Three/CircularProgressbar';
+import HorizontalProgressBar from '@/Three/HorizontalProgressBar';
 import Colors from '@/Three/defaults.color';
 import StoryCircleItems from '@/Three/SectionStoryCircleItems';
 import DefaultLines from '@/Three/LinesDefault';
@@ -90,11 +91,11 @@ export default defineComponent({
       // const updated = GroupHelper().CreateGroup(circle);
       // updated.position.set(-5,0,0);
       // updated.scale.set(.5,0.5,0);
-
       // threeSvc.AddGroupsToScene([updated]);
       // threeSvc.AddToScene(Tools().Grid());
       threeSvc.state.scene.updateMatrixWorld(true);
     };
+
 
     const showPauseScreen = (threeSvc: ThreeService) => {
       threeSvc.ClearScene();
@@ -127,7 +128,7 @@ export default defineComponent({
           useStory().setFrameAssets(activeStoryData, currentFrame - 1),
         ),
       );
-
+      threeSvc.AddGroupsToScene(HorizontalProgressBar().create(new Vector3(0,-7,Layers.scene),[1000,2000,3000],5000,2500,Colors().yellow));
       playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[0].position, 4));
       playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[1].position, 4));
       playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[2].position, 4));
@@ -166,10 +167,10 @@ export default defineComponent({
       audioHelper = AudioHelper(audioSchema);
       if (stories.value) {
         // PlayAudio();
-
         storyData = stories.value;
         console.log('=> ACTIVE STORIES <=', stories);
         buildStory(currentStory);
+        threeSvc.AddGroupsToScene(HorizontalProgressBar().create(new Vector3(0,-7,Layers.scene),[1000,2000,3000],5000,2500,Colors().yellow));
         // startStory();
         // const pos = spot.moveTo(new Vector3(-3,2,Layers.scene), new Vector3(3,-2,Layers.scene))
         // console.log(pos);
