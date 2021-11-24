@@ -30,6 +30,7 @@ import StoryCircleItems from '@/Three/SectionStoryCircleItems';
 import DefaultLines from '@/Three/LinesDefault';
 import GroupHelper from '@/Three/GroupHelper';
 import useStoryCircle from '@/Three/useStoryCircle.playbook';
+import useFrameAssetOverview from '@/Three/useFrameAssetOverview.playbook';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -74,77 +75,19 @@ export default defineComponent({
       console.log('CURRENTIME', audioSchema.audio.context.currentTime);
     };
 
-    const buildFrameAssetOverview = (currentFrame: number) => {
-      const assetsFromFrame = useAsset().getAssetsFromFrame(
-        activeStoryData,
-        currentFrame,
-      );
-
-      const group: Group = new Group();
-      const positions: Array<Vector3> = [];
-      let pos = -8;
-      for (const asset of assetsFromFrame) {
-        const position = new Vector3(pos, 0, Layers.presentation);
-        positions.push(position);
-        group.add(FrameOverview().addImage(asset, position));
-        pos += 6;
-      }
-
-      playBook.addToPlayBook(() => {
-        threeSvc.ClearScene();
-        threeSvc.AddToScene(group);
-      });
-
-      group.children.forEach((asset, index) => {
-        let highlightedImage: any;
-        playBook.addToPlayBook(() => {
-          const inactiveAssets = group.children.filter((_asset) => _asset != asset);
-          inactiveAssets.forEach((_asset) => {
-            useAsset().setInactive(_asset as Mesh<BoxBufferGeometry, any>);
-          });
-
-          // zoom image & highlight
-          useAsset().zoom(asset as Mesh<BoxBufferGeometry, any>, threeSvc.state.height);
-          highlightedImage = useAsset().addMetadataToZoomedImage(
-            assetsFromFrame[index],
-            asset as Mesh<BoxBufferGeometry, any>,
-            storyColor,
-          );
-          threeSvc.AddToScene(highlightedImage);
-        });
-        playBook.addToPlayBook(() => {
-          threeSvc.state.scene.remove(highlightedImage);
-          asset.scale.set(1, 1, 1);
-          asset.position.set(positions[index].x, positions[index].y, positions[index].z);
-          threeSvc.AddGroupsToScene(
-            HorizontalProgressBar().create(
-              new Vector3(0, -7, Layers.scene),
-              [1000, 2000, 3000],
-              5000,
-              currentFrame + 1 * 1000,
-              storyColor,
-            ),
-          );
-        });
-      });
-      // playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[0].position, 4));
-      // playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[1].position, 4));
-      // playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[2].position, 4));
-      // playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[2].position, 4));
-    };
     const buildStory = (currentStory: number) => {
       console.log('buildStory()', storyData);
       activeStoryData = useStory().setActiveStory(storyData, currentStory - 1);
 
       spot.create(new Vector3(0, 0, Layers.scene));
       useStoryCircle(threeSvc,activeStoryData,playBook).create(new Vector3(0,0,0),storyColor,currentFrame);
-      buildFrameAssetOverview(currentFrame - 1);
+      useFrameAssetOverview(threeSvc,activeStoryData,playBook).create(currentFrame, storyColor);
       currentFrame++;
       useStoryCircle(threeSvc,activeStoryData,playBook).create(new Vector3(0,0,0),storyColor,currentFrame);
-      buildFrameAssetOverview(currentFrame - 1);
+      useFrameAssetOverview(threeSvc,activeStoryData,playBook).create(currentFrame, storyColor);
       currentFrame++;
       useStoryCircle(threeSvc,activeStoryData,playBook).create(new Vector3(0,0,0), storyColor,currentFrame);
-      buildFrameAssetOverview(currentFrame - 1);
+      useFrameAssetOverview(threeSvc,activeStoryData,playBook).create(currentFrame, storyColor);
     };
 
     const startStory = () => {
@@ -159,6 +102,7 @@ export default defineComponent({
         }
       }, 500);
     };
+
     onMounted(() => {
       threeSvc = new ThreeService(viewport);
       audioSchema = AudioSchema(threeSvc);
