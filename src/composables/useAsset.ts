@@ -26,13 +26,11 @@ const useAsset = (): {
   };
 
   const getCollections = (asset: Asset) => {
-    return asset.metadata.filter((data) => data.key === 'collection');
+    return asset.collections;
   };
 
   const getDimensions = (asset: Asset) => {
-    return asset.metadata.filter(
-      (data) => data.key === 'hoogte' || data.key === 'diameter',
-    );
+    return asset.dimensions;
   };
 
   const getImage = (asset: Asset) => {

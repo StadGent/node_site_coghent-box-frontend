@@ -58,6 +58,7 @@ export type Frame = {
 export type Asset = {
   id: string;
   title: Array<Metadata>;
-  metadata: Array<Metadata>;
+  collections: Array<Metadata>;
+  dimensions: Array<Metadata>;
   mediafiles: Array<Mediafiles>;
 };
