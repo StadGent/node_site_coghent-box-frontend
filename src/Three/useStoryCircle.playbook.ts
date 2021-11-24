@@ -27,6 +27,7 @@ const useStoryCircle = (
       [currentFrame, activeStoryData.frames.length],
       'https://cdn-icons-png.flaticon.com/512/844/844994.png',
       true,
+      true
     );
   };
 

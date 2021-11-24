@@ -9,11 +9,11 @@ const useStory = (): {
   title: (activeStory: Story) => string;
   setFrameTitles: (activeStory: Story) => Array<string>;
   setFrameAssets: (activeStory: Story, frame: number) => Record<string, string>;
+  GetStoryTitles: (stories: Array<Story>) => Array<string>;
   /**
    * old functions
    */
   Title: (entity: any) => string;
-  GetStoryTitles: (stories: Array<Entity>) => Array<string>;
   RelationIds: (story: Entity) => Array<string>;
   CreateCenterWords: (words: Array<string>) => Record<string, Vector3>;
 } => {
@@ -51,7 +51,7 @@ const useStory = (): {
     return entity.title?.[0]?.value ? entity.title?.[0]?.value : 'no title';
   };
 
-  const GetStoryTitles = (stories: Array<Entity>) => {
+  const GetStoryTitles = (stories: Array<Story>) => {
     const titles: Array<string> = [];
     stories.map((story) => {
       titles.push(Title(story));

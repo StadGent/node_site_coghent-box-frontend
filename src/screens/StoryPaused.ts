@@ -7,48 +7,53 @@ import SchemaLine from '@/Three/LineSchema';
 import { Group, Vector3 } from 'three';
 import StoryCircle from '../Three/SectionStoryCircle';
 import EndOfStoryText from '@/Three/EndOfStoryText';
+import useStoryCircle from '@/Three/useStoryCircle.playbook';
+import useStory from '@/composables/useStory';
+import { Story } from '@/models/GraphqlModel';
+import CircularProgressBar from '@/Three/CircularProgressbar';
 
-const StoryPaused = (): {
-  Create: (currentStory: string, titles: Array<string>, color?: number) => Array<Group>;
+const StoryPaused = (storyData: Array<Story>): {
+  Create: (progress: Array<number>) => Array<Group>;
 } => {
-  const Lollipop = (title: string, position: Vector3, color?: number) => {
-    const schema = CircleHelper().CreateSchema(
+  const storyCircle = (story: Story, currentFrame: number, position: Vector3, storyColor: number) => {
+    const groups: Array<Group> = [];
+    const titleCircle = StoryCircle().Create(
+      useStory().title(story),
+      CircleHelper().CreateSchema(position, 2, storyColor),
+      [currentFrame, story.frames.length],
+      'https://cdn-icons-png.flaticon.com/512/844/844994.png',
+      true,
+      false
+    );
+    
+
+    const progressBar = CircularProgressBar().createActiveSegment(
       position,
-      2,
-      color || DefaultColors().green,
+      2.5,
+      story.frames.length,
+      currentFrame,
+      storyColor,
     );
-    const startpositionForLine = CircleHelper().CalculatePointOfCircle(
-      { angle: 180, radius: 2.3 } as CirclePoint,
-      schema.position,
-    );
-    const circle = StoryCircle().Create(title, schema, 0.3);
-    const line = SchemaLine().CreateLine({
-      positions: [
-        startpositionForLine,
-        new Vector3(startpositionForLine.x, startpositionForLine.y - 20, 0),
-      ],
-      endObject: Defaults().EndCircle(),
-      params: { color: color || DefaultColors().green },
-    });
-    return GroupHelper().CreateGroup([line, circle]);
+    GroupHelper().AddObjectsTogroups(titleCircle, groups);
+    GroupHelper().AddObjectsTogroups(progressBar.object, groups);
+    return groups;
   };
 
-  const Create = (currentStory: string, titles: Array<string>) => {
+  const Create = (progress: Array<number>) => {
     const groups: Array<Group> = [];
-    groups.push(EndOfStoryText().Create(currentStory, 'endOfstorytext'));
-    for (let i = 0; i < titles.length; i++) {
+    // groups.push(EndOfStoryText().Create(currentStory, 'endOfstorytext'));
+    for (let i = 0; i < useStory().GetStoryTitles(storyData).length; i++) {
       GroupHelper().AddObjectsTogroups(
-        [
-          Lollipop(
-            titles[i],
-            Defaults().StoryPausePositions()[i],
-            Defaults().StoryColors()[i],
-          ),
-        ],
+        storyCircle(
+          storyData[i],
+          progress[i],
+          Defaults().StoryPausePositions()[i],
+          Defaults().StoryColors()[i],
+        ),
         groups,
       );
     }
-    return groups;
+    return groups
   };
   return { Create };
 };

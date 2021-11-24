@@ -54,7 +54,6 @@ export default defineComponent({
     let activeStoryData = reactive<Story>({} as Story);
     const spot = Spot();
     const playBook = PlayBook();
-    let frameAssetSchemas: Array<CubeSchema> = [];
 
     const moveSpotlight = (position: Vector3, widestLength: number) => {
       spot.move(position, widestLength);
@@ -71,7 +70,6 @@ export default defineComponent({
     const PauseAudio = () => {
       audioHelper.Pause();
       console.log('PAUSE');
-
       console.log('CURRENTIME', audioSchema.audio.context.currentTime);
     };
 
@@ -89,6 +87,10 @@ export default defineComponent({
       currentFrame++;
       useStoryCircle(threeSvc,activeStoryData,playBook).create(new Vector3(0,0,0), storyColor,currentFrame);
       useFrameAssetOverview(threeSvc,activeStoryData,playBook).create(currentFrame, storyColor);
+      playBook.addToPlayBook(() => {
+        threeSvc.ClearScene();
+        threeSvc.AddGroupsToScene(StoryPaused(storyData).Create([2,3,1]));
+      });
     };
 
     const startStory = () => {
@@ -109,6 +111,7 @@ export default defineComponent({
       }, 500);
       interval
     };
+
 
     onMounted(() => {
       threeSvc = new ThreeService(viewport);

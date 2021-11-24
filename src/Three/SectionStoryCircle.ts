@@ -23,6 +23,7 @@ const StoryCircle = (): {
     progressState: [number, number],
     iconUrl: string,
     showProgress: true | false,
+    showShadedCircle: true | false,
   ) => Array<Group>;
 } => {
   const main = (schema: CircleSchema) => {
@@ -76,29 +77,46 @@ const StoryCircle = (): {
     progressState: [number, number],
     iconUrl: string,
     showProgress: true | false,
+    showShadedCircle: true | false,
   ) => {
+
     const groups: Array<Group> = [];
+    GroupHelper().AddObjectsTogroups([main(circleSchema)], groups);
     GroupHelper().AddObjectsTogroups(
       [
         main(circleSchema),
-        shadedCircle(circleSchema),
         title(
           storyTitle,
-          new Vector3(circleSchema.position.x, circleSchema.position.y - 1, 0),
+          new Vector3(
+            circleSchema.position.x,
+            circleSchema.position.y - 1,
+            Layers.presentation,
+          ),
           circleSchema.params.color || DefaultColors().green,
         ),
         progressText(
           progressState,
-          new Vector3(circleSchema.position.x, circleSchema.position.y - 0.5, 0),
+          new Vector3(
+            circleSchema.position.x,
+            circleSchema.position.y - 0.5,
+            Layers.presentation,
+          ),
           circleSchema.params.color || DefaultColors().green,
         ),
         icon(
-          new Vector3(circleSchema.position.x, circleSchema.position.y + 1.2, 0),
+          new Vector3(
+            circleSchema.position.x,
+            circleSchema.position.y + 1.2,
+            Layers.presentation,
+          ),
           iconUrl,
         ),
       ],
       groups,
     );
+    if (showShadedCircle) {
+      GroupHelper().AddObjectsTogroups([shadedCircle(circleSchema)], groups);
+    }
     if (showProgress) {
       GroupHelper().AddObjectsTogroups(
         [CircularprogressBar().create(circleSchema.position, 2.5, 1, 1)],

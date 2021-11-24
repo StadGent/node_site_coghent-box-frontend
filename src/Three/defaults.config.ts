@@ -2,6 +2,7 @@ import { CircleGeometry, Mesh, MeshBasicMaterial, Vector3 } from 'three';
 import BaseChapes from './BaseChapes';
 import { CirclePoint, CircleSchema } from './CircleSchema';
 import { CubeSchema } from './CubeSchema';
+import Colors from './defaults.color';
 import DefaultColors from './defaults.color';
 import { TextSchema } from './Textschema';
 
@@ -27,19 +28,19 @@ const Defaults = (): {
 
   const StoryPausePositions = () => {
     return [
-      new Vector3(-29, 0, 0),
-      new Vector3(-14, 0, 0),
-      new Vector3(14, 0, 0),
-      new Vector3(29, 0, 0),
+      new Vector3(-15, 0, 0),
+      new Vector3(-7, 0, 0),
+      new Vector3(7, 0, 0),
+      new Vector3(15, 0, 0),
     ];
   };
 
   const StoryColors = () => {
     return [
-      DefaultColors().pink,
-      DefaultColors().yellow,
-      DefaultColors().green,
-      DefaultColors().lightBlue,
+      Colors().pink,
+      Colors().yellow,
+      Colors().green,
+      Colors().lightBlue,
     ];
   };
   const CenterWordPositions = () => {
@@ -76,20 +77,20 @@ const Defaults = (): {
       text: text,
       position: position as Vector3,
       fontParams: {
-        color: DefaultColors().white,
+        color: Colors().white,
         size: 0.3,
         path: '/Fonts/myFont.json',
       },
       textBoxParams: {
         height: 1,
         width: 3,
-        color: DefaultColors().green,
+        color: Colors().green,
       },
     };
   };
 
   const EndCircle = () => {
-    return BaseChapes().DrawCircle(0.08, DefaultColors().green, 50);
+    return BaseChapes().DrawCircle(0.08, Colors().green, 50);
   };
 
   return {
