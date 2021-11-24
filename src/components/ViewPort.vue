@@ -10,8 +10,8 @@ import useStory from '@/composables/useStory';
 import Tools from '@/Three/Tools';
 import ThreeService from '@/services/ThreeService';
 import { defineComponent, onMounted, PropType, reactive, ref } from 'vue';
-import { BoxBufferGeometry, Color, Mesh, Vector3 } from 'three';
-import { Entity as _Entity, Story } from '@/models/GraphqlModel';
+import { BoxBufferGeometry, Color, Group, Mesh, Vector3 } from 'three';
+import { Asset, Entity as _Entity, Story } from '@/models/GraphqlModel';
 import FrameOverview from '@/screens/FrameOverview';
 import { CubeSchema } from '@/Three/CubeSchema';
 import AudioSchema from '@/Three/AudioSchema';
@@ -20,7 +20,7 @@ import AudioHelper from '@/Three/AudioHelper';
 import StoryPaused from '@/screens/StoryPaused';
 import Layers from '@/Three/defaults.layers';
 import PlayBook from '@/composables/playbook';
-import Asset from '@/composables/useAsset';
+import useAsset from '@/composables/useAsset';
 import StoryCircle from '@/Three/SectionStoryCircle';
 import CircleHelper from '@/Three/CircleHelper';
 import CircularProgressBar from '@/Three/CircularProgressbar';
@@ -29,7 +29,6 @@ import Colors from '@/Three/defaults.color';
 import StoryCircleItems from '@/Three/SectionStoryCircleItems';
 import DefaultLines from '@/Three/LinesDefault';
 import GroupHelper from '@/Three/GroupHelper';
-import useAsset from '@/composables/useAsset';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -117,32 +116,19 @@ export default defineComponent({
       threeSvc.AddGroupsToScene(overviewFrame.groups);
     };
 
-    const showAsset = () => {
+    const showAsset = (asset: Asset, position: Vector3) => {
       threeSvc.ClearScene();
       // threeSvc.AddToScene(Tools().Grid());
-      const assetsFromFrame = Asset().getAssetsFromFrame(
-        activeStoryData,
-        currentFrame - 1,
-      );
-      const asset = assetsFromFrame[2];
 
-      const image = FrameOverview().addImage(
-        asset,
-        new Vector3(0, 0, Layers.presentation),
-      );
-      const image2 = FrameOverview().addImage(
-        asset,
-        new Vector3(-8, 0, Layers.presentation),
-      );
+      const image = FrameOverview().addImage(asset, position);
 
       threeSvc.AddToScene(image);
-      threeSvc.AddToScene(image2);
-    
-      setTimeout(() => {
-        useAsset().zoom(image as Mesh<BoxBufferGeometry, any>, threeSvc.state.height);
-        useAsset().setInactive(image2 as Mesh<BoxBufferGeometry, any>);
-        threeSvc.AddToScene(useAsset().addMetadataToZoomedImage(asset,image as Mesh<BoxBufferGeometry, any>,storyColor));
-      }, 1000);
+
+      // setTimeout(() => {
+      //   useAsset().zoom(image as Mesh<BoxBufferGeometry, any>, threeSvc.state.height);
+      //   useAsset().setInactive(image2 as Mesh<BoxBufferGeometry, any>);
+      //   threeSvc.AddToScene(useAsset().addMetadataToZoomedImage(asset,image as Mesh<BoxBufferGeometry, any>,storyColor));
+      // }, 1000);
     };
 
     const PlayAudio = () => {
@@ -156,27 +142,87 @@ export default defineComponent({
     };
 
     const buildFrameAssetOverview = (currentFrame: number) => {
-      playBook.addToPlayBook(() =>
-        addFrameOverviewToScene(
-          threeSvc,
-          useStory().setFrameAssets(activeStoryData, currentFrame - 1),
-        ),
+      threeSvc.ClearScene();
+      const assetsFromFrame = useAsset().getAssetsFromFrame(
+        activeStoryData,
+        currentFrame,
       );
+      const group: Group = new Group();
+      const positions: Array<Vector3> = [];
+      let pos = -8;
+      for (const asset of assetsFromFrame) {
+        const position = new Vector3(pos, 0, Layers.presentation);
+        positions.push(position);
+        group.add(FrameOverview().addImage(asset, position));
+        pos += 6;
+      }
+
+      playBook.addToPlayBook(() => threeSvc.AddToScene(group));
+      // threeSvc.AddToScene(group)
+      // useAsset().zoom(group.children[2] as Mesh<BoxBufferGeometry, any>, threeSvc.state.height)
+      let highlightedImage: any;
       playBook.addToPlayBook(() =>
-        threeSvc.AddGroupsToScene(
-          HorizontalProgressBar().create(
-            new Vector3(0, -7, Layers.scene),
-            [1000, 2000, 3000],
-            5000,
-            2500,
-            storyColor,
-          ),
-        ),
+       { useAsset().zoom(
+          group.children[2] as Mesh<BoxBufferGeometry, any>,
+          threeSvc.state.height,
+        );
+        highlightedImage = useAsset().addMetadataToZoomedImage(
+        assetsFromFrame[2],
+        group.children[2] as Mesh<BoxBufferGeometry, any>,
+        storyColor,
       );
-      playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[0].position, 4));
-      playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[1].position, 4));
-      playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[2].position, 4));
-      playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[2].position, 4));
+        threeSvc.AddToScene(highlightedImage)}
+      );
+      // threeSvc.AddToScene(highlightedImage);
+      // playBook.addToPlayBook(() => threeSvc.state.scene.remove(highlightedImage));
+      
+      playBook.addToPlayBook(() => {
+        console.log('highlightedImage', highlightedImage);
+        threeSvc.state.scene.remove(highlightedImage);
+        group.children[2].scale.set(1, 1, 1);
+        group.children[2].position.set(positions[2].x, positions[2].y, positions[2].z);
+      });
+      // group.children[2].scale.set(1,1,1);
+      // group.children[2].position.set(positions[2].x,positions[2].y, positions[2].z);
+
+      // group.children.forEach((asset, index) => {
+      //   playBook.addToPlayBook(() =>
+      //     {useAsset().zoom(asset as Mesh<BoxBufferGeometry, any>, threeSvc.state.height),
+      //     threeSvc.AddToScene(useAsset().addMetadataToZoomedImage(assetsFromFrame[index],asset as Mesh<BoxBufferGeometry, any>,storyColor));}
+
+      //   );
+
+      //   playBook.addToPlayBook(() => {
+      //     asset.scale.set(1, 1, 1);
+      //   });
+      // });
+
+      console.log(group.children[1]);
+      // useAsset().zoom(group.children[1] as Mesh<BoxBufferGeometry, any>, 600);
+      // useAsset().setInactive(group.children[0] as Mesh<BoxBufferGeometry, any>);
+      // showAsset(assetsFromFrame[0],new Vector3(0,0,0));
+      // showAsset(assetsFromFrame[1],new Vector3(5,2,0));
+      // playBook.addToPlayBook(() =>
+      //   addFrameOverviewToScene(
+      //     threeSvc,
+      //     useStory().setFrameAssets(activeStoryData, currentFrame - 1),
+      //   ),
+      // );
+      // playBook.addToPlayBook(() =>
+      //   threeSvc.AddGroupsToScene(
+      //     HorizontalProgressBar().create(
+      //       new Vector3(0, -7, Layers.scene),
+      //       [1000, 2000, 3000],
+      //       5000,
+      //       2500,
+      //       storyColor,
+      //     ),
+      //   ),
+      // );
+      // playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[0].position, 4));
+      // playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[1].position, 4));
+      // playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[2].position, 4));
+      // playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[2].position, 4));
     };
 
     const buildStory = (currentStory: number) => {
@@ -184,10 +230,9 @@ export default defineComponent({
       activeStoryData = useStory().setActiveStory(storyData, currentStory - 1);
 
       spot.create(new Vector3(0, 0, Layers.scene));
-      // buildStoryCircle(threeSvc);
-
-      // buildFrameAssetOverview(1)
-      // buildFrameAssetOverview(2)
+      buildStoryCircle(threeSvc);
+      buildFrameAssetOverview(0);
+      // buildFrameAssetOverview(2)1
       // buildFrameAssetOverview(3)
     };
 
@@ -215,13 +260,10 @@ export default defineComponent({
         console.log('=> ACTIVE STORIES <=', stories);
         buildStory(currentStory);
 
-        // addFrameOverviewToScene(
-        //   threeSvc,
-        //   useStory().setFrameAssets(activeStoryData, currentFrame - 1),
-        // );
-        showAsset();
+        // buildFrameAssetOverview(currentFrame - 1);
+        // showAsset();
         // threeSvc.AddGroupsToScene(HorizontalProgressBar().create(new Vector3(0,-7,Layers.scene),[1000,2000,3000],5000,2500,storyColor));
-        // startStory();
+        startStory();
         // const pos = spot.moveTo(new Vector3(-3,2,Layers.scene), new Vector3(3,-2,Layers.scene))
         // console.log(pos);
         // for (let index = 0; index < pos.length; index++) {
