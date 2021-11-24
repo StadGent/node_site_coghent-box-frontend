@@ -5,7 +5,6 @@ const PlayBook = (): {
   const playbookFunctions: Array<Function> = [];
   const addToPlayBook = (func: Function) => {
     playbookFunctions.push(func as Function);
-    console.log(`Added function to playbook => total ${playbookFunctions.length}`);
   };
 
   const getPlayBookFunctions = () => {

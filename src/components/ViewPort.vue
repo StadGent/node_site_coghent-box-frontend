@@ -80,6 +80,7 @@ export default defineComponent({
       activeStoryData = useStory().setActiveStory(storyData, currentStory - 1);
 
       spot.create(new Vector3(0, 0, Layers.scene));
+
       useStoryCircle(threeSvc,activeStoryData,playBook).create(new Vector3(0,0,0),storyColor,currentFrame);
       useFrameAssetOverview(threeSvc,activeStoryData,playBook).create(currentFrame, storyColor);
       currentFrame++;
@@ -93,14 +94,20 @@ export default defineComponent({
     const startStory = () => {
       let current = 0;
       let time = 2;
-      setInterval(() => {
-        console.log(Math.floor(audioSchema.audio.context.currentTime));
+      const interval = setInterval(() => {
         if (audioHelper.DoEvent(audioSchema.audio.context.currentTime, time)) {
+          console.log(audioSchema.audio.context.currentTime);
           playBook.getPlayBookFunctions()[current]();
           time += 1;
           current++;
         }
+        if(current > playBook.getPlayBookFunctions().length - 1){
+          current = 0;
+          PauseAudio();
+          clearInterval(interval);
+        }
       }, 500);
+      interval
     };
 
     onMounted(() => {
@@ -109,11 +116,9 @@ export default defineComponent({
       // audioSchema.loadAudioFile('/Audio/example.mp3');
       audioHelper = AudioHelper(audioSchema);
       if (stories.value) {
-        // PlayAudio();
         storyData = stories.value;
         console.log('=> ACTIVE STORIES <=', stories);
         buildStory(currentStory);
-        // threeSvc.AddGroupsToScene(HorizontalProgressBar().create(new Vector3(0,-7,Layers.scene),[1000,2000,3000],5000,2500,storyColor));
         startStory();
         // const pos = spot.moveTo(new Vector3(-3,2,Layers.scene), new Vector3(3,-2,Layers.scene))
         // console.log(pos);
