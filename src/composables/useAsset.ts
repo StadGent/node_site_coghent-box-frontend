@@ -6,8 +6,7 @@ import GroupHelper from '@/Three/GroupHelper';
 import TextHelper from '@/Three/TextHelper';
 import { FontParams } from '@/Three/Textschema';
 import { BoxBufferGeometry, Mesh, Vector3, Group } from 'three';
-import Frame from './frame';
-import useStory from './useStory';
+
 
 const useAsset = (): {
   getCollections: (asset: Asset) => Array<Metadata>;
