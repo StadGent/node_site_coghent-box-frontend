@@ -69,11 +69,12 @@ export default defineComponent({
         'https://cdn-icons-png.flaticon.com/512/844/844994.png',
         true,
       );
+
       const active = CircularProgressBar().createActiveSegment(
         new Vector3(0, 0, 0),
         2.5,
         3,
-        currentFrame -1,
+        currentFrame - 1,
         storyColor,
       );
       const activeFrameLine = StoryCircleItems().CreateDashedLineWithWord(
@@ -82,7 +83,7 @@ export default defineComponent({
       );
 
       const progressOfFrame = StoryCircle().progressText(
-        [currentFrame , activeStoryData.frames.length],
+        [currentFrame, activeStoryData.frames.length],
         new Vector3(
           activeFrameLine.endOfLine.x,
           activeFrameLine.endOfLine.y + 0.8,
@@ -139,6 +140,12 @@ export default defineComponent({
       group.children.forEach((asset, index) => {
         let highlightedImage: any;
         playBook.addToPlayBook(() => {
+          const inactiveAssets = group.children.filter((_asset) => _asset != asset);
+          inactiveAssets.forEach((_asset) => {
+            useAsset().setInactive(_asset as Mesh<BoxBufferGeometry, any>);
+          });
+
+          // zoom image & highlight
           useAsset().zoom(asset as Mesh<BoxBufferGeometry, any>, threeSvc.state.height);
           highlightedImage = useAsset().addMetadataToZoomedImage(
             assetsFromFrame[index],
@@ -147,7 +154,6 @@ export default defineComponent({
           );
           threeSvc.AddToScene(highlightedImage);
         });
-
         playBook.addToPlayBook(() => {
           threeSvc.state.scene.remove(highlightedImage);
           asset.scale.set(1, 1, 1);
@@ -157,10 +163,10 @@ export default defineComponent({
               new Vector3(0, -7, Layers.scene),
               [1000, 2000, 3000],
               5000,
-              currentFrame+1*1000,
+              currentFrame + 1 * 1000,
               storyColor,
             ),
-          )
+          );
         });
       });
 
@@ -183,6 +189,7 @@ export default defineComponent({
       buildStoryCircle(threeSvc);
       buildFrameAssetOverview(currentFrame - 1);
     };
+
     const startStory = () => {
       let current = 0;
       let time = 2;
@@ -207,6 +214,17 @@ export default defineComponent({
         buildStory(currentStory);
         // threeSvc.AddGroupsToScene(HorizontalProgressBar().create(new Vector3(0,-7,Layers.scene),[1000,2000,3000],5000,2500,storyColor));
         startStory();
+
+        // threeSvc.ClearScene();
+        // threeSvc.AddGroupsToScene(
+        //     HorizontalProgressBar().create(
+        //       new Vector3(0, -7, Layers.background),
+        //       [1000, 2000, 3000],
+        //       5000,
+        //       currentFrame + 1 * 1000,
+        //       storyColor,
+        //     ),
+        //   );
         // const pos = spot.moveTo(new Vector3(-3,2,Layers.scene), new Vector3(3,-2,Layers.scene))
         // console.log(pos);
         // for (let index = 0; index < pos.length; index++) {

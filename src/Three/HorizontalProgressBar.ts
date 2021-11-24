@@ -34,12 +34,13 @@ const HorizontalProgressBar = (): {
         const timeDot = CircleHelper().CreateSchema(
           new Vector3(
             startPosition.x + timing / dividing - radius * 2,
-            startPosition.y + 0.47,
+            startPosition.y + 0.47 ,
             Layers.presentation,
           ),
           radius,
           storyColor,
         );
+
         const circle = SchemaCircle().CreateCircle(timeDot, Layers.presentation)
         timingDots.push(circle);
       } else {
@@ -70,11 +71,11 @@ const HorizontalProgressBar = (): {
     const radius = 0.08;
     const length = 10;
     const dividing = endtime / 10;
-    const startPos = new Vector3(position.x - length / 2 + radius, position.y,position.z);
+    const startPos = new Vector3(position.x - length / 2 + radius, position.y, Layers.presentation);
     const schema = CubeHelper().CreateSchema(
       position,
       '',
-      new Vector3(length, 0.25, Layers.presentation - 0.1),
+      new Vector3(length, 0.25, Layers.presentation - 0.01),
       0.7,
       true,
     );

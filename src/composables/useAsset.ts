@@ -43,6 +43,7 @@ const useAsset = (): {
 
   const zoom = (assetImageCube: Mesh<BoxBufferGeometry, any>, screenHeight: number) => {
     assetImageCube.position.set(assetImageCube.position.x, -1, assetImageCube.position.z);
+    assetImageCube.material.opacity = 1;
     assetImageCube.scale.set(3.2, 3.2 % screenHeight, Layers.presentation);
   };
 
@@ -59,13 +60,14 @@ const useAsset = (): {
       new Vector3(cubeParams.width, cubeParams.height, Layers.presentation),
     );
     schema.params.color = storyColor;
-    const cube = CubeHelper().HighlightImage(schema, storyColor);
+    schema.position.z = Layers.presentation;
+    const cube = CubeHelper().HighlightImage(schema, storyColor);    
     cube.scale.set(
       assetImageCube.scale.x,
       assetImageCube.scale.y,
-      assetImageCube.scale.z,
+      Layers.presentation,
     );
-    assetImageCube.material.opacity = 1;
+
     const textPosition = new Vector3(
       assetImageCube.position.x - cubeParams.width /2.5 * cube.scale.x,
       assetImageCube.position.y + cubeParams.height / 2* cube.scale.y,
