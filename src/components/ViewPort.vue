@@ -29,6 +29,7 @@ import Colors from '@/Three/defaults.color';
 import StoryCircleItems from '@/Three/SectionStoryCircleItems';
 import DefaultLines from '@/Three/LinesDefault';
 import GroupHelper from '@/Three/GroupHelper';
+import useStoryCircle from '@/Three/useStoryCircle.playbook';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -59,50 +60,6 @@ export default defineComponent({
       threeSvc.AddToScene(spot.SpotLight());
     };
 
-    const buildStoryCircle = (threeSvc: ThreeService) => {
-      threeSvc.state.scene.background = new Color(Colors().black);
-      playBook.addToPlayBook(() => threeSvc.ClearScene());
-      const circle = StoryCircle().Create(
-        useStory().title(activeStoryData),
-        CircleHelper().CreateSchema(new Vector3(0, 0, 0), 2, storyColor),
-        [currentFrame, activeStoryData.frames.length],
-        'https://cdn-icons-png.flaticon.com/512/844/844994.png',
-        true,
-      );
-
-      const active = CircularProgressBar().createActiveSegment(
-        new Vector3(0, 0, 0),
-        2.5,
-        3,
-        currentFrame - 1,
-        storyColor,
-      );
-      const activeFrameLine = StoryCircleItems().CreateDashedLineWithWord(
-        DefaultLines().line3(active.dotSchemas[currentFrame - 1].position),
-        useStory().setFrameTitles(activeStoryData)[currentFrame - 1],
-      );
-
-      const progressOfFrame = StoryCircle().progressText(
-        [currentFrame, activeStoryData.frames.length],
-        new Vector3(
-          activeFrameLine.endOfLine.x,
-          activeFrameLine.endOfLine.y + 0.8,
-          Layers.presentation,
-        ),
-        Colors().white,
-      );
-
-      playBook.addToPlayBook(() => {
-        threeSvc.AddGroupsToScene(circle);
-        threeSvc.AddGroupsToScene(active.object);
-        threeSvc.AddToScene(activeFrameLine.object);
-        threeSvc.AddToScene(progressOfFrame);
-      });
-
-      // threeSvc.AddToScene(Tools().Grid());
-      threeSvc.state.scene.updateMatrixWorld(true);
-    };
-
     const showPauseScreen = (threeSvc: ThreeService) => {
       threeSvc.ClearScene();
     };
@@ -122,6 +79,7 @@ export default defineComponent({
         activeStoryData,
         currentFrame,
       );
+
       const group: Group = new Group();
       const positions: Array<Vector3> = [];
       let pos = -8;
@@ -169,7 +127,6 @@ export default defineComponent({
           );
         });
       });
-
       // playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[0].position, 4));
       // playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[1].position, 4));
       // playBook.addToPlayBook(() => moveSpotlight(frameAssetSchemas[2].position, 4));
@@ -180,13 +137,13 @@ export default defineComponent({
       activeStoryData = useStory().setActiveStory(storyData, currentStory - 1);
 
       spot.create(new Vector3(0, 0, Layers.scene));
-      buildStoryCircle(threeSvc);
+      useStoryCircle(threeSvc,activeStoryData,playBook).create(new Vector3(0,0,0),storyColor,currentFrame);
       buildFrameAssetOverview(currentFrame - 1);
       currentFrame++;
-      buildStoryCircle(threeSvc);
+      useStoryCircle(threeSvc,activeStoryData,playBook).create(new Vector3(0,0,0),storyColor,currentFrame);
       buildFrameAssetOverview(currentFrame - 1);
       currentFrame++;
-      buildStoryCircle(threeSvc);
+      useStoryCircle(threeSvc,activeStoryData,playBook).create(new Vector3(0,0,0), storyColor,currentFrame);
       buildFrameAssetOverview(currentFrame - 1);
     };
 
@@ -214,17 +171,6 @@ export default defineComponent({
         buildStory(currentStory);
         // threeSvc.AddGroupsToScene(HorizontalProgressBar().create(new Vector3(0,-7,Layers.scene),[1000,2000,3000],5000,2500,storyColor));
         startStory();
-
-        // threeSvc.ClearScene();
-        // threeSvc.AddGroupsToScene(
-        //     HorizontalProgressBar().create(
-        //       new Vector3(0, -7, Layers.background),
-        //       [1000, 2000, 3000],
-        //       5000,
-        //       currentFrame + 1 * 1000,
-        //       storyColor,
-        //     ),
-        //   );
         // const pos = spot.moveTo(new Vector3(-3,2,Layers.scene), new Vector3(3,-2,Layers.scene))
         // console.log(pos);
         // for (let index = 0; index < pos.length; index++) {
