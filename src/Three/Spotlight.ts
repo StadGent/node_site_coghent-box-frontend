@@ -4,12 +4,14 @@ import SchemaCircle from './CircleSchema';
 import Colors from './defaults.color';
 import Layers from './defaults.layers';
 
-const Spot = (): {
+export type SpotlightFunctions = {
   SpotLight: () => Mesh;
   create: (startPosition: Vector3, radius: number,color?: number) => Mesh;
   move: (position: Vector3, height: number) => void;
   moveTo: (from: Vector3, to: Vector3) => Array<Vector3>;
-} => {
+}
+
+const Spot = (): SpotlightFunctions => {
   let spotlight: Mesh;
 
   const SpotLight = () => spotlight;

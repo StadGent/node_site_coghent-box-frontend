@@ -1,7 +1,9 @@
-const PlayBook = (): {
-  addToPlayBook: (func: any) => void;
-  getPlayBookFunctions: () => Array<any>;
-} => {
+export type PlayBookFunctions = {
+  addToPlayBook: (func: Function) => void;
+  getPlayBookFunctions: () => Array<Function>;
+}
+
+const PlayBook = (): PlayBookFunctions=> {
   const playbookFunctions: Array<Function> = [];
   const addToPlayBook = (func: Function) => {
     playbookFunctions.push(func as Function);

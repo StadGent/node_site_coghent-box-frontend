@@ -5,12 +5,14 @@ import ThreeService from '@/services/ThreeService';
 import { BoxBufferGeometry, Group, Mesh, Object3D, Vector3 } from 'three';
 import Layers from './defaults.layers';
 import HorizontalProgressBar from './HorizontalProgressBar';
+import { PlayBookFunctions } from '@/composables/playbook'
+import { SpotlightFunctions } from './Spotlight';
 
 const useFrameAssetOverview = (
   threeService: ThreeService,
   activeStoryData: Story,
-  playBook: any,
-  spot: any,
+  playBook: PlayBookFunctions,
+  spot: SpotlightFunctions,
 ): {
   create: (currentFrame: number, storyColor: number) => void;
 } => {
@@ -27,7 +29,7 @@ const useFrameAssetOverview = (
       group.add(FrameOverview().addImage(asset, position));
       pos += 6;
     }
-
+    
     playBook.addToPlayBook(() => {
       threeService.ClearScene();
       threeService.AddToScene(group);
@@ -85,7 +87,6 @@ const useFrameAssetOverview = (
       useAsset().setActive(asset);
     })
   }
-
 
   const create = (currentFrame: number, _storyColor: number) => {
     assets = useAsset().getAssetsFromFrame(activeStoryData, currentFrame - 1);

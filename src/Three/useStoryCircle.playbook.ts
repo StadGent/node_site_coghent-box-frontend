@@ -1,4 +1,4 @@
-import PlayBook from '@/composables/playbook';
+import PlayBook, { PlayBookFunctions } from '@/composables/playbook';
 import useStory from '@/composables/useStory';
 import { Story } from '@/models/GraphqlModel';
 import ThreeService from '@/services/ThreeService';
@@ -16,7 +16,7 @@ import StoryCircleItems from './SectionStoryCircleItems';
 const useStoryCircle = (
   threeService: ThreeService,
   activeStoryData: Story,
-  playBook: any,
+  playBook: PlayBookFunctions,
 ): {
   create: (position: Vector3, storyColor: number, currentFrame: number) => void;
 } => {
