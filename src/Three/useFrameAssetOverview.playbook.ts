@@ -10,6 +10,7 @@ const useFrameAssetOverview = (
   threeService: ThreeService,
   activeStoryData: Story,
   playBook: any,
+  spot: any,
 ): {
   create: (currentFrame: number, storyColor: number) => void;
 } => {
@@ -30,6 +31,8 @@ const useFrameAssetOverview = (
     playBook.addToPlayBook(() => {
       threeService.ClearScene();
       threeService.AddToScene(group);
+      spot.move(positions[0], 4)
+      threeService.AddToScene(spot.SpotLight())
     });
   };
 
@@ -67,13 +70,22 @@ const useFrameAssetOverview = (
 
   const zoomAndHighlightAsset = (asset: Mesh<BoxBufferGeometry, any>, currentAsset: number) => {
     useAsset().zoom(asset as Mesh<BoxBufferGeometry, any>, threeService.state.height);
-        highlightedImage = useAsset().addMetadataToZoomedImage(
-          assets[currentAsset],
-          asset as Mesh<BoxBufferGeometry, any>,
-          storyColor,
-        );
-        threeService.AddToScene(highlightedImage);
+    highlightedImage = useAsset().addMetadataToZoomedImage(
+      assets[currentAsset],
+      asset as Mesh<BoxBufferGeometry, any>,
+      storyColor,
+    );
+    threeService.AddToScene(highlightedImage);
   };
+
+  const moveSpotlightToAsset = (asset: Mesh<BoxBufferGeometry, any>) => {
+    playBook.addToPlayBook(() => {
+      spot.move(asset.position, asset.geometry.parameters.height + 0.05);
+      threeService.AddToScene(spot.SpotLight())
+      useAsset().setActive(asset);
+    })
+  }
+
 
   const create = (currentFrame: number, _storyColor: number) => {
     assets = useAsset().getAssetsFromFrame(activeStoryData, currentFrame - 1);
@@ -81,6 +93,7 @@ const useFrameAssetOverview = (
     displayAllAssets();
 
     group.children.forEach((asset, index) => {
+      moveSpotlightToAsset(asset as Mesh<BoxBufferGeometry, any>);
       playBook.addToPlayBook(() => {
         setAssetsInactive(asset as Mesh<BoxBufferGeometry, any>);
         zoomAndHighlightAsset(asset as Mesh<BoxBufferGeometry, any>, index);

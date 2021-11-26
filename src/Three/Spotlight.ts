@@ -1,26 +1,30 @@
 import { Mesh, Vector3 } from 'three';
 import CircleHelper from './CircleHelper';
 import SchemaCircle from './CircleSchema';
+import Colors from './defaults.color';
 import Layers from './defaults.layers';
 
 const Spot = (): {
   SpotLight: () => Mesh;
-  create: (startPosition: Vector3) => Mesh;
+  create: (startPosition: Vector3, radius: number,color?: number) => Mesh;
   move: (position: Vector3, height: number) => void;
   moveTo: (from: Vector3, to: Vector3) => Array<Vector3>;
 } => {
   let spotlight: Mesh;
 
   const SpotLight = () => spotlight;
-  const create = (startPosition: Vector3, color?: number) => {
+  const create = (startPosition: Vector3, radius: number, color?: number) => {
     spotlight = SchemaCircle().CreateCircle(
       CircleHelper().CreateSchema(
         new Vector3(startPosition.x, startPosition.y, Layers.scene),
         1,
-        color || 0xc4c4c4,
+        color || Colors().white,
+        0.5
       ),
-      Layers.presentation,
+      Layers.scene,
+      true,
     );
+    move(startPosition, radius);
     return spotlight;
   };
 

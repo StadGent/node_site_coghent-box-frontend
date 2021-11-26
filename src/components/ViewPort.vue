@@ -76,17 +76,16 @@ export default defineComponent({
     const buildStory = (currentStory: number) => {
       console.log('buildStory()', storyData);
       activeStoryData = useStory().setActiveStory(storyData, currentStory - 1);
-
-      spot.create(new Vector3(0, 0, Layers.scene));
-
+      spot.create(new Vector3(0, 0, Layers.scene), 6);
+      playBook.addToPlayBook(() => threeSvc.AddToScene(spot.SpotLight()));      
       useStoryCircle(threeSvc,activeStoryData,playBook).create(new Vector3(0,0,0),storyColor,currentFrame);
-      useFrameAssetOverview(threeSvc,activeStoryData,playBook).create(currentFrame, storyColor);
+      useFrameAssetOverview(threeSvc,activeStoryData,playBook, spot).create(currentFrame, storyColor);
       currentFrame++;
       useStoryCircle(threeSvc,activeStoryData,playBook).create(new Vector3(0,0,0),storyColor,currentFrame);
-      useFrameAssetOverview(threeSvc,activeStoryData,playBook).create(currentFrame, storyColor);
+      useFrameAssetOverview(threeSvc,activeStoryData,playBook, spot).create(currentFrame, storyColor);
       currentFrame++;
       useStoryCircle(threeSvc,activeStoryData,playBook).create(new Vector3(0,0,0), storyColor,currentFrame);
-      useFrameAssetOverview(threeSvc,activeStoryData,playBook).create(currentFrame, storyColor);
+      useFrameAssetOverview(threeSvc,activeStoryData,playBook, spot).create(currentFrame, storyColor);
       playBook.addToPlayBook(() => {
         threeSvc.ClearScene();
         threeSvc.AddGroupsToScene(StoryPaused(storyData).Create([2,3,1]));

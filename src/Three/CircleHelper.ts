@@ -3,7 +3,7 @@ import { Vector3 } from 'three';
 
 const CircleHelper = (): {
   CalculatePointOfCircle: (point: CirclePoint, position: Vector3) => Vector3;
-  CreateSchema: (position: Vector3, radius: number, color: number) => CircleSchema;
+  CreateSchema: (position: Vector3, radius: number, color: number, opacity?: number) => CircleSchema;
   CreateSchemas: (positions: Array<Vector3>, radius: number, color: number) => Array<CircleSchema>;
   SplitCircleInSegments: (position: Vector3, radius: number, segments: number) => Array<Vector3>;
 } => {
@@ -13,12 +13,13 @@ const CircleHelper = (): {
     return { x: posX + position.x, y: posY + position.y, z: 0 } as Vector3;
   };
 
-  const CreateSchema = (position: Vector3, radius: number, color: number) => {
+  const CreateSchema = (position: Vector3, radius: number, color: number, opacity?: number) => {
     return {
       position: position,
       params: {
         radius: radius,
         color: color,
+        opacity: opacity || 1
       },
     } as CircleSchema;
   };

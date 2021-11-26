@@ -14,6 +14,7 @@ const useAsset = (): {
   getImage: (asset: Asset) => string;
   zoom: (assetImageCube: Mesh<BoxBufferGeometry, any>, screenHeight: number) => void;
   setInactive: (assetImageCube: Mesh<BoxBufferGeometry, any>) => void;
+  setActive: (assetImageCube: Mesh<BoxBufferGeometry, any>) => void;
   addMetadataToZoomedImage: (
     asset: Asset,
     assetImageCube: Mesh<BoxBufferGeometry, any>,
@@ -82,6 +83,11 @@ const useAsset = (): {
     assetImageCube.position.z = Layers.scene;
   };
 
+  const setActive = (assetImageCube: Mesh<BoxBufferGeometry, any>) => {
+    assetImageCube.material.opacity = 1;
+    assetImageCube.position.z = Layers.scene;
+  };
+
   const getAssetsFromFrame = (activeStory: Story, frame: number) => {
     return activeStory.frames[frame].assets;
   };
@@ -93,6 +99,7 @@ const useAsset = (): {
     zoom,
     addMetadataToZoomedImage,
     setInactive,
+    setActive,
     getAssetsFromFrame,
   };
 };
