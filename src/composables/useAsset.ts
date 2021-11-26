@@ -11,6 +11,7 @@ import { BoxBufferGeometry, Mesh, Vector3, Group } from 'three';
 const useAsset = (): {
   getCollections: (asset: Asset) => Array<Metadata>;
   getDimensions: (asset: Asset) => Array<Metadata>;
+  getTimestamps: (asset: Asset) => Array<Metadata>;
   getImage: (asset: Asset) => string;
   zoom: (assetImageCube: Mesh<BoxBufferGeometry, any>, screenHeight: number) => void;
   setInactive: (assetImageCube: Mesh<BoxBufferGeometry, any>) => void;
@@ -32,6 +33,10 @@ const useAsset = (): {
 
   const getDimensions = (asset: Asset) => {
     return asset.dimensions;
+  };
+  
+  const getTimestamps = (asset: Asset) => {
+    return asset.timestamps;
   };
 
   const getImage = (asset: Asset) => {
@@ -95,6 +100,7 @@ const useAsset = (): {
   return {
     getCollections,
     getDimensions,
+    getTimestamps,
     getImage,
     zoom,
     addMetadataToZoomedImage,

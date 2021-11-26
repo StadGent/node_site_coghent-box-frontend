@@ -60,5 +60,6 @@ export type Asset = {
   title: Array<Metadata>;
   collections: Array<Metadata>;
   dimensions: Array<Metadata>;
+  timestamps: Array<Metadata>;
   mediafiles: Array<Mediafiles>;
 };
