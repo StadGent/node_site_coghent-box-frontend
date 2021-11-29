@@ -15,7 +15,7 @@ const Timing: Timings = {
     progressBar: 0.4,
   },
   storyCircle:{
-    showFrameTitle: 0.5,
+    showFrameTitle: 1,
     clearScene: 0.01,
   },
 };

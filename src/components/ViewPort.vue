@@ -67,7 +67,6 @@ export default defineComponent({
       activeStoryData = useStory().setActiveStory(storyData, currentStory - 1);
       spot.create(new Vector3(0, 0, Layers.scene), 6);
       playBook.addToPlayBook(() => threeSvc.AddToScene(spot.SpotLight()), 0);
-      console.log('Actions =>', playBook.getPlayBookFunctions());
       useStoryCircle(threeSvc, activeStoryData, playBook).create(
         new Vector3(0, 0, 0),
         storyColor,
@@ -80,27 +79,40 @@ export default defineComponent({
         3,
       );
       currentFrame++;
-      useStoryCircle(threeSvc,activeStoryData,playBook).create(new Vector3(0,0,0),storyColor,currentFrame, 28);
-      // useFrameAssetOverview(threeSvc,activeStoryData,playBook, spot).create(currentFrame, storyColor, 30);
-      // currentFrame++;
-      // useStoryCircle(threeSvc,activeStoryData,playBook).create(new Vector3(0,0,0), storyColor,currentFrame);
-      // useFrameAssetOverview(threeSvc,activeStoryData,playBook, spot).create(currentFrame, storyColor);
-
+      useStoryCircle(threeSvc, activeStoryData, playBook).create(
+        new Vector3(0, 0, 0),
+        storyColor,
+        currentFrame,
+        28,
+      );
+      useFrameAssetOverview(threeSvc,activeStoryData,playBook, spot).create(currentFrame, storyColor, 35);
+      currentFrame++;
+      useStoryCircle(threeSvc,activeStoryData,playBook).create(new Vector3(0,0,0), storyColor,currentFrame, 40);
+      useFrameAssetOverview(threeSvc,activeStoryData,playBook, spot).create(currentFrame, storyColor,43);
+      playBook.addToPlayBook(() => threeSvc.AddGroupsToScene(StoryPaused(storyData).Create([1, 2, 3])), 50);
       playBook.addToPlayBook(() => {
-        alert();
         threeSvc.ClearScene();
-        threeSvc.AddGroupsToScene(StoryPaused(storyData).Create([2,3,1]));
-      }, 0);
+        threeSvc.AddGroupsToScene(StoryPaused(storyData).Create([1, 2, 3]));
+      }, 48)
+      console.log('Actions =>', playBook.getPlayBookFunctions());
     };
 
-
     const startStory = () => {
-      console.log('playbook functions', playBook.getPlayBookFunctions());
-      console.log('first function on playbook', playBook.getPlayBookFunctions()[0].time);
       let currentFunction = 0;
       const interval = setInterval(() => {
-        console.log(`Current time is => ${audioSchema.audio.context.currentTime} \n Time from function is => ${playBook.getPlayBookFunctions()[currentFunction].time}`);
-        if (audioHelper.DoEvent(audioSchema.audio.context.currentTime, playBook.getPlayBookFunctions()[currentFunction].time)) {
+        console.log(
+          `Current time is => ${
+            audioSchema.audio.context.currentTime
+          } \n Time from function is => ${
+            playBook.getPlayBookFunctions()[currentFunction].time
+          }`,
+        );
+        if (
+          audioHelper.DoEvent(
+            audioSchema.audio.context.currentTime,
+            playBook.getPlayBookFunctions()[currentFunction].time,
+          )
+        ) {
           playBook.getPlayBookFunctions()[currentFunction].func();
           currentFunction++;
         }
@@ -122,7 +134,9 @@ export default defineComponent({
         storyData = stories.value;
         buildStory(currentStory);
         startStory();
-        // const pos = spot.moveTo(new Vector3(-3,2,Layers.scene), new Vector3(3,-2,Layers.scene))
+      
+        // threeSvc.AddGroupsToScene(StoryPaused(storyData).Create([1, 2, 3]));
+         // const pos = spot.moveTo(new Vector3(-3,2,Layers.scene), new Vector3(3,-2,Layers.scene))
         // console.log(pos);
         // for (let index = 0; index < pos.length; index++) {
         //   moveSpotlight(pos[index], 4)
