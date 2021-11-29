@@ -10,25 +10,15 @@ import useStory from '@/composables/useStory';
 import Tools from '@/Three/Tools';
 import ThreeService from '@/services/ThreeService';
 import { defineComponent, onMounted, PropType, reactive, ref } from 'vue';
-import { BoxBufferGeometry, Color, Group, Mesh, Vector3 } from 'three';
-import { Asset, Entity as _Entity, Story } from '@/models/GraphqlModel';
-import FrameOverview from '@/screens/FrameOverview';
-import { CubeSchema } from '@/Three/CubeSchema';
+import { Vector3 } from 'three';
+import { Entity as _Entity, Story } from '@/models/GraphqlModel';
 import AudioSchema from '@/Three/AudioSchema';
 import Spot from '@/Three/Spotlight';
 import AudioHelper from '@/Three/AudioHelper';
 import StoryPaused from '@/screens/StoryPaused';
 import Layers from '@/Three/defaults.layers';
 import PlayBook from '@/composables/playbook';
-import useAsset from '@/composables/useAsset';
-import StoryCircle from '@/Three/SectionStoryCircle';
-import CircleHelper from '@/Three/CircleHelper';
-import CircularProgressBar from '@/Three/CircularProgressbar';
-import HorizontalProgressBar from '@/Three/HorizontalProgressBar';
 import Colors from '@/Three/defaults.color';
-import StoryCircleItems from '@/Three/SectionStoryCircleItems';
-import DefaultLines from '@/Three/LinesDefault';
-import GroupHelper from '@/Three/GroupHelper';
 import useStoryCircle from '@/Three/useStoryCircle.playbook';
 import useFrameAssetOverview from '@/Three/useFrameAssetOverview.playbook';
 
@@ -67,50 +57,61 @@ export default defineComponent({
     const PlayAudio = () => {
       audioHelper.Play();
     };
+
     const PauseAudio = () => {
       audioHelper.Pause();
-      console.log('PAUSE');
-      console.log('CURRENTIME', audioSchema.audio.context.currentTime);
     };
 
     const buildStory = (currentStory: number) => {
       console.log('buildStory()', storyData);
       activeStoryData = useStory().setActiveStory(storyData, currentStory - 1);
       spot.create(new Vector3(0, 0, Layers.scene), 6);
-      playBook.addToPlayBook(() => threeSvc.AddToScene(spot.SpotLight()));      
-      useStoryCircle(threeSvc,activeStoryData,playBook).create(new Vector3(0,0,0),storyColor,currentFrame);
-      useFrameAssetOverview(threeSvc,activeStoryData,playBook, spot).create(currentFrame, storyColor);
+      playBook.addToPlayBook(() => threeSvc.AddToScene(spot.SpotLight()), 0);
+      console.log('Actions =>', playBook.getPlayBookFunctions());
+      useStoryCircle(threeSvc, activeStoryData, playBook).create(
+        new Vector3(0, 0, 0),
+        storyColor,
+        currentFrame,
+        1,
+      );
+      useFrameAssetOverview(threeSvc, activeStoryData, playBook, spot).create(
+        currentFrame,
+        storyColor,
+        3,
+      );
       currentFrame++;
-      useStoryCircle(threeSvc,activeStoryData,playBook).create(new Vector3(0,0,0),storyColor,currentFrame);
-      useFrameAssetOverview(threeSvc,activeStoryData,playBook, spot).create(currentFrame, storyColor);
-      currentFrame++;
-      useStoryCircle(threeSvc,activeStoryData,playBook).create(new Vector3(0,0,0), storyColor,currentFrame);
-      useFrameAssetOverview(threeSvc,activeStoryData,playBook, spot).create(currentFrame, storyColor);
+      useStoryCircle(threeSvc,activeStoryData,playBook).create(new Vector3(0,0,0),storyColor,currentFrame, 28);
+      // useFrameAssetOverview(threeSvc,activeStoryData,playBook, spot).create(currentFrame, storyColor, 30);
+      // currentFrame++;
+      // useStoryCircle(threeSvc,activeStoryData,playBook).create(new Vector3(0,0,0), storyColor,currentFrame);
+      // useFrameAssetOverview(threeSvc,activeStoryData,playBook, spot).create(currentFrame, storyColor);
+
       playBook.addToPlayBook(() => {
+        alert();
         threeSvc.ClearScene();
         threeSvc.AddGroupsToScene(StoryPaused(storyData).Create([2,3,1]));
-      });
+      }, 0);
     };
 
+
     const startStory = () => {
-      let current = 0;
-      let time = 2;
+      console.log('playbook functions', playBook.getPlayBookFunctions());
+      console.log('first function on playbook', playBook.getPlayBookFunctions()[0].time);
+      let currentFunction = 0;
       const interval = setInterval(() => {
-        if (audioHelper.DoEvent(audioSchema.audio.context.currentTime, time)) {
-          console.log(audioSchema.audio.context.currentTime);
-          playBook.getPlayBookFunctions()[current]();
-          time += 1;
-          current++;
+        console.log(`Current time is => ${audioSchema.audio.context.currentTime} \n Time from function is => ${playBook.getPlayBookFunctions()[currentFunction].time}`);
+        if (audioHelper.DoEvent(audioSchema.audio.context.currentTime, playBook.getPlayBookFunctions()[currentFunction].time)) {
+          playBook.getPlayBookFunctions()[currentFunction].func();
+          currentFunction++;
         }
-        if(current > playBook.getPlayBookFunctions().length - 1){
-          current = 0;
+        if (currentFunction > playBook.getPlayBookFunctions().length - 1) {
+          currentFunction = 0;
           PauseAudio();
           clearInterval(interval);
         }
-      }, 500);
-      interval
+      }, 100);
+      interval;
     };
-
 
     onMounted(() => {
       threeSvc = new ThreeService(viewport);
@@ -119,7 +120,6 @@ export default defineComponent({
       audioHelper = AudioHelper(audioSchema);
       if (stories.value) {
         storyData = stories.value;
-        console.log('=> ACTIVE STORIES <=', stories);
         buildStory(currentStory);
         startStory();
         // const pos = spot.moveTo(new Vector3(-3,2,Layers.scene), new Vector3(3,-2,Layers.scene))
