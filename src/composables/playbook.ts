@@ -14,7 +14,7 @@ const PlayBook = (): PlayBookFunctions=> {
   };
 
   const getPlayBookFunctions = () => {
-    return playbookFunctions.sort(ob => ob.time) as Array<{time:number,func:Function}>;
+    return playbookFunctions.sort((a,b) => a.time - b.time) as Array<{time:number,func:Function}>;
   };
 
   return {

@@ -24,7 +24,7 @@ const useAsset = (): {
   getAssetsFromFrame: (activeStory: Story, frame: number) => Array<Asset>;
 } => {
   const getTitle = (asset: Asset) => {
-    return asset.title[0].value;
+    return asset.title[0]?.value;
   };
 
   const getCollections = (asset: Asset) => {
@@ -77,9 +77,11 @@ const useAsset = (): {
       assetImageCube.position.y + cubeParams.height / 2* cube.scale.y,
       assetImageCube.position.z,
     );
-    const text = TextHelper().CreateText(`${getTitle(asset)}, ${useAsset().getCollections(asset)[0].value}`, textPosition, undefined, {
+
+    const text = TextHelper().CreateText(`${getTitle(asset)?!undefined:''} (${getCollections(asset)[0]?.value?!undefined:''})`, textPosition, undefined, {
       color: storyColor,
     } as FontParams);
+  
     return GroupHelper().CreateGroup([text, cube]);
   };
 
