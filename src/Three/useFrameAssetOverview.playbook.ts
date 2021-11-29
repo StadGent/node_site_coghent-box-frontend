@@ -86,6 +86,7 @@ const useFrameAssetOverview = (
     );
     threeService.AddToScene(highlightedImage);
   };
+  
 
   const moveSpotlightToAsset = (
     asset: Mesh<BoxBufferGeometry, any>,
@@ -101,25 +102,27 @@ const useFrameAssetOverview = (
   const create = (currentFrame: number, _storyColor: number, timestamp: number) => {
     assets = useAsset().getAssetsFromFrame(activeStoryData, currentFrame - 1);
     storyColor = _storyColor;
-
     displayAllAssets(timestamp);
     group.children.forEach((asset, index) => {
-      moveSpotlightToAsset(
-        asset as Mesh<BoxBufferGeometry, any>,
-        parseInt(assets[index].timestamps[0].value) - Timing.frameOverview.moveSpotlight,
-      );
-      playBook.addToPlayBook(
-        () => displayProgressBar(storyColor, currentFrame),
-        parseInt(assets[index].timestamps[0].value) - Timing.frameOverview.progressBar,
-      );
-      playBook.addToPlayBook(() => {
-        setAssetsInactive(asset as Mesh<BoxBufferGeometry, any>);
-        zoomAndHighlightAsset(asset as Mesh<BoxBufferGeometry, any>, index);
-      }, parseInt(assets[index].timestamps[0].value));
+      if (assets[index].timestamps[0]) {
+        moveSpotlightToAsset(
+          asset as Mesh<BoxBufferGeometry, any>,
+          parseInt(assets[index].timestamps[0].value) -
+            Timing.frameOverview.moveSpotlight,
+        );
+        playBook.addToPlayBook(
+          () => displayProgressBar(storyColor, currentFrame),
+          parseInt(assets[index].timestamps[0].value) - Timing.frameOverview.progressBar,
+        );
+        playBook.addToPlayBook(() => {
+          setAssetsInactive(asset as Mesh<BoxBufferGeometry, any>);
+          zoomAndHighlightAsset(asset as Mesh<BoxBufferGeometry, any>, index);
+        }, parseInt(assets[index].timestamps[0].value));
 
-      playBook.addToPlayBook(() => {
-        resetImage(asset as Object3D<Event>, highlightedImage, index);
-      }, parseInt(assets[index].timestamps[0].value));
+        playBook.addToPlayBook(() => {
+          resetImage(asset as Object3D<Event>, highlightedImage, index);
+        }, parseInt(assets[index].timestamps[0].value) + 2);
+      }
     });
   };
 

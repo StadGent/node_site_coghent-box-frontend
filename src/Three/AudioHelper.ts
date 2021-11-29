@@ -8,11 +8,13 @@ const AudioHelper = (
   const Play = () => {
     if (audioSchema.audio.isPlaying === false) {
       audioSchema.audio.play();
+      console.log(`Playing state: `, audioSchema.audio.isPlaying);
     }
   };
   const Pause = () => {
     if (audioSchema.audio.isPlaying == true) {
       audioSchema.audio.pause();
+      console.log(`Playing state: `, audioSchema.audio.isPlaying);
     }
   };
 
