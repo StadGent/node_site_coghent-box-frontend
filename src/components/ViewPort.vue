@@ -9,7 +9,7 @@
 import useStory from '@/composables/useStory';
 import Tools from '@/Three/Tools';
 import ThreeService from '@/services/ThreeService';
-import { defineComponent, onMounted, PropType, reactive, ref } from 'vue';
+import { defineComponent, onMounted, PropType, reactive, ref, watch } from 'vue';
 import { Vector3 } from 'three';
 import { Entity as _Entity, Story } from '@/models/GraphqlModel';
 import AudioSchema from '@/Three/AudioSchema';
@@ -29,10 +29,16 @@ export default defineComponent({
       type: Array as PropType<Array<Story>>,
       required: true,
     },
+    storySelected: {
+      type: Number,
+      required: true,
+      default: 1,
+    }
   },
   setup(props) {
     const stories = ref(props.stories);
-    const currentStory = 1;
+    const currentStory = ref<number>(props.storySelected);
+    const chooseStory = ref<boolean>(false);
     const storyColor = Colors().yellow;
     let currentFrame = 1;
     const pause = ref(false);
@@ -44,6 +50,13 @@ export default defineComponent({
     let activeStoryData = reactive<Story>({} as Story);
     const spot = Spot();
     const playBook = PlayBook();
+
+    watch(() => props.storySelected, (value) => {
+      if(chooseStory.value){
+        currentStory.value = value;
+        console.log('Selected story => ',currentStory.value);
+      }
+    });
 
     const moveSpotlight = (position: Vector3, widestLength: number) => {
       spot.move(position, widestLength);
@@ -78,23 +91,26 @@ export default defineComponent({
         storyColor,
         3,
       );
-      currentFrame++;
-      useStoryCircle(threeSvc, activeStoryData, playBook).create(
-        new Vector3(0, 0, 0),
-        storyColor,
-        currentFrame,
-        28,
-      );
-      useFrameAssetOverview(threeSvc,activeStoryData,playBook, spot).create(currentFrame, storyColor, 35);
-      currentFrame++;
-      useStoryCircle(threeSvc,activeStoryData,playBook).create(new Vector3(0,0,0), storyColor,currentFrame, 40);
-      useFrameAssetOverview(threeSvc,activeStoryData,playBook, spot).create(currentFrame, storyColor,43);
-      playBook.addToPlayBook(() => threeSvc.AddGroupsToScene(StoryPaused(storyData).Create([1, 2, 3])), 50);
-      playBook.addToPlayBook(() => {
-        threeSvc.ClearScene();
-        threeSvc.AddGroupsToScene(StoryPaused(storyData).Create([1, 2, 3]));
-      }, 48)
+      // currentFrame++;
+      // useStoryCircle(threeSvc, activeStoryData, playBook).create(
+      //   new Vector3(0, 0, 0),
+      //   storyColor,
+      //   currentFrame,
+      //   28,
+      // );
+
+      
+      // useFrameAssetOverview(threeSvc,activeStoryData,playBook, spot).create(currentFrame, storyColor, 35);
+      // currentFrame++;
+      // useStoryCircle(threeSvc,activeStoryData,playBook).create(new Vector3(0,0,0), storyColor,currentFrame, 40);
+      // useFrameAssetOverview(threeSvc,activeStoryData,playBook, spot).create(currentFrame, storyColor,43);
+      // playBook.addToPlayBook(() => threeSvc.AddGroupsToScene(StoryPaused(storyData).Create([1, 2, 3])), 50);
+      // playBook.addToPlayBook(() => {
+      //   threeSvc.ClearScene();
+      //   threeSvc.AddGroupsToScene(StoryPaused(storyData).Create([1, 2, 3]));
+      // }, 48)
       console.log('Actions =>', playBook.getPlayBookFunctions());
+
     };
 
     const startStory = () => {
@@ -132,7 +148,7 @@ export default defineComponent({
       audioHelper = AudioHelper(audioSchema);
       if (stories.value) {
         storyData = stories.value;
-        buildStory(currentStory);
+        buildStory(currentStory.value);
         startStory();
       
         // threeSvc.AddGroupsToScene(StoryPaused(storyData).Create([1, 2, 3]));
