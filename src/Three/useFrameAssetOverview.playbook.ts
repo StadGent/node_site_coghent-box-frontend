@@ -6,9 +6,10 @@ import { BoxBufferGeometry, Group, Mesh, Object3D, Vector3 } from 'three';
 import Layers from './defaults.layers';
 import HorizontalProgressBar from './HorizontalProgressBar';
 import { PlayBookFunctions } from '@/composables/playbook';
+import Frame from '@/composables/frame';
 import { SpotlightFunctions } from './Spotlight';
 import Timing from './defaults.timing';
-import Frame from '@/composables/frame';
+import { Frame as modelFrame } from '@/models/GraphqlModel';
 
 const useFrameAssetOverview = (
   threeService: ThreeService,
@@ -24,14 +25,20 @@ const useFrameAssetOverview = (
   let storyColor: number;
   let highlightedImage: any;
 
-  const displayAllAssets = (timestamp: number) => {
+  const displayAllAssets = (frame: modelFrame, timestamp: number) => {
     let pos = -8;
     for (const asset of assets) {
+      const relationMetadata = Frame().connectAssetWithTimestamp(frame,asset);
       const position = new Vector3(pos, 0, Layers.presentation);
+      if(relationMetadata?.position != null || undefined){
+        position.x = relationMetadata.position.x;
+        position.y = relationMetadata.position.y;
+      }
       positions.push(position);
       group.add(FrameOverview().addImage(asset, position));
       pos += 6;
     }
+
     playBook.addToPlayBook(() => {
       threeService.ClearScene();
       threeService.AddToScene(group);
@@ -100,7 +107,7 @@ const useFrameAssetOverview = (
   const create = (currentFrame: number, _storyColor: number, timestamp: number) => {
     assets = useAsset().getAssetsFromFrame(activeStoryData, currentFrame - 1);
     storyColor = _storyColor;
-    displayAllAssets(timestamp);
+    displayAllAssets(activeStoryData.frames[currentFrame - 1], timestamp);
     group.children.forEach((asset, index) => {
       const relationMetadata = Frame().connectAssetWithTimestamp(activeStoryData.frames[currentFrame -1], assets[index]);
       if (relationMetadata.timestamp_start) {

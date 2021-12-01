@@ -16,7 +16,6 @@ import AudioSchema from '@/Three/AudioSchema';
 import Spot from '@/Three/Spotlight';
 import AudioHelper from '@/Three/AudioHelper';
 import StoryPaused from '@/screens/StoryPaused';
-import ScanQR from '@/screens/ScanQR';
 import Layers from '@/Three/defaults.layers';
 import PlayBook from '@/composables/playbook';
 import Colors from '@/Three/defaults.color';
@@ -107,7 +106,6 @@ export default defineComponent({
       spot.create(new Vector3(0, 0, Layers.scene), 6);
       playBook.addToPlayBook(() => threeSvc.AddToScene(spot.SpotLight()), 0);
 
-      // threeSvc.AddToScene(ScanQR().create());
       useStoryCircle(threeSvc, activeStoryData, playBook).create(
         new Vector3(0, 0, 0),
         storyColor,
@@ -115,19 +113,21 @@ export default defineComponent({
         activeStoryData.frames.length,
         0,
       );
-      // useFrameAssetOverview(threeSvc, activeStoryData, playBook, spot).create(
-      //   currentFrame,
-      //   storyColor,
-      //   3,
-      // );
-      // currentFrame++;
-      // useStoryCircle(threeSvc, activeStoryData, playBook).create(
-      //   new Vector3(0, 0, 0),
-      //   storyColor,
-      //   currentFrame,
-      //   17,
-      // );
-      // useFrameAssetOverview(threeSvc,activeStoryData,playBook, spot).create(currentFrame, storyColor, 19);
+      useFrameAssetOverview(threeSvc, activeStoryData, playBook, spot).create(
+        currentFrame,
+        storyColor,
+        3,
+      );
+      currentFrame++;
+      useStoryCircle(threeSvc, activeStoryData, playBook).create(
+        new Vector3(0, 0, 0),
+        storyColor,
+        currentFrame,
+        activeStoryData.frames.length,
+        17,
+      );
+      
+      useFrameAssetOverview(threeSvc,activeStoryData,playBook, spot).create(currentFrame, storyColor, 19);      
       // currentFrame++;
       // useStoryCircle(threeSvc,activeStoryData,playBook).create(new Vector3(0,0,0), storyColor,currentFrame, 40);
       // useFrameAssetOverview(threeSvc,activeStoryData,playBook, spot).create(currentFrame, storyColor,43);

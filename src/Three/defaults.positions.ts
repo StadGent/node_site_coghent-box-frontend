@@ -26,7 +26,7 @@ const Positions = (): {
     ];
   };
 
-  const QRCodeScannerImage = new Vector3(-8,-1,Layers.presentation);
+  const QRCodeScannerImage = new Vector3(0,-1,Layers.presentation);
 
   return {
     StoryPausePositions,

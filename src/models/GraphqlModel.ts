@@ -69,7 +69,7 @@ export type ComponentMetadata = {
   label: string;
   timestamp_start: number;
   timestamp_end: number;
-  postion: Position;
+  position: Position;
   scale: number;
 };
 
