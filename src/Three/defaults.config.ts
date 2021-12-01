@@ -3,14 +3,11 @@ import BaseChapes from './BaseChapes';
 import { CirclePoint, CircleSchema } from './CircleSchema';
 import { CubeSchema } from './CubeSchema';
 import Colors from './defaults.color';
-import DefaultColors from './defaults.color';
 import { TextSchema } from './Textschema';
 
 const Defaults = (): {
   circlePoints: () => Array<CirclePoint>;
-  StoryPausePositions: () => Array<Vector3>;
   StoryColors: () => Array<number>;
-  CenterWordPositions: () => Array<Vector3>;
   Circle: () => CircleSchema;
   ImageCube: () => CubeSchema;
   Word: (text: string, position: Vector3) => TextSchema;
@@ -26,31 +23,12 @@ const Defaults = (): {
     ];
   };
 
-  const StoryPausePositions = () => {
-    return [
-      new Vector3(-15, 0, 0),
-      new Vector3(-7, 0, 0),
-      new Vector3(7, 0, 0),
-      new Vector3(15, 0, 0),
-    ];
-  };
-
   const StoryColors = () => {
     return [
       Colors().pink,
       Colors().yellow,
       Colors().green,
       Colors().lightBlue,
-    ];
-  };
-  const CenterWordPositions = () => {
-    return [
-      new Vector3(0.5, 2, 0),
-      new Vector3(-1.5, 1, 0),
-      new Vector3(-2, -1.5, 0),
-      new Vector3(3, 1, 0),
-      new Vector3(3, -1.5, 0),
-      new Vector3(1, -3, 0),
     ];
   };
 
@@ -95,9 +73,7 @@ const Defaults = (): {
 
   return {
     circlePoints,
-    StoryPausePositions,
     StoryColors,
-    CenterWordPositions,
     Circle,
     ImageCube,
     Word,

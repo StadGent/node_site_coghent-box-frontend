@@ -1,8 +1,8 @@
 import { Entity } from 'coghent-vue-3-component-library/lib/queries';
 import { Vector3 } from 'three';
-import Defaults from '@/Three/defaults.config';
 import Common from '@/composables/common';
 import { Asset, Story } from '@/models/GraphqlModel';
+import Positions from '@/Three/defaults.positions';
 
 const useStory = (): {
   setActiveStory: (stories: Array<Story>, story: number) => Story;
@@ -69,7 +69,7 @@ const useStory = (): {
   const CreateCenterWords = (words: Array<string>) => {
     const centerWords: Record<string, Vector3> = {};
     words.forEach((word, index) => {
-      centerWords[word] = Defaults().CenterWordPositions()[index];
+      centerWords[word] = Positions().CenterWordPositions()[index];
     });
     return centerWords;
   };

@@ -1,6 +1,5 @@
 import CircleHelper from '@/Three/CircleHelper';
 import { CirclePoint } from '@/Three/CircleSchema';
-import DefaultColors from '@/Three/defaults.color';
 import Defaults from '@/Three/defaults.config';
 import GroupHelper from '@/Three/GroupHelper';
 import SchemaLine from '@/Three/LineSchema';
@@ -11,6 +10,7 @@ import useStoryCircle from '@/Three/useStoryCircle.playbook';
 import useStory from '@/composables/useStory';
 import { Story } from '@/models/GraphqlModel';
 import CircularProgressBar from '@/Three/CircularProgressbar';
+import Positions from '@/Three/defaults.positions';
 
 const StoryPaused = (storyData: Array<Story>): {
   Create: (progress: Array<number>) => Array<Group>;
@@ -25,7 +25,6 @@ const StoryPaused = (storyData: Array<Story>): {
       true,
       false
     );
-    
 
     const progressBar = CircularProgressBar().createActiveSegment(
       position,
@@ -47,7 +46,7 @@ const StoryPaused = (storyData: Array<Story>): {
         storyCircle(
           storyData[i],
           progress[i],
-          Defaults().StoryPausePositions()[i],
+          Positions().StoryPausePositions()[i],
           Defaults().StoryColors()[i],
         ),
         groups,
