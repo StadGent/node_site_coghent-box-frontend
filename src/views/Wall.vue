@@ -28,6 +28,7 @@ export default defineComponent({
       const activeStories = entities.data.Entities?.results;
       if (activeStories) {
         stories.value = [...activeStories];
+        console.log(`=> Stories <=`, entities);
       }
     });
 
@@ -53,8 +54,6 @@ export default defineComponent({
             console.log('pressed 5');
             storySelected.value = 5;
             break;
-          default:
-            console.log(key);
         }
       };
 

@@ -31,7 +31,7 @@ const StoryCircle = (): {
   };
   const shadedCircle = (schema: CircleSchema) => {
     schema.params.radius = schema.params.radius + 2;
-    schema.params.color = Colors().yellow;
+    schema.params.color = schema.params.color || Colors().green;
     schema.params.opacity = 0.4;
     return SchemaCircle().CreateCircle(schema, Layers.scene, true);
   };

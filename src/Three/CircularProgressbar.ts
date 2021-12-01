@@ -67,7 +67,7 @@ const CircularProgressBar = (): {
     progress: number,
     color?: number,
   ) => {
-    const mesh = create(position, radius, segments, progress, color || Colors().white);
+    const mesh = create(position, radius, segments, progress,  Colors().white);
     const points = CircleHelper().SplitCircleInSegments(position, radius, segments);
     const schemas = CircleHelper().CreateSchemas(points, 0.4, color || Colors().white);
     const progressDots: Array<Group> = [];

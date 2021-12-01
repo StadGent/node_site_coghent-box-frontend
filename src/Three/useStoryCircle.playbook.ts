@@ -19,7 +19,7 @@ const useStoryCircle = (
   activeStoryData: Story,
   playBook: PlayBookFunctions,
 ): {
-  create: (position: Vector3, storyColor: number, currentFrame: number, timestamp: number) => void;
+  create: (position: Vector3, storyColor: number, currentFrame: number, frames: number, timestamp: number) => void;
 } => {
   const titleCircle = (position: Vector3, storyColor: number, currentFrame: number) => {
     return StoryCircle().Create(
@@ -31,7 +31,7 @@ const useStoryCircle = (
       true
     );
   };
-
+  
   const frameLineWithTitle = (
     currentFrame: number,
     progressBar: {
@@ -57,18 +57,18 @@ const useStoryCircle = (
     return GroupHelper().CreateGroup([activeFrameLine.object, progressOfFrame]);
   };
 
-  const create = (position: Vector3, storyColor: number, currentFrame: number, timestamp: number) => {
+  const create = (position: Vector3, storyColor: number, currentFrame: number, frames: number, timestamp: number) => {
     threeService.state.scene.background = new Color(Colors().black);
     playBook.addToPlayBook(() => threeService.ClearScene(), timestamp - Timing.storyCircle.clearScene);
 
     const progressBar = CircularProgressBar().createActiveSegment(
       new Vector3(0, 0, 0),
       2.5,
-      3,
+      frames,
       currentFrame - 1,
       storyColor,
     );
-1
+
     playBook.addToPlayBook(() => {
       threeService.AddGroupsToScene(titleCircle(position, storyColor, currentFrame));
       threeService.AddGroupsToScene(progressBar.object);
