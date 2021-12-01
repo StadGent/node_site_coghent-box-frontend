@@ -22,6 +22,7 @@ export type ComponentRelation = {
   type: string;
   order: number;
 };
+
 export type Entity = {
   id: string;
   type: string;
@@ -54,7 +55,16 @@ export type Frame = {
   metadata: Array<Metadata>;
   mediafiles: Array<Mediafiles>;
   assets: Array<Asset>;
+  relationMetadata: Array<ComponentMetadata>;
 };
+
+export type ComponentMetadata = {
+  key: string;
+  label: string;
+  timestamp_start: number;
+  timestamp_end: number;
+};
+
 export type Asset = {
   id: string;
   title: Array<Metadata>;

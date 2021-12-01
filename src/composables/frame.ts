@@ -1,24 +1,14 @@
-import { Entity } from '@/models/GraphqlModel';
+import { Asset, ComponentMetadata, ComponentRelation, Entity, Frame } from '@/models/GraphqlModel';
 import Common from './common';
 import Story from './useStory';
 
 const Frame = (): {
-  GetFrames: (ids: Array<string>) => Promise<Array<Entity>>;
   GetFrameTitles: (frames: Array<Entity>) => Array<string>;
   GetFrameMainImage: (frame: Entity) => string;
   GetFramesMainImages: (frames: Array<Entity>) => Array<string>;
   CreateFrameRecord: (frames: any) => Record<string, string>;
-  GetAssetsFromFrame: (frameId: string) => Promise<Record<string, string>>;
+  connectAssetWithTimestamp: (frame: Frame, asset: Asset) => ComponentMetadata;
 } => {
-  const GetFrames = async (ids: Array<string>) => {
-    const frames: Array<Entity> = [];
-    for (const id of ids) {
-      const frame = await Common().GetEntityById(id);
-      frames.push(frame.data.Entity);
-    }
-    return frames;
-  };
-
   const GetFrameTitles = (frames: Array<Entity>) => {
     const centerWords: Array<string> = [];
     for (const frame of frames) {
@@ -54,25 +44,17 @@ const Frame = (): {
     return record;
   };
 
-  const GetAssetsFromFrame = async (frameId: string) => {
-    const story = await Common().GetEntityById(frameId);
-    const components = await Common().GetRelationComponents(story.data.Entity.id);
-    const assetIds = Common().ComponentIds(components);
-    const assets: Array<Entity> = [];
-    for (const id of assetIds) {
-      const asset = await Common().GetEntityById(id);
-      assets.push(asset.data.Entity);
-    }
-    return CreateFrameRecord(assets);
-  };
+  const connectAssetWithTimestamp = (frame: Frame, asset: Asset) => {
+    const metadataForAsset = frame.relationMetadata.filter(metadata => Common().FilterOutIdAfterSlash(metadata.key) == asset.id)[0];
+    return metadataForAsset;    
+  }
 
   return {
-    GetFrames,
     GetFrameTitles,
     GetFrameMainImage,
     GetFramesMainImages,
     CreateFrameRecord,
-    GetAssetsFromFrame,
+    connectAssetWithTimestamp,
   };
 };
 

@@ -8,7 +8,7 @@ import HorizontalProgressBar from './HorizontalProgressBar';
 import { PlayBookFunctions } from '@/composables/playbook';
 import { SpotlightFunctions } from './Spotlight';
 import Timing from './defaults.timing';
-import { Metadata } from 'coghent-vue-3-component-library/lib/queries';
+import Frame from '@/composables/frame';
 
 const useFrameAssetOverview = (
   threeService: ThreeService,
@@ -32,7 +32,6 @@ const useFrameAssetOverview = (
       group.add(FrameOverview().addImage(asset, position));
       pos += 6;
     }
-
     playBook.addToPlayBook(() => {
       threeService.ClearScene();
       threeService.AddToScene(group);
@@ -86,7 +85,6 @@ const useFrameAssetOverview = (
     );
     threeService.AddToScene(highlightedImage);
   };
-  
 
   const moveSpotlightToAsset = (
     asset: Mesh<BoxBufferGeometry, any>,
@@ -104,24 +102,25 @@ const useFrameAssetOverview = (
     storyColor = _storyColor;
     displayAllAssets(timestamp);
     group.children.forEach((asset, index) => {
-      if (assets[index].timestamps[0]) {
+      const relationMetadata = Frame().connectAssetWithTimestamp(activeStoryData.frames[currentFrame -1], assets[index]);
+      if (relationMetadata.timestamp_start) {
         moveSpotlightToAsset(
           asset as Mesh<BoxBufferGeometry, any>,
-          parseInt(assets[index].timestamps[0].value) -
+          relationMetadata.timestamp_start -
             Timing.frameOverview.moveSpotlight,
         );
         playBook.addToPlayBook(
           () => displayProgressBar(storyColor, currentFrame),
-          parseInt(assets[index].timestamps[0].value) - Timing.frameOverview.progressBar,
+          relationMetadata.timestamp_start - Timing.frameOverview.progressBar,
         );
         playBook.addToPlayBook(() => {
           setAssetsInactive(asset as Mesh<BoxBufferGeometry, any>);
           zoomAndHighlightAsset(asset as Mesh<BoxBufferGeometry, any>, index);
-        }, parseInt(assets[index].timestamps[0].value));
+        }, relationMetadata.timestamp_start);
 
         playBook.addToPlayBook(() => {
           resetImage(asset as Object3D<Event>, highlightedImage, index);
-        }, parseInt(assets[index].timestamps[0].value) + 2);
+        }, relationMetadata.timestamp_end);
       }
     });
   };
