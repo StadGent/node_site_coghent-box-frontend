@@ -58,11 +58,19 @@ export type Frame = {
   relationMetadata: Array<ComponentMetadata>;
 };
 
+export type Position = {
+  x: number;
+  y: number;
+  z: number;
+}
+
 export type ComponentMetadata = {
   key: string;
   label: string;
   timestamp_start: number;
   timestamp_end: number;
+  postion: Position;
+  scale: number;
 };
 
 export type Asset = {
