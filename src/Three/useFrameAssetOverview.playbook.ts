@@ -40,7 +40,6 @@ const useFrameAssetOverview = (
     }
 
     playBook.addToPlayBook(() => {
-      threeService.ClearScene();
       threeService.AddToScene(group);
       spot.move(positions[0], 4);
       threeService.AddToScene(spot.SpotLight());

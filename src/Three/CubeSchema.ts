@@ -55,7 +55,8 @@ const SchemaCube = (): {
     });
     const cube = new Mesh(geometry, material);
     chapeHelper.SetPosition(schema.position, cube);
-    cube.position.z = Layers.presentation;
+    
+    // cube.position.z = Layers.presentation;
     return cube;
   };
 

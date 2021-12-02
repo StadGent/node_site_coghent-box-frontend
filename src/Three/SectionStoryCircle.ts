@@ -107,7 +107,7 @@ const StoryCircle = (): {
           new Vector3(
             circleSchema.position.x,
             circleSchema.position.y + 1.2,
-            Layers.presentation,
+            Layers.presentation - 0.1,
           ),
           iconUrl,
         ),
