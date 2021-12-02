@@ -1,12 +1,13 @@
 import useAsset from '@/composables/useAsset';
 import { Asset } from '@/models/GraphqlModel';
+import ThreeService from '@/services/ThreeService';
 import CubeHelper from '@/Three/CubeHelper';
 import SchemaCube, { CubeSchema } from '@/Three/CubeSchema';
 import Layers from '@/Three/defaults.layers';
 import GroupHelper from '@/Three/GroupHelper';
 import { Group, Mesh, Vector3 } from 'three';
 
-const FrameOverview = (): {
+const FrameOverview = (threeService: ThreeService): {
   addImage:(asset: Asset, position: Vector3) => Mesh;
   create: (assets: Record<string, string>) => {
     groups: Array<Group>;
@@ -16,7 +17,7 @@ const FrameOverview = (): {
 
   const addImage = (asset: Asset, position: Vector3) => {
     const dim = [4,4];
-    const schema = CubeHelper().CreateSchema(position,useAsset().getImage(asset),new Vector3(dim[0], dim[1],0));
+    const schema = CubeHelper().CreateSchema(position,useAsset(threeService).getImage(asset),new Vector3(dim[0], dim[1],0));
     const cube = SchemaCube().CreateImageCube(schema);
     return cube;
   };

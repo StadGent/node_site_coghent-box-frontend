@@ -1,17 +1,20 @@
 import { Metadata } from '@/models/CollectionModel';
 import { Asset, Story } from '@/models/GraphqlModel';
+import ThreeService from '@/services/ThreeService';
 import CubeHelper from '@/Three/CubeHelper';
 import Layers from '@/Three/defaults.layers';
 import GroupHelper from '@/Three/GroupHelper';
+import { SpotlightFunctions } from '@/Three/Spotlight';
 import TextHelper from '@/Three/TextHelper';
 import { FontParams } from '@/Three/Textschema';
 import { BoxBufferGeometry, Mesh, Vector3, Group } from 'three';
 
-const useAsset = (): {
+const useAsset = (threeService: ThreeService): {
   getCollections: (asset: Asset) => Array<Metadata>;
   getDimensions: (asset: Asset) => Array<Metadata>;
   getImage: (asset: Asset) => string;
-  zoom: (assetImageCube: Mesh<BoxBufferGeometry, any>, screenHeight: number) => void;
+  moveSpotlightToAsset:(spot: SpotlightFunctions, asset: Mesh<BoxBufferGeometry, any>) => void;
+  zoom: (assetImageCube: Mesh<BoxBufferGeometry, any>, spot: SpotlightFunctions, scale: number) => void;
   setInactive: (assetImageCube: Mesh<BoxBufferGeometry, any>) => void;
   setActive: (assetImageCube: Mesh<BoxBufferGeometry, any>) => void;
   addMetadataToZoomedImage: (
@@ -40,10 +43,17 @@ const useAsset = (): {
       : 'http://localhost:8001/download/4226243bcfd8986cc128e5f5241589b9-2015-0070.JPG';
   };
 
-  const zoom = (assetImageCube: Mesh<BoxBufferGeometry, any>, screenHeight: number) => {
+  const moveSpotlightToAsset = (spot: SpotlightFunctions, asset: Mesh<BoxBufferGeometry, any>) => {
+    spot.move(asset.position, asset.geometry.parameters.height + 0.05);
+    threeService.AddToScene(spot.SpotLight());
+    setActive(asset);
+  };
+
+  const zoom = (assetImageCube: Mesh<BoxBufferGeometry, any>, spot: SpotlightFunctions, scale: number) => {
     assetImageCube.position.set(assetImageCube.position.x, -1, assetImageCube.position.z);
+    moveSpotlightToAsset(spot,assetImageCube);
     assetImageCube.material.opacity = 1;
-    assetImageCube.scale.set(3.2, 3.2 % screenHeight, Layers.presentation);
+    assetImageCube.scale.set(scale, scale, Layers.presentation);
   };
 
   const addMetadataToZoomedImage = (
@@ -52,7 +62,6 @@ const useAsset = (): {
     storyColor: number,
   ) => {
     const cubeParams = CubeHelper().GetCubeParams(assetImageCube);
-
     const schema = CubeHelper().CreateSchema(
       assetImageCube.position,
       '',
@@ -98,6 +107,7 @@ const useAsset = (): {
     getCollections,
     getDimensions,
     getImage,
+    moveSpotlightToAsset,
     zoom,
     addMetadataToZoomedImage,
     setInactive,

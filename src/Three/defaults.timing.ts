@@ -11,12 +11,12 @@ type Timings = {
 
 const Timing: Timings = {
   frameOverview: {
-    moveSpotlight: 0.5,
+    moveSpotlight: 1,
     progressBar: 0.4,
   },
   storyCircle:{
     showFrameTitle: 1,
-    clearScene: 0.01,
+    clearScene: 0,
   },
 };
 

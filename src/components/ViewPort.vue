@@ -127,7 +127,7 @@ export default defineComponent({
         17,
       );
       
-      useFrameAssetOverview(threeSvc,activeStoryData,playBook, spot).create(currentFrame, storyColor, 19);      
+      useFrameAssetOverview(threeSvc,activeStoryData,playBook, spot).create(currentFrame, storyColor, 19);
       // currentFrame++;
       // useStoryCircle(threeSvc,activeStoryData,playBook).create(new Vector3(0,0,0), storyColor,currentFrame, 40);
       // useFrameAssetOverview(threeSvc,activeStoryData,playBook, spot).create(currentFrame, storyColor,43);
@@ -142,7 +142,6 @@ export default defineComponent({
     const startStory = () => {
       console.log(`START STORY`);
       console.log(`There are ${playBook.getPlayBookFunctions().length} actions.`);
-      audioHelper.Play();
       let currentFunction = 0;
       const interval = setInterval(() => {
         console.log(
