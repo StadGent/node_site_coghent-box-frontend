@@ -54,7 +54,7 @@ export default defineComponent({
       () => props.storySelected,
       (value) => {
         console.log('Can you choose a story?', chooseStory.value);
-        if (chooseStory.value) {
+        if (chooseStory.value && value <= storyData.length) {
           chooseStory.value = false;
           currentStory.value = value;
           currentFrame = 1;
@@ -111,7 +111,6 @@ export default defineComponent({
       console.log(`START STORY`);
       console.log(`There are ${playBook.getPlayBookFunctions().length} actions.`);
       let currentFunction = 0;
-      // audio = new Audio('/Audio/example.mp3');
       audio.play();
       interval = setInterval(() => {
         if (
@@ -135,7 +134,6 @@ export default defineComponent({
       console.log('setup');
       if (stories.value) {
         audioHelper = AudioHelper();
-        
         storyData = stories.value;
         buildStory(currentStory.value, '/Audio/example.mp3');
       }
