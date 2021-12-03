@@ -1,3 +1,4 @@
+import Common from '@/composables/common';
 import useAsset from '@/composables/useAsset';
 import { Asset } from '@/models/GraphqlModel';
 import ThreeService from '@/services/ThreeService';
@@ -16,8 +17,7 @@ const FrameOverview = (threeService: ThreeService): {
 } => {
 
   const addImage = (asset: Asset, position: Vector3) => {
-    const dim = [4,4];
-    const schema = CubeHelper().CreateSchema(position,useAsset(threeService).getImage(asset),new Vector3(dim[0], dim[1],0));
+    const schema = CubeHelper().CreateSchema(position,useAsset(threeService).getImage(asset),new Vector3(Common().pixelsToMeters(asset.mediafiles[0]?.mediainfo.width), Common().pixelsToMeters(asset.mediafiles[0]?.mediainfo.height),0));
     const cube = SchemaCube().CreateImageCube(schema);
     return cube;
   };

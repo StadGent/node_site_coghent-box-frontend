@@ -1,6 +1,9 @@
+import Defaults from '@/Three/defaults.config';
+
 const Common = (): {
   FilterOutIdAfterSlash: (str: string) => string;
   RemoveEntersFromString: (str: string) => string;
+  pixelsToMeters: (pixels: number) => number;
 } => {
 
   const FilterOutIdAfterSlash = (str: string) => {
@@ -13,9 +16,14 @@ const Common = (): {
     return str.replace(/\n/g, '');
   };
 
+  const pixelsToMeters = (pixels: number) => {
+    return pixels * Defaults().pixelInMeter();
+  }
+
   return {
     FilterOutIdAfterSlash,
     RemoveEntersFromString,
+    pixelsToMeters,
   };
 };
 

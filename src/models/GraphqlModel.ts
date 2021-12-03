@@ -46,6 +46,11 @@ export type Mediafiles = {
   original_file_location: string;
   thumbnail_file_location: string;
   entities: Array<string>;
+  filename: string;
+  mediainfo: {
+    width: number;
+    height: number;
+  };
 };
 
 export type Frame = {
@@ -62,7 +67,7 @@ export type Position = {
   x: number;
   y: number;
   z: number;
-}
+};
 
 export type ComponentMetadata = {
   key: string;

@@ -10,6 +10,7 @@ import Frame from '@/composables/frame';
 import { SpotlightFunctions } from './Spotlight';
 import Timing from './defaults.timing';
 import { Frame as modelFrame } from '@/models/GraphqlModel';
+import Defaults from './defaults.config';
 
 const useFrameAssetOverview = (
   threeService: ThreeService,
@@ -124,7 +125,7 @@ const useFrameAssetOverview = (
               asset as Mesh<BoxBufferGeometry, any>,
               spot,
               index,
-              relationMetadata.scale,
+              Defaults().zoomOfAsset(),
             );
           }, relationMetadata.timestamp_start);
 

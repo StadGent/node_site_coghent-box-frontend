@@ -50,7 +50,7 @@ const useAsset = (threeService: ThreeService): {
   };
 
   const zoom = (assetImageCube: Mesh<BoxBufferGeometry, any>, spot: SpotlightFunctions, scale: number) => {
-    assetImageCube.position.set(assetImageCube.position.x, -1, assetImageCube.position.z);
+    assetImageCube.position.set(assetImageCube.position.x, 0, assetImageCube.position.z);
     moveSpotlightToAsset(spot,assetImageCube);
     assetImageCube.material.opacity = 1;
     assetImageCube.scale.set(scale, scale, Layers.presentation);

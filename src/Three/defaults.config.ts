@@ -6,6 +6,8 @@ import Colors from './defaults.color';
 import { TextSchema } from './Textschema';
 
 const Defaults = (): {
+  pixelInMeter: () => number;
+  zoomOfAsset: () => number;
   circlePoints: () => Array<CirclePoint>;
   StoryColors: () => Array<number>;
   Circle: () => CircleSchema;
@@ -13,6 +15,10 @@ const Defaults = (): {
   Word: (text: string, position: Vector3) => TextSchema;
   EndCircle: () => Mesh<CircleGeometry, MeshBasicMaterial>;
 } => {
+
+  const pixelInMeter = () => 0.003;
+  const zoomOfAsset = () => 1.8;
+  
   const circlePoints = () => {
     return [
       { angle: 25, radius: 3 },
@@ -72,6 +78,8 @@ const Defaults = (): {
   };
 
   return {
+    pixelInMeter,
+    zoomOfAsset,
     circlePoints,
     StoryColors,
     Circle,
