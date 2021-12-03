@@ -40,12 +40,12 @@ const useStoryCircle = (
     },
   ) => {
     const activeFrameLine = StoryCircleItems().CreateDashedLineWithWord(
-      DefaultLines().line3(progressBar.dotSchemas[currentFrame - 1].position),
-      useStory().setFrameTitles(activeStoryData)[currentFrame - 1],
+      DefaultLines().line3(progressBar.dotSchemas[currentFrame].position),
+      useStory().setFrameTitles(activeStoryData)[currentFrame],
     );
 
     const progressOfFrame = StoryCircle().progressText(
-      [currentFrame, activeStoryData.frames.length],
+      [currentFrame + 1, activeStoryData.frames.length],
       new Vector3(
         activeFrameLine.endOfLine.x,
         activeFrameLine.endOfLine.y + 0.8,
@@ -65,12 +65,12 @@ const useStoryCircle = (
       new Vector3(0, 0, 0),
       2.5,
       frames,
-      currentFrame - 1,
+      currentFrame +1,
       storyColor,
     );
 
     playBook.addToPlayBook(() => {
-      threeService.AddGroupsToScene(titleCircle(position, storyColor, currentFrame));
+      threeService.AddGroupsToScene(titleCircle(position, storyColor, currentFrame + 1));
       threeService.AddGroupsToScene(progressBar.object);
     }, timestamp);
     playBook.addToPlayBook(() => {

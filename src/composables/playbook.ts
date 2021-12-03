@@ -11,7 +11,7 @@ export type PlayBookObject = {
 }
 
 const PlayBook = (): PlayBookFunctions=> {
-  let playbookFunctions: Array<PlayBookObject> = [];
+  let playbookFunctions: Array<PlayBookObject> = [{time: 0,func: () => {}}];
   const addToPlayBook = (func: Function, timestamp:number) => {
     const obj = {
       time: timestamp,
@@ -28,9 +28,9 @@ const PlayBook = (): PlayBookFunctions=> {
 
   const clearPlaybook = (yes: true | false) => {
     if(yes){
-      playbookFunctions = [];
+      playbookFunctions = [{time: 0,func: () => {}}];
     }
-    return playbookFunctions.length == 0;
+    return playbookFunctions.length === 1;
   }
 
   return {

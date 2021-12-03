@@ -1,4 +1,10 @@
+import ThreeService from '@/services/ThreeService';
 import { Vector3, Group } from 'three';
+import CircleHelper from './CircleHelper';
+import SchemaCircle from './CircleSchema';
+import CubeHelper from './CubeHelper';
+import Colors from './defaults.color';
+import Layers from './defaults.layers';
 import GroupHelper from './GroupHelper';
 import LineHelper from './LineHelper';
 import SchemaLine, { LineSchema } from './LineSchema';
@@ -9,6 +15,7 @@ const Tools = (): {
   xAxis: (position: Vector3) => Group;
   devideScreenInZones: (zones: number, objectWidth: number) => Array<Array<Vector3>>;
   ZoneLines: (zones: Array<Array<Vector3>>) => Array<Group>;
+  dotOnPosition:(threeService: ThreeService, position: Vector3) => void;
 } => {
   const Grid = () => {
     const middleX = xAxis(new Vector3(0, 0, 0));
@@ -58,7 +65,13 @@ const Tools = (): {
     return SchemaLine().CreateLines(lineSchemas);
   };
 
-  return { Grid, xAxis, yAxis, devideScreenInZones, ZoneLines };
+  const dotOnPosition = (threeService: ThreeService, position: Vector3) => {
+    const schema = CircleHelper().CreateSchema(position,1,Colors().pink);
+    const circle = SchemaCircle().CreateCircle(schema, Layers.presentation);
+    threeService.AddToScene(circle);
+  }
+
+  return { Grid, xAxis, yAxis, devideScreenInZones, ZoneLines, dotOnPosition };
 };
 
 export default Tools;

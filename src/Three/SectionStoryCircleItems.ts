@@ -31,6 +31,8 @@ const StoryCircleItems = (): {
     });
     line.position.z = Layers.presentation;
     const enddOfLine = LineHelper().GetEndOfLine(line);
+    enddOfLine.x.toFixed(2);
+    enddOfLine.y.toFixed(2);
     const frameTitle  = TextHelper().CreateText(word, enddOfLine);
 
     return {object: GroupHelper().CreateGroup([line, frameTitle]), endOfLine: enddOfLine};

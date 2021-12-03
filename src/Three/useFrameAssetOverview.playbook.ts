@@ -26,17 +26,15 @@ const useFrameAssetOverview = (
   let highlightedImage: any;
 
   const displayAllAssets = (frame: modelFrame, timestamp: number) => {
-    let pos = -8;
     for (const asset of assets) {
       const relationMetadata = Frame().connectAssetWithTimestamp(frame, asset);
-      const position = new Vector3(pos, 0, Layers.presentation);
+      const position = new Vector3(0, 0, Layers.presentation);
       if (relationMetadata?.position != null || undefined) {
         position.x = relationMetadata.position.x;
         position.y = relationMetadata.position.y;
       }
       positions.push(position);
       group.add(FrameOverview(threeService).addImage(asset, position));
-      pos += 6;
     }
 
     playBook.addToPlayBook(() => {
@@ -85,11 +83,7 @@ const useFrameAssetOverview = (
     currentAsset: number,
     scale: number,
   ) => {
-    useAsset(threeService).zoom(
-      asset as Mesh<BoxBufferGeometry, any>,
-      spot,
-      scale,
-    );
+    useAsset(threeService).zoom(asset as Mesh<BoxBufferGeometry, any>, spot, scale);
 
     highlightedImage = useAsset(threeService).addMetadataToZoomedImage(
       assets[currentAsset],
@@ -100,39 +94,48 @@ const useFrameAssetOverview = (
   };
 
   const create = (currentFrame: number, _storyColor: number, timestamp: number) => {
-    assets = useAsset(threeService).getAssetsFromFrame(activeStoryData, currentFrame - 1);
+    assets = useAsset(threeService).getAssetsFromFrame(activeStoryData, currentFrame);
     storyColor = _storyColor;
-    displayAllAssets(activeStoryData.frames[currentFrame - 1], timestamp);
-    group.children.forEach((asset, index) => {
-      const relationMetadata = Frame().connectAssetWithTimestamp(
-        activeStoryData.frames[currentFrame - 1],
-        assets[index],
-      );
-      if (relationMetadata.timestamp_start) {
-        playBook.addToPlayBook(
-          () => useAsset(threeService).moveSpotlightToAsset(spot,asset as Mesh<BoxBufferGeometry, any>),
-          relationMetadata.timestamp_start - Timing.frameOverview.moveSpotlight,
+    if (assets.length > 0) {
+      displayAllAssets(activeStoryData.frames[currentFrame], timestamp);
+      group.children.forEach((asset, index) => {
+        const relationMetadata = Frame().connectAssetWithTimestamp(
+          activeStoryData.frames[currentFrame],
+          assets[index],
         );
-        playBook.addToPlayBook(
-          () => displayProgressBar(storyColor, currentFrame),
-          relationMetadata.timestamp_start - Timing.frameOverview.progressBar,
-        );
-        playBook.addToPlayBook(() => {
-          setAssetsInactive(asset as Mesh<BoxBufferGeometry, any>);
-          zoomAndHighlightAsset(
-            asset as Mesh<BoxBufferGeometry, any>,
-            spot,
-            index,
-            relationMetadata.scale,
+        if (relationMetadata.timestamp_start) {
+          playBook.addToPlayBook(
+            () =>
+              useAsset(threeService).moveSpotlightToAsset(
+                spot,
+                asset as Mesh<BoxBufferGeometry, any>,
+              ),
+            relationMetadata.timestamp_start - Timing.frameOverview.moveSpotlight,
           );
-        }, relationMetadata.timestamp_start);
+          playBook.addToPlayBook(
+            () => displayProgressBar(storyColor, currentFrame),
+            relationMetadata.timestamp_start - Timing.frameOverview.progressBar,
+          );
+          playBook.addToPlayBook(() => {
+            setAssetsInactive(asset as Mesh<BoxBufferGeometry, any>);
+            zoomAndHighlightAsset(
+              asset as Mesh<BoxBufferGeometry, any>,
+              spot,
+              index,
+              relationMetadata.scale,
+            );
+          }, relationMetadata.timestamp_start);
 
-        playBook.addToPlayBook(() => {
-          resetImage(asset as Object3D<Event>, highlightedImage, index);
-          useAsset(threeService).moveSpotlightToAsset(spot,asset as Mesh<BoxBufferGeometry, any>);
-        }, relationMetadata.timestamp_end);
-      }
-    });
+          playBook.addToPlayBook(() => {
+            resetImage(asset as Object3D<Event>, highlightedImage, index);
+            useAsset(threeService).moveSpotlightToAsset(
+              spot,
+              asset as Mesh<BoxBufferGeometry, any>,
+            );
+          }, relationMetadata.timestamp_end);
+        }
+      });
+    }
   };
 
   return { create };

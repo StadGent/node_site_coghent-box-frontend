@@ -8,7 +8,7 @@ import Tools from '@/Three/Tools';
 import ThreeService from '@/services/ThreeService';
 import { defineComponent, onMounted, PropType, reactive, ref, watch } from 'vue';
 import { Vector3 } from 'three';
-import { Entity as _Entity, Story } from '@/models/GraphqlModel';
+import { Entity as _Entity, Frame, Story } from '@/models/GraphqlModel';
 import Spot from '@/Three/Spotlight';
 import AudioHelper from '@/Three/AudioHelper';
 import StoryPaused from '@/screens/StoryPaused';
@@ -71,10 +71,6 @@ export default defineComponent({
       buildStory(currentStory.value);
     };
 
-    const showPauseScreen = (threeSvc: ThreeService) => {
-      threeSvc.ClearScene();
-    };
-
     const buildStory = (currentStory: number) => {
       threeSvc.ClearScene();
       console.log('buildStory()', storyData);
@@ -83,20 +79,26 @@ export default defineComponent({
       spot.create(new Vector3(0, 0, Layers.scene), 6);
       playBook.addToPlayBook(() => threeSvc.AddToScene(spot.SpotLight()), 0);
 
-      useStoryCircle(threeSvc, activeStoryData, playBook).create(
-        new Vector3(0, 0, 0),
-        storyColor,
-        currentFrame,
-        activeStoryData.frames.length,
-        1,
-      );
-      useFrameAssetOverview(threeSvc, activeStoryData, playBook, spot).create(
-        currentFrame,
-        storyColor,
-        2,
-      );
+      activeStoryData.frames.map((frame: Frame, index: number) => {
+        currentFrame = index;
+        useStoryCircle(threeSvc, activeStoryData, playBook).create(
+          new Vector3(0, 0, 0),
+          storyColor,
+          currentFrame,
+          activeStoryData.frames.length,
+          playBook.lastAction().time + 1,
+        );
+        
+        useFrameAssetOverview(threeSvc, activeStoryData, playBook, spot).create(
+          currentFrame,
+          storyColor,
+          playBook.lastAction().time + 1,
+        );
+      });
+
       playBook.addToPlayBook(() => {
         chooseStory.value = true;
+        audio.pause();
         threeSvc.AddGroupsToScene(StoryPaused(storyData).Create([1, 2, 3]));
       }, playBook.lastAction().time + 1);
 
@@ -130,7 +132,7 @@ export default defineComponent({
       console.log(`There are ${playBook.getPlayBookFunctions().length} actions.`);
       let currentFunction = 0;
       audio = new Audio('/Audio/example.mp3');
-      // audio.play();
+      audio.play();
       interval = setInterval(() => {
         if (
           audioHelper.DoEvent(
