@@ -26,6 +26,7 @@ const useFrameAssetOverview = (
   let highlightedImage: any;
 
   const displayAllAssets = (frame: modelFrame, timestamp: number) => {
+    const data: Record<number, Vector3> = {};
     for (const asset of assets) {
       const relationMetadata = Frame().connectAssetWithTimestamp(frame, asset);
       const position = new Vector3(0, 0, Layers.presentation);
@@ -33,13 +34,14 @@ const useFrameAssetOverview = (
         position.x = relationMetadata.position.x;
         position.y = relationMetadata.position.y;
       }
+      data[relationMetadata.timestamp_start] = position;
       positions.push(position);
       group.add(FrameOverview(threeService).addImage(asset, position));
     }
 
     playBook.addToPlayBook(() => {
       threeService.AddToScene(group);
-      spot.move(positions[0], 4);
+      spot.move(Object.values(data)[0], 4);
       threeService.AddToScene(spot.SpotLight());
     }, timestamp);
   };
