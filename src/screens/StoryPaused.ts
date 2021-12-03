@@ -11,6 +11,11 @@ import useStory from '@/composables/useStory';
 import { Story } from '@/models/GraphqlModel';
 import CircularProgressBar from '@/Three/CircularProgressbar';
 import Positions from '@/Three/defaults.positions';
+import DefaultsPauseState from '@/Three/defaults.pauseState';
+import Colors from '@/Three/defaults.color';
+import TextHelper from '@/Three/TextHelper';
+import SchemaCube from '@/Three/CubeSchema';
+import CubeHelper from '@/Three/CubeHelper';
 
 const StoryPaused = (storyData: Array<Story>): {
   Create: (progress: Array<number>) => Array<Group>;
@@ -38,9 +43,21 @@ const StoryPaused = (storyData: Array<Story>): {
     return groups;
   };
 
+  const storyEndText = () => {
+    const groups: Array<Group> = [];
+    const text = TextHelper().CreateTextFromRecord(
+      DefaultsPauseState().topTextState1,
+      Colors().black,
+    );
+    const manSchema = CubeHelper().CreateSchema(new Vector3(0,0,0),"@/assets/man.svg", new Vector3(3,2,0));
+    const man = SchemaCube().CreateImageCube(manSchema);
+    GroupHelper().AddObjectsTogroups(text, groups);
+    GroupHelper().AddObjectsTogroups([man], groups);
+    return groups;
+  };
+
   const Create = (progress: Array<number>) => {
     const groups: Array<Group> = [];
-    // groups.push(EndOfStoryText().Create(currentStory, 'endOfstorytext'));
     for (let i = 0; i < useStory().GetStoryTitles(storyData).length; i++) {
       GroupHelper().AddObjectsTogroups(
         storyCircle(
@@ -52,6 +69,7 @@ const StoryPaused = (storyData: Array<Story>): {
         groups,
       );
     }
+    GroupHelper().AddObjectsTogroups(storyEndText(), groups);
     return groups
   };
   return { Create };

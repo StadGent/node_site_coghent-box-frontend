@@ -21,7 +21,7 @@ const Spot = (): SpotlightFunctions => {
         new Vector3(startPosition.x, startPosition.y, Layers.scene),
         1,
         color || Colors().white,
-        0.5
+        0.2
       ),
       Layers.scene,
       true,

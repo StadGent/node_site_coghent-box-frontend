@@ -100,7 +100,10 @@ export default defineComponent({
       playBook.addToPlayBook(() => {
         chooseStory.value = true;
         audio.pause();
+        threeSvc.ClearScene();
         threeSvc.AddGroupsToScene(StoryPaused(storyData).Create([1, 2, 3]));
+        spot.move(new Vector3(0, 1.5, 0), 6);
+        threeSvc.AddToScene(spot.SpotLight());
       }, playBook.lastAction().time + 1);
 
       console.log('Actions =>', playBook.getPlayBookFunctions());
@@ -149,6 +152,8 @@ export default defineComponent({
 
     onMounted(() => {
       threeSvc = new ThreeService(viewport);
+      // threeSvc.AddToScene(Tools().xAxis(new Vector3(0, 0, 0)));
+      // threeSvc.AddToScene(Tools().yAxis(new Vector3(0, 0, 0)));
       threeSvc.Animate();
     });
 

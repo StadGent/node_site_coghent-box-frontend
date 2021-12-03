@@ -13,11 +13,11 @@ const DefaultsPauseState = (): {
   pauseIcon: () => Group;
 } => {
   const topTextState1: Record<string, Vector3> = {
-    'Je beluisterde het volledige': new Vector3(-3, 3, 0),
-    'hoofdstuk ': new Vector3(0, 2, 0),
-    'Kies een van de oplichtende': new Vector3(-3, 0, 0),
-    'bollen om een nieuw hoofdstuk': new Vector3(-3.5, -1, 0),
-    'te starten.': new Vector3(0, -2, 0),
+    'Je hebt het hele': new Vector3(0, 3, 0),
+    'hoofdstuk gezien': new Vector3(-0.2, 2.5, 0),
+    'Maak een nieuwe keuze': new Vector3(-0.8, 2, 0),
+    'door op de lichtgevende': new Vector3(-0.9, 1.5, 0),
+    'bol te gaan staan.': new Vector3(-0.1, 1, 0),
   };
   const topTextState2: Record<string, Vector3> = {
     'Ga terug op de bol staan om': new Vector3(-3, -1.5, 0),

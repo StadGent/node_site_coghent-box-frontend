@@ -44,7 +44,12 @@ const useAsset = (threeService: ThreeService): {
   };
 
   const moveSpotlightToAsset = (spot: SpotlightFunctions, asset: Mesh<BoxBufferGeometry, any>) => {
-    spot.move(asset.position, asset.geometry.parameters.height + 0.05);
+    const widest = asset.geometry.parameters.width > asset.geometry.parameters.height
+    if(widest){
+      spot.move(asset.position, asset.geometry.parameters.width + 0.05);
+    }else{
+      spot.move(asset.position, asset.geometry.parameters.height + 0.05);
+    }
     threeService.AddToScene(spot.SpotLight());
     setActive(asset);
   };

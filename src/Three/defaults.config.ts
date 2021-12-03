@@ -17,7 +17,7 @@ const Defaults = (): {
 } => {
 
   const pixelInMeter = () => 0.003;
-  const zoomOfAsset = () => 1.8;
+  const zoomOfAsset = () => 2;
   
   const circlePoints = () => {
     return [
