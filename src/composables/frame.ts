@@ -1,17 +1,23 @@
-import { Asset, ComponentMetadata, ComponentRelation, Entity, Frame } from '@/models/GraphqlModel';
+import {
+  Asset,
+  ComponentMetadata,
+  Entity,
+  Story,
+} from '@/models/GraphqlModel';
 import Common from './common';
-import Story from './useStory';
+import useStory from './useStory';
 
-const Frame = (): {
+const useFrame = (): {
   GetFrameTitles: (frames: Array<Entity>) => Array<string>;
   GetFrameMainImage: (frame: Entity) => string;
   GetFramesMainImages: (frames: Array<Entity>) => Array<string>;
   CreateFrameRecord: (frames: any) => Record<string, string>;
+  getLastAssetRelationMetadata: (activeStoryData: Story, currentFrameIndex: number) => ComponentMetadata;
 } => {
   const GetFrameTitles = (frames: Array<Entity>) => {
     const centerWords: Array<string> = [];
     for (const frame of frames) {
-      centerWords.push(Story().Title(frame));
+      centerWords.push(useStory().Title(frame));
     }
     return centerWords;
   };
@@ -34,7 +40,7 @@ const Frame = (): {
   const CreateFrameRecord = (frames: Array<Entity>) => {
     const record: Record<string, string> = {};
     for (const frame of frames) {
-      const title = Story().Title(frame);
+      const title = useStory().Title(frame);
       const imageLink = frame.mediafiles?.[0]?.original_file_location
         ? frame.mediafiles?.[0]?.original_file_location
         : 'http://localhost:8001/download/4226243bcfd8986cc128e5f5241589b9-2015-0070.JPG';
@@ -43,12 +49,32 @@ const Frame = (): {
     return record;
   };
 
+  const getLastAssetRelationMetadata = (activeStoryData: Story, currentFrameIndex: number) => {
+    let lastAsset: Asset = activeStoryData.frames[currentFrameIndex].assets[0];
+    let relationMetadata = Common().connectRelationMetadata(
+      activeStoryData.frames[currentFrameIndex],
+      activeStoryData.frames[currentFrameIndex].assets[0],
+    );
+    activeStoryData.frames[currentFrameIndex].assets.forEach((asset) => {
+      const data = Common().connectRelationMetadata(
+        activeStoryData.frames[currentFrameIndex],
+        asset,
+      );
+      if (data.timestamp_end > relationMetadata.timestamp_end) {
+        lastAsset = asset;
+        relationMetadata = data;
+      }
+    });
+    return relationMetadata;
+  };
+
   return {
     GetFrameTitles,
     GetFrameMainImage,
     GetFramesMainImages,
     CreateFrameRecord,
+    getLastAssetRelationMetadata,
   };
 };
 
-export default Frame;
+export default useFrame;

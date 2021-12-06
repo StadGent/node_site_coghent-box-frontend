@@ -13,6 +13,7 @@ import { Entity as _Entity, Frame, Story } from '@/models/GraphqlModel';
 import Spot from '@/Three/Spotlight';
 import AudioHelper from '@/Three/AudioHelper';
 import VideoHelper from '@/Three/VideoHelper';
+import PlayBookBuild from '@/Three/playbook.build';
 import StoryPaused from '@/screens/StoryPaused';
 import Layers from '@/Three/defaults.layers';
 import PlayBook from '@/composables/playbook';
@@ -21,6 +22,8 @@ import useStoryCircle from '@/Three/useStoryCircle.playbook';
 import useFrameAssetOverview from '@/Three/useFrameAssetOverview.playbook';
 import Defaults from '@/Three/defaults.config';
 import Common from '@/composables/common';
+import Timing from '@/Three/defaults.timing';
+import useFrame from '@/composables/frame';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -69,62 +72,25 @@ export default defineComponent({
       },
     );
 
-    const resetStory = () => {
-      clearInterval(interval);
-      playBook.clearPlaybook(true);
-      buildStory(currentStory.value, '/Audio/sample4.mp3');
+    watch(
+      () => props.stories,
+      (value) => {
+        stories.value = value;
+        // playStartVideo();
+        setup();
+      },
+    );
+
+    const setup = async () => {
+      if (stories.value) {
+        audioHelper = AudioHelper();
+        storyData = stories.value;
+        buildStory(currentStory.value, '/Audio/example.mp3');
+      }
     };
 
-    const buildStory = (currentStory: number, audioFile: string) => {
-      threeSvc.ClearScene();
-
-      console.log('buildStory()', storyData);
-      activeStoryData = useStory().setActiveStory(storyData, currentStory - 1);
-      audio = AudioHelper().setAudioTrack(activeStoryData, 0, audioFile);
-      console.log('ActiveStoryData => ', activeStoryData);
-      spot.create(new Vector3(0, 0, Layers.scene), 6);
-      playBook.addToPlayBook(() => threeSvc.AddToScene(spot.SpotLight()), 0);
-
-      activeStoryData.frames.map((frame: Frame, index: number) => {
-        currentFrame = index;
-        playBook.addToPlayBook(() => {
-          audio.pause();
-          audio = AudioHelper().setAudioTrack(activeStoryData, index, audioFile);
-          audio.play();
-        }, playBook.lastAction().time + 1);
-        useStoryCircle(threeSvc, activeStoryData, playBook).create(
-          new Vector3(0, 0, 0),
-          storyColor,
-          currentFrame,
-          activeStoryData.frames.length,
-          playBook.lastAction().time + 1,
-        );
-
-        useFrameAssetOverview(threeSvc, activeStoryData, playBook, spot).create(
-          currentFrame,
-          storyColor,
-          playBook.lastAction().time + 1,
-        );
-      });
-
-      playBook.addToPlayBook(() => {
-        chooseStory.value = true;
-        audio.pause();
-        threeSvc.ClearScene();
-        threeSvc.AddGroupsToScene(StoryPaused(storyData).Create([1, 2, 3]));
-        spot.move(new Vector3(0, 1.5, 0), 6);
-        threeSvc.AddToScene(spot.SpotLight());
-      }, playBook.lastAction().time + 1);
-
-      console.log('Actions =>', playBook.getPlayBookFunctions());
-      startStory();
-    };
-
-    const startStory = () => {
-      console.log(`START STORY`);
-      console.log(`There are ${playBook.getPlayBookFunctions().length} actions.`);
+    const timing = () => {
       let currentFunction = 0;
-      audio.play();
       interval = setInterval(() => {
         if (
           audioHelper.DoEvent(
@@ -143,23 +109,52 @@ export default defineComponent({
       interval;
     };
 
-    const setup = async () => {
-      console.log('setup');
-      if (stories.value) {
-        audioHelper = AudioHelper();
-        storyData = stories.value;
-        buildStory(currentStory.value, '/Audio/example.mp3');
-      }
+    const buildStory = (currentStory: number, audioFile: string) => {
+      threeSvc.ClearScene();
+      activeStoryData = useStory().setActiveStory(storyData, currentStory - 1);
+     
+      PlayBookBuild(threeSvc, playBook, activeStoryData).initialSpotLight(spot);
+      activeStoryData.frames.map((frame: Frame, index: number) => {
+        currentFrame = index;
+        // PlayBookBuild(playBook, activeStoryData).updateAudio(audio,index, audioFile);
+        
+        PlayBookBuild(threeSvc, playBook, activeStoryData).storyCircle(
+          currentFrame,
+          storyColor,
+        );
+        PlayBookBuild(threeSvc, playBook, activeStoryData).frameOverview(
+          currentFrame,
+          storyColor,
+          spot,
+        );
+      });
+
+      playBook.addToPlayBook(() => {
+        chooseStory.value = true;
+        audio.pause();
+        threeSvc.ClearScene();
+        threeSvc.AddGroupsToScene(StoryPaused(storyData).Create([1, 2, 3]));
+        spot.move(new Vector3(0, 1.5, 0), 6);
+        threeSvc.AddToScene(spot.SpotLight());
+      }, playBook.lastAction().time + Timing.delayNextCycle);
+
+      playBook.addToPlayBook(() => {
+        audio.pause();
+        audio = AudioHelper().setAudioTrack(activeStoryData, currentFrame, audioFile);
+        audio.play();
+      }, useFrame().getLastAssetRelationMetadata(activeStoryData, currentFrame)?.timestamp_end + Timing.delayNextCycle || 0);
+
+      console.log('Actions =>', playBook.getPlayBookFunctions());
+      audio = AudioHelper().setAudioTrack(activeStoryData, 0, audioFile);
+      audio.play();
+      timing();
     };
 
-    watch(
-      () => props.stories,
-      (value) => {
-        stories.value = value;
-        // playStartVideo();
-        setup();
-      },
-    );
+    const resetStory = () => {
+      clearInterval(interval);
+      playBook.clearPlaybook(true);
+      buildStory(currentStory.value, '/Audio/sample4.mp3');
+    };
 
     const playStartVideo = () => {
       const videoSrc =

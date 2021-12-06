@@ -114,11 +114,11 @@ const useFrameAssetOverview = (
                 spot,
                 asset as Mesh<BoxBufferGeometry, any>,
               ),
-            relationMetadata.timestamp_start - Timing.frameOverview.moveSpotlight,
+            relationMetadata.timestamp_start,
           );
           playBook.addToPlayBook(
             () => displayProgressBar(storyColor, currentFrame),
-            relationMetadata.timestamp_start - Timing.frameOverview.progressBar,
+            relationMetadata.timestamp_start,
           );
           playBook.addToPlayBook(() => {
             setAssetsInactive(asset as Mesh<BoxBufferGeometry, any>);
@@ -128,7 +128,7 @@ const useFrameAssetOverview = (
               index,
               Defaults().zoomOfAsset(),
             );
-          }, relationMetadata.timestamp_start);
+          }, relationMetadata.timestamp_start + Timing.frameOverview.spotLightMoved);
 
           playBook.addToPlayBook(() => {
             resetImage(asset as Object3D<Event>, highlightedImage, index);
