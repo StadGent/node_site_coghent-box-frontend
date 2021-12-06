@@ -1,12 +1,9 @@
 import CircleHelper from '@/Three/CircleHelper';
-import { CirclePoint } from '@/Three/CircleSchema';
 import Defaults from '@/Three/defaults.config';
 import GroupHelper from '@/Three/GroupHelper';
-import SchemaLine from '@/Three/LineSchema';
 import { Group, Vector3 } from 'three';
 import StoryCircle from '../Three/SectionStoryCircle';
-import EndOfStoryText from '@/Three/EndOfStoryText';
-import useStoryCircle from '@/Three/useStoryCircle.playbook';
+
 import useStory from '@/composables/useStory';
 import { Story } from '@/models/GraphqlModel';
 import CircularProgressBar from '@/Three/CircularProgressbar';
