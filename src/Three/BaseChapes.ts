@@ -11,6 +11,7 @@ import {
   Vector3,
   LineDashedMaterial,
   LineDashedMaterialParameters,
+  VideoTexture,
 } from 'three';
 import { CubeParams } from './CubeSchema';
 import DefaultColors from './defaults.color';
@@ -33,6 +34,10 @@ const BaseChapes = (): {
   ) => Line<BufferGeometry, LineDashedMaterial>;
   DrawImageCube: (
     url: string,
+    format: Vector3,
+  ) => Mesh<BoxBufferGeometry, MeshBasicMaterial>;
+  DrawVideoCube: (
+    video: HTMLVideoElement,
     format: Vector3,
   ) => Mesh<BoxBufferGeometry, MeshBasicMaterial>;
   DrawCube: (
@@ -95,6 +100,16 @@ const BaseChapes = (): {
     return new Mesh(geometry, material);
   };
 
+  const DrawVideoCube = (video: HTMLVideoElement, format: Vector3) => {
+    const texture = new VideoTexture(video);
+    const geometry = new BoxBufferGeometry(format.x, format.y, format.z);
+    const material = new MeshBasicMaterial({
+      map: texture,
+    });
+    material.color.convertSRGBToLinear();
+    return new Mesh(geometry, material);
+  };
+
   const DrawCube = (
     params: CubeParams,
   ) => {
@@ -111,6 +126,7 @@ const BaseChapes = (): {
   return {
     DrawCircle,
     DrawImageCube,
+    DrawVideoCube,
     DrawLine,
     DrawDashedLine,
     DrawCube,

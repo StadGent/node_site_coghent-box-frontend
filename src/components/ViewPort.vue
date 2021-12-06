@@ -1,16 +1,18 @@
 <template>
   <div ref="viewport"></div>
+  <video ref="videoElement"></video>
 </template>
 
 <script lang="ts">
 import useStory from '@/composables/useStory';
 import Tools from '@/Three/Tools';
 import ThreeService from '@/services/ThreeService';
-import { defineComponent, onMounted, PropType, reactive, ref, watch } from 'vue';
+import { defineComponent, onMounted, PropType, reactive, Ref, ref, watch } from 'vue';
 import { Vector3 } from 'three';
 import { Entity as _Entity, Frame, Story } from '@/models/GraphqlModel';
 import Spot from '@/Three/Spotlight';
 import AudioHelper from '@/Three/AudioHelper';
+import VideoHelper from '@/Three/VideoHelper';
 import StoryPaused from '@/screens/StoryPaused';
 import Layers from '@/Three/defaults.layers';
 import PlayBook from '@/composables/playbook';
@@ -39,6 +41,7 @@ export default defineComponent({
     let storyColor = Colors().yellow;
     let currentFrame = 1;
     const viewport = ref(null);
+    const videoElement = ref<HTMLVideoElement>();
     let audio: HTMLAudioElement;
     let threeSvc: ThreeService;
     let audioHelper: {
@@ -146,9 +149,17 @@ export default defineComponent({
       () => props.stories,
       (value) => {
         stories.value = value;
-        setup();
+        playStartVideo();
+        // setup();
       },
     );
+    const playStartVideo = () => {
+      const videoSrc = 'https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4';
+      const videoCube = VideoHelper().videoElementAsCube(videoElement as Ref<HTMLVideoElement>, videoSrc, new Vector3(8,8,0));
+      threeSvc.AddToScene(videoCube);
+      videoElement.value?.play();
+      setTimeout(() => {console.log('currenttime',videoElement.value?.currentTime);videoCube.position.set(0,0,0);}, 7000)
+    };
 
     onMounted(() => {
       threeSvc = new ThreeService(viewport);
@@ -157,7 +168,7 @@ export default defineComponent({
       threeSvc.Animate();
     });
 
-    return { viewport };
+    return { viewport, videoElement };
   },
 });
 </script>
