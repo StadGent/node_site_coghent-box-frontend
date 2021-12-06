@@ -80,21 +80,18 @@ export default defineComponent({
 
       console.log('buildStory()', storyData);
       activeStoryData = useStory().setActiveStory(storyData, currentStory - 1);
-      const relationMetadata = Common().connectRelationMetadata(
-        activeStoryData,
-        activeStoryData.frames[currentFrame],
-      );
-      if (relationMetadata.audioFile) {
-        audio = new Audio(relationMetadata.audioFile);
-      } else {
-        audio = new Audio(audioFile);
-      }
+      audio = AudioHelper().setAudioTrack(activeStoryData, 0, audioFile);
       console.log('ActiveStoryData => ', activeStoryData);
       spot.create(new Vector3(0, 0, Layers.scene), 6);
       playBook.addToPlayBook(() => threeSvc.AddToScene(spot.SpotLight()), 0);
 
       activeStoryData.frames.map((frame: Frame, index: number) => {
         currentFrame = index;
+        playBook.addToPlayBook(() => {
+          audio.pause();
+          audio = AudioHelper().setAudioTrack(activeStoryData, index, audioFile);
+          audio.play();
+        }, playBook.lastAction().time + 1);
         useStoryCircle(threeSvc, activeStoryData, playBook).create(
           new Vector3(0, 0, 0),
           storyColor,
