@@ -1,7 +1,7 @@
 import { Entity } from 'coghent-vue-3-component-library/lib/queries';
 import { Vector3 } from 'three';
 import Common from '@/composables/common';
-import { Asset, Story } from '@/models/GraphqlModel';
+import { Asset, ComponentMetadata, Story } from '@/models/GraphqlModel';
 import Positions from '@/Three/defaults.positions';
 
 const useStory = (): {
@@ -10,6 +10,7 @@ const useStory = (): {
   setFrameTitles: (activeStory: Story) => Array<string>;
   setFrameAssets: (activeStory: Story, frame: number) => Record<string, string>;
   GetStoryTitles: (stories: Array<Story>) => Array<string>;
+  getRelationMetadataOfFrames: (activeStoryData: Story) => Array<ComponentMetadata>;
   /**
    * old functions
    */
@@ -74,6 +75,10 @@ const useStory = (): {
     return centerWords;
   };
 
+  const getRelationMetadataOfFrames = (activeStoryData: Story) => {
+    return activeStoryData.relationMetadata as Array<ComponentMetadata>;
+  }
+
   return {
     setActiveStory,
     title,
@@ -83,6 +88,7 @@ const useStory = (): {
     GetStoryTitles,
     RelationIds,
     CreateCenterWords,
+    getRelationMetadataOfFrames,
   };
 };
 

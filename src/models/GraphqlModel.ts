@@ -38,6 +38,7 @@ export type Story = {
   title: Array<Metadata>;
   metadata: Array<Metadata>;
   mediafiles: Array<Mediafiles>;
+  relationMetadata: Array<ComponentMetadata>;
   frames: Array<Frame>;
 };
 
@@ -76,6 +77,8 @@ export type ComponentMetadata = {
   timestamp_end: number;
   position: Position;
   scale: number;
+  audioFile?: string;
+  subtitleFile?: string;
 };
 
 export type Asset = {

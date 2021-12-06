@@ -20,6 +20,7 @@ import Colors from '@/Three/defaults.color';
 import useStoryCircle from '@/Three/useStoryCircle.playbook';
 import useFrameAssetOverview from '@/Three/useFrameAssetOverview.playbook';
 import Defaults from '@/Three/defaults.config';
+import Common from '@/composables/common';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -76,9 +77,18 @@ export default defineComponent({
 
     const buildStory = (currentStory: number, audioFile: string) => {
       threeSvc.ClearScene();
-      audio = new Audio(audioFile);
+
       console.log('buildStory()', storyData);
       activeStoryData = useStory().setActiveStory(storyData, currentStory - 1);
+      const relationMetadata = Common().connectRelationMetadata(
+        activeStoryData,
+        activeStoryData.frames[currentFrame],
+      );
+      if (relationMetadata.audioFile) {
+        audio = new Audio(relationMetadata.audioFile);
+      } else {
+        audio = new Audio(audioFile);
+      }
       console.log('ActiveStoryData => ', activeStoryData);
       spot.create(new Vector3(0, 0, Layers.scene), 6);
       playBook.addToPlayBook(() => threeSvc.AddToScene(spot.SpotLight()), 0);
@@ -149,16 +159,25 @@ export default defineComponent({
       () => props.stories,
       (value) => {
         stories.value = value;
-        playStartVideo();
-        // setup();
+        // playStartVideo();
+        setup();
       },
     );
+
     const playStartVideo = () => {
-      const videoSrc = 'https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4';
-      const videoCube = VideoHelper().videoElementAsCube(videoElement as Ref<HTMLVideoElement>, videoSrc, new Vector3(8,8,0));
+      const videoSrc =
+        'https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4';
+      const videoCube = VideoHelper().videoElementAsCube(
+        videoElement as Ref<HTMLVideoElement>,
+        videoSrc,
+        new Vector3(8, 8, 0),
+      );
       threeSvc.AddToScene(videoCube);
       videoElement.value?.play();
-      setTimeout(() => {console.log('currenttime',videoElement.value?.currentTime);videoCube.position.set(0,0,0);}, 7000)
+      setTimeout(() => {
+        console.log('currenttime', videoElement.value?.currentTime);
+        videoCube.position.set(0, 0, 0);
+      }, 7000);
     };
 
     onMounted(() => {

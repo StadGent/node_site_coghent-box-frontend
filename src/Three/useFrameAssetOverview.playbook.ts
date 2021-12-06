@@ -11,6 +11,7 @@ import { SpotlightFunctions } from './Spotlight';
 import Timing from './defaults.timing';
 import { Frame as modelFrame } from '@/models/GraphqlModel';
 import Defaults from './defaults.config';
+import Common from '@/composables/common';
 
 const useFrameAssetOverview = (
   threeService: ThreeService,
@@ -29,7 +30,7 @@ const useFrameAssetOverview = (
   const displayAllAssets = (frame: modelFrame, timestamp: number) => {
     const data: Record<number, Vector3> = {};
     for (const asset of assets) {
-      const relationMetadata = Frame().connectAssetWithTimestamp(frame, asset);
+      const relationMetadata = Common().connectRelationMetadata(frame, asset);
       const position = new Vector3(0, 0, Layers.presentation);
       if (relationMetadata?.position != null || undefined) {
         position.x = relationMetadata.position.x;
@@ -102,7 +103,7 @@ const useFrameAssetOverview = (
     if (assets.length > 0) {
       displayAllAssets(activeStoryData.frames[currentFrame], timestamp);
       group.children.forEach((asset, index) => {
-        const relationMetadata = Frame().connectAssetWithTimestamp(
+        const relationMetadata = Common().connectRelationMetadata(
           activeStoryData.frames[currentFrame],
           assets[index],
         );
