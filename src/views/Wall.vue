@@ -1,5 +1,6 @@
 <template>
   <ViewPort :stories="stories" :storySelected="storySelected"/>
+  <mqtt @selectStory="setSelectStory"/>
 </template>
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
@@ -7,10 +8,11 @@ import ViewPort from '@/components/ViewPort.vue';
 import { useQuery } from '@vue/apollo-composable';
 import { SearchFilter  } from 'coghent-vue-3-component-library/lib/queries';
 import { GetStoriesDocument  } from 'coghent-vue-3-component-library';
+import mqtt from '@/components/mqtt.vue';
 
 export default defineComponent({
   name: 'Wall',
-  components: { ViewPort },
+  components: { ViewPort, mqtt },
 
   setup() {
     const searchValue: SearchFilter = {
@@ -21,6 +23,7 @@ export default defineComponent({
     };
     let stories = ref<Array<any>>();
     const storySelected = ref<number>(1);
+    const val = ref<any>();
 
     const { onResult: Stories } = useQuery(GetStoriesDocument,{searchValue: searchValue})
 
@@ -57,9 +60,17 @@ export default defineComponent({
         }
       };
 
+      const setSelectStory = (sensorValue: {id: number, msg: boolean}) => {
+        console.log(`MQTT data => `, sensorValue)
+        if(sensorValue.msg){
+          storySelected.value = sensorValue.id;
+        }
+      }
+
     return {
       stories,
       storySelected,
+      setSelectStory,
     };
   },
 });

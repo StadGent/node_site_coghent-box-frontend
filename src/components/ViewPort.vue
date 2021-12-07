@@ -56,6 +56,7 @@ export default defineComponent({
     watch(
       () => props.storySelected,
       (value) => {
+        console.log('You want to select story', props.storySelected);
         console.log('Can you choose a story?', chooseStory.value);
         if (chooseStory.value && value <= storyData.length) {
           chooseStory.value = false;
@@ -74,7 +75,7 @@ export default defineComponent({
         stories.value = value;
         // playStartVideo();
         setup();
-      },
+      }
     );
 
     const setup = async () => {
@@ -182,6 +183,7 @@ export default defineComponent({
       threeSvc = new ThreeService(viewport);
       // threeSvc.AddToScene(Tools().xAxis(new Vector3(0, 0, 0)));
       // threeSvc.AddToScene(Tools().yAxis(new Vector3(0, 0, 0)));
+
       threeSvc.Animate();
     });
 
