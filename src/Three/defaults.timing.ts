@@ -11,7 +11,7 @@ type Timings = {
 const Timing: Timings = {
   delayNextCycle: 1,
   frameOverview: {
-    spotLightMoved: 1.5,
+    spotLightMoved: 1,
   },
   storyCircle:{
     showFrameTitle: 1,

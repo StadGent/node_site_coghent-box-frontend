@@ -72,10 +72,10 @@ const useStoryCircle = (
     playBook.addToPlayBook(() => {
       threeService.AddGroupsToScene(titleCircle(position, storyColor, currentFrame + 1));
       threeService.AddGroupsToScene(progressBar.object);
-    }, timestamp);
+    }, timestamp, `Add title cirle with progressbar to the scene.`);
     playBook.addToPlayBook(() => {
       threeService.AddToScene(frameLineWithTitle(currentFrame, progressBar));
-    }, timestamp + Timing.storyCircle.showFrameTitle);
+    }, timestamp + Timing.storyCircle.showFrameTitle, `Add the frame title to the scene.`);
     threeService.state.scene.updateMatrixWorld(true);
   };
 

@@ -1,5 +1,5 @@
 export type PlayBookFunctions = {
-  addToPlayBook: (func: Function, timestamp:number) => void;
+  addToPlayBook: (func: Function, timestamp:number, context?:string) => void;
   getPlayBookFunctions: () => Array<PlayBookObject>;
   lastAction: () => PlayBookObject;
   clearPlaybook: (yes: true | false) => boolean;
@@ -8,14 +8,16 @@ export type PlayBookFunctions = {
 export type PlayBookObject = {
   time: number;
   func: Function;
+  context: string;
 }
 
 const PlayBook = (): PlayBookFunctions=> {
-  let playbookFunctions: Array<PlayBookObject> = [{time: 0,func: () => {}}];
-  const addToPlayBook = (func: Function, timestamp:number) => {
+  let playbookFunctions: Array<PlayBookObject> = [{time: 0,func: () => {}, context: 'Beginning of playbook.'}];
+  const addToPlayBook = (func: Function, timestamp:number, context?:string) => {
     const obj = {
       time: timestamp,
       func: func,
+      context: context as string,
     } as PlayBookObject;
     playbookFunctions.push(obj);
   };
@@ -28,7 +30,7 @@ const PlayBook = (): PlayBookFunctions=> {
 
   const clearPlaybook = (yes: true | false) => {
     if(yes){
-      playbookFunctions = [{time: 0,func: () => {}}];
+      playbookFunctions = [{time: 0,func: () => {}, context: 'Beginning of playbook.'}];
     }
     return playbookFunctions.length === 1;
   }

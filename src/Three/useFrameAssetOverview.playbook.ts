@@ -28,6 +28,7 @@ const useFrameAssetOverview = (
   let highlightedImage: any;
 
   const displayAllAssets = (frame: modelFrame, timestamp: number) => {
+    threeService.state.scene.remove(group);
     const data: Record<number, Vector3> = {};
     for (const asset of assets) {
       const relationMetadata = Common().connectRelationMetadata(frame, asset);
@@ -45,7 +46,7 @@ const useFrameAssetOverview = (
       threeService.AddToScene(group);
       spot.move(Object.values(data)[0], 4);
       threeService.AddToScene(spot.SpotLight());
-    }, timestamp);
+    }, timestamp,`Add all assets to scene.`);
   };
 
   const displayProgressBar = (storyColor: number, currentFrame: number) => {
@@ -115,10 +116,12 @@ const useFrameAssetOverview = (
                 asset as Mesh<BoxBufferGeometry, any>,
               ),
             relationMetadata.timestamp_start,
+            `Move spotlight to asset ${assets[index].id}.`
           );
           playBook.addToPlayBook(
             () => displayProgressBar(storyColor, currentFrame),
             relationMetadata.timestamp_start,
+            `Display progressbar.`
           );
           playBook.addToPlayBook(() => {
             setAssetsInactive(asset as Mesh<BoxBufferGeometry, any>);
@@ -136,7 +139,9 @@ const useFrameAssetOverview = (
               spot,
               asset as Mesh<BoxBufferGeometry, any>,
             );
-          }, relationMetadata.timestamp_end);
+          }, relationMetadata.timestamp_end,
+            `Reset image position of asset: ${assets[index].id} and spotlight.`
+          );
         }
       });
     }

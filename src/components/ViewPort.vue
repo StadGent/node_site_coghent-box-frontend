@@ -98,6 +98,13 @@ export default defineComponent({
             playBook.getPlayBookFunctions()[currentFunction].time,
           )
         ) {
+          console.log(
+            `| Time: ${
+              playBook.getPlayBookFunctions()[currentFunction].time
+            } \n| Context: ${
+              playBook.getPlayBookFunctions()[currentFunction].context
+            }`,
+          );
           playBook.getPlayBookFunctions()[currentFunction].func();
           currentFunction++;
         }
@@ -112,12 +119,12 @@ export default defineComponent({
     const buildStory = (currentStory: number, audioFile: string) => {
       threeSvc.ClearScene();
       activeStoryData = useStory().setActiveStory(storyData, currentStory - 1);
-     
+
       PlayBookBuild(threeSvc, playBook, activeStoryData).initialSpotLight(spot);
       activeStoryData.frames.map((frame: Frame, index: number) => {
         currentFrame = index;
         // PlayBookBuild(playBook, activeStoryData).updateAudio(audio,index, audioFile);
-        
+
         PlayBookBuild(threeSvc, playBook, activeStoryData).storyCircle(
           currentFrame,
           storyColor,
@@ -130,19 +137,24 @@ export default defineComponent({
       });
 
       playBook.addToPlayBook(() => {
-        chooseStory.value = true;
-        audio.pause();
-        threeSvc.ClearScene();
-        threeSvc.AddGroupsToScene(StoryPaused(storyData).Create([1, 2, 3]));
-        spot.move(new Vector3(0, 1.5, 0), 6);
-        threeSvc.AddToScene(spot.SpotLight());
-      }, playBook.lastAction().time + Timing.delayNextCycle);
-
-      playBook.addToPlayBook(() => {
         audio.pause();
         audio = AudioHelper().setAudioTrack(activeStoryData, currentFrame, audioFile);
         audio.play();
-      }, useFrame().getLastAssetRelationMetadata(activeStoryData, currentFrame)?.timestamp_end + Timing.delayNextCycle || 0);
+      }, useFrame().getLastAssetRelationMetadata(activeStoryData, currentFrame)?.timestamp_end);
+
+      playBook.addToPlayBook(
+        () => {
+          chooseStory.value = true;
+          audio.pause();
+          threeSvc.ClearScene();
+          threeSvc.AddGroupsToScene(StoryPaused(storyData).Create([1, 2, 3]));
+          spot.move(new Vector3(0, 1.5, 0), 6);
+          threeSvc.AddToScene(spot.SpotLight());
+        },
+        useFrame().getLastAssetRelationMetadata(activeStoryData, currentFrame)
+          ?.timestamp_end + Timing.delayNextCycle,
+        `Display story overview.`,
+      );
 
       console.log('Actions =>', playBook.getPlayBookFunctions());
       audio = AudioHelper().setAudioTrack(activeStoryData, 0, audioFile);
