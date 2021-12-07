@@ -8,7 +8,7 @@ export type SpotlightFunctions = {
   SpotLight: () => Mesh;
   create: (startPosition: Vector3, radius: number,color?: number) => Mesh;
   move: (position: Vector3, height: number) => void;
-  moveTo: (from: Vector3, to: Vector3) => Array<Vector3>;
+  moveTo: (from: Vector3, to: Vector3, steps: number) => Array<Vector3>;
 }
 
 const Spot = (): SpotlightFunctions => {
@@ -35,9 +35,9 @@ const Spot = (): SpotlightFunctions => {
     spotlight.scale.set(widestLenght / 2 + 1, widestLenght / 2 + 1, Layers.scene);
   };
 
-  const moveTo = (from: Vector3, to: Vector3) => {
+  const moveTo = (from: Vector3, to: Vector3, steps: number) => {
     const positions: Array<Vector3> = [];
-    for (let i = 0; i < 60; i++) {
+    for (let i = 0; i < steps; i++) {
       positions.push(new Vector3(from.x - to.x / 60, from.y - to.y / 60, Layers.scene));
     }
     return positions;
