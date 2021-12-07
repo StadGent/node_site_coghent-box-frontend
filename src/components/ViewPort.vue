@@ -8,7 +8,7 @@ import useStory from '@/composables/useStory';
 import Tools from '@/Three/Tools';
 import ThreeService from '@/services/ThreeService';
 import { defineComponent, onMounted, PropType, reactive, Ref, ref, watch } from 'vue';
-import { PointLight, SpotLight, Vector3 } from 'three';
+import { Vector3 } from 'three';
 import { Entity as _Entity, Frame, Story } from '@/models/GraphqlModel';
 import Spot from '@/Three/Spotlight';
 import AudioHelper from '@/Three/AudioHelper';
@@ -75,18 +75,12 @@ export default defineComponent({
         stories.value = value;
         spot.create(new Vector3(-10, 0, 0), 3, Colors().lightBlue);
         threeSvc.AddToScene(spot.SpotLight());
-        let positions = spot.moveTo(new Vector3(10, -5, 0), new Vector3(10, 5, 0), 60000);
-        for (let i = 0; i < 60000; i++) {
-          setTimeout(() => {spot.SpotLight().position.set(positions[i].x,positions[i].y, 0)},100)
-        }
-        let p = spot.moveTo(new Vector3(10, 5, 0), new Vector3(-10, 2, 0), 60000);
-        for (let i = 0; i < 60000; i++) {
-          setTimeout(() => {spot.SpotLight().position.set(p[i].x,p[i].y, 0)},100)
-        }
-        let poss = spot.moveTo(new Vector3(-10, 2, 0), new Vector3(-10, -5, 0), 60000);
-        for (let i = 0; i < 60000; i++) {
-          setTimeout(() => {spot.SpotLight().position.set(poss[i].x,poss[i].y, 0)},100)
-        }
+        spot.moveTo(spot.SpotLight(),new Vector3(10, -5, 0), new Vector3(10, 5, 0), Defaults().moveToPositionSteps());
+      
+        spot.moveTo(spot.SpotLight(),new Vector3(10, 5, 0), new Vector3(-10, 2, 0), Defaults().moveToPositionSteps());
+       
+        spot.moveTo(spot.SpotLight(),new Vector3(-10, 2, 0), new Vector3(-10, -5, 0), Defaults().moveToPositionSteps());
+        
         // playStartVideo();
         // setup();
       },
