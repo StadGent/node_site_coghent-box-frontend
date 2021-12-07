@@ -50,7 +50,6 @@ const useFrame = (): {
   };
 
   const getLastAssetRelationMetadata = (activeStoryData: Story, currentFrameIndex: number) => {
-    let lastAsset: Asset = activeStoryData.frames[currentFrameIndex].assets[0];
     let relationMetadata = Common().connectRelationMetadata(
       activeStoryData.frames[currentFrameIndex],
       activeStoryData.frames[currentFrameIndex].assets[0],
@@ -61,7 +60,6 @@ const useFrame = (): {
         asset,
       );
       if (data.timestamp_end > relationMetadata.timestamp_end) {
-        lastAsset = asset;
         relationMetadata = data;
       }
     });

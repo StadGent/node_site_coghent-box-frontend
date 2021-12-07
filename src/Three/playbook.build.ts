@@ -1,3 +1,4 @@
+import useFrame from '@/composables/useFrame';
 import { PlayBookFunctions } from '@/composables/playbook';
 import { Story } from '@/models/GraphqlModel';
 import ThreeService from '@/services/ThreeService';
@@ -39,7 +40,7 @@ const PlayBookBuild = (
         backupAudioFile,
       );
       audio.play();
-    }, playBook.lastAction().time + Timing.delayNextCycle);
+    }, useFrame().getLastAssetRelationMetadata(activeStoryData, activeFrameIndex).timestamp_end);
   };
 
   const storyCircle = (currentFrameIndex: number, storyColor: number) => {

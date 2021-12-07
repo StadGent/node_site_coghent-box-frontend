@@ -6,7 +6,6 @@ import { BoxBufferGeometry, Group, Mesh, Object3D, Vector3 } from 'three';
 import Layers from './defaults.layers';
 import HorizontalProgressBar from './HorizontalProgressBar';
 import { PlayBookFunctions } from '@/composables/playbook';
-import Frame from '@/composables/frame';
 import { SpotlightFunctions } from './Spotlight';
 import Timing from './defaults.timing';
 import { Frame as modelFrame } from '@/models/GraphqlModel';

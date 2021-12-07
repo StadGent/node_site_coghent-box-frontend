@@ -15,15 +15,11 @@ import AudioHelper from '@/Three/AudioHelper';
 import VideoHelper from '@/Three/VideoHelper';
 import PlayBookBuild from '@/Three/playbook.build';
 import StoryPaused from '@/screens/StoryPaused';
-import Layers from '@/Three/defaults.layers';
 import PlayBook from '@/composables/playbook';
 import Colors from '@/Three/defaults.color';
-import useStoryCircle from '@/Three/useStoryCircle.playbook';
-import useFrameAssetOverview from '@/Three/useFrameAssetOverview.playbook';
 import Defaults from '@/Three/defaults.config';
-import Common from '@/composables/common';
 import Timing from '@/Three/defaults.timing';
-import useFrame from '@/composables/frame';
+import useFrame from '@/composables/useFrame';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -101,9 +97,7 @@ export default defineComponent({
           console.log(
             `| Time: ${
               playBook.getPlayBookFunctions()[currentFunction].time
-            } \n| Context: ${
-              playBook.getPlayBookFunctions()[currentFunction].context
-            }`,
+            } \n| Context: ${playBook.getPlayBookFunctions()[currentFunction].context}`,
           );
           playBook.getPlayBookFunctions()[currentFunction].func();
           currentFunction++;
@@ -123,7 +117,7 @@ export default defineComponent({
       PlayBookBuild(threeSvc, playBook, activeStoryData).initialSpotLight(spot);
       activeStoryData.frames.map((frame: Frame, index: number) => {
         currentFrame = index;
-        // PlayBookBuild(playBook, activeStoryData).updateAudio(audio,index, audioFile);
+        // PlayBookBuild(threeSvc, playBook, activeStoryData).updateAudio(audio,currentFrame, audioFile);
 
         PlayBookBuild(threeSvc, playBook, activeStoryData).storyCircle(
           currentFrame,
@@ -140,7 +134,7 @@ export default defineComponent({
         audio.pause();
         audio = AudioHelper().setAudioTrack(activeStoryData, currentFrame, audioFile);
         audio.play();
-      }, useFrame().getLastAssetRelationMetadata(activeStoryData, currentFrame)?.timestamp_end);
+      }, useFrame().getLastAssetRelationMetadata(activeStoryData, currentFrame).timestamp_end);
 
       playBook.addToPlayBook(
         () => {
