@@ -6,10 +6,10 @@ import Layers from './defaults.layers';
 
 export type SpotlightFunctions = {
   SpotLight: () => Mesh;
-  create: (startPosition: Vector3, radius: number,color?: number) => Mesh;
+  create: (startPosition: Vector3, radius: number, color?: number) => Mesh;
   move: (position: Vector3, height: number) => void;
   moveTo: (from: Vector3, to: Vector3, steps: number) => Array<Vector3>;
-}
+};
 
 const Spot = (): SpotlightFunctions => {
   let spotlight: Mesh;
@@ -21,7 +21,7 @@ const Spot = (): SpotlightFunctions => {
         new Vector3(startPosition.x, startPosition.y, Layers.scene),
         1,
         color || Colors().white,
-        0.2
+        0.2,
       ),
       Layers.scene,
       true,
@@ -37,8 +37,24 @@ const Spot = (): SpotlightFunctions => {
 
   const moveTo = (from: Vector3, to: Vector3, steps: number) => {
     const positions: Array<Vector3> = [];
+    let stepX = -Math.abs(from.x - to.x) / steps;
+    let stepY = -Math.abs(from.y - to.y) / steps;
+    
+    if(to.x < 0){
+      stepX = -stepX
+    }
+    if(to.y < 0){
+      stepY = -stepY
+    }
+    
     for (let i = 0; i < steps; i++) {
-      positions.push(new Vector3(from.x - to.x / 60, from.y - to.y / 60, Layers.scene));
+      positions.push(
+        new Vector3(
+          from.x - stepX * i,
+          from.y - stepY * i,
+          Layers.scene,
+        ),
+      );
     }
     return positions;
   };
