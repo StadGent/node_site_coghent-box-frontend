@@ -8,11 +8,11 @@ import useStory from '@/composables/useStory';
 import { Story } from '@/models/GraphqlModel';
 import CircularProgressBar from '@/Three/CircularProgressbar';
 import Positions from '@/Three/defaults.positions';
-import DefaultsPauseState from '@/Three/defaults.pauseState';
 import Colors from '@/Three/defaults.color';
 import TextHelper from '@/Three/TextHelper';
 import SchemaCube from '@/Three/CubeSchema';
 import CubeHelper from '@/Three/CubeHelper';
+import HelperText from '@/Three/defaults.helperText';
 
 const StoryPaused = (storyData: Array<Story>): {
   Create: (progress: Array<number>) => Array<Group>;
@@ -43,7 +43,7 @@ const StoryPaused = (storyData: Array<Story>): {
   const storyEndText = () => {
     const groups: Array<Group> = [];
     const text = TextHelper().CreateTextFromRecord(
-      DefaultsPauseState().topTextState1,
+      HelperText().EndOfStory,
       Colors().black,
     );
     const manSchema = CubeHelper().CreateSchema(new Vector3(0,0,0),"@/assets/man.svg", new Vector3(3,2,0));
