@@ -9,6 +9,7 @@ import Timing from './defaults.timing';
 import { SpotlightFunctions } from './Spotlight';
 import useFrameAssetOverview from './useFrameAssetOverview.playbook';
 import useStoryCircle from './useStoryCircle.playbook';
+import EndOfSession from '@/screens/EndOfSession';
 
 const PlayBookBuild = (
   threeService: ThreeService,
@@ -23,6 +24,7 @@ const PlayBookBuild = (
   storyCircle: (currentFrameIndex: number, storyColor: number) => void;
   frameOverview: (currentFrameIndex: number, storyColor: number, spot: SpotlightFunctions) => void;
   initialSpotLight: (spot: SpotlightFunctions) => void;
+  endOfSession: () => void;
 } => {
   const updateAudio = (
     audio: HTMLAudioElement,
@@ -44,6 +46,7 @@ const PlayBookBuild = (
   };
 
   const storyCircle = (currentFrameIndex: number, storyColor: number) => {
+    console.log(`alert creating storyCircle`);
     useStoryCircle(threeService, activeStoryData, playBook).create(
       new Vector3(0, 0, 0),
       storyColor,
@@ -63,14 +66,26 @@ const PlayBookBuild = (
 
   const initialSpotLight = (spot: SpotlightFunctions) => {
     spot.create(new Vector3(0, 0, Layers.scene), 6);
-    playBook.addToPlayBook(() => threeService.AddToScene(spot.SpotLight()), 0);
+    playBook.addToPlayBook(() => threeService.AddToScene(spot.SpotLight()), 0, `Add initial spotLight to the scene`);
   };
+
+  const endOfSession =() => {
+    playBook.addToPlayBook(
+      () => {
+        threeService.ClearScene();
+        threeService.AddGroupsToScene(EndOfSession().create());
+      },
+      playBook.lastAction().time + Timing.delayNextCycle,
+      `Display story overview.`,
+    );
+  }
 
   return {
     updateAudio,
     storyCircle,
     frameOverview,
     initialSpotLight,
+    endOfSession
   };
 };
 

@@ -1,6 +1,8 @@
-import { Vector3, Mesh } from 'three';
-import { CubeParams } from './CubeSchema';
+import { Vector3, Mesh, Group } from 'three';
+import CubeHelper from './CubeHelper';
+import SchemaCube, { CubeParams } from './CubeSchema';
 import DefaultColors from './defaults.color';
+import GroupHelper from './GroupHelper';
 import SchemaText, { FontParams } from './Textschema';
 
 const TextHelper = (): {
@@ -11,6 +13,7 @@ const TextHelper = (): {
     textBox?: CubeParams,
     params?: FontParams,
   ) => Mesh;
+  displayTextFromRecordWithIcon: (textRecord: Record<string, Vector3>, color: number, icon: string, iconPosition: Vector3, iconDimensions: Vector3) => Array<Group>;
 } => {
   const textSchema = SchemaText();
   const CreateText = (
@@ -55,7 +58,20 @@ const TextHelper = (): {
     }
     return txtMeshes;
   };
-  return { CreateText, CreateTextFromRecord };
+  const displayTextFromRecordWithIcon = (textRecord: Record<string, Vector3>, color: number, icon: string, iconPosition: Vector3, iconDimensions: Vector3) => {
+    const groups: Array<Group> = [];
+    const text = CreateTextFromRecord(
+      textRecord,
+      color,
+    );
+    const iconSchema = CubeHelper().CreateSchema(iconPosition,icon, iconDimensions);
+    const iconCube = SchemaCube().CreateImageCube(iconSchema);
+    GroupHelper().AddObjectsTogroups(text, groups);
+    GroupHelper().AddObjectsTogroups([iconCube], groups);
+    return groups;
+  };
+
+  return { CreateText, CreateTextFromRecord, displayTextFromRecordWithIcon };
 };
 
 export default TextHelper;
