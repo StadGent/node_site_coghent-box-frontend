@@ -59,7 +59,7 @@ const useStoryCircle = (
 
   const create = (position: Vector3, storyColor: number, currentFrame: number, frames: number, timestamp: number) => {
     threeService.state.scene.background = new Color(Colors().black);
-    playBook.addToPlayBook(() => threeService.ClearScene(), timestamp);
+    playBook.addToPlayBook(() => threeService.ClearScene(), timestamp), `Clear scene for storyCircle`;
 
     const progressBar = CircularProgressBar().createActiveSegment(
       new Vector3(0, 0, 0),

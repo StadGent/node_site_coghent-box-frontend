@@ -41,11 +41,15 @@ const useFrameAssetOverview = (
       group.add(FrameOverview(threeService).addImage(asset, position));
     }
 
-    playBook.addToPlayBook(() => {
-      threeService.AddToScene(group);
-      spot.move(Object.values(data)[0], 4);
-      threeService.AddToScene(spot.SpotLight());
-    }, timestamp,`Add all assets to scene.`);
+    playBook.addToPlayBook(
+      () => {
+        threeService.AddToScene(group);
+        spot.move(Object.values(data)[0], 4);
+        threeService.AddToScene(spot.SpotLight());
+      },
+      timestamp,
+      `Add all assets to scene.`,
+    );
   };
 
   const displayProgressBar = (storyColor: number, currentFrame: number) => {
@@ -110,36 +114,43 @@ const useFrameAssetOverview = (
         if (relationMetadata.timestamp_start) {
           playBook.addToPlayBook(
             () =>
+              // spot.moveTo(spot.SpotLight(),new Vector3(0,0,0),relationMetadata.position as Vector3,Defaults().moveToPositionSteps()),
               useAsset(threeService).moveSpotlightToAsset(
                 spot,
                 asset as Mesh<BoxBufferGeometry, any>,
               ),
             relationMetadata.timestamp_start,
-            `Move spotlight to asset ${assets[index].id}.`
+            `Move spotlight to asset ${assets[index].id}.`,
           );
           playBook.addToPlayBook(
             () => displayProgressBar(storyColor, currentFrame),
             relationMetadata.timestamp_start,
-            `Display progressbar.`
+            `Display progressbar.`,
           );
-          playBook.addToPlayBook(() => {
-            setAssetsInactive(asset as Mesh<BoxBufferGeometry, any>);
-            zoomAndHighlightAsset(
-              asset as Mesh<BoxBufferGeometry, any>,
-              spot,
-              index,
-              Defaults().zoomOfAsset(),
-            );
-          }, relationMetadata.timestamp_start + Timing.frameOverview.spotLightMoved);
+          playBook.addToPlayBook(
+            () => {
+              setAssetsInactive(asset as Mesh<BoxBufferGeometry, any>);
+              zoomAndHighlightAsset(
+                asset as Mesh<BoxBufferGeometry, any>,
+                spot,
+                index,
+                Defaults().zoomOfAsset(),
+              );
+            },
+            relationMetadata.timestamp_start + Timing.frameOverview.spotLightMoved,
+            `Zoom and highlight asset + set other assets inactive`,
+          );
 
-          playBook.addToPlayBook(() => {
-            resetImage(asset as Object3D<Event>, highlightedImage, index);
-            useAsset(threeService).moveSpotlightToAsset(
-              spot,
-              asset as Mesh<BoxBufferGeometry, any>,
-            );
-          }, relationMetadata.timestamp_end,
-            `Reset image position of asset: ${assets[index].id} and spotlight.`
+          playBook.addToPlayBook(
+            () => {
+              resetImage(asset as Object3D<Event>, highlightedImage, index);
+              useAsset(threeService).moveSpotlightToAsset(
+                spot,
+                asset as Mesh<BoxBufferGeometry, any>,
+              );
+            },
+            relationMetadata.timestamp_end,
+            `Reset image position of asset: ${assets[index].id} and spotlight.`,
           );
         }
       });
