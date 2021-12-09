@@ -11,7 +11,6 @@ import { BoxBufferGeometry, Mesh, Vector3, Group } from 'three';
 
 const useAsset = (threeService: ThreeService): {
   getCollections: (asset: Asset) => Array<Metadata>;
-  getDimensions: (asset: Asset) => Array<Metadata>;
   getImage: (asset: Asset) => string;
   moveSpotlightToAsset:(spot: SpotlightFunctions, asset: Mesh<BoxBufferGeometry, any>) => void;
   zoom: (assetImageCube: Mesh<BoxBufferGeometry, any>, spot: SpotlightFunctions, scale: number) => void;
@@ -33,10 +32,6 @@ const useAsset = (threeService: ThreeService): {
     return asset.collections;
   };
 
-  const getDimensions = (asset: Asset) => {
-    return asset.dimensions;
-  };
-
   const getImage = (asset: Asset) => {
     return asset.mediafiles?.[0]?.original_file_location
       ? asset.mediafiles?.[0]?.original_file_location
@@ -44,13 +39,16 @@ const useAsset = (threeService: ThreeService): {
   };
 
   const moveSpotlightToAsset = (spot: SpotlightFunctions, asset: Mesh<BoxBufferGeometry, any>) => {
-    const widest = asset.geometry.parameters.width > asset.geometry.parameters.height
+    const widest = asset.geometry.parameters.width > asset.geometry.parameters.height;
+    threeService.AddToScene(spot.SpotLight());
+
     if(widest){
       spot.move(asset.position, asset.geometry.parameters.width + 0.1);
+      // spot.moveTo(spot.SpotLight(),spot.SpotLight().position,asset.position, Defaults().moveToPositionSteps());
     }else{
       spot.move(asset.position, asset.geometry.parameters.height + 0.1);
+      // spot.moveTo(spot.SpotLight(),spot.SpotLight().position,asset.position, Defaults().moveToPositionSteps());
     }
-    threeService.AddToScene(spot.SpotLight());
     setActive(asset);
   };
 
@@ -110,7 +108,6 @@ const useAsset = (threeService: ThreeService): {
 
   return {
     getCollections,
-    getDimensions,
     getImage,
     moveSpotlightToAsset,
     zoom,
