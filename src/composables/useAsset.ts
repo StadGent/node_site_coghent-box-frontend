@@ -4,16 +4,16 @@ import ThreeService from '@/services/ThreeService';
 import CubeHelper from '@/Three/CubeHelper';
 import Layers from '@/Three/defaults.layers';
 import GroupHelper from '@/Three/GroupHelper';
-import { SpotlightFunctions } from '@/Three/Spotlight';
 import TextHelper from '@/Three/TextHelper';
 import { FontParams } from '@/Three/Textschema';
 import { BoxBufferGeometry, Mesh, Vector3, Group } from 'three';
+import Common from './common';
 
 const useAsset = (threeService: ThreeService): {
   getCollections: (asset: Asset) => Array<Metadata>;
   getImage: (asset: Asset) => string;
-  moveSpotlightToAsset:(spot: SpotlightFunctions, asset: Mesh<BoxBufferGeometry, any>) => void;
-  zoom: (assetImageCube: Mesh<BoxBufferGeometry, any>, spot: SpotlightFunctions, scale: number) => void;
+  moveSpotlightToAsset:(spotlight: Mesh, asset: Mesh<BoxBufferGeometry, any>) => void;
+  zoom: (assetImageCube: Mesh<BoxBufferGeometry, any>, spotlight: Mesh, scale: number) => void;
   setInactive: (assetImageCube: Mesh<BoxBufferGeometry, any>) => void;
   setActive: (assetImageCube: Mesh<BoxBufferGeometry, any>) => void;
   addMetadataToZoomedImage: (
@@ -38,23 +38,21 @@ const useAsset = (threeService: ThreeService): {
       : 'http://localhost:8001/download/4226243bcfd8986cc128e5f5241589b9-2015-0070.JPG';
   };
 
-  const moveSpotlightToAsset = (spot: SpotlightFunctions, asset: Mesh<BoxBufferGeometry, any>) => {
+  const moveSpotlightToAsset = (spotlight: Mesh, asset: Mesh<BoxBufferGeometry, any>) => {
     const widest = asset.geometry.parameters.width > asset.geometry.parameters.height;
-    threeService.AddToScene(spot.SpotLight());
-
     if(widest){
-      spot.move(asset.position, asset.geometry.parameters.width + 0.1);
-      // spot.moveTo(spot.SpotLight(),spot.SpotLight().position,asset.position, Defaults().moveToPositionSteps());
+      spotlight.scale.set(asset.geometry.parameters.width + 0.1 / 2 + 1, asset.geometry.parameters.width + 0.1 / 2 + 1, Layers.scene);
+      Common().moveObject(spotlight,asset.position);
     }else{
-      spot.move(asset.position, asset.geometry.parameters.height + 0.1);
-      // spot.moveTo(spot.SpotLight(),spot.SpotLight().position,asset.position, Defaults().moveToPositionSteps());
+      spotlight.scale.set(asset.geometry.parameters.width + 0.1 / 2 + 1, asset.geometry.parameters.width + 0.1 / 2 + 1, Layers.scene);
+      Common().moveObject(spotlight,asset.position);
     }
     setActive(asset);
   };
 
-  const zoom = (assetImageCube: Mesh<BoxBufferGeometry, any>, spot: SpotlightFunctions, scale: number) => {
+  const zoom = (assetImageCube: Mesh<BoxBufferGeometry, any>, spotlight: Mesh, scale: number) => {
     assetImageCube.position.set(assetImageCube.position.x, 0, assetImageCube.position.z);
-    moveSpotlightToAsset(spot,assetImageCube);
+    moveSpotlightToAsset(spotlight,assetImageCube);
     assetImageCube.material.opacity = 1;
     assetImageCube.scale.set(scale, scale, Layers.presentation);
   };

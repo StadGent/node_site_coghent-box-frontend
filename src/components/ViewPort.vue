@@ -8,9 +8,8 @@ import useStory from '@/composables/useStory';
 import Tools from '@/Three/Tools';
 import ThreeService from '@/services/ThreeService';
 import { defineComponent, onMounted, PropType, reactive, Ref, ref, watch } from 'vue';
-import { Vector3 } from 'three';
+import { Mesh, Vector3 } from 'three';
 import { Entity as _Entity, Frame, Story } from '@/models/GraphqlModel';
-import Spot from '@/Three/Spotlight';
 import AudioHelper from '@/Three/AudioHelper';
 import VideoHelper from '@/Three/VideoHelper';
 import PlayBookBuild from '@/Three/playbook.build';
@@ -21,8 +20,6 @@ import Colors from '@/Three/defaults.color';
 import Defaults from '@/Three/defaults.config';
 import Timing from '@/Three/defaults.timing';
 import useFrame from '@/composables/useFrame';
-import useAsset from '@/composables/useAsset';
-import EndOfStoryText from '@/Three/EndOfStoryText';
 import Layers from '@/Three/defaults.layers';
 import SchemaCube from '@/Three/CubeSchema';
 import Common from '@/composables/common';
@@ -56,7 +53,7 @@ export default defineComponent({
     let interval: ReturnType<typeof setTimeout>;
     let storyData: Array<Story> = [];
     let activeStoryData = reactive<Story>({} as Story);
-    const spot = Spot();
+    let spotlight: Mesh;
     const playBook = PlayBook();
 
     watch(
@@ -79,10 +76,9 @@ export default defineComponent({
       () => props.stories,
       (value) => {
         stories.value = value;
-        spot.create(new Vector3(10, 0, 0), 3, Colors().lightBlue);
 
         // playStartVideo();
-        // setup();
+        setup();
       },
     );
 
@@ -124,46 +120,49 @@ export default defineComponent({
       threeSvc.ClearScene();
       activeStoryData = useStory().setActiveStory(storyData, currentStory - 1);
 
-      PlayBookBuild(threeSvc, playBook, activeStoryData).initialSpotLight(spot);
-
-      PlayBookBuild(threeSvc, playBook, activeStoryData).storyCircle(1, storyColor);
+      spotlight = PlayBookBuild(
+        threeSvc,
+        playBook,
+        spotlight,
+        activeStoryData,
+      ).initialSpotLight();
 
       activeStoryData.frames.map((frame: Frame, index: number) => {
         currentFrame = index;
 
         // PlayBookBuild(threeSvc, playBook, activeStoryData).updateAudio(audio,currentFrame, audioFile);
 
-        PlayBookBuild(threeSvc, playBook, activeStoryData).storyCircle(
+        PlayBookBuild(threeSvc, playBook, spotlight, activeStoryData).storyCircle(
           currentFrame,
           storyColor,
         );
 
-        playBook.addToPlayBook(
-          () => {
-            audio.pause();
-            audio = AudioHelper().setAudioTrack(activeStoryData, currentFrame, audioFile);
-            audio.play();
-          },
-          useFrame().getLastAssetRelationMetadata(activeStoryData, currentFrame)
-            .timestamp_end,
-          'Pause audio and create new audio ',
-        );
-
-        PlayBookBuild(threeSvc, playBook, activeStoryData).frameOverview(
+        PlayBookBuild(threeSvc, playBook, spotlight, activeStoryData).frameOverview(
           currentFrame,
           storyColor,
-          spot,
         );
       });
+
+      playBook.addToPlayBook(
+        () => {
+          audio.pause();
+          audio = AudioHelper().setAudioTrack(activeStoryData, currentFrame, audioFile);
+          audio.play();
+        },
+        useFrame().getLastAssetRelationMetadata(activeStoryData, currentFrame)
+          .timestamp_end,
+        'Pause audio and create new audio ',
+      );
 
       playBook.addToPlayBook(
         () => {
           chooseStory.value = true;
           audio.pause();
           threeSvc.ClearScene();
+          threeSvc.AddToScene(spotlight);
+          spotlight.scale.set(6, 6, Layers.scene);
+          Common().moveObject(spotlight, new Vector3(0, 2, Layers.scene));
           threeSvc.AddGroupsToScene(StoryPaused(storyData).Create([1, 2, 3]));
-          spot.move(new Vector3(0, 1.5, 0), 6);
-          threeSvc.AddToScene(spot.SpotLight());
         },
         useFrame().getLastAssetRelationMetadata(activeStoryData, currentFrame)
           ?.timestamp_end + Timing.delayNextCycle,
@@ -172,7 +171,7 @@ export default defineComponent({
       // PlayBookBuild(threeSvc, playBook, activeStoryData).endOfSession(new Vector3(22,1, Layers.presentation));
 
       console.log('Actions =>', playBook.getPlayBookFunctions());
-      audio = AudioHelper().setAudioTrack(activeStoryData, 0, audioFile);
+      audio = AudioHelper().setAudioTrack(activeStoryData, currentFrame, audioFile);
       audio.play();
       timing();
     };
@@ -216,14 +215,12 @@ export default defineComponent({
       Common().moveObject(cube2, new Vector3(10, 4, Layers.scene));
     };
 
-    
-
     onMounted(() => {
       threeSvc = new ThreeService(viewport);
       // threeSvc.AddToScene(Tools().xAxis(new Vector3(0, 0, 0)));
       // threeSvc.AddToScene(Tools().yAxis(new Vector3(0, 0, 0)));
 
-      test_movingObject();
+      // test_movingObject();
 
       threeSvc.Animate();
     });

@@ -17,7 +17,8 @@ const FrameOverview = (threeService: ThreeService): {
 } => {
 
   const addImage = (asset: Asset, position: Vector3) => {
-    const schema = CubeHelper().CreateSchema(position,useAsset(threeService).getImage(asset),new Vector3(Common().pixelsToMeters(asset.mediafiles[0]?.mediainfo.width), Common().pixelsToMeters(asset.mediafiles[0]?.mediainfo.height),0));
+    const schema = CubeHelper().CreateSchema(position,useAsset(threeService).getImage(asset),new Vector3(2,2,0));
+    // const schema = CubeHelper().CreateSchema(position,useAsset(threeService).getImage(asset),new Vector3(Common().pixelsToMeters(asset.mediafiles[0]?.mediainfo.width), Common().pixelsToMeters(asset.mediafiles[0]?.mediainfo.height),0));
     const cube = SchemaCube().CreateImageCube(schema);
     return cube;
   };

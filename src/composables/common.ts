@@ -30,12 +30,15 @@ const Common = (): {
   }
 
   const moveObject = (object: Mesh, toPosition: Vector3) => {
+    if(object.position.x == toPosition.x)
+      object.position.x = object.position.x -0.1;
     const stepY = Math.abs(object.position.y - toPosition.y) / Defaults().steps();
     const stepX = Math.abs(object.position.x - toPosition.x) / Defaults().steps();
     if (object.position != toPosition) {
       if (object.position.x < toPosition.x) {
         if (object.position.x + stepX > toPosition.x) {
           object.position.x = toPosition.x;
+          object.position.y = toPosition.y;
         } else {
           object.position.set(
             object.position.x + stepX,
