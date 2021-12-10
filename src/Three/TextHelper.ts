@@ -12,8 +12,15 @@ const TextHelper = (): {
     position: Vector3,
     textBox?: CubeParams,
     params?: FontParams,
+    opacity?: number,
   ) => Mesh;
-  displayTextFromRecordWithIcon: (textRecord: Record<string, Vector3>, color: number, icon: string, iconPosition: Vector3, iconDimensions: Vector3) => Array<Group>;
+  displayTextFromRecordWithIcon: (
+    textRecord: Record<string, Vector3>,
+    color: number,
+    icon: string,
+    iconPosition: Vector3,
+    iconDimensions: Vector3,
+  ) => Array<Group>;
 } => {
   const textSchema = SchemaText();
   const CreateText = (
@@ -21,6 +28,7 @@ const TextHelper = (): {
     position: Vector3,
     textBox?: CubeParams,
     params?: FontParams,
+    opacity?: number,
   ) => {
     const schema = {
       text: word,
@@ -36,7 +44,7 @@ const TextHelper = (): {
         color: textBox?.color || DefaultColors().black,
       },
     };
-    return textSchema.LoadText(schema, position);
+    return textSchema.LoadText(schema, opacity || 1);
   };
   const CreateTextFromRecord = (words: Record<string, Vector3>, color?: number) => {
     const txtMeshes: Array<Mesh> = [];
@@ -54,17 +62,20 @@ const TextHelper = (): {
           width: 3,
         },
       };
-      txtMeshes.push(textSchema.LoadText(schema));
+      txtMeshes.push(textSchema.LoadText(schema, 1));
     }
     return txtMeshes;
   };
-  const displayTextFromRecordWithIcon = (textRecord: Record<string, Vector3>, color: number, icon: string, iconPosition: Vector3, iconDimensions: Vector3) => {
+  const displayTextFromRecordWithIcon = (
+    textRecord: Record<string, Vector3>,
+    color: number,
+    icon: string,
+    iconPosition: Vector3,
+    iconDimensions: Vector3,
+  ) => {
     const groups: Array<Group> = [];
-    const text = CreateTextFromRecord(
-      textRecord,
-      color,
-    );
-    const iconSchema = CubeHelper().CreateSchema(iconPosition,icon, iconDimensions);
+    const text = CreateTextFromRecord(textRecord, color);
+    const iconSchema = CubeHelper().CreateSchema(iconPosition, icon, iconDimensions);
     const iconCube = SchemaCube().CreateImageCube(iconSchema);
     GroupHelper().AddObjectsTogroups(text, groups);
     GroupHelper().AddObjectsTogroups([iconCube], groups);

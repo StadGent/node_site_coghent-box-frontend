@@ -3,8 +3,8 @@ import { Vector3 } from 'three';
 const HelperText = (): {
   EndOfStory: Record<string, Vector3>;
   personSteppedOfSensor: Record<string, Vector3>;
-  scanYourTicket: Record<string, Vector3>;
-  goToWebPortal: Record<string, Vector3>;
+  scanYourTicket: (position: Vector3) => Record<string, Vector3>;
+  goToWebPortal: (position: Vector3) => Record<string, Vector3>;
   WalkToTouchtable: Record<string, Vector3>;
 } => {
   const EndOfStory: Record<string, Vector3> = {
@@ -22,16 +22,20 @@ const HelperText = (): {
     'een nieuw verhaal te starten.': new Vector3(-3, -4.5, 0),
   };
 
-  const scanYourTicket: Record<string, Vector3> = {
-    'Scan je ticket': new Vector3(-12, 3, 0),
-    'opnieuw aan de zuil': new Vector3(-12.2, 2.5, 0),
-    'om verder te gaan': new Vector3(-12.8, 2, 0),
+  const scanYourTicket = (position: Vector3) => {
+    return {
+      'Scan je ticket': new Vector3(-position.x + 1.6, 3, 0),
+      'opnieuw aan de zuil': new Vector3(-position.x + 1.4, 2.5, 0),
+      'om verder te gaan': new Vector3(-position.x + 1.4, 2, 0),
+    };
   };
-  const goToWebPortal: Record<string, Vector3> = {
-    'Neem je ticket mee': new Vector3(12, 3, 0),
-    'naar huis en ontdek de': new Vector3(11.8, 2.5, 0),
-    'collectie verder online': new Vector3(12, 2, 0),
-    'wwwcoghentbox.be': new Vector3(12, 1.5, 0),
+  const goToWebPortal = (position: Vector3) => {
+    return {
+      'Neem je ticket mee': new Vector3(position.x - 1.8, 3, 0),
+      'naar huis en ontdek de': new Vector3(position.x - 2, 2.5, 0),
+      'collectie verder online': new Vector3(position.x - 1.8, 2, 0),
+      'wwwcoghentbox.be': new Vector3(position.x - 1.8, 1.5, 0),
+    };
   };
   const WalkToTouchtable: Record<string, Vector3> = {
     'Ga de collectie': new Vector3(0, 3, 0),

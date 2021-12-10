@@ -3,6 +3,7 @@ type Textsize = {
   small: number;
   medium: number;
   big: number;
+  veryBig: number;
 };
 
 type CustomText = {
@@ -15,6 +16,7 @@ const customText: CustomText = {
     small: 0.3,
     medium: 0.4,
     big: 0.5,
+    veryBig: 1.2,
   },
 };
 

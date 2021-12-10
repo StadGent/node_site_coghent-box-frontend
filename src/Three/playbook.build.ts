@@ -24,7 +24,7 @@ const PlayBookBuild = (
   storyCircle: (currentFrameIndex: number, storyColor: number) => void;
   frameOverview: (currentFrameIndex: number, storyColor: number, spot: SpotlightFunctions) => void;
   initialSpotLight: (spot: SpotlightFunctions) => void;
-  endOfSession: () => void;
+  endOfSession: (position: Vector3, spotRadius?: number) => void;
 } => {
   const updateAudio = (
     audio: HTMLAudioElement,
@@ -69,11 +69,11 @@ const PlayBookBuild = (
     playBook.addToPlayBook(() => threeService.AddToScene(spot.SpotLight()), 0, `Add initial spotLight to the scene`);
   };
 
-  const endOfSession =() => {
+  const endOfSession =(position: Vector3, spotRadius?: number) => {
     playBook.addToPlayBook(
       () => {
         threeService.ClearScene();
-        threeService.AddGroupsToScene(EndOfSession().create());
+        threeService.AddGroupsToScene(EndOfSession(position, spotRadius).create());
       },
       playBook.lastAction().time + Timing.delayNextCycle,
       `Display story overview.`,
