@@ -1,9 +1,11 @@
 import {
-  Asset,
   ComponentMetadata,
   Entity,
   Story,
+  Asset,
+  Frame
 } from '@/models/GraphqlModel';
+import { Relation } from 'coghent-vue-3-component-library/lib/queries';
 import Common from './common';
 import useStory from './useStory';
 
@@ -13,6 +15,7 @@ const useFrame = (): {
   GetFramesMainImages: (frames: Array<Entity>) => Array<string>;
   CreateFrameRecord: (frames: any) => Record<string, string>;
   getLastAssetRelationMetadata: (activeStoryData: Story, currentFrameIndex: number) => ComponentMetadata;
+  getAudioForFrame: (frame: Frame) => string;
 } => {
   const GetFrameTitles = (frames: Array<Entity>) => {
     const centerWords: Array<string> = [];
@@ -65,13 +68,29 @@ const useFrame = (): {
     });
     return relationMetadata;
   };
-
+  
+  const getAudioForFrame = (frame: Frame) => {
+    const audioFiles: Array<string> = [];
+    let audio = 'No audio for frame';
+    frame.assets.map(asset => {
+      asset.relations.map(relation => {
+        if(relation.audioFile?.includes('download')){
+          audioFiles.push(relation.audioFile);
+        }
+      });
+    });
+    if(audioFiles.length >0){
+      audio = audioFiles[0];
+    }
+    return audio;
+  }
   return {
     GetFrameTitles,
     GetFrameMainImage,
     GetFramesMainImages,
     CreateFrameRecord,
     getLastAssetRelationMetadata,
+    getAudioForFrame,
   };
 };
 

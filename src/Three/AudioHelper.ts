@@ -1,4 +1,4 @@
-import Common from '@/composables/common';
+import useFrame from '@/composables/useFrame';
 import { Story } from '@/models/GraphqlModel';
 
 const AudioHelper = (): {
@@ -12,12 +12,10 @@ const AudioHelper = (): {
 
   const setAudioTrack = (activeStoryData: Story, currentFrameIndex: number, backupAudioFile: string) => {
     let audio = new Audio(backupAudioFile);
-    const relationMetadata = Common().connectRelationMetadata(
-      activeStoryData,
-      activeStoryData.frames[currentFrameIndex],
-    );
-    if (relationMetadata.audioFile) {
-      audio = new Audio(relationMetadata.audioFile);
+
+    const audioForFrame = useFrame().getAudioForFrame(activeStoryData.frames[currentFrameIndex]);
+    if (audioForFrame.includes('download')) {
+      audio = new Audio(audioForFrame);
     }
     return audio
   };
