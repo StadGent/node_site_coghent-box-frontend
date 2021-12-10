@@ -24,6 +24,8 @@ import useFrame from '@/composables/useFrame';
 import useAsset from '@/composables/useAsset';
 import EndOfStoryText from '@/Three/EndOfStoryText';
 import Layers from '@/Three/defaults.layers';
+import SchemaCube from '@/Three/CubeSchema';
+import Common from '@/composables/common';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -80,7 +82,7 @@ export default defineComponent({
         spot.create(new Vector3(10, 0, 0), 3, Colors().lightBlue);
 
         // playStartVideo();
-        setup();
+        // setup();
       },
     );
 
@@ -197,10 +199,31 @@ export default defineComponent({
       }, 7000);
     };
 
+    const test_movingObject = () => {
+      console.log(`test_movingObjects`);
+      threeSvc.ClearScene();
+      const cube = SchemaCube().CreateCube({
+        position: new Vector3(0, 0, Layers.scene),
+        params: { width: 2, height: 2, color: Colors().lightBlue },
+      });
+      const cube2 = SchemaCube().CreateCube({
+        position: new Vector3(0, 0, Layers.scene),
+        params: { width: 2, height: 4, color: Colors().pink },
+      });
+      threeSvc.AddToScene(cube);
+      threeSvc.AddToScene(cube2);
+      Common().moveObject(cube, new Vector3(-10, -4, Layers.scene));
+      Common().moveObject(cube2, new Vector3(10, 4, Layers.scene));
+    };
+
+    
+
     onMounted(() => {
       threeSvc = new ThreeService(viewport);
       // threeSvc.AddToScene(Tools().xAxis(new Vector3(0, 0, 0)));
       // threeSvc.AddToScene(Tools().yAxis(new Vector3(0, 0, 0)));
+
+      test_movingObject();
 
       threeSvc.Animate();
     });
