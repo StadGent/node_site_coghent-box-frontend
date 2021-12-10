@@ -8,15 +8,7 @@ import useStory from '@/composables/useStory';
 import Tools from '@/Three/Tools';
 import ThreeService from '@/services/ThreeService';
 import { defineComponent, onMounted, PropType, reactive, Ref, ref, watch } from 'vue';
-import {
-  AnimationClip,
-  AnimationMixer,
-  Clock,
-  Mesh,
-  NumberKeyframeTrack,
-  Vector3,
-  VectorKeyframeTrack,
-} from 'three';
+import { Vector3 } from 'three';
 import { Entity as _Entity, Frame, Story } from '@/models/GraphqlModel';
 import Spot from '@/Three/Spotlight';
 import AudioHelper from '@/Three/AudioHelper';
@@ -31,6 +23,7 @@ import Timing from '@/Three/defaults.timing';
 import useFrame from '@/composables/useFrame';
 import useAsset from '@/composables/useAsset';
 import EndOfStoryText from '@/Three/EndOfStoryText';
+import Layers from '@/Three/defaults.layers';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -63,8 +56,6 @@ export default defineComponent({
     let activeStoryData = reactive<Story>({} as Story);
     const spot = Spot();
     const playBook = PlayBook();
-    const clock = new Clock();
-    const spotlightMixer = new AnimationMixer(spot.SpotLight());
 
     watch(
       () => props.storySelected,
@@ -87,29 +78,6 @@ export default defineComponent({
       (value) => {
         stories.value = value;
         spot.create(new Vector3(10, 0, 0), 3, Colors().lightBlue);
-        // threeSvc.AddToScene(spot.SpotLight());
-        // spot.SpotLight().position.set(-10,0,0);
-
-        // spot.moveTo(
-        //   spot.SpotLight(),
-        //   new Vector3(10, -5, 0),
-        //   new Vector3(10, 5, 0),
-        //   Defaults().moveToPositionSteps(),
-        // );
-
-        // spot.moveTo(
-        //   spot.SpotLight(),
-        //   new Vector3(10, 5, 0),
-        //   new Vector3(-10, 2, 0),
-        //   Defaults().moveToPositionSteps(),
-        // );
-
-        // spot.moveTo(
-        //   spot.SpotLight(),
-        //   new Vector3(-10, 2, 0),
-        //   new Vector3(-10, -5, 0),
-        //   Defaults().moveToPositionSteps(),
-        // );
 
         // playStartVideo();
         setup();
@@ -156,7 +124,6 @@ export default defineComponent({
 
       PlayBookBuild(threeSvc, playBook, activeStoryData).initialSpotLight(spot);
 
-      // testMoveingPositions();
       PlayBookBuild(threeSvc, playBook, activeStoryData).storyCircle(1, storyColor);
 
       activeStoryData.frames.map((frame: Frame, index: number) => {
@@ -200,7 +167,7 @@ export default defineComponent({
           ?.timestamp_end + Timing.delayNextCycle,
         `Display story overview.`,
       );
-      // PlayBookBuild(threeSvc, playBook, activeStoryData).endOfSession();
+      // PlayBookBuild(threeSvc, playBook, activeStoryData).endOfSession(new Vector3(22,1, Layers.presentation));
 
       console.log('Actions =>', playBook.getPlayBookFunctions());
       audio = AudioHelper().setAudioTrack(activeStoryData, 0, audioFile);
@@ -230,65 +197,10 @@ export default defineComponent({
       }, 7000);
     };
 
-    // const testMoveingPositions = () => {
-    //   threeSvc.ClearScene();
-    //   activeStoryData = useStory().setActiveStory(storyData, currentStory.value - 1);
-
-    //   const times = [];
-    //   for (let index = 0; index <= Defaults().moveToPositionSteps(); index =index+ 0.01) {
-    //     times.push(index);
-
-    //   }
-    //   console.log(times);
-    //    const positions = spot.moveTo(
-    //       spot.SpotLight(),
-    //       new Vector3(10, -5, 0),
-    //       new Vector3(-10, 5, 0),
-    //       Defaults().moveToPositionSteps(),
-    //     );
-    //     console.log(positions);
-    //   const keyframe = new VectorKeyframeTrack('.position', times, positions);
-    //   const tracks = [keyframe];
-    //   const clip = new AnimationClip('smooth', -1,tracks);
-    //   const action = spotlightMixer.clipAction(clip);
-
-    //   action.play();
-    //   // playBook.addToPlayBook(
-    //   //   () => {
-    //   //     console.log(`Spotlight()`, spot.SpotLight());
-    //   //     // spot.SpotLight().position.set(-10,0,0);
-    //   //     spot.move(new Vector3(10,5,0), 4);
-    //   //     // threeSvc.AddToScene(spot.SpotLight());
-
-    //   //   },
-    //   //   2,
-    //   //   'Move object from A to B',
-    //   // );
-
-    //   // playBook.addToPlayBook(() => {
-    //   //    spot.moveTo(
-    //   //     spot.SpotLight(),
-    //   //     new Vector3(10, -5, 0),
-    //   //     new Vector3(-10, 5, 0),
-    //   //     Defaults().moveToPositionSteps(),
-    //   //   );
-    //   // }, 2.3, 'Move object To');
-
-    //   console.log('Actions =>', playBook.getPlayBookFunctions());
-    //   audio = AudioHelper().setAudioTrack(activeStoryData, 0, '/Audio/sample4.mp3');
-    //   audio.play();
-    //   timing();
-    // };
-
     onMounted(() => {
       threeSvc = new ThreeService(viewport);
       // threeSvc.AddToScene(Tools().xAxis(new Vector3(0, 0, 0)));
       // threeSvc.AddToScene(Tools().yAxis(new Vector3(0, 0, 0)));
-      // if (stories.value) {
-      //   audioHelper = AudioHelper();
-      //   storyData = stories.value;
-      //   buildStory(1, '/Audio/example.mp3');
-      // }
 
       threeSvc.Animate();
     });
