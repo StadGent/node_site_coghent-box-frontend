@@ -130,38 +130,38 @@ export default defineComponent({
             }
           });
 
-          entity.relations.forEach((relation) => {
-            if (relation.entity) {
-              let existingRel = relations.get(relation.key);
-              if (!existingRel) {
-                existingRel = new fabric.Rect({
-                  width: 100,
-                  height: 100,
-                  fill: 'red',
-                  stroke: 'red',
-                });
-                setRect(existingRel, relation.entity);
-                relations.set(relation.key, existingRel);
-                canvas.add(existingRel);
+          // entity.relations.forEach((relation) => {
+          //   if (relation.entity) {
+          //     let existingRel = relations.get(relation.key);
+          //     if (!existingRel) {
+          //       existingRel = new fabric.Rect({
+          //         width: 100,
+          //         height: 100,
+          //         fill: 'red',
+          //         stroke: 'red',
+          //       });
+          //       setRect(existingRel, relation.entity);
+          //       relations.set(relation.key, existingRel);
+          //       canvas.add(existingRel);
 
-                const rectText = new fabric.Textbox(relation.entity.title, {
-                  left: existingRel.left,
-                  top: existingRel.top,
-                  fontSize: 20,
-                  selectable: false,
-                  evented: false,
-                  width: 100,
-                });
-                existingRel.title = rectText;
-                canvas.add(rectText);
-              }
-              const line = getLine(existingRel, rect);
-              existingRel.lines.going.push(line);
-              rect.lines.coming.push(line);
-              canvas.add(line);
-              canvas.sendToBack(line);
-            }
-          });
+          //       const rectText = new fabric.Textbox(relation.entity.title, {
+          //         left: existingRel.left,
+          //         top: existingRel.top,
+          //         fontSize: 20,
+          //         selectable: false,
+          //         evented: false,
+          //         width: 100,
+          //       });
+          //       existingRel.title = rectText;
+          //       canvas.add(rectText);
+          //     }
+          //     const line = getLine(existingRel, rect);
+          //     existingRel.lines.going.push(line);
+          //     rect.lines.coming.push(line);
+          //     canvas.add(line);
+          //     canvas.sendToBack(line);
+          //   }
+          // });
 
           if (entity.title) {
             const rectText = new fabric.Textbox(entity.title, {

@@ -1,3 +1,5 @@
+import { Vector3 } from 'three';
+
 export interface Collection {
   count: number,
   limit: number,
@@ -26,5 +28,12 @@ export interface Metadata {
 export interface Relation {
   key: string,
   type: string,
-  entity: Result | undefined
+  label?: string
+  timestamp_start?: number,
+  timestamp_end?: number,
+  position?: Vector3,
+  scale?: number,
+  audioFile?: string
+  subtitleFile?: string
+  
 }

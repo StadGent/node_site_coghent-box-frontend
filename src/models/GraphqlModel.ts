@@ -1,5 +1,5 @@
-import { MediaFile, Relation } from 'coghent-vue-3-component-library/lib/queries';
-import { Metadata } from './CollectionModel';
+import { MediaFile } from 'coghent-vue-3-component-library/lib/queries';
+import { Metadata, Relation } from './CollectionModel';
 
 export type SearchFilter = {
   value?: String;
