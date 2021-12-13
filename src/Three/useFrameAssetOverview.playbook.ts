@@ -9,6 +9,7 @@ import { PlayBookFunctions } from '@/composables/playbook';
 import Timing from './defaults.timing';
 import { Frame as modelFrame } from '@/models/GraphqlModel';
 import Common from '@/composables/common';
+import MoveObject from '@/composables/moveObject';
 
 const useFrameAssetOverview = (
   threeService: ThreeService,
@@ -43,7 +44,7 @@ const useFrameAssetOverview = (
       () => {
         threeService.AddToScene(group);
         threeService.AddToScene(spotlight);
-        Common().moveObject(spotlight, Object.values(data)[0]);
+        MoveObject().move(spotlight, Object.values(data)[0]);
       },
       timestamp,
       `Add all assets to scene.`,
@@ -140,7 +141,7 @@ const useFrameAssetOverview = (
           playBook.addToPlayBook(
             () => {
               resetImage(asset as Object3D<Event>, highlightedImage, index);
-              Common().moveObject(spotlight,asset.position);
+              MoveObject().move(spotlight,asset.position);
 
               useAsset(threeService).moveSpotlightToAsset(
                 spotlight,

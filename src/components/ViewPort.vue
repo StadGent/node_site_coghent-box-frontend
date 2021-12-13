@@ -22,7 +22,7 @@ import Timing from '@/Three/defaults.timing';
 import useFrame from '@/composables/useFrame';
 import Layers from '@/Three/defaults.layers';
 import SchemaCube from '@/Three/CubeSchema';
-import Common from '@/composables/common';
+import MoveObject from '@/composables/moveObject';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -78,7 +78,7 @@ export default defineComponent({
         stories.value = value;
 
         // playStartVideo();
-        setup();
+        // setup();
       },
     );
 
@@ -161,7 +161,7 @@ export default defineComponent({
           threeSvc.ClearScene();
           threeSvc.AddToScene(spotlight);
           spotlight.scale.set(6, 6, Layers.scene);
-          Common().moveObject(spotlight, new Vector3(0, 2, Layers.scene));
+          MoveObject().move(spotlight, new Vector3(0, 2, Layers.scene));
           threeSvc.AddGroupsToScene(StoryPaused(storyData).Create([1, 2, 3]));
         },
         useFrame().getLastAssetRelationMetadata(activeStoryData, currentFrame)
@@ -210,9 +210,9 @@ export default defineComponent({
         params: { width: 2, height: 4, color: Colors().pink },
       });
       threeSvc.AddToScene(cube);
-      threeSvc.AddToScene(cube2);
-      Common().moveObject(cube, new Vector3(-10, -4, Layers.scene));
-      Common().moveObject(cube2, new Vector3(10, 4, Layers.scene));
+      // threeSvc.AddToScene(cube2);
+      MoveObject().move(cube, new Vector3(5, 0, Layers.scene));
+      // MoveObject().move(cube2, new Vector3(10, 4, Layers.scene));
     };
 
     onMounted(() => {
@@ -220,7 +220,7 @@ export default defineComponent({
       // threeSvc.AddToScene(Tools().xAxis(new Vector3(0, 0, 0)));
       // threeSvc.AddToScene(Tools().yAxis(new Vector3(0, 0, 0)));
 
-      // test_movingObject();
+      test_movingObject();
 
       threeSvc.Animate();
     });

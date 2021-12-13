@@ -8,6 +8,7 @@ import TextHelper from '@/Three/TextHelper';
 import { FontParams } from '@/Three/Textschema';
 import { BoxBufferGeometry, Mesh, Vector3, Group } from 'three';
 import Common from './common';
+import MoveObject from './moveObject';
 
 const useAsset = (threeService: ThreeService): {
   getCollections: (asset: Asset) => Array<Metadata>;
@@ -42,10 +43,10 @@ const useAsset = (threeService: ThreeService): {
     const widest = asset.geometry.parameters.width > asset.geometry.parameters.height;
     if(widest){
       spotlight.scale.set(asset.geometry.parameters.width + 0.1 / 2 + 1, asset.geometry.parameters.width + 0.1 / 2 + 1, Layers.scene);
-      Common().moveObject(spotlight,asset.position);
+      MoveObject().move(spotlight,asset.position);
     }else{
       spotlight.scale.set(asset.geometry.parameters.width + 0.1 / 2 + 1, asset.geometry.parameters.width + 0.1 / 2 + 1, Layers.scene);
-      Common().moveObject(spotlight,asset.position);
+      MoveObject().move(spotlight,asset.position);
     }
     setActive(asset);
   };
