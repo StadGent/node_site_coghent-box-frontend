@@ -66,7 +66,7 @@ const Tools = (): {
   };
 
   const dotOnPosition = (threeService: ThreeService, position: Vector3) => {
-    const schema = CircleHelper().CreateSchema(position,1,Colors().pink);
+    const schema = CircleHelper().CreateSchema(new Vector3(position.x -(position.x * 0.03 * 2), position.y - (position.y * 2* 0.03), position.z),0.1,Colors().pink);
     const circle = SchemaCircle().CreateCircle(schema, Layers.presentation);
     threeService.AddToScene(circle);
   }
