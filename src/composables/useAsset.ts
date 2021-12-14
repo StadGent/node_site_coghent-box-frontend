@@ -4,6 +4,7 @@ import ThreeService from '@/services/ThreeService';
 import CubeHelper from '@/Three/CubeHelper';
 import { CubeParams } from '@/Three/CubeSchema';
 import Layers from '@/Three/defaults.layers';
+import Measurements from '@/Three/defaults.measurements';
 import GroupHelper from '@/Three/GroupHelper';
 import TextHelper from '@/Three/TextHelper';
 import { FontParams } from '@/Three/Textschema';
@@ -16,7 +17,7 @@ const useAsset = (
   getTitle: (asset: Asset) => string;
   getCollections: (asset: Asset) => Array<Metadata>;
   getImage: (asset: Asset) => string;
-  moveSpotlightToAsset: (spotlight: Mesh, asset: Mesh<BoxBufferGeometry, any>) => void;
+  moveSpotlightToAsset: (spotlight: Mesh, asset: Mesh<BoxBufferGeometry, any>) => Promise<void>;
   zoom: (
     assetImageCube: Mesh<BoxBufferGeometry, any>,
     spotlight: Mesh,
@@ -51,22 +52,22 @@ const useAsset = (
       : 'http://localhost:8001/download/4226243bcfd8986cc128e5f5241589b9-2015-0070.JPG';
   };
 
-  const moveSpotlightToAsset = (spotlight: Mesh, asset: Mesh<BoxBufferGeometry, any>) => {
+  const moveSpotlightToAsset = async (spotlight: Mesh, asset: Mesh<BoxBufferGeometry, any>) => {
     const widest = asset.geometry.parameters.width > asset.geometry.parameters.height;
     if (widest) {
       spotlight.scale.set(
-        asset.geometry.parameters.width / 2,
-        asset.geometry.parameters.width / 2,
+        (asset.geometry.parameters.width / 2) + Measurements().spotLight.spaceAroundObject,
+        (asset.geometry.parameters.width / 2) + Measurements().spotLight.spaceAroundObject,
         Layers.scene,
       );
-      MoveObject().move(spotlight, asset.position);
+      await MoveObject().startMoving(spotlight, asset.position);
     } else {
       spotlight.scale.set(
-        asset.geometry.parameters.width / 2,
-        asset.geometry.parameters.width / 2,
+        (asset.geometry.parameters.height / 2) + Measurements().spotLight.spaceAroundObject,
+        (asset.geometry.parameters.height / 2) + Measurements().spotLight.spaceAroundObject,
         Layers.scene,
       );
-      MoveObject().move(spotlight, asset.position);
+      await MoveObject().startMoving(spotlight, asset.position);
     }
     setActive(asset);
   };
@@ -95,8 +96,11 @@ const useAsset = (
       {} as CubeParams,
       { color: color } as FontParams,
     ) as Mesh<BoxGeometry, any>;
-    const rest =
+    let rest =
       object.geometry.parameters.width * scale - metadataInfo.geometry.parameters.width;
+    if (object.position.x < 0) {
+      rest = -rest;
+    }
     metadataInfo.position.set(
       (object.position.x - rest / 2) * scale,
       (object.position.y + object.geometry.parameters.height / 2) * scale,

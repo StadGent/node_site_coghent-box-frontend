@@ -2,7 +2,7 @@ import useAsset from '@/composables/useAsset';
 import { Asset, Story } from '@/models/GraphqlModel';
 import FrameOverview from '@/screens/FrameOverview';
 import ThreeService from '@/services/ThreeService';
-import { BoxBufferGeometry, BufferGeometry, CircleGeometry, Group, Line, Material, Mesh, Object3D, Vector3 } from 'three';
+import { BoxBufferGeometry, Group, Mesh, Object3D, Vector3 } from 'three';
 import Layers from './defaults.layers';
 import HorizontalProgressBar from './HorizontalProgressBar';
 import { PlayBookFunctions } from '@/composables/playbook';
@@ -13,6 +13,7 @@ import MoveObject from '@/composables/moveObject';
 import Defaults from './defaults.config';
 import LineHelper from './LineHelper';
 import GroupHelper from './GroupHelper';
+import AudioHelper from './AudioHelper';
 
 const useFrameAssetOverview = (
   threeService: ThreeService,
@@ -44,10 +45,10 @@ const useFrameAssetOverview = (
     }
 
     playBook.addToPlayBook(
-      () => {
+      async () => {
         threeService.AddToScene(group);
         threeService.AddToScene(spotlight);
-        MoveObject().move(spotlight, Object.values(data)[0]);
+        await MoveObject().startMoving(spotlight, Object.values(data)[0]);
       },
       timestamp,
       `Add all assets to scene.`,
@@ -92,7 +93,6 @@ const useFrameAssetOverview = (
     currentAsset: number,
     scale: number,
   ) => {
-    // spotlight.scale.set(asset.geometry.parameters.width / 2 + 0.1, asset.geometry.parameters.width / 2 + 0.1, Layers.scene);
     useAsset(threeService).zoom(asset as Mesh<BoxBufferGeometry, any>, spotlight, scale);
     const collections = useAsset(threeService).getCollections(assets[currentAsset]);
     const title = useAsset(threeService).getTitle(assets[currentAsset]);
@@ -114,8 +114,8 @@ const useFrameAssetOverview = (
         );
         if (relationMetadata.timestamp_start) {
           playBook.addToPlayBook(
-            () => {
-              useAsset(threeService).moveSpotlightToAsset(
+            async () => {
+              await useAsset(threeService).moveSpotlightToAsset(
                 spotlight,
                 asset as Mesh<BoxBufferGeometry, any>,
               );
@@ -142,14 +142,12 @@ const useFrameAssetOverview = (
           );
 
           playBook.addToPlayBook(
-            () => {
+            async () => {
               resetImage(asset as Object3D<Event>, highlightWithMetaInfo, index);
-              // MoveObject().move(spotlight,asset.position);
-
-              // useAsset(threeService).moveSpotlightToAsset(
-              //   spotlight,
-              //   asset as Mesh<BoxBufferGeometry, any>,
-              // );
+              await useAsset(threeService).moveSpotlightToAsset(
+                spotlight,
+                asset as Mesh<BoxBufferGeometry, any>,
+              );
             },
             relationMetadata.timestamp_end,
             `Reset image position of asset: ${assets[index].id} and spotlight.`,

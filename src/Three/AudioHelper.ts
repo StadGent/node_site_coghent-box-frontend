@@ -17,7 +17,7 @@ const AudioHelper = (): {
     if (audioForFrame.includes('download')) {
       audio = new Audio(audioForFrame);
     }
-    return audio
+    return audio;
   };
 
   return {
