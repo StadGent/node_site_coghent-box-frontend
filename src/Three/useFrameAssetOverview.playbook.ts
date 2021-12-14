@@ -2,7 +2,7 @@ import useAsset from '@/composables/useAsset';
 import { Asset, Story } from '@/models/GraphqlModel';
 import FrameOverview from '@/screens/FrameOverview';
 import ThreeService from '@/services/ThreeService';
-import { BoxBufferGeometry, Group, Mesh, Object3D, Vector3 } from 'three';
+import { BoxBufferGeometry, BufferGeometry, CircleGeometry, Group, Line, Material, Mesh, Object3D, Vector3 } from 'three';
 import Layers from './defaults.layers';
 import HorizontalProgressBar from './HorizontalProgressBar';
 import { PlayBookFunctions } from '@/composables/playbook';
@@ -10,6 +10,9 @@ import Timing from './defaults.timing';
 import { Frame as modelFrame } from '@/models/GraphqlModel';
 import Common from '@/composables/common';
 import MoveObject from '@/composables/moveObject';
+import Defaults from './defaults.config';
+import LineHelper from './LineHelper';
+import GroupHelper from './GroupHelper';
 
 const useFrameAssetOverview = (
   threeService: ThreeService,
@@ -23,7 +26,7 @@ const useFrameAssetOverview = (
   const positions: Array<Vector3> = [];
   let assets: Array<Asset> = [];
   let storyColor: number;
-  let highlightedImage: any;
+  let highlightWithMetaInfo: Group;
 
   const displayAllAssets = (frame: modelFrame, timestamp: number) => {
     threeService.state.scene.remove(group);
@@ -65,7 +68,7 @@ const useFrameAssetOverview = (
 
   const resetImage = (
     asset: Object3D<Event>,
-    imageCube: Mesh<BoxBufferGeometry, any>,
+    imageCube: Group,
     currentAsset: number,
   ) => {
     threeService.state.scene.remove(imageCube);
@@ -89,14 +92,12 @@ const useFrameAssetOverview = (
     currentAsset: number,
     scale: number,
   ) => {
+    spotlight.scale.set(asset.geometry.parameters.width / 2 + 0.1, asset.geometry.parameters.width / 2 + 0.1, Layers.scene);
     useAsset(threeService).zoom(asset as Mesh<BoxBufferGeometry, any>, spotlight, scale);
-
-    highlightedImage = useAsset(threeService).addMetadataToZoomedImage(
-      assets[currentAsset],
-      asset as Mesh<BoxBufferGeometry, any>,
-      storyColor,
-    );
-    threeService.AddToScene(highlightedImage);
+    const metadataInfo = useAsset(threeService).addMetadata(asset,storyColor, scale, 'Chair02 , Maarten van Severen (Design Museum Gent)')
+    highlightWithMetaInfo = GroupHelper().CreateGroup([LineHelper().drawLineArroundCube(asset,storyColor), metadataInfo]);
+    
+    threeService.AddToScene(highlightWithMetaInfo);
   };
 
   const create = (currentFrame: number, _storyColor: number, timestamp: number) => {
@@ -128,11 +129,11 @@ const useFrameAssetOverview = (
           playBook.addToPlayBook(
             () => {
               setAssetsInactive(asset as Mesh<BoxBufferGeometry, any>);
-              // zoomAndHighlightAsset(
-              //   asset as Mesh<BoxBufferGeometry, any>,
-              //   index,
-              //   Defaults().zoomOfAsset(),
-              // );
+              zoomAndHighlightAsset(
+                asset as Mesh<BoxBufferGeometry, any>,
+                index,
+                Defaults().zoomOfAsset(),
+              );
             },
             relationMetadata.timestamp_start + Timing.frameOverview.spotLightMoved,
             `Zoom and highlight asset + set other assets inactive`,
@@ -140,13 +141,13 @@ const useFrameAssetOverview = (
 
           playBook.addToPlayBook(
             () => {
-              resetImage(asset as Object3D<Event>, highlightedImage, index);
-              MoveObject().move(spotlight,asset.position);
+              resetImage(asset as Object3D<Event>, highlightWithMetaInfo, index);
+              // MoveObject().move(spotlight,asset.position);
 
-              useAsset(threeService).moveSpotlightToAsset(
-                spotlight,
-                asset as Mesh<BoxBufferGeometry, any>,
-              );
+              // useAsset(threeService).moveSpotlightToAsset(
+              //   spotlight,
+              //   asset as Mesh<BoxBufferGeometry, any>,
+              // );
             },
             relationMetadata.timestamp_end,
             `Reset image position of asset: ${assets[index].id} and spotlight.`,

@@ -62,7 +62,7 @@ const PlayBookBuild = (
   };
 
   const initialSpotLight = () => {
-    const spotlight = Spot().create(new Vector3(0, 0, Layers.scene), 6);
+    const spotlight = Spot().create(new Vector3(0, 0, Layers.scene), 5);
     playBook.addToPlayBook(() => threeService.AddToScene(spotlight), 0, `Add initial spotLight to the scene`);
     threeService.AddToScene(spotlight);
     return spotlight;

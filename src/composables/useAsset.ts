@@ -2,21 +2,33 @@ import { Metadata } from '@/models/CollectionModel';
 import { Asset, Story } from '@/models/GraphqlModel';
 import ThreeService from '@/services/ThreeService';
 import CubeHelper from '@/Three/CubeHelper';
+import { CubeParams } from '@/Three/CubeSchema';
 import Layers from '@/Three/defaults.layers';
 import GroupHelper from '@/Three/GroupHelper';
 import TextHelper from '@/Three/TextHelper';
 import { FontParams } from '@/Three/Textschema';
-import { BoxBufferGeometry, Mesh, Vector3, Group } from 'three';
-import Common from './common';
+import { BoxBufferGeometry, Mesh, Vector3, Group, BoxGeometry } from 'three';
 import MoveObject from './moveObject';
 
-const useAsset = (threeService: ThreeService): {
+const useAsset = (
+  threeService: ThreeService,
+): {
   getCollections: (asset: Asset) => Array<Metadata>;
   getImage: (asset: Asset) => string;
-  moveSpotlightToAsset:(spotlight: Mesh, asset: Mesh<BoxBufferGeometry, any>) => void;
-  zoom: (assetImageCube: Mesh<BoxBufferGeometry, any>, spotlight: Mesh, scale: number) => void;
+  moveSpotlightToAsset: (spotlight: Mesh, asset: Mesh<BoxBufferGeometry, any>) => void;
+  zoom: (
+    assetImageCube: Mesh<BoxBufferGeometry, any>,
+    spotlight: Mesh,
+    scale: number,
+  ) => void;
   setInactive: (assetImageCube: Mesh<BoxBufferGeometry, any>) => void;
   setActive: (assetImageCube: Mesh<BoxBufferGeometry, any>) => void;
+  addMetadata: (
+    object: Mesh<BoxBufferGeometry, any>,
+    color: number,
+    scale: number,
+    text: string,
+  ) => Mesh<BoxBufferGeometry, any>;
   addMetadataToZoomedImage: (
     asset: Asset,
     assetImageCube: Mesh<BoxBufferGeometry, any>,
@@ -24,7 +36,6 @@ const useAsset = (threeService: ThreeService): {
   ) => Group;
   getAssetsFromFrame: (activeStory: Story, frame: number) => Array<Asset>;
 } => {
-  
   const getTitle = (asset: Asset) => {
     return asset.title[0]?.value;
   };
@@ -41,21 +52,56 @@ const useAsset = (threeService: ThreeService): {
 
   const moveSpotlightToAsset = (spotlight: Mesh, asset: Mesh<BoxBufferGeometry, any>) => {
     const widest = asset.geometry.parameters.width > asset.geometry.parameters.height;
-    if(widest){
-      spotlight.scale.set(asset.geometry.parameters.width + 0.1 / 2 + 1, asset.geometry.parameters.width + 0.1 / 2 + 1, Layers.scene);
-      MoveObject().move(spotlight,asset.position);
-    }else{
-      spotlight.scale.set(asset.geometry.parameters.width + 0.1 / 2 + 1, asset.geometry.parameters.width + 0.1 / 2 + 1, Layers.scene);
-      MoveObject().move(spotlight,asset.position);
+    if (widest) {
+      spotlight.scale.set(
+        asset.geometry.parameters.width / 2,
+        asset.geometry.parameters.width / 2,
+        Layers.scene,
+      );
+      MoveObject().move(spotlight, asset.position);
+    } else {
+      spotlight.scale.set(
+        asset.geometry.parameters.width / 2,
+        asset.geometry.parameters.width / 2,
+        Layers.scene,
+      );
+      MoveObject().move(spotlight, asset.position);
     }
     setActive(asset);
   };
 
-  const zoom = (assetImageCube: Mesh<BoxBufferGeometry, any>, spotlight: Mesh, scale: number) => {
+  const zoom = (
+    assetImageCube: Mesh<BoxBufferGeometry, any>,
+    spotlight: Mesh,
+    scale: number,
+  ) => {
     assetImageCube.position.set(assetImageCube.position.x, 0, assetImageCube.position.z);
-    moveSpotlightToAsset(spotlight,assetImageCube);
+    // MoveObject().move(assetImageCube, new Vector3(assetImageCube.position.x, 0, assetImageCube.position.z))
+    moveSpotlightToAsset(spotlight, assetImageCube);
     assetImageCube.material.opacity = 1;
     assetImageCube.scale.set(scale, scale, Layers.presentation);
+  };
+
+  const addMetadata = (
+    object: Mesh<BoxBufferGeometry, any>,
+    color: number,
+    scale: number,
+    text: string,
+  ) => {
+    const metadataInfo = TextHelper().CreateText(
+      text,
+      new Vector3(object.position.x, object.position.y, object.position.z),
+      {} as CubeParams,
+      { color: color } as FontParams,
+    ) as Mesh<BoxGeometry, any>;
+    const rest =
+      object.geometry.parameters.width * scale - metadataInfo.geometry.parameters.width;
+    metadataInfo.position.set(
+      (object.position.x - rest / 2) * scale,
+      (object.position.y + object.geometry.parameters.height / 2) * scale,
+      object.position.z,
+    );
+    return metadataInfo;
   };
 
   const addMetadataToZoomedImage = (
@@ -71,23 +117,26 @@ const useAsset = (threeService: ThreeService): {
     );
     schema.params.color = storyColor;
     schema.position.z = Layers.presentation;
-    const cube = CubeHelper().HighlightImage(schema, storyColor);    
-    cube.scale.set(
-      assetImageCube.scale.x,
-      assetImageCube.scale.y,
-      Layers.presentation,
-    );
+    const cube = CubeHelper().HighlightImage(schema, storyColor);
+    cube.scale.set(assetImageCube.scale.x, assetImageCube.scale.y, Layers.presentation);
 
     const textPosition = new Vector3(
-      assetImageCube.position.x - cubeParams.width /2.5 * cube.scale.x,
-      assetImageCube.position.y + cubeParams.height / 2* cube.scale.y,
+      assetImageCube.position.x - (cubeParams.width / 2.5) * cube.scale.x,
+      assetImageCube.position.y + (cubeParams.height / 2) * cube.scale.y,
       assetImageCube.position.z,
     );
 
-    const text = TextHelper().CreateText(`${getTitle(asset)?!undefined:''} (${getCollections(asset)[0]?.value?!undefined:''})`, textPosition, undefined, {
-      color: storyColor,
-    } as FontParams);
-  
+    const text = TextHelper().CreateText(
+      `${getTitle(asset) ? !undefined : ''} (${
+        getCollections(asset)[0]?.value ? !undefined : ''
+      })`,
+      textPosition,
+      undefined,
+      {
+        color: storyColor,
+      } as FontParams,
+    );
+
     return GroupHelper().CreateGroup([text, cube]);
   };
 
@@ -110,6 +159,7 @@ const useAsset = (threeService: ThreeService): {
     getImage,
     moveSpotlightToAsset,
     zoom,
+    addMetadata,
     addMetadataToZoomedImage,
     setInactive,
     setActive,

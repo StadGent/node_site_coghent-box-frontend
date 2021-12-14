@@ -3,7 +3,6 @@ import {
   Line,
   LineBasicMaterial,
   BufferGeometry,
-  Group,
   Object3D,
   Mesh,
   MeshBasicMaterial,
@@ -44,38 +43,40 @@ const LineHelper = (): {
     cube: Mesh<BoxGeometry, MeshBasicMaterial>,
     color: number,
   ) => {
+    const marginFromObject = 0.16;
+    const linewidth = 3;
     const startPointX =
       cube.position.x -
       cube.position.x * 0.03 * 2.03 -
-      cube.geometry.parameters.width * cube.scale.x / 2 -
-      0.08;
+      (cube.geometry.parameters.width * cube.scale.x) / 2 -
+      marginFromObject / 2;
     const startPointY =
       cube.position.y -
       cube.position.y * 0.03 * 2.03 -
-      cube.geometry.parameters.height * cube.scale.y / 2 -
-      0.06;
+      (cube.geometry.parameters.height * cube.scale.y) / 2 -
+      marginFromObject / 2;
     const path: Array<Vector3> = [
       new Vector3(startPointX, startPointY, Layers.presentation),
       new Vector3(
-        startPointX + cube.geometry.parameters.width * cube.scale.x + 0.16,
+        startPointX + cube.geometry.parameters.width * cube.scale.x + marginFromObject,
         startPointY,
         Layers.presentation,
       ),
       new Vector3(
-        startPointX + cube.geometry.parameters.width * cube.scale.x + 0.16,
-        startPointY + cube.geometry.parameters.height * cube.scale.y + 0.16,
+        startPointX + cube.geometry.parameters.width * cube.scale.x + marginFromObject,
+        startPointY + cube.geometry.parameters.height * cube.scale.y + marginFromObject,
         Layers.presentation,
       ),
       new Vector3(
         startPointX,
-        startPointY + cube.geometry.parameters.height * cube.scale.y + 0.16,
+        startPointY + cube.geometry.parameters.height * cube.scale.y + marginFromObject,
         Layers.presentation,
       ),
       new Vector3(startPointX, startPointY, Layers.presentation),
     ];
 
     const geometry = new BufferGeometry().setFromPoints(path);
-    const material = new LineBasicMaterial({ color: color, linewidth: 3 });
+    const material = new LineBasicMaterial({ color: color, linewidth: linewidth });
     return new Line(geometry, material);
   };
 

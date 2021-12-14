@@ -8,7 +8,7 @@ import useStory from '@/composables/useStory';
 import Tools from '@/Three/Tools';
 import ThreeService from '@/services/ThreeService';
 import { defineComponent, onMounted, PropType, reactive, Ref, ref, watch } from 'vue';
-import { BufferGeometry, CurvePath, Line, LineBasicMaterial, Mesh, MeshBasicMaterial, Path, TubeBufferGeometry, TubeGeometry, Vector3 } from 'three';
+import { Mesh, Vector3 } from 'three';
 import { Entity as _Entity, Frame, Story } from '@/models/GraphqlModel';
 import AudioHelper from '@/Three/AudioHelper';
 import VideoHelper from '@/Three/VideoHelper';
@@ -21,11 +21,13 @@ import Defaults from '@/Three/defaults.config';
 import Timing from '@/Three/defaults.timing';
 import useFrame from '@/composables/useFrame';
 import Layers from '@/Three/defaults.layers';
-import SchemaCube, { CubeSchema } from '@/Three/CubeSchema';
+import SchemaCube, { CubeParams, CubeSchema } from '@/Three/CubeSchema';
 import MoveObject from '@/composables/moveObject';
 import Common from '@/composables/common';
 import LineHelper from '@/Three/LineHelper';
 import GroupHelper from '@/Three/GroupHelper';
+import TextHelper from '@/Three/TextHelper';
+import useAsset from '@/composables/useAsset';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -44,7 +46,7 @@ export default defineComponent({
     const stories = ref(props.stories);
     const currentStory = ref<number>(props.storySelected);
     const chooseStory = ref<boolean>(false);
-    let storyColor = Defaults().StoryColors()[currentStory.value -1];
+    let storyColor = Defaults().StoryColors()[currentStory.value - 1];
     let currentFrame = 1;
     const viewport = ref(null);
     const videoElement = ref<HTMLVideoElement>();
@@ -81,7 +83,7 @@ export default defineComponent({
         stories.value = value;
 
         // playStartVideo();
-        // setup();
+        setup();
       },
     );
 
@@ -163,8 +165,8 @@ export default defineComponent({
           audio.pause();
           threeSvc.ClearScene();
           threeSvc.AddToScene(spotlight);
-          spotlight.scale.set(6, 6, Layers.scene);
-          MoveObject().move(spotlight, new Vector3(0, 2, Layers.scene));
+          spotlight.scale.set(4, 4, Layers.scene);
+          MoveObject().move(spotlight, new Vector3(0, 7, Layers.scene));
           threeSvc.AddGroupsToScene(StoryPaused(storyData).Create([1, 2, 3]));
         },
         useFrame().getLastAssetRelationMetadata(activeStoryData, currentFrame)
@@ -215,36 +217,51 @@ export default defineComponent({
       threeSvc.AddToScene(cube);
       // threeSvc.AddToScene(cube2);
       MoveObject().move(cube, new Vector3(10, 5, Layers.scene));
-  
+
       // if(MoveObject().move(cube, new Vector3(-10, 2, Layers.scene))){
       //   alert('here')
       // ;
 
       // }
-      
-      
+
       // MoveObject().move(cube2, new Vector3(10, 4, Layers.scene));
     };
 
     const test_zoomObject = () => {
-      const cube = SchemaCube().CreateCube({position: new Vector3(10,0,0), params: {color: 0xfff0fe ,width: Common().pixelsToMeters(3648), height: Common().pixelsToMeters(2432)}} as CubeSchema);
+      const cube = SchemaCube().CreateCube({
+        position: new Vector3(-15, 0, 0),
+        params: {
+          color: 0xfff0fe,
+          width: Common().pixelsToMeters(3648),
+          height: Common().pixelsToMeters(2432),
+        },
+      } as CubeSchema);
       // const cube = SchemaCube().CreateCube({position: new Vector3(0,0,Layers.presentation), params: {color: 0xfff0fe ,width:4, height: 2}} as CubeSchema);
       threeSvc.AddToScene(cube);
-      cube.scale.set(2,2,0);
-      threeSvc.AddToScene(GroupHelper().CreateGroup([LineHelper().drawLineArroundCube(cube, storyColor)]));
+      cube.scale.set(1, 1, 0);
+      const metadataInfo = useAsset(threeSvc).addMetadata(
+        cube,
+        storyColor,
+        1,
+        'Chair02 , Maarten van Severen (Design Museum Gent)',
+      );
+      threeSvc.AddToScene(
+        GroupHelper().CreateGroup([
+          LineHelper().drawLineArroundCube(cube, storyColor),
+          metadataInfo,
+        ]),
+      );
 
       Tools().dotOnPosition(threeSvc, cube.position);
-      
-
     };
 
     onMounted(() => {
       threeSvc = new ThreeService(viewport);
-      threeSvc.AddToScene(Tools().xAxis(new Vector3(0, 0, 0)));
-      threeSvc.AddToScene(Tools().yAxis(new Vector3(0, 0, 0)));
+      // threeSvc.AddToScene(Tools().xAxis(new Vector3(0, 0, 0)));
+      // threeSvc.AddToScene(Tools().yAxis(new Vector3(0, 0, 0)));
 
       // test_movingObject();
-      test_zoomObject();
+      // test_zoomObject();
 
       threeSvc.Animate();
     });
