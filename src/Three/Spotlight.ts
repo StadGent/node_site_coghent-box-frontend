@@ -4,6 +4,11 @@ import SchemaCircle from './CircleSchema';
 import Colors from './defaults.color';
 import Layers from './defaults.layers';
 
+export type SpotLightParams ={
+  radius: number;
+  spaceAroundObject: number;
+}
+
 export type SpotlightFunctions = {
   SpotLight: () => Mesh;
   create: (startPosition: Vector3, radius: number, color?: number) => Mesh;

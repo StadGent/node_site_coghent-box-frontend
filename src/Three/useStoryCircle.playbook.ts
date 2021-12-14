@@ -8,6 +8,7 @@ import { CircleSchema } from './CircleSchema';
 import CircularProgressBar from './CircularProgressbar';
 import Colors from './defaults.color';
 import Layers from './defaults.layers';
+import Measurements from './defaults.measurements';
 import Timing from './defaults.timing';
 import GroupHelper from './GroupHelper';
 import DefaultLines from './LinesDefault';
@@ -24,7 +25,7 @@ const useStoryCircle = (
   const titleCircle = (position: Vector3, storyColor: number, currentFrame: number) => {
     return StoryCircle().Create(
       useStory().title(activeStoryData),
-      CircleHelper().CreateSchema(position, 2, storyColor),
+      CircleHelper().CreateSchema(position, Measurements().storyCircle.radius, storyColor),
       [currentFrame, activeStoryData.frames.length],
       'https://cdn-icons-png.flaticon.com/512/844/844994.png',
       true,
@@ -63,9 +64,9 @@ const useStoryCircle = (
 
     const progressBar = CircularProgressBar().createActiveSegment(
       new Vector3(0, 0, 0),
-      2.5,
+      Measurements().progressBar.radius,
       frames,
-      currentFrame +1,
+      currentFrame + 1,
       storyColor,
     );
 

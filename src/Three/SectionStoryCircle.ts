@@ -10,6 +10,12 @@ import Layers from './defaults.layers';
 import customText from './defaults.text';
 import CircularprogressBar from '@/Three/CircularProgressbar';
 import Colors from '@/Three/defaults.color';
+import Measurements from './defaults.measurements';
+
+export type StoryCircleParams ={
+  radius: number;
+  outerCircle: number;
+}
 
 const StoryCircle = (): {
   progressText: (
@@ -30,7 +36,7 @@ const StoryCircle = (): {
     return SchemaCircle().CreateCircle(schema, Layers.presentation);
   };
   const shadedCircle = (schema: CircleSchema) => {
-    schema.params.radius = schema.params.radius + 2;
+    schema.params.radius = Measurements().storyCircle.outerCircle;
     schema.params.color = schema.params.color || Colors().green;
     schema.params.opacity = 0.4;
     return SchemaCircle().CreateCircle(schema, Layers.scene, true);
@@ -119,7 +125,7 @@ const StoryCircle = (): {
     }
     if (showProgress) {
       GroupHelper().AddObjectsTogroups(
-        [CircularprogressBar().create(circleSchema.position, 2.5, 1, 1)],
+        [CircularprogressBar().create(circleSchema.position, Measurements().progressBar.radius, 1, 1)],
         groups,
       );
     }

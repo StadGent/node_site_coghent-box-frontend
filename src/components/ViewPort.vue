@@ -21,13 +21,14 @@ import Defaults from '@/Three/defaults.config';
 import Timing from '@/Three/defaults.timing';
 import useFrame from '@/composables/useFrame';
 import Layers from '@/Three/defaults.layers';
-import SchemaCube, { CubeParams, CubeSchema } from '@/Three/CubeSchema';
+import SchemaCube, { CubeSchema } from '@/Three/CubeSchema';
 import MoveObject from '@/composables/moveObject';
 import Common from '@/composables/common';
 import LineHelper from '@/Three/LineHelper';
 import GroupHelper from '@/Three/GroupHelper';
 import TextHelper from '@/Three/TextHelper';
 import useAsset from '@/composables/useAsset';
+import StoryService from '@/services/StoryService';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -60,6 +61,7 @@ export default defineComponent({
     let activeStoryData = reactive<Story>({} as Story);
     let spotlight: Mesh;
     const playBook = PlayBook();
+    let storyService: StoryService;
 
     watch(
       () => props.storySelected,
@@ -91,12 +93,13 @@ export default defineComponent({
       if (stories.value) {
         audioHelper = AudioHelper();
         storyData = stories.value;
+        storyService = new StoryService(storyData);
+        console.log('StoryData', storyService.storyData);
         buildStory(currentStory.value, '/Audio/example.mp3');
       }
     };
 
     const timing = () => {
-      console.log(`TIMING`);
       let currentFunction = 0;
       interval = setInterval(() => {
         if (
@@ -135,8 +138,6 @@ export default defineComponent({
       activeStoryData.frames.map((frame: Frame, index: number) => {
         currentFrame = index;
 
-        // PlayBookBuild(threeSvc, playBook, activeStoryData).updateAudio(audio,currentFrame, audioFile);
-
         PlayBookBuild(threeSvc, playBook, spotlight, activeStoryData).storyCircle(
           currentFrame,
           storyColor,
@@ -146,33 +147,35 @@ export default defineComponent({
           currentFrame,
           storyColor,
         );
+        storyService.updateSeenFramesOfStory(activeStoryData.id, frame, false);
+        console.log(`Updated storyData`, storyService.storyData);
       });
 
       playBook.addToPlayBook(
-        () => {
-          audio.pause();
-          audio = AudioHelper().setAudioTrack(activeStoryData, currentFrame, audioFile);
-          audio.play();
-        },
-        useFrame().getLastAssetRelationMetadata(activeStoryData, currentFrame)
-          .timestamp_end,
-        'Pause audio and create new audio ',
-      );
-
-      playBook.addToPlayBook(
-        () => {
+        async () => {
           chooseStory.value = true;
           audio.pause();
           threeSvc.ClearScene();
           threeSvc.AddToScene(spotlight);
           spotlight.scale.set(4, 4, Layers.scene);
-          MoveObject().move(spotlight, new Vector3(0, 7, Layers.scene));
           threeSvc.AddGroupsToScene(StoryPaused(storyData).Create([1, 2, 3]));
+          await MoveObject().startMoving(spotlight, new Vector3(0, 2.5, Layers.scene));
         },
         useFrame().getLastAssetRelationMetadata(activeStoryData, currentFrame)
-          ?.timestamp_end + Timing.delayNextCycle,
+          ?.timestamp_end + Timing.frameOverview.spotLightMoved,
         `Display story overview.`,
       );
+
+      // playBook.addToPlayBook(
+      //   () => {
+      //     audio.pause();
+      //     audio = AudioHelper().setAudioTrack(activeStoryData, currentFrame, audioFile);
+      //     audio.play();
+      //   },
+      //   useFrame().getLastAssetRelationMetadata(activeStoryData, currentFrame)
+      //     .timestamp_end + Timing.delayNextCycle,
+      //   'Pause audio and create new audio ',
+      // );
       // PlayBookBuild(threeSvc, playBook, activeStoryData).endOfSession(new Vector3(22,1, Layers.presentation));
 
       console.log('Actions =>', playBook.getPlayBookFunctions());

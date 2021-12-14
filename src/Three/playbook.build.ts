@@ -10,6 +10,7 @@ import Spot from './Spotlight';
 import useFrameAssetOverview from './useFrameAssetOverview.playbook';
 import useStoryCircle from './useStoryCircle.playbook';
 import EndOfSession from '@/screens/EndOfSession';
+import Measurements from './defaults.measurements';
 
 const PlayBookBuild = (
   threeService: ThreeService,
@@ -43,13 +44,12 @@ const PlayBookBuild = (
   };
 
   const storyCircle = (currentFrameIndex: number, storyColor: number) => {
-    threeService.AddToScene(spotlight);
     useStoryCircle(threeService, activeStoryData, playBook).create(
       new Vector3(0, 0, 0),
       storyColor,
       currentFrameIndex,
       activeStoryData.frames.length,
-      playBook.lastAction().time + Timing.delayNextCycle,
+      playBook.lastAction().time,
     );
   };
 
@@ -62,7 +62,7 @@ const PlayBookBuild = (
   };
 
   const initialSpotLight = () => {
-    const spotlight = Spot().create(new Vector3(0, 0, Layers.scene), 5);
+    const spotlight = Spot().create(new Vector3(0, 0, Layers.scene), Measurements().spotLight.radius);
     playBook.addToPlayBook(() => threeService.AddToScene(spotlight), 0, `Add initial spotLight to the scene`);
     threeService.AddToScene(spotlight);
     return spotlight;

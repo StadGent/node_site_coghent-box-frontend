@@ -13,7 +13,6 @@ import MoveObject from '@/composables/moveObject';
 import Defaults from './defaults.config';
 import LineHelper from './LineHelper';
 import GroupHelper from './GroupHelper';
-import AudioHelper from './AudioHelper';
 
 const useFrameAssetOverview = (
   threeService: ThreeService,
