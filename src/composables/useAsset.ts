@@ -13,6 +13,7 @@ import MoveObject from './moveObject';
 const useAsset = (
   threeService: ThreeService,
 ): {
+  getTitle: (asset: Asset) => string;
   getCollections: (asset: Asset) => Array<Metadata>;
   getImage: (asset: Asset) => string;
   moveSpotlightToAsset: (spotlight: Mesh, asset: Mesh<BoxBufferGeometry, any>) => void;
@@ -155,6 +156,7 @@ const useAsset = (
   };
 
   return {
+    getTitle,
     getCollections,
     getImage,
     moveSpotlightToAsset,

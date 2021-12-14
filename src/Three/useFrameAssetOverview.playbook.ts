@@ -92,9 +92,11 @@ const useFrameAssetOverview = (
     currentAsset: number,
     scale: number,
   ) => {
-    spotlight.scale.set(asset.geometry.parameters.width / 2 + 0.1, asset.geometry.parameters.width / 2 + 0.1, Layers.scene);
+    // spotlight.scale.set(asset.geometry.parameters.width / 2 + 0.1, asset.geometry.parameters.width / 2 + 0.1, Layers.scene);
     useAsset(threeService).zoom(asset as Mesh<BoxBufferGeometry, any>, spotlight, scale);
-    const metadataInfo = useAsset(threeService).addMetadata(asset,storyColor, scale, 'Chair02 , Maarten van Severen (Design Museum Gent)')
+    const collections = useAsset(threeService).getCollections(assets[currentAsset]);
+    const title = useAsset(threeService).getTitle(assets[currentAsset]);
+    const metadataInfo = useAsset(threeService).addMetadata(asset,storyColor, scale, `${title}, Me (${collections[0].value})`)
     highlightWithMetaInfo = GroupHelper().CreateGroup([LineHelper().drawLineArroundCube(asset,storyColor), metadataInfo]);
     
     threeService.AddToScene(highlightWithMetaInfo);
