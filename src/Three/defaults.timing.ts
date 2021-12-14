@@ -1,20 +1,28 @@
 type Timings = {
+  moveObject: {
+    refreshStep: number;
+    steps: number;
+  };
   delayNextCycle: number;
   frameOverview: {
     spotLightMoved: number;
   };
-  storyCircle:{
+  storyCircle: {
     showFrameTitle: number;
   };
 };
 
 const Timing: Timings = {
+  moveObject: {
+    refreshStep: 12,
+    steps: 60,
+  },
   delayNextCycle: 1,
   frameOverview: {
-    spotLightMoved: 1,
+    spotLightMoved: 3.8,
   },
-  storyCircle:{
-    showFrameTitle: 1,
+  storyCircle: {
+    showFrameTitle: 2,
   },
 };
 
