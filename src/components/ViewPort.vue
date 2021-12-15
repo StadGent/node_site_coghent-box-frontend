@@ -7,7 +7,15 @@
 import useStory from '@/composables/useStory';
 import Tools from '@/Three/Tools';
 import ThreeService from '@/services/ThreeService';
-import { defineComponent, onMounted, PropType, reactive, Ref, ref, watch } from 'vue';
+import {
+  defineComponent,
+  onMounted,
+  PropType,
+  reactive,
+  Ref,
+  ref,
+  watch,
+} from 'vue';
 import { Mesh, Vector3 } from 'three';
 import { Entity as _Entity, Frame, Story } from '@/models/GraphqlModel';
 import AudioHelper from '@/Three/AudioHelper';
@@ -45,10 +53,10 @@ export default defineComponent({
   },
   setup(props) {
     const stories = ref(props.stories);
-    const currentStory = ref<number>(props.storySelected);
+    const currentStory = ref<number>(props.storySelected-1);
     const chooseStory = ref<boolean>(false);
-    let storyColor = Defaults().StoryColors()[currentStory.value - 1];
-    let currentFrame = 1;
+    let storyColor = Defaults().StoryColors()[currentStory.value];
+    let currentFrame = 0;
     const viewport = ref(null);
     const videoElement = ref<HTMLVideoElement>();
     let audio: HTMLAudioElement;
@@ -70,8 +78,8 @@ export default defineComponent({
         console.log('Can you choose a story?', chooseStory.value);
         if (chooseStory.value && value <= storyData.length) {
           chooseStory.value = false;
-          currentStory.value = value;
-          currentFrame = 1;
+          currentStory.value = value -1;
+          currentFrame = 0;
           storyColor = Defaults().StoryColors()[value];
           console.log('Selected story => ', currentStory.value);
           resetStory();
@@ -105,18 +113,18 @@ export default defineComponent({
         if (
           audioHelper.DoEvent(
             audio.currentTime,
-            playBook.getPlayBookFunctions()[currentFunction].time,
+            playBook.getPlayBookActions()[currentFunction].time,
           )
         ) {
           console.log(
             `| Time: ${
-              playBook.getPlayBookFunctions()[currentFunction].time
-            } \n| Context: ${playBook.getPlayBookFunctions()[currentFunction].context}`,
+              playBook.getPlayBookActions()[currentFunction].time
+            } \n| Context: ${playBook.getPlayBookActions()[currentFunction].context}`,
           );
-          playBook.getPlayBookFunctions()[currentFunction].func();
+          playBook.getPlayBookActions()[currentFunction].func();
           currentFunction++;
         }
-        if (currentFunction > playBook.getPlayBookFunctions().length - 1) {
+        if (currentFunction > playBook.getPlayBookActions().length - 1) {
           currentFunction = 0;
           clearInterval(interval);
         }
@@ -126,7 +134,7 @@ export default defineComponent({
 
     const buildStory = (currentStory: number, audioFile: string) => {
       threeSvc.ClearScene();
-      activeStoryData = useStory().setActiveStory(storyData, currentStory - 1);
+      activeStoryData = useStory().setActiveStory(storyData, currentStory);
 
       spotlight = PlayBookBuild(
         threeSvc,
@@ -136,22 +144,41 @@ export default defineComponent({
       ).initialSpotLight();
 
       activeStoryData.frames.map((frame: Frame, index: number) => {
+        const framePlaybook = PlayBook();
+
         currentFrame = index;
-
-        PlayBookBuild(threeSvc, playBook, spotlight, activeStoryData).storyCircle(
+        PlayBookBuild(threeSvc, framePlaybook, spotlight, activeStoryData).storyCircle(
           currentFrame,
           storyColor,
         );
 
-        PlayBookBuild(threeSvc, playBook, spotlight, activeStoryData).frameOverview(
+        PlayBookBuild(threeSvc, framePlaybook, spotlight, activeStoryData).frameOverview(
           currentFrame,
           storyColor,
         );
+        playBook.mergeActionsWithPlaybook(framePlaybook.getSortedPlayBookActions());
+        console.log({ currentFrame });
+        console.log('length of frames', activeStoryData.frames.length);
+        if (currentFrame < activeStoryData.frames.length - 1) {
+          playBook.addToPlayBook(
+            () => {
+              audio.pause();
+              audio = AudioHelper().setAudioTrack(
+                activeStoryData,
+                currentFrame,
+                audioFile,
+              );
+              audio.play();
+            },
+            playBook.lastAction().time,
+            `Starting new audio for frame`,
+          );
+        }
+
         //FIXME: Update the storyData when the frame is actually seen
         storyService.updateSeenFramesOfStory(activeStoryData.id, frame, false);
         console.log(`Updated storyData`, storyService.getStoryData());
       });
-
       playBook.addToPlayBook(
         async () => {
           chooseStory.value = true;
@@ -162,24 +189,10 @@ export default defineComponent({
           threeSvc.AddGroupsToScene(StoryPaused(storyData).Create([1, 2, 3]));
           await MoveObject().startMoving(spotlight, new Vector3(0, 2.5, Layers.scene));
         },
-        useFrame().getLastAssetRelationMetadata(activeStoryData, currentFrame)
-          ?.timestamp_end + Timing.frameOverview.spotLightMoved,
+        playBook.lastAction().time + Timing.frameOverview.spotLightMoved,
         `Display story overview.`,
       );
 
-      // playBook.addToPlayBook(
-      //   () => {
-      //     audio.pause();
-      //     audio = AudioHelper().setAudioTrack(activeStoryData, currentFrame, audioFile);
-      //     audio.play();
-      //   },
-      //   useFrame().getLastAssetRelationMetadata(activeStoryData, currentFrame)
-      //     .timestamp_end + Timing.delayNextCycle,
-      //   'Pause audio and create new audio ',
-      // );
-      // PlayBookBuild(threeSvc, playBook, activeStoryData).endOfSession(new Vector3(22,1, Layers.presentation));
-
-      console.log('Actions =>', playBook.getPlayBookFunctions());
       audio = AudioHelper().setAudioTrack(activeStoryData, currentFrame, audioFile);
       audio.play();
       timing();

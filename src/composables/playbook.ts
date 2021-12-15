@@ -1,8 +1,10 @@
 export type PlayBookFunctions = {
   addToPlayBook: (func: Function, timestamp:number, context?:string) => void;
-  getPlayBookFunctions: () => Array<PlayBookObject>;
+  getSortedPlayBookActions: () => Array<PlayBookObject>;
+  getPlayBookActions: () => Array<PlayBookObject>;
   lastAction: () => PlayBookObject;
   clearPlaybook: (yes: true | false) => boolean;
+  mergeActionsWithPlaybook: (playbookActions: Array<PlayBookObject>) => void;
 }
 
 export type PlayBookObject = {
@@ -12,34 +14,46 @@ export type PlayBookObject = {
 }
 
 const PlayBook = (): PlayBookFunctions=> {
-  let playbookFunctions: Array<PlayBookObject> = [{time: 0,func: () => {}, context: 'Beginning of playbook.'}];
+  let playbookActions: Array<PlayBookObject> = [{time: 0,func: () => {}, context: 'Beginning of playbook.'}];
+
   const addToPlayBook = (func: Function, timestamp:number, context?:string) => {
     const obj = {
       time: timestamp,
       func: func,
       context: context as string,
     } as PlayBookObject;
-    playbookFunctions.push(obj);
+    playbookActions.push(obj);
   };
 
-  const getPlayBookFunctions = () => {
-    return playbookFunctions.sort((a,b) => a.time - b.time);
+  const getSortedPlayBookActions = () => {
+    return playbookActions.sort((a,b) => a.time - b.time);
   };
 
-  const lastAction = () => getPlayBookFunctions()[getPlayBookFunctions().length -1 ];
+  const getPlayBookActions = () => {
+    return playbookActions;
+  };
+
+  const lastAction = () => getPlayBookActions()[getPlayBookActions().length -1 ];
 
   const clearPlaybook = (yes: true | false) => {
     if(yes){
-      playbookFunctions = [{time: 0,func: () => {}, context: 'Beginning of playbook.'}];
+      playbookActions = [{time: 0,func: () => {}, context: 'Beginning of playbook.'}];
     }
-    return playbookFunctions.length === 1;
+    return playbookActions.length === 1;
+  }
+
+  const mergeActionsWithPlaybook = (actions: Array<PlayBookObject>) => {
+    playbookActions = playbookActions.concat(actions);
+    console.log(`NEW Master playbook actions`, playbookActions);
   }
 
   return {
     addToPlayBook,
-    getPlayBookFunctions,
+    getSortedPlayBookActions,
+    getPlayBookActions,
     lastAction,
     clearPlaybook,
+    mergeActionsWithPlaybook,
   };
 };
 

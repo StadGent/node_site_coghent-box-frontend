@@ -40,7 +40,7 @@ const PlayBookBuild = (
         backupAudioFile,
       );
       audio.play();
-    }, useFrame().getLastAssetRelationMetadata(activeStoryData, activeFrameIndex).timestamp_end);
+    }, useFrame().getLastAssetRelationMetadata(activeStoryData, activeFrameIndex).timestamp_end, 'Set audio track');
   };
 
   const storyCircle = (currentFrameIndex: number, storyColor: number) => {
