@@ -94,7 +94,7 @@ export default defineComponent({
         audioHelper = AudioHelper();
         storyData = stories.value;
         storyService = new StoryService(storyData);
-        console.log('StoryData', storyService.storyData);
+        console.log('StoryData', storyService.getStoryData());
         buildStory(currentStory.value, '/Audio/example.mp3');
       }
     };
@@ -147,8 +147,9 @@ export default defineComponent({
           currentFrame,
           storyColor,
         );
+        //FIXME: Update the storyData when the frame is actually seen
         storyService.updateSeenFramesOfStory(activeStoryData.id, frame, false);
-        console.log(`Updated storyData`, storyService.storyData);
+        console.log(`Updated storyData`, storyService.getStoryData());
       });
 
       playBook.addToPlayBook(
