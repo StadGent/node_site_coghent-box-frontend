@@ -7,15 +7,7 @@
 import useStory from '@/composables/useStory';
 import Tools from '@/Three/Tools';
 import ThreeService from '@/services/ThreeService';
-import {
-  defineComponent,
-  onMounted,
-  PropType,
-  reactive,
-  Ref,
-  ref,
-  watch,
-} from 'vue';
+import { defineComponent, onMounted, PropType, reactive, Ref, ref, watch } from 'vue';
 import { Mesh, Vector3 } from 'three';
 import { Entity as _Entity, Frame, Story } from '@/models/GraphqlModel';
 import AudioHelper from '@/Three/AudioHelper';
@@ -53,7 +45,7 @@ export default defineComponent({
   },
   setup(props) {
     const stories = ref(props.stories);
-    const currentStory = ref<number>(props.storySelected-1);
+    const currentStory = ref<number>(props.storySelected - 1);
     const chooseStory = ref<boolean>(false);
     let storyColor = Defaults().StoryColors()[currentStory.value];
     let currentFrame = 0;
@@ -76,10 +68,12 @@ export default defineComponent({
       (value) => {
         console.log('You want to select story', props.storySelected);
         console.log('Can you choose a story?', chooseStory.value);
+        storyData = stories.value;
         if (chooseStory.value && value <= storyData.length) {
+          const _storyData = storyService.getStoryDataOfStory(storyData[value-1].id);
           chooseStory.value = false;
-          currentStory.value = value -1;
-          currentFrame = 0;
+          currentStory.value = value - 1;
+          currentFrame = _storyData.totalOfFramesSeen;
           storyColor = Defaults().StoryColors()[value];
           console.log('Selected story => ', currentStory.value);
           resetStory();
@@ -135,6 +129,8 @@ export default defineComponent({
     const buildStory = (currentStory: number, audioFile: string) => {
       threeSvc.ClearScene();
       activeStoryData = useStory().setActiveStory(storyData, currentStory);
+      // storyService.updateSeenFramesOfStory(activeStoryData.id,activeStoryData.frames[currentFrame]);
+      console.log(`Updated storyData`, storyService.getStoryDataOfStory(activeStoryData.id));
 
       spotlight = PlayBookBuild(
         threeSvc,
@@ -143,42 +139,32 @@ export default defineComponent({
         activeStoryData,
       ).initialSpotLight();
 
-      activeStoryData.frames.map((frame: Frame, index: number) => {
-        const framePlaybook = PlayBook();
+      playBook.addToPlayBook(
+        () => {
+          audio.pause();
+          audio = AudioHelper().setAudioTrack(activeStoryData, currentFrame, audioFile);
+          audio.play();
+        },
+        playBook.lastAction().time,
+        `Starting new audio for frame`,
+      );
 
-        currentFrame = index;
-        PlayBookBuild(threeSvc, framePlaybook, spotlight, activeStoryData).storyCircle(
-          currentFrame,
-          storyColor,
-        );
+      // activeStoryData.frames.map((frame: Frame, index: number) => {
+      const framePlaybook = PlayBook();
 
-        PlayBookBuild(threeSvc, framePlaybook, spotlight, activeStoryData).frameOverview(
-          currentFrame,
-          storyColor,
-        );
-        playBook.mergeActionsWithPlaybook(framePlaybook.getSortedPlayBookActions());
-        console.log({ currentFrame });
-        console.log('length of frames', activeStoryData.frames.length);
-        if (currentFrame < activeStoryData.frames.length - 1) {
-          playBook.addToPlayBook(
-            () => {
-              audio.pause();
-              audio = AudioHelper().setAudioTrack(
-                activeStoryData,
-                currentFrame,
-                audioFile,
-              );
-              audio.play();
-            },
-            playBook.lastAction().time,
-            `Starting new audio for frame`,
-          );
-        }
+      // currentFrame = index;
+      PlayBookBuild(threeSvc, framePlaybook, spotlight, activeStoryData).storyCircle(
+        currentFrame,
+        storyColor,
+      );
 
-        //FIXME: Update the storyData when the frame is actually seen
-        storyService.updateSeenFramesOfStory(activeStoryData.id, frame, false);
-        console.log(`Updated storyData`, storyService.getStoryData());
-      });
+      PlayBookBuild(threeSvc, framePlaybook, spotlight, activeStoryData).frameOverview(
+        currentFrame,
+        storyColor,
+      );
+      playBook.mergeActionsWithPlaybook(framePlaybook.getSortedPlayBookActions());
+      console.log({ currentFrame });
+
       playBook.addToPlayBook(
         async () => {
           chooseStory.value = true;

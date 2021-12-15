@@ -30,8 +30,12 @@ export default class StoryService {
     return this.totalOfSeenFrames;
   }
 
-  updateSeenFramesOfStory(currentStoryId: string, seenFrame: Frame, storySeen: boolean) {
-    if(this.storyData.length > 0){
+  getStoryDataOfStory(storyId: string){
+    return this.storyData.filter(data => data.storyId == storyId)[0];
+  }
+
+  updateSeenFramesOfStory(currentStoryId: string, seenFrame: Frame) {
+    if(this.storyData.length > 0 && seenFrame != undefined){
       const storyToUpdate = this.storyData.filter(story => story.storyId === currentStoryId)[0];
       if(!storyToUpdate.seenFrames.includes(seenFrame)){
         this.totalOfSeenFrames++;
