@@ -1,5 +1,5 @@
 import { Metadata } from '@/models/CollectionModel';
-import { Asset, Story } from '@/models/GraphqlModel';
+import { Asset, ComponentMetadata, Story } from '@/models/GraphqlModel';
 import ThreeService from '@/services/ThreeService';
 import CubeHelper from '@/Three/CubeHelper';
 import { CubeParams } from '@/Three/CubeSchema';
@@ -17,7 +17,10 @@ const useAsset = (
   getTitle: (asset: Asset) => string;
   getCollections: (asset: Asset) => Array<Metadata>;
   getImage: (asset: Asset) => string;
-  moveSpotlightToAsset: (spotlight: Mesh, asset: Mesh<BoxBufferGeometry, any>) => Promise<void>;
+  moveSpotlightToAsset: (
+    spotlight: Mesh,
+    asset: Mesh<BoxBufferGeometry, any>,
+  ) => Promise<void>;
   zoom: (
     assetImageCube: Mesh<BoxBufferGeometry, any>,
     spotlight: Mesh,
@@ -37,6 +40,7 @@ const useAsset = (
     storyColor: number,
   ) => Group;
   getAssetsFromFrame: (activeStory: Story, frame: number) => Array<Asset>;
+  setZoomTiming: (relationMetadata: ComponentMetadata) => number;
 } => {
   const getTitle = (asset: Asset) => {
     return asset.title[0]?.value;
@@ -52,19 +56,22 @@ const useAsset = (
       : 'http://localhost:8001/download/4226243bcfd8986cc128e5f5241589b9-2015-0070.JPG';
   };
 
-  const moveSpotlightToAsset = async (spotlight: Mesh, asset: Mesh<BoxBufferGeometry, any>) => {
+  const moveSpotlightToAsset = async (
+    spotlight: Mesh,
+    asset: Mesh<BoxBufferGeometry, any>,
+  ) => {
     const widest = asset.geometry.parameters.width > asset.geometry.parameters.height;
     if (widest) {
       spotlight.scale.set(
-        (asset.geometry.parameters.width / 2) + Measurements().spotLight.spaceAroundObject,
-        (asset.geometry.parameters.width / 2) + Measurements().spotLight.spaceAroundObject,
+        asset.geometry.parameters.width / 2 + Measurements().spotLight.spaceAroundObject,
+        asset.geometry.parameters.width / 2 + Measurements().spotLight.spaceAroundObject,
         Layers.scene,
       );
       await MoveObject().startMoving(spotlight, asset.position);
     } else {
       spotlight.scale.set(
-        (asset.geometry.parameters.height / 2) + Measurements().spotLight.spaceAroundObject,
-        (asset.geometry.parameters.height / 2) + Measurements().spotLight.spaceAroundObject,
+        asset.geometry.parameters.height / 2 + Measurements().spotLight.spaceAroundObject,
+        asset.geometry.parameters.height / 2 + Measurements().spotLight.spaceAroundObject,
         Layers.scene,
       );
       await MoveObject().startMoving(spotlight, asset.position);
@@ -159,6 +166,18 @@ const useAsset = (
     return activeStory.frames[frame].assets;
   };
 
+  const setZoomTiming = (relationMetadata: ComponentMetadata) => {
+    let timeToZoom = relationMetadata.timestamp_zoom;
+    if (
+      relationMetadata.timestamp_zoom == undefined ||
+      relationMetadata.timestamp_start > relationMetadata.timestamp_zoom ||
+      relationMetadata.timestamp_zoom > relationMetadata.timestamp_end
+    ) {
+      timeToZoom = relationMetadata.timestamp_start;
+    }
+    return timeToZoom;
+  };
+
   return {
     getTitle,
     getCollections,
@@ -170,6 +189,7 @@ const useAsset = (
     setInactive,
     setActive,
     getAssetsFromFrame,
+    setZoomTiming,
   };
 };
 

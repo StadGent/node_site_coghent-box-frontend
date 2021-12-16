@@ -136,7 +136,7 @@ const useFrameAssetOverview = (
                 Defaults().zoomOfAsset(),
               );
             },
-            relationMetadata.timestamp_start + Timing.frameOverview.spotLightMoved,
+            useAsset(threeService).setZoomTiming(relationMetadata) + Timing.frameOverview.spotLightMoved,
             `Zoom and highlight asset + set other assets inactive`,
           );
 

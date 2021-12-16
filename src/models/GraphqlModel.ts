@@ -75,6 +75,7 @@ export type ComponentMetadata = {
   label: string;
   timestamp_start: number;
   timestamp_end: number;
+  timestamp_zoom: number;
   position: Position;
   scale: number;
   audioFile?: string;
