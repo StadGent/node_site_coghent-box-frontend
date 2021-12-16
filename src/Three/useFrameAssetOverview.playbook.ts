@@ -66,11 +66,7 @@ const useFrameAssetOverview = (
     );
   };
 
-  const resetImage = (
-    asset: Object3D<Event>,
-    imageCube: Group,
-    currentAsset: number,
-  ) => {
+  const resetImage = (asset: Object3D<Event>, imageCube: Group, currentAsset: number) => {
     threeService.state.scene.remove(imageCube);
     asset.scale.set(1, 1, 0);
     asset.position.set(
@@ -95,9 +91,17 @@ const useFrameAssetOverview = (
     useAsset(threeService).zoom(asset as Mesh<BoxBufferGeometry, any>, spotlight, scale);
     const collections = useAsset(threeService).getCollections(assets[currentAsset]);
     const title = useAsset(threeService).getTitle(assets[currentAsset]);
-    const metadataInfo = useAsset(threeService).addMetadata(asset,storyColor, scale, `${title}, Me (${collections[0].value})`)
-    highlightWithMetaInfo = GroupHelper().CreateGroup([LineHelper().drawLineArroundCube(asset,storyColor), metadataInfo]);
-    
+    const metadataInfo = useAsset(threeService).addMetadata(
+      asset,
+      storyColor,
+      scale,
+      `${title}, Me (${collections[0].value})`,
+    );
+    highlightWithMetaInfo = GroupHelper().CreateGroup([
+      LineHelper().drawLineArroundCube(asset, storyColor),
+      metadataInfo,
+    ]);
+
     threeService.AddToScene(highlightWithMetaInfo);
   };
 
@@ -136,7 +140,8 @@ const useFrameAssetOverview = (
                 Defaults().zoomOfAsset(),
               );
             },
-            useAsset(threeService).setZoomTiming(relationMetadata) + Timing.frameOverview.spotLightMoved,
+            useAsset(threeService).setZoomTiming(relationMetadata) +
+              Timing.frameOverview.spotLightMoved,
             `Zoom and highlight asset + set other assets inactive`,
           );
 
@@ -148,7 +153,7 @@ const useFrameAssetOverview = (
                 asset as Mesh<BoxBufferGeometry, any>,
               );
             },
-            relationMetadata.timestamp_end,
+            relationMetadata.timestamp_end + Timing.frameOverview.spotLightMoved,
             `Reset image position of asset: ${assets[index].id} and spotlight.`,
           );
         }

@@ -74,7 +74,7 @@ export default defineComponent({
           chooseStory.value = false;
           currentStory.value = value - 1;
           currentFrame = _storyData.totalOfFramesSeen;
-          storyColor = Defaults().StoryColors()[value];
+          storyColor = storyService.getStoryDataOfStory(storyData[currentStory.value].id).storyColor;
           console.log('Selected story => ', currentStory.value);
           resetStory();
         }

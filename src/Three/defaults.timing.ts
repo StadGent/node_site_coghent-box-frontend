@@ -19,7 +19,7 @@ const Timing: Timings = {
   },
   delayNextCycle: 1,
   frameOverview: {
-    spotLightMoved: 3.8,
+    spotLightMoved: 4,
   },
   storyCircle: {
     showFrameTitle: 2,
