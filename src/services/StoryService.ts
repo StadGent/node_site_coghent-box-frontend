@@ -1,6 +1,8 @@
 import { Frame, Story } from '@/models/GraphqlModel';
 import Colors from '@/Three/defaults.color';
 import Defaults from '@/Three/defaults.config';
+import Positions from '@/Three/defaults.positions';
+import { Vector3 } from 'three';
 
 export type StoryData = {
   storyId: string;
@@ -9,6 +11,7 @@ export type StoryData = {
   totalOfFramesSeen: number;
   storySeen: boolean;
   storyColor: number;
+  pausedPosition: Vector3;
 };
 
 export default class StoryService {
@@ -51,8 +54,20 @@ export default class StoryService {
         storyToUpdate['totalOfFramesSeen'] = storyToUpdate.seenFrames.length;
       }      
       storyToUpdate['storySeen'] = this.IHaveSeenTheStory(currentStoryId);
-
+      storyToUpdate['storyColor'] = this.setStoryColor(storyToUpdate);
     }
+  }
+
+  storyIsSeen(storyId: string){
+    return this.storyData.filter(data => data.storyId == storyId)[0].storySeen;
+  }
+
+  private setStoryColor(storyData: StoryData){
+    let color = storyData.storyColor;
+    if(storyData.storySeen){
+      color = Colors().grey;
+    }
+    return color;
   }
 
   private assignColorToStories(){
@@ -70,14 +85,14 @@ export default class StoryService {
 
   private fillUpDataSources() {
     if (this.stories.length > 0) {
-      this.stories.map((story) => {
+      this.stories.map((story, index) => {
         this.addStoryIdToStoryIds(story);
-        this.storyData.push(this.createStoryDataObject(story));
+        this.storyData.push(this.createStoryDataObject(story, index));
       });
     }
   }
 
-  private createStoryDataObject (story: Story) {
+  private createStoryDataObject (story: Story, index: number) {
     return {
       storyId: story.id,
       totalOfFrames: story.frames.length,
@@ -85,6 +100,7 @@ export default class StoryService {
       totalOfFramesSeen: 0,
       storySeen: false,
       storyColor: Colors().white,
+      pausedPosition: Positions().StoryPausePositions()[index],
     } as StoryData
   }
 

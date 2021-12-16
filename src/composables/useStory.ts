@@ -1,14 +1,17 @@
 import { Entity } from 'coghent-vue-3-component-library/lib/queries';
-import { Vector3 } from 'three';
+import { Vector, Vector3 } from 'three';
 import Common from '@/composables/common';
 import { Asset, ComponentMetadata, Story } from '@/models/GraphqlModel';
 import Positions from '@/Three/defaults.positions';
+import { StoryData } from '@/services/StoryService';
 
 const useStory = (): {
   setActiveStory: (stories: Array<Story>, story: number) => Story;
   title: (activeStory: Story) => string;
   setFrameTitles: (activeStory: Story) => Array<string>;
   setFrameAssets: (activeStory: Story, frame: number) => Record<string, string>;
+  getStory: (storyData: Array<Story>, storyId: string) => Story;
+  getStoriesWithTheirProgress: (stories: Array<Story>, storyData: Array<StoryData>) => Record<string, StoryData>;
   GetStoryTitles: (stories: Array<Story>) => Array<string>;
   getRelationMetadataOfFrames: (activeStoryData: Story) => Array<ComponentMetadata>;
   /**
@@ -24,8 +27,6 @@ const useStory = (): {
 
   const title = (activeStory: Story) => {
     return activeStory.title[0].value;
-
-    // return 'Story Title';
   };
 
   const setFrameTitles = (activeStory: Story) => {
@@ -43,6 +44,18 @@ const useStory = (): {
     });
     return frameAssets;
   };
+
+  const getStory = (storyData: Array<Story>, storyId: string) => {
+    return storyData.filter(data => data.id == storyId)[0]
+  }
+
+  const getStoriesWithTheirProgress = (stories: Array<Story>, storyData: Array<StoryData>) => {
+    const storyWithProgress: Record<string, StoryData> = {};
+    stories.forEach((story,) => {
+      storyWithProgress[story.id] = storyData.filter(data => data.storyId === story.id)[0]
+    });
+    return storyWithProgress;
+  }
 
   /*
     Old Calls to get the story data
@@ -84,6 +97,8 @@ const useStory = (): {
     title,
     setFrameTitles,
     setFrameAssets,
+    getStory,
+    getStoriesWithTheirProgress,
     Title,
     GetStoryTitles,
     RelationIds,

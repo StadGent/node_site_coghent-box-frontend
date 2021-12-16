@@ -47,7 +47,6 @@ export default defineComponent({
     const stories = ref(props.stories);
     const currentStory = ref<number>(props.storySelected - 1);
     const chooseStory = ref<boolean>(false);
-    let storyColor = Defaults().StoryColors()[currentStory.value];
     let currentFrame = 0;
     const viewport = ref(null);
     const videoElement = ref<HTMLVideoElement>();
@@ -69,12 +68,11 @@ export default defineComponent({
         console.log('You want to select story', props.storySelected);
         console.log('Can you choose a story?', chooseStory.value);
         storyData = stories.value;
-        if (chooseStory.value && value <= storyData.length) {
+        if (chooseStory.value && value <= storyData.length && !storyService.storyIsSeen(storyData[value-1].id)) {
           const _storyData = storyService.getStoryDataOfStory(storyData[value-1].id);
           chooseStory.value = false;
           currentStory.value = value - 1;
           currentFrame = _storyData.totalOfFramesSeen;
-          storyColor = storyService.getStoryDataOfStory(storyData[currentStory.value].id).storyColor;
           console.log('Selected story => ', currentStory.value);
           resetStory();
         }
@@ -129,8 +127,6 @@ export default defineComponent({
     const buildStory = (currentStory: number, audioFile: string) => {
       threeSvc.ClearScene();
       activeStoryData = useStory().setActiveStory(storyData, currentStory);
-      // storyService.updateSeenFramesOfStory(activeStoryData.id,activeStoryData.frames[currentFrame]);
-      console.log(`Updated storyData`, storyService.getStoryDataOfStory(activeStoryData.id));
 
       spotlight = PlayBookBuild(
         threeSvc,
@@ -149,21 +145,18 @@ export default defineComponent({
         `Starting new audio for frame`,
       );
 
-      // activeStoryData.frames.map((frame: Frame, index: number) => {
       const framePlaybook = PlayBook();
 
-      // currentFrame = index;
       PlayBookBuild(threeSvc, framePlaybook, spotlight, activeStoryData).storyCircle(
         currentFrame,
-        storyColor,
+        storyService.getStoryColor(activeStoryData.id),
       );
 
       PlayBookBuild(threeSvc, framePlaybook, spotlight, activeStoryData).frameOverview(
         currentFrame,
-        storyColor,
+        storyService.getStoryColor(activeStoryData.id),
       );
       playBook.mergeActionsWithPlaybook(framePlaybook.getSortedPlayBookActions());
-      console.log({ currentFrame });
 
       playBook.addToPlayBook(
         async () => {
@@ -172,7 +165,10 @@ export default defineComponent({
           threeSvc.ClearScene();
           threeSvc.AddToScene(spotlight);
           spotlight.scale.set(4, 4, Layers.scene);
-          threeSvc.AddGroupsToScene(StoryPaused(storyData).Create([1, 2, 3]));
+          storyService.updateSeenFramesOfStory(activeStoryData.id,activeStoryData.frames[currentFrame]);
+
+          const storiesWithTheirProgress = useStory().getStoriesWithTheirProgress(storyData,storyService.getStoryData());
+          threeSvc.AddGroupsToScene(StoryPaused(storyData).Create(storiesWithTheirProgress));
           await MoveObject().startMoving(spotlight, new Vector3(0, 2.5, Layers.scene));
         },
         playBook.lastAction().time + Timing.frameOverview.spotLightMoved,
@@ -244,13 +240,13 @@ export default defineComponent({
       cube.scale.set(1, 1, 0);
       const metadataInfo = useAsset(threeSvc).addMetadata(
         cube,
-        storyColor,
+        Colors().white,
         1,
         'Chair02 , Maarten van Severen (Design Museum Gent)',
       );
       threeSvc.AddToScene(
         GroupHelper().CreateGroup([
-          LineHelper().drawLineArroundCube(cube, storyColor),
+          LineHelper().drawLineArroundCube(cube, Colors().white),
           metadataInfo,
         ]),
       );

@@ -1,5 +1,4 @@
 import CircleHelper from '@/Three/CircleHelper';
-import Defaults from '@/Three/defaults.config';
 import GroupHelper from '@/Three/GroupHelper';
 import { Group, Vector3 } from 'three';
 import StoryCircle from '../Three/SectionStoryCircle';
@@ -7,15 +6,15 @@ import StoryCircle from '../Three/SectionStoryCircle';
 import useStory from '@/composables/useStory';
 import { Story } from '@/models/GraphqlModel';
 import CircularProgressBar from '@/Three/CircularProgressbar';
-import Positions from '@/Three/defaults.positions';
 import Colors from '@/Three/defaults.color';
 import TextHelper from '@/Three/TextHelper';
 import SchemaCube from '@/Three/CubeSchema';
 import CubeHelper from '@/Three/CubeHelper';
 import HelperText from '@/Three/defaults.helperText';
+import { StoryData } from '@/services/StoryService';
 
 const StoryPaused = (storyData: Array<Story>): {
-  Create: (progress: Array<number>) => Array<Group>;
+  Create: (storiesWithTheirProgress: Record<string, StoryData>) => Array<Group>;
 } => {
   const storyCircle = (story: Story, currentFrame: number, position: Vector3, storyColor: number) => {
     const groups: Array<Group> = [];
@@ -53,18 +52,18 @@ const StoryPaused = (storyData: Array<Story>): {
     return groups;
   };
 
-  const Create = (progress: Array<number>) => {
+  const Create = (storiesWithTheirProgress: Record<string, StoryData>) => {
     const groups: Array<Group> = [];
-    for (let i = 0; i < useStory().GetStoryTitles(storyData).length; i++) {
+    for(const key in storiesWithTheirProgress){
       GroupHelper().AddObjectsTogroups(
-        storyCircle(
-          storyData[i],
-          progress[i],
-          Positions().StoryPausePositions()[i],
-          Defaults().StoryColors()[i],
-        ),
-        groups,
-      );
+            storyCircle(
+              useStory().getStory(storyData,storiesWithTheirProgress[key].storyId),
+              storiesWithTheirProgress[key].totalOfFramesSeen,
+              storiesWithTheirProgress[key].pausedPosition,
+              storiesWithTheirProgress[key].storyColor,
+            ),
+            groups,
+          );
     }
     GroupHelper().AddObjectsTogroups(storyEndText(), groups);
     return groups

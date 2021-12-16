@@ -5,6 +5,7 @@ const Colors = (): {
   lightBlue: number;
   white: number;
   black: number;
+  grey: number;
 } => {
   const green = 0x02a77f;
   const pink = 0xb65099;
@@ -12,6 +13,7 @@ const Colors = (): {
   const lightBlue = 0x9fcdd;
   const white = 0xffffff;
   const black = 0x000000;
+  const grey = 0xdcdcdc;
 
   return {
     green,
@@ -20,6 +22,7 @@ const Colors = (): {
     lightBlue,
     white,
     black,
+    grey,
   };
 };
 
