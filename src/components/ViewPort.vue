@@ -256,6 +256,7 @@ export default defineComponent({
 
     onMounted(() => {
       threeSvc = new ThreeService(viewport);
+      Tools().splitAreaInZones(threeSvc,threeSvc.state.width,5);
       // threeSvc.AddToScene(Tools().xAxis(new Vector3(0, 0, 0)));
       // threeSvc.AddToScene(Tools().yAxis(new Vector3(0, 0, 0)));
 
