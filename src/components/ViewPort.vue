@@ -286,16 +286,10 @@ export default defineComponent({
       zones.forEach(zone => {
         threeSvc.AddToScene(Tools().yAxis(new Vector3(zone.start.x, zone.start.y, zone.start.z)));
       })
-      const object = SchemaCube().CreateCube({position: new Vector3(16,0,Layers.presentation), params: {width: 3,height: 2, color: Colors().yellow}} as CubeSchema);
+      const object = SchemaCube().CreateCube({position: new Vector3(-1,0,Layers.presentation), params: {width: 3,height: 2, color: Colors().yellow}} as CubeSchema);
       threeSvc.AddToScene(object);
       const inZone = zonehelper.objectIsInZone(object);
-      const width = inZone.end.x - inZone.start.x;
-      console.log(object.position);
-      console.log({inZone});
-      console.log({width});
-      const theZone = SchemaCube().CreateCube({position: new Vector3(inZone.end.x - width/2,0,Layers.presentation), params: {width: width,height: 30, color: Colors().white, opacity: 0.5, isTransparant: true}} as CubeSchema);
-      threeSvc.AddToScene(theZone);
-      console.log({theZone});
+      Tools().dotOnPosition(threeSvc, zonehelper.getMiddleOfZone(inZone));
 
       // test_movingObject();
       // test_zoomObject();

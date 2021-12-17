@@ -1,5 +1,6 @@
 import Common from '@/composables/common';
 import { Mesh, Vector3 } from 'three';
+import Layers from './defaults.layers';
 
 type Zone = {
   start: Vector3;
@@ -11,6 +12,7 @@ const ZoneHelper = (
 ): {
   createZonesXAxis: (_zones: number) => Array<Zone>;
   objectIsInZone: (object: Mesh) => Zone;
+  getMiddleOfZone: (zone: Zone) => Vector3;
 } => {
   const referencePosition = new Vector3(0, 0, 0);
   const zones: Array<Zone> = [];
@@ -44,9 +46,15 @@ const ZoneHelper = (
     return zone;
   };
 
+  const getMiddleOfZone = (zone: Zone) => {
+    const width = zone.end.x - zone.start.x;
+    return new Vector3(zone.end.x - width/2,0,Layers.presentation)
+  };
+
   return {
     createZonesXAxis,
     objectIsInZone,
+    getMiddleOfZone,
   };
 };
 
