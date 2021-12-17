@@ -8,6 +8,7 @@ import { TextSchema } from './schema.text';
 const Defaults = (): {
   pixelInMeter: () => number;
   zoomOfAsset: () => number;
+  screenZones: () => number;
   circlePoints: () => Array<CirclePoint>;
   StoryColors: () => Array<number>;
   Circle: () => CircleSchema;
@@ -18,6 +19,7 @@ const Defaults = (): {
 
   const pixelInMeter = () => 0.003;
   const zoomOfAsset = () => 1.5;
+  const screenZones = () => 5;
   
   const circlePoints = () => {
     return [
@@ -80,6 +82,7 @@ const Defaults = (): {
   return {
     pixelInMeter,
     zoomOfAsset,
+    screenZones,
     circlePoints,
     StoryColors,
     Circle,
