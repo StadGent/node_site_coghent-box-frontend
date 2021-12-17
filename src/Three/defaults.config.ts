@@ -9,6 +9,8 @@ const Defaults = (): {
   pixelInMeter: () => number;
   zoomOfAsset: () => number;
   screenZones: () => number;
+  scaleReducer: () => number;
+  showZonesInOverview: () => true | false;
   circlePoints: () => Array<CirclePoint>;
   StoryColors: () => Array<number>;
   Circle: () => CircleSchema;
@@ -16,10 +18,11 @@ const Defaults = (): {
   Word: (text: string, position: Vector3) => TextSchema;
   EndCircle: () => Mesh<CircleGeometry, MeshBasicMaterial>;
 } => {
-
   const pixelInMeter = () => 0.003;
   const zoomOfAsset = () => 1.5;
   const screenZones = () => 5;
+  const scaleReducer = () => 0.2;
+  const showZonesInOverview = () => true;
   
   const circlePoints = () => {
     return [
@@ -83,6 +86,8 @@ const Defaults = (): {
     pixelInMeter,
     zoomOfAsset,
     screenZones,
+    scaleReducer,
+    showZonesInOverview,
     circlePoints,
     StoryColors,
     Circle,

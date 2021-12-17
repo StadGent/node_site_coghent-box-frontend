@@ -7,6 +7,7 @@ import Colors from './defaults.color';
 import Layers from './defaults.layers';
 import GroupHelper from './helper.group';
 import SchemaLine, { LineSchema } from './schema.line';
+import { Zone } from './helper.zones';
 
 const Tools = (): {
   Grid: () => Group;
@@ -15,6 +16,7 @@ const Tools = (): {
   splitAreaInZones: (threeService: ThreeService,
     sceneWidth: number,
     zones: number,) => void;
+  displayZones: (threeService: ThreeService, zones: Array<Zone>) => void;
   dotOnPosition: (threeService: ThreeService, position: Vector3) => void;
 } => {
   const Grid = () => {
@@ -51,6 +53,12 @@ const Tools = (): {
     }
   };
 
+  const displayZones = (threeService: ThreeService ,zones: Array<Zone>) => {
+    zones.forEach(zone => {
+      threeService.AddToScene(Tools().yAxis(new Vector3(zone.start.x, zone.start.y, zone.start.z)));
+    })
+  }
+
   const dotOnPosition = (threeService: ThreeService, position: Vector3) => {
     const schema = CircleHelper().CreateSchema(
       new Vector3(
@@ -65,7 +73,7 @@ const Tools = (): {
     threeService.AddToScene(circle);
   };
 
-  return { Grid, xAxis, yAxis, splitAreaInZones, dotOnPosition };
+  return { Grid, xAxis, yAxis, splitAreaInZones, displayZones, dotOnPosition };
 };
 
 export default Tools;

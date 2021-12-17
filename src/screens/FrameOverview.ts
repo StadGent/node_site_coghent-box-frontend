@@ -9,16 +9,17 @@ import GroupHelper from '@/Three/helper.group';
 import { Group, Mesh, Vector3 } from 'three';
 
 const FrameOverview = (threeService: ThreeService): {
-  addImage:(asset: Asset, position: Vector3) => Mesh;
+  addImage:(asset: Asset, scale:number, position: Vector3) => Mesh;
   create: (assets: Record<string, string>) => {
     groups: Array<Group>;
     schemas: Array<CubeSchema>;
   };
 } => {
 
-  const addImage = (asset: Asset, position: Vector3) => {
+  const addImage = (asset: Asset, scale: number, position: Vector3) => {
     const schema = CubeHelper().CreateSchema(position,useAsset(threeService).getImage(asset),new Vector3(Common().pixelsToMeters(asset.mediafiles[0]?.mediainfo.width), Common().pixelsToMeters(asset.mediafiles[0]?.mediainfo.height),0));
     const cube = SchemaCube().CreateImageCube(schema);
+    cube.scale.set(scale,scale,0);
     return cube;
   };
 

@@ -91,6 +91,7 @@ const useAsset = (
     // MoveObject().move(assetImageCube, new Vector3(assetImageCube.position.x, 0, assetImageCube.position.z))
     moveSpotlightToAsset(spotlight, assetImageCube);
     assetImageCube.material.opacity = 1;
+    assetImageCube.scale.set(0, 0, 0);
     assetImageCube.scale.set(scale, scale, Layers.presentation);
   };
 
