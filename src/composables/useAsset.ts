@@ -23,12 +23,14 @@ const useAsset = (
   ) => Promise<void>;
   zoom: (
     assetImageCube: Mesh<BoxBufferGeometry, any>,
+    position: Vector3,
     spotlight: Mesh,
     scale: number,
   ) => void;
   setInactive: (assetImageCube: Mesh<BoxBufferGeometry, any>) => void;
   setActive: (assetImageCube: Mesh<BoxBufferGeometry, any>) => void;
   addMetadata: (
+    zoomPosition: Vector3,
     object: Mesh<BoxBufferGeometry, any>,
     color: number,
     scale: number,
@@ -81,10 +83,11 @@ const useAsset = (
 
   const zoom = (
     assetImageCube: Mesh<BoxBufferGeometry, any>,
+    position: Vector3,
     spotlight: Mesh,
     scale: number,
   ) => {
-    assetImageCube.position.set(assetImageCube.position.x, 0, assetImageCube.position.z);
+    assetImageCube.position.set(position.x, position.y, position.z);
     // MoveObject().move(assetImageCube, new Vector3(assetImageCube.position.x, 0, assetImageCube.position.z))
     moveSpotlightToAsset(spotlight, assetImageCube);
     assetImageCube.material.opacity = 1;
@@ -92,6 +95,7 @@ const useAsset = (
   };
 
   const addMetadata = (
+    zoomPosition: Vector3,
     object: Mesh<BoxBufferGeometry, any>,
     color: number,
     scale: number,
@@ -99,7 +103,7 @@ const useAsset = (
   ) => {
     const metadataInfo = TextHelper().CreateText(
       text,
-      new Vector3(object.position.x, object.position.y, object.position.z),
+      zoomPosition,
       {} as CubeParams,
       { color: color } as FontParams,
     ) as Mesh<BoxGeometry, any>;

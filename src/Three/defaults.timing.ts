@@ -17,7 +17,7 @@ const Timing: Timings = {
     refreshStep: 12,
     steps: 60,
   },
-  delayNextCycle: 1,
+  delayNextCycle: 2,
   frameOverview: {
     spotLightMoved: 4,
   },

@@ -5,6 +5,7 @@ import {
   WebGLRenderer,
   Group,
   sRGBEncoding,
+  Vector3,
 } from 'three';
 import { Ref } from 'vue';
 
@@ -15,6 +16,7 @@ type State = {
   scene: Scene;
   renderer: any;
   groups: Array<Group>;
+  sceneDimensions: Vector3,
 };
 
 export const initState: State = {
@@ -24,6 +26,7 @@ export const initState: State = {
   scene: new Scene(),
   renderer: null,
   groups: [],
+  sceneDimensions: new Vector3(0,0,0),
 };
 
 export default class ThreeService {
@@ -42,6 +45,7 @@ export default class ThreeService {
   SetViewPort(width: number, height: number) {
     this.state.width = width;
     this.state.height = height;
+    this.state.sceneDimensions = new Vector3(width,height,0);
   }
   InitializeRenderer() {
     this.state.renderer = new WebGLRenderer({ antialias: true });

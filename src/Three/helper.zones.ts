@@ -2,7 +2,7 @@ import Common from '@/composables/common';
 import { Mesh, Vector3 } from 'three';
 import Layers from './defaults.layers';
 
-type Zone = {
+export type Zone = {
   start: Vector3;
   end: Vector3;
 };
@@ -11,13 +11,13 @@ const ZoneHelper = (
   screen: Vector3,
 ): {
   createZonesXAxis: (_zones: number) => Array<Zone>;
-  objectIsInZone: (object: Mesh) => Zone;
+  objectIsInZone: (object: Mesh, zones: Array<Zone>) => Zone;
   getMiddleOfZone: (zone: Zone) => Vector3;
 } => {
   const referencePosition = new Vector3(0, 0, 0);
-  const zones: Array<Zone> = [];
 
   const createZonesXAxis = (_zones: number) => {
+    const zones: Array<Zone> = [];
     const zoneWidthInPixels = screen.x / _zones;
     const zoneWidth = Common().pixelsToMeters(zoneWidthInPixels) * 10;
     const beginningOfScreen =
@@ -34,7 +34,7 @@ const ZoneHelper = (
     return zones;
   };
 
-  const objectIsInZone = (object: Mesh) => {
+  const objectIsInZone = (object: Mesh, zones: Array<Zone>) => {
     let zone: Zone = { start: new Vector3(0, 0, 0), end: new Vector3(0, 0, 0) };
     if (zones.length > 0) {
       zones.map((_zone) => {

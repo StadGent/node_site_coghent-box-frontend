@@ -16,7 +16,7 @@ import { Entity as _Entity, Frame, Story } from '@/models/GraphqlModel';
 import Tools from '@/Three/helper.tools';
 import AudioHelper from '@/Three/helper.audio';
 import VideoHelper from '@/Three/helper.video';
-import ZoneHelper from '@/Three/helper.zones';
+import ZoneHelper, { Zone } from '@/Three/helper.zones';
 import LineHelper from '@/Three/helper.line';
 import GroupHelper from '@/Three/helper.group';
 import TextHelper from '@/Three/helper.text';
@@ -72,6 +72,7 @@ export default defineComponent({
     let storyData: Array<Story> = [];
     let activeStoryData = reactive<Story>({} as Story);
     let spotlight: Mesh;
+    let zones: Array<Zone>;
 
     watch(
       () => props.storySelected,
@@ -100,7 +101,7 @@ export default defineComponent({
         stories.value = value;
 
         // playStartVideo();
-        // setup();
+        setup();
       },
     );
 
@@ -168,6 +169,7 @@ export default defineComponent({
       );
 
       PlayBookBuild(threeSvc, framePlaybook, spotlight, activeStoryData).frameOverview(
+        zones,
         currentFrame,
         storyService.getStoryColor(activeStoryData.id),
         audioDuration,
@@ -195,7 +197,7 @@ export default defineComponent({
           );
           await MoveObject().startMoving(spotlight, new Vector3(0, 2.5, Layers.scene));
         },
-        playBook.lastAction().time + Timing.frameOverview.spotLightMoved,
+        playBook.lastAction().time + Timing.frameOverview.spotLightMoved + Timing.delayNextCycle,
         `Display story overview.`,
       );
 
@@ -226,73 +228,10 @@ export default defineComponent({
       }, 7000);
     };
 
-    const test_movingObject = () => {
-      console.log(`test_movingObjects`);
-      threeSvc.ClearScene();
-      const cube = SchemaCube().CreateCube({
-        position: new Vector3(10, 0, Layers.scene),
-        params: { width: 2, height: 2, color: Colors().lightBlue },
-      });
-      const cube2 = SchemaCube().CreateCube({
-        position: new Vector3(0, 0, Layers.scene),
-        params: { width: 2, height: 4, color: Colors().pink },
-      });
-      threeSvc.AddToScene(cube);
-      // threeSvc.AddToScene(cube2);
-      MoveObject().move(cube, new Vector3(10, 5, Layers.scene));
-
-      // if(MoveObject().move(cube, new Vector3(-10, 2, Layers.scene))){
-      //   alert('here')
-      // ;
-
-      // }
-
-      // MoveObject().move(cube2, new Vector3(10, 4, Layers.scene));
-    };
-
-    const test_zoomObject = () => {
-      const cube = SchemaCube().CreateCube({
-        position: new Vector3(-15, 0, 0),
-        params: {
-          color: 0xfff0fe,
-          width: Common().pixelsToMeters(3648),
-          height: Common().pixelsToMeters(2432),
-        },
-      } as CubeSchema);
-      // const cube = SchemaCube().CreateCube({position: new Vector3(0,0,Layers.presentation), params: {color: 0xfff0fe ,width:4, height: 2}} as CubeSchema);
-      threeSvc.AddToScene(cube);
-      cube.scale.set(1, 1, 0);
-      const metadataInfo = useAsset(threeSvc).addMetadata(
-        cube,
-        Colors().white,
-        1,
-        'Chair02 , Maarten van Severen (Design Museum Gent)',
-      );
-      threeSvc.AddToScene(
-        GroupHelper().CreateGroup([
-          LineHelper().drawLineArroundCube(cube, Colors().white),
-          metadataInfo,
-        ]),
-      );
-
-      Tools().dotOnPosition(threeSvc, cube.position);
-    };
-
     onMounted(() => {
       threeSvc = new ThreeService(viewport);
       const zonehelper = ZoneHelper(new Vector3(threeSvc.state.width,threeSvc.state.height,0));
-      const zones = zonehelper.createZonesXAxis(Defaults().screenZones());
-      console.log({zones});
-      zones.forEach(zone => {
-        threeSvc.AddToScene(Tools().yAxis(new Vector3(zone.start.x, zone.start.y, zone.start.z)));
-      })
-      const object = SchemaCube().CreateCube({position: new Vector3(-1,0,Layers.presentation), params: {width: 3,height: 2, color: Colors().yellow}} as CubeSchema);
-      threeSvc.AddToScene(object);
-      const inZone = zonehelper.objectIsInZone(object);
-      Tools().dotOnPosition(threeSvc, zonehelper.getMiddleOfZone(inZone));
-
-      // test_movingObject();
-      // test_zoomObject();
+      zones = zonehelper.createZonesXAxis(Defaults().screenZones());
 
       threeSvc.Animate();
     });

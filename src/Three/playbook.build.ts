@@ -11,6 +11,7 @@ import useFrameAssetOverview from './playbook.frameAssetOverview';
 import useStoryCircle from './playbook.storyCircle';
 import EndOfSession from '@/screens/EndOfSession';
 import Measurements from './defaults.measurements';
+import { Zone } from './helper.zones';
 
 const PlayBookBuild = (
   threeService: ThreeService,
@@ -24,7 +25,7 @@ const PlayBookBuild = (
     backupAudioFile: string,
   ) => void;
   storyCircle: (currentFrameIndex: number, storyColor: number) => void;
-  frameOverview: (currentFrameIndex: number, storyColor: number, audioDuration: number) => void;
+  frameOverview: (zones: Array<Zone>, currentFrameIndex: number, storyColor: number, audioDuration: number) => void;
   initialSpotLight: () => Mesh;
   endOfSession: (position: Vector3, spotRadius?: number) => void;
 } => {
@@ -53,9 +54,8 @@ const PlayBookBuild = (
     );
   };
 
-  const frameOverview = (currentFrameIndex: number, storyColor: number, audioDuration: number) => {
-    console.log({audioDuration});
-    useFrameAssetOverview(threeService, activeStoryData, playBook, spotlight).create(
+  const frameOverview = (zones: Array<Zone>, currentFrameIndex: number, storyColor: number, audioDuration: number) => {
+    useFrameAssetOverview(threeService, activeStoryData, playBook, spotlight, zones).create(
       currentFrameIndex,
       storyColor,
       playBook.lastAction().time + Timing.delayNextCycle,

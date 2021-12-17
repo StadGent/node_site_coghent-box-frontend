@@ -14,12 +14,14 @@ import Defaults from './defaults.config';
 import LineHelper from './helper.line';
 import GroupHelper from './helper.group';
 import useFrame from '@/composables/useFrame';
+import ZoneHelper, { Zone } from './helper.zones';
 
 const useFrameAssetOverview = (
   threeService: ThreeService,
   activeStoryData: Story,
   playBook: PlayBookFunctions,
   spotlight: Mesh,
+  zones: Array<Zone>,
 ): {
   create: (currentFrame: number, storyColor: number, timestamp: number, audioDuration: number) => void;
 } => {
@@ -89,10 +91,13 @@ const useFrameAssetOverview = (
     currentAsset: number,
     scale: number,
   ) => {
-    useAsset(threeService).zoom(asset as Mesh<BoxBufferGeometry, any>, spotlight, scale);
+    const inZone = ZoneHelper(threeService.state.sceneDimensions).objectIsInZone(asset,zones);
+    const zoomTo = ZoneHelper(threeService.state.sceneDimensions).getMiddleOfZone(inZone);
+    useAsset(threeService).zoom(asset as Mesh<BoxBufferGeometry, any>,zoomTo, spotlight, scale);
     const collections = useAsset(threeService).getCollections(assets[currentAsset]);
     const title = useAsset(threeService).getTitle(assets[currentAsset]);
     const metadataInfo = useAsset(threeService).addMetadata(
+      zoomTo,
       asset,
       storyColor,
       scale,
