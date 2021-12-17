@@ -5,30 +5,37 @@
 
 <script lang="ts">
 import useStory from '@/composables/useStory';
-import Tools from '@/Three/helper.tools';
+
 import ThreeService from '@/services/ThreeService';
+import StoryService from '@/services/StoryService';
+
 import { defineComponent, onMounted, PropType, reactive, Ref, ref, watch } from 'vue';
 import { Mesh, Vector3 } from 'three';
 import { Entity as _Entity, Frame, Story } from '@/models/GraphqlModel';
+
+import Tools from '@/Three/helper.tools';
 import AudioHelper from '@/Three/helper.audio';
 import VideoHelper from '@/Three/helper.video';
+import ZoneHelper from '@/Three/helper.zones';
+import LineHelper from '@/Three/helper.line';
+import GroupHelper from '@/Three/helper.group';
+import TextHelper from '@/Three/helper.text';
+
+import Defaults from '@/Three/defaults.config';
+import Colors from '@/Three/defaults.color';
+import Timing from '@/Three/defaults.timing';
+import Layers from '@/Three/defaults.layers';
+
 import PlayBookBuild from '@/Three/playbook.build';
 import StoryPaused from '@/screens/StoryPaused';
 import EndOfSession from '@/screens/EndOfSession';
 import PlayBook from '@/composables/playbook';
-import Colors from '@/Three/defaults.color';
-import Defaults from '@/Three/defaults.config';
-import Timing from '@/Three/defaults.timing';
 import useFrame from '@/composables/useFrame';
-import Layers from '@/Three/defaults.layers';
-import SchemaCube, { CubeSchema } from '@/Three/schema.cube';
 import MoveObject from '@/composables/moveObject';
 import Common from '@/composables/common';
-import LineHelper from '@/Three/helper.line';
-import GroupHelper from '@/Three/helper.group';
-import TextHelper from '@/Three/helper.text';
 import useAsset from '@/composables/useAsset';
-import StoryService from '@/services/StoryService';
+
+import SchemaCube, { CubeSchema } from '@/Three/schema.cube';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -93,7 +100,7 @@ export default defineComponent({
         stories.value = value;
 
         // playStartVideo();
-        setup();
+        // setup();
       },
     );
 
@@ -273,9 +280,22 @@ export default defineComponent({
 
     onMounted(() => {
       threeSvc = new ThreeService(viewport);
-      // Tools().splitAreaInZones(threeSvc,threeSvc.state.width,5);
-      // threeSvc.AddToScene(Tools().xAxis(new Vector3(0, 0, 0)));
-      // threeSvc.AddToScene(Tools().yAxis(new Vector3(0, 0, 0)));
+      const zonehelper = ZoneHelper(new Vector3(threeSvc.state.width,threeSvc.state.height,0));
+      const zones = zonehelper.createZonesXAxis(Defaults().screenZones());
+      console.log({zones});
+      zones.forEach(zone => {
+        threeSvc.AddToScene(Tools().yAxis(new Vector3(zone.start.x, zone.start.y, zone.start.z)));
+      })
+      const object = SchemaCube().CreateCube({position: new Vector3(16,0,Layers.presentation), params: {width: 3,height: 2, color: Colors().yellow}} as CubeSchema);
+      threeSvc.AddToScene(object);
+      const inZone = zonehelper.objectIsInZone(object);
+      const width = inZone.end.x - inZone.start.x;
+      console.log(object.position);
+      console.log({inZone});
+      console.log({width});
+      const theZone = SchemaCube().CreateCube({position: new Vector3(inZone.end.x - width/2,0,Layers.presentation), params: {width: width,height: 30, color: Colors().white, opacity: 0.5, isTransparant: true}} as CubeSchema);
+      threeSvc.AddToScene(theZone);
+      console.log({theZone});
 
       // test_movingObject();
       // test_zoomObject();
