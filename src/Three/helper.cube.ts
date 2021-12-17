@@ -1,6 +1,5 @@
 import { Mesh, BoxGeometry, MeshBasicMaterial, Vector3 } from 'three';
 import SchemaCube, { CubeParams, CubeSchema } from './schema.cube';
-import DefaultColors from './defaults.color';
 
 const CubeHelper = (): {
   GetCubeParams: (cube: Mesh<BoxGeometry, MeshBasicMaterial>) => CubeParams;

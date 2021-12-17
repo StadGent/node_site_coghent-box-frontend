@@ -20,6 +20,7 @@ const useAsset = (
   moveSpotlightToAsset: (
     spotlight: Mesh,
     asset: Mesh<BoxBufferGeometry, any>,
+    scale: number,
   ) => Promise<void>;
   zoom: (
     assetImageCube: Mesh<BoxBufferGeometry, any>,
@@ -61,19 +62,20 @@ const useAsset = (
   const moveSpotlightToAsset = async (
     spotlight: Mesh,
     asset: Mesh<BoxBufferGeometry, any>,
+    scale: number,
   ) => {
     const widest = asset.geometry.parameters.width > asset.geometry.parameters.height;
     if (widest) {
       spotlight.scale.set(
-        asset.geometry.parameters.width / 2 + Measurements().spotLight.spaceAroundObject,
-        asset.geometry.parameters.width / 2 + Measurements().spotLight.spaceAroundObject,
+        (asset.geometry.parameters.width / 2) * scale  + Measurements().spotLight.spaceAroundObject,
+        (asset.geometry.parameters.width / 2) * scale + Measurements().spotLight.spaceAroundObject,
         Layers.scene,
       );
       await MoveObject().startMoving(spotlight, asset.position);
     } else {
       spotlight.scale.set(
-        asset.geometry.parameters.height / 2 + Measurements().spotLight.spaceAroundObject,
-        asset.geometry.parameters.height / 2 + Measurements().spotLight.spaceAroundObject,
+        (asset.geometry.parameters.height / 2) * scale + Measurements().spotLight.spaceAroundObject,
+        (asset.geometry.parameters.height / 2) * scale + Measurements().spotLight.spaceAroundObject,
         Layers.scene,
       );
       await MoveObject().startMoving(spotlight, asset.position);
@@ -89,7 +91,7 @@ const useAsset = (
   ) => {
     assetImageCube.position.set(position.x, position.y, position.z);
     // MoveObject().move(assetImageCube, new Vector3(assetImageCube.position.x, 0, assetImageCube.position.z))
-    moveSpotlightToAsset(spotlight, assetImageCube);
+    moveSpotlightToAsset(spotlight, assetImageCube, scale);
     assetImageCube.material.opacity = 1;
     assetImageCube.scale.set(0, 0, 0);
     assetImageCube.scale.set(scale, scale, Layers.presentation);

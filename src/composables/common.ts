@@ -9,6 +9,7 @@ const Common = (): {
     parent: Frame | Story,
     child: Asset | Frame,
   ) => ComponentMetadata;
+  firstIsBiggest: (first:number, second: number) => boolean;
 } => {
   const FilterOutIdAfterSlash = (str: string) => {
     const index = (str.indexOf('/') as number) + 1;
@@ -31,11 +32,16 @@ const Common = (): {
     return metadataForAsset;
   };
 
+  const firstIsBiggest = (first: number, second: number) => {
+    return first > second;
+  }
+
   return {
     FilterOutIdAfterSlash,
     RemoveEntersFromString,
     pixelsToMeters,
     connectRelationMetadata,
+    firstIsBiggest,
   };
 };
 

@@ -13,7 +13,7 @@ const ZoneHelper = (
   createZonesXAxis: (_zones: number) => Array<Zone>;
   objectIsInZone: (object: Mesh, zones: Array<Zone>) => Zone;
   getMiddleOfZone: (zone: Zone) => Vector3;
-  zoneWidth: (_zones: number) => number;
+  zoneDimensions: (_zones: number) => { width: number; height: number };
 } => {
   const referencePosition = new Vector3(0, 0, 0);
 
@@ -49,18 +49,21 @@ const ZoneHelper = (
 
   const getMiddleOfZone = (zone: Zone) => {
     const width = zone.end.x - zone.start.x;
-    return new Vector3(zone.end.x - width/2,0,Layers.presentation)
+    return new Vector3(zone.end.x - width / 2, 0, Layers.presentation);
   };
 
-  const zoneWidth = (_zones: number) => {
-    return Common().pixelsToMeters(screen.x/_zones) * 10;
+  const zoneDimensions = (_zones: number) => {
+    return {
+      width: Common().pixelsToMeters(screen.x / _zones) * 10,
+      height: Common().pixelsToMeters(screen.y) * 10,
+    };
   };
 
   return {
     createZonesXAxis,
     objectIsInZone,
     getMiddleOfZone,
-    zoneWidth,
+    zoneDimensions,
   };
 };
 
