@@ -24,7 +24,7 @@ const PlayBookBuild = (
     backupAudioFile: string,
   ) => void;
   storyCircle: (currentFrameIndex: number, storyColor: number) => void;
-  frameOverview: (currentFrameIndex: number, storyColor: number) => void;
+  frameOverview: (currentFrameIndex: number, storyColor: number, audioDuration: number) => void;
   initialSpotLight: () => Mesh;
   endOfSession: (position: Vector3, spotRadius?: number) => void;
 } => {
@@ -53,11 +53,13 @@ const PlayBookBuild = (
     );
   };
 
-  const frameOverview = (currentFrameIndex: number, storyColor: number) => {
+  const frameOverview = (currentFrameIndex: number, storyColor: number, audioDuration: number) => {
+    console.log({audioDuration});
     useFrameAssetOverview(threeService, activeStoryData, playBook, spotlight).create(
       currentFrameIndex,
       storyColor,
       playBook.lastAction().time + Timing.delayNextCycle,
+      audioDuration,
     );
   };
 

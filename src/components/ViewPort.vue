@@ -61,6 +61,7 @@ export default defineComponent({
     let spotlight: Mesh;
     const playBook = PlayBook();
     let storyService: StoryService;
+    const audioDuration = 120;
 
     watch(
       () => props.storySelected,
@@ -155,6 +156,7 @@ export default defineComponent({
       PlayBookBuild(threeSvc, framePlaybook, spotlight, activeStoryData).frameOverview(
         currentFrame,
         storyService.getStoryColor(activeStoryData.id),
+        audioDuration,
       );
       playBook.mergeActionsWithPlaybook(framePlaybook.getSortedPlayBookActions());
 
@@ -256,7 +258,7 @@ export default defineComponent({
 
     onMounted(() => {
       threeSvc = new ThreeService(viewport);
-      Tools().splitAreaInZones(threeSvc,threeSvc.state.width,5);
+      // Tools().splitAreaInZones(threeSvc,threeSvc.state.width,5);
       // threeSvc.AddToScene(Tools().xAxis(new Vector3(0, 0, 0)));
       // threeSvc.AddToScene(Tools().yAxis(new Vector3(0, 0, 0)));
 

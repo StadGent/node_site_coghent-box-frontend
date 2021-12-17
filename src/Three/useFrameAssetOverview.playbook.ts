@@ -13,6 +13,7 @@ import MoveObject from '@/composables/moveObject';
 import Defaults from './defaults.config';
 import LineHelper from './LineHelper';
 import GroupHelper from './GroupHelper';
+import useFrame from '@/composables/useFrame';
 
 const useFrameAssetOverview = (
   threeService: ThreeService,
@@ -20,7 +21,7 @@ const useFrameAssetOverview = (
   playBook: PlayBookFunctions,
   spotlight: Mesh,
 ): {
-  create: (currentFrame: number, storyColor: number, timestamp: number) => void;
+  create: (currentFrame: number, storyColor: number, timestamp: number, audioDuration: number) => void;
 } => {
   const group: Group = new Group();
   const positions: Array<Vector3> = [];
@@ -105,11 +106,17 @@ const useFrameAssetOverview = (
     threeService.AddToScene(highlightWithMetaInfo);
   };
 
-  const create = (currentFrame: number, _storyColor: number, timestamp: number) => {
+  const create = (currentFrame: number, _storyColor: number, timestamp: number, audioDuration: number) => {
+    const assetsWithTimestampStart = useFrame().getStartTimestampsWithTheirAsset(activeStoryData.frames[currentFrame]);
     assets = useAsset(threeService).getAssetsFromFrame(activeStoryData, currentFrame);
     storyColor = _storyColor;
     if (assets.length > 0) {
       displayAllAssets(activeStoryData.frames[currentFrame], timestamp);
+      playBook.addToPlayBook(
+        () => displayProgressBar(storyColor, 0, audioDuration, Object.values(assetsWithTimestampStart)),
+        timestamp,
+        `Display progressbar.`,
+      );
       group.children.forEach((asset, index) => {
         const relationMetadata = Common().connectRelationMetadata(
           activeStoryData.frames[currentFrame],
@@ -127,9 +134,11 @@ const useFrameAssetOverview = (
             `Move spotlight to asset ${assets[index].id}.`,
           );
           playBook.addToPlayBook(
-            () => displayProgressBar(storyColor, 1000, 5000, [1000,2000,3000]),
-            relationMetadata.timestamp_start,
-            `Display progressbar.`,
+            () => {
+              displayProgressBar(storyColor, Object.values(assetsWithTimestampStart)[index], audioDuration, Object.values(assetsWithTimestampStart));
+            },
+            relationMetadata.timestamp_start + Timing.frameOverview.spotLightMoved,
+            `Update progressbar checkpoint.`,
           );
           playBook.addToPlayBook(
             () => {

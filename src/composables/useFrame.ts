@@ -2,10 +2,8 @@ import {
   ComponentMetadata,
   Entity,
   Story,
-  Asset,
   Frame
 } from '@/models/GraphqlModel';
-import { Relation } from 'coghent-vue-3-component-library/lib/queries';
 import Common from './common';
 import useStory from './useStory';
 
@@ -16,6 +14,8 @@ const useFrame = (): {
   CreateFrameRecord: (frames: any) => Record<string, string>;
   getLastAssetRelationMetadata: (activeStoryData: Story, currentFrameIndex: number) => ComponentMetadata;
   getAudioForFrame: (frame: Frame) => string;
+  getRelationMetadata: (frame: Frame) => Array<ComponentMetadata>; 
+  getStartTimestampsWithTheirAsset: (frame: Frame) => Record<string,number>; 
 } => {
   const GetFrameTitles = (frames: Array<Entity>) => {
     const centerWords: Array<string> = [];
@@ -84,6 +84,20 @@ const useFrame = (): {
     }
     return audio;
   }
+
+  const getRelationMetadata = (frame: Frame) => {
+    return frame.relationMetadata;
+  };
+
+  const getStartTimestampsWithTheirAsset = (frame: Frame) => {
+    const relationMetadata = getRelationMetadata(frame)
+    const assetWithStartTime: Record<string,number> = {};
+    relationMetadata.map(metadata => {
+      assetWithStartTime[Common().FilterOutIdAfterSlash(metadata.key)] = metadata.timestamp_start;
+    })
+    return assetWithStartTime;
+  }
+
   return {
     GetFrameTitles,
     GetFrameMainImage,
@@ -91,6 +105,8 @@ const useFrame = (): {
     CreateFrameRecord,
     getLastAssetRelationMetadata,
     getAudioForFrame,
+    getRelationMetadata,
+    getStartTimestampsWithTheirAsset,
   };
 };
 
