@@ -54,13 +54,13 @@ const useFrameAssetOverview = (
     );
   };
 
-  const displayProgressBar = (storyColor: number, currentFrame: number) => {
+  const displayProgressBar = (storyColor: number, currentTime: number, maxTime: number, checkpoints: Array<number>) => {
     threeService.AddGroupsToScene(
       HorizontalProgressBar().create(
         new Vector3(0, -7, Layers.scene),
-        [1000, 2000, 3000],
-        5000,
-        currentFrame * 1000,
+        checkpoints,
+        maxTime,
+        currentTime,
         storyColor,
       ),
     );
@@ -127,7 +127,7 @@ const useFrameAssetOverview = (
             `Move spotlight to asset ${assets[index].id}.`,
           );
           playBook.addToPlayBook(
-            () => displayProgressBar(storyColor, currentFrame),
+            () => displayProgressBar(storyColor, 1000, 5000, [1000,2000,3000]),
             relationMetadata.timestamp_start,
             `Display progressbar.`,
           );
