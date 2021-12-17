@@ -1,5 +1,5 @@
-import { StoryCircleParams } from './SectionStoryCircle';
-import { SpotLightParams } from './Spotlight';
+import { StoryCircleParams } from './section.storyCircle';
+import { SpotLightParams } from './shapes.spotlight';
 
 type GenericCircleObject ={
   radius: number;

@@ -1,10 +1,10 @@
-import Correction from '@/Three/Correction';
-import CubeHelper from '@/Three/CubeHelper';
-import SchemaCube from '@/Three/CubeSchema';
+import Correction from '@/Three/helper.correction';
+import CubeHelper from '@/Three/helper.cube';
+import SchemaCube from '@/Three/schema.cube';
 import DefaultColors from '@/Three/defaults.color';
-import DefaultsHelper from '@/Three/DefaultsHelper';
-import LineHelper from '@/Three/LineHelper';
-import SchemaLine from '@/Three/LineSchema';
+import DefaultsHelper from '@/Three/helper.defaults';
+import LineHelper from '@/Three/helper.line';
+import SchemaLine from '@/Three/schema.line';
 import { Group, Mesh, Object3D, Vector3 } from 'three';
 
 const StoryCircleChild = (): {

@@ -1,15 +1,15 @@
-import CircleHelper from '@/Three/CircleHelper';
-import GroupHelper from '@/Three/GroupHelper';
+import CircleHelper from '@/Three/helper.circle';
+import GroupHelper from '@/Three/helper.group';
 import { Group, Vector3 } from 'three';
-import StoryCircle from '../Three/SectionStoryCircle';
+import StoryCircle from '../Three/section.storyCircle';
 
 import useStory from '@/composables/useStory';
 import { Story } from '@/models/GraphqlModel';
-import CircularProgressBar from '@/Three/CircularProgressbar';
+import CircularProgressBar from '@/Three/shapes.circularProgressbar';
 import Colors from '@/Three/defaults.color';
-import TextHelper from '@/Three/TextHelper';
-import SchemaCube from '@/Three/CubeSchema';
-import CubeHelper from '@/Three/CubeHelper';
+import TextHelper from '@/Three/helper.text';
+import SchemaCube from '@/Three/schema.cube';
+import CubeHelper from '@/Three/helper.cube';
 import HelperText from '@/Three/defaults.helperText';
 import { StoryData } from '@/services/StoryService';
 

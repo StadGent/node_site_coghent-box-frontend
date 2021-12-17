@@ -1,11 +1,11 @@
 import { MeshBasicMaterial, Mesh, RingGeometry, Vector3, Group } from 'three';
-import ChapeHelper from './Chapehelper';
-import CircleHelper from './CircleHelper';
-import SchemaCircle, { CircleSchema } from './CircleSchema';
-import Correction from './Correction';
+import ChapeHelper from './helper.chape';
+import CircleHelper from './helper.circle';
+import SchemaCircle, { CircleSchema } from './schema.circle';
+import Correction from './helper.correction';
 import Colors from './defaults.color';
 import Layers from './defaults.layers';
-import GroupHelper from './GroupHelper';
+import GroupHelper from './helper.group';
 
 const CircularProgressBar = (): {
   create: (

@@ -5,8 +5,8 @@ import {
   Mesh,
   Vector3,
 } from 'three';
-import BaseChapes from './BaseChapes';
-import ChapeHelper from './Chapehelper';
+import BaseChapes from './shapes.base';
+import ChapeHelper from './helper.chape';
 
 export type CubeParams = {
   width: number;

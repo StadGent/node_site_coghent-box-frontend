@@ -5,13 +5,13 @@
 
 <script lang="ts">
 import useStory from '@/composables/useStory';
-import Tools from '@/Three/Tools';
+import Tools from '@/Three/helper.tools';
 import ThreeService from '@/services/ThreeService';
 import { defineComponent, onMounted, PropType, reactive, Ref, ref, watch } from 'vue';
 import { Mesh, Vector3 } from 'three';
 import { Entity as _Entity, Frame, Story } from '@/models/GraphqlModel';
-import AudioHelper from '@/Three/AudioHelper';
-import VideoHelper from '@/Three/VideoHelper';
+import AudioHelper from '@/Three/helper.audio';
+import VideoHelper from '@/Three/helper.video';
 import PlayBookBuild from '@/Three/playbook.build';
 import StoryPaused from '@/screens/StoryPaused';
 import EndOfSession from '@/screens/EndOfSession';
@@ -21,12 +21,12 @@ import Defaults from '@/Three/defaults.config';
 import Timing from '@/Three/defaults.timing';
 import useFrame from '@/composables/useFrame';
 import Layers from '@/Three/defaults.layers';
-import SchemaCube, { CubeSchema } from '@/Three/CubeSchema';
+import SchemaCube, { CubeSchema } from '@/Three/schema.cube';
 import MoveObject from '@/composables/moveObject';
 import Common from '@/composables/common';
-import LineHelper from '@/Three/LineHelper';
-import GroupHelper from '@/Three/GroupHelper';
-import TextHelper from '@/Three/TextHelper';
+import LineHelper from '@/Three/helper.line';
+import GroupHelper from '@/Three/helper.group';
+import TextHelper from '@/Three/helper.text';
 import useAsset from '@/composables/useAsset';
 import StoryService from '@/services/StoryService';
 
@@ -44,24 +44,27 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const viewport = ref(null);
     const stories = ref(props.stories);
     const currentStory = ref<number>(props.storySelected - 1);
     const chooseStory = ref<boolean>(false);
-    let currentFrame = 0;
-    const viewport = ref(null);
     const videoElement = ref<HTMLVideoElement>();
-    let audio: HTMLAudioElement;
+
+    const playBook = PlayBook();
+    const audioDuration = 120;
+
     let threeSvc: ThreeService;
+    let storyService: StoryService;
+
+    let audio: HTMLAudioElement;
     let audioHelper: {
       DoEvent: (currentTime: number, eventTime: number) => boolean;
     };
+    let currentFrame = 0;
     let interval: ReturnType<typeof setTimeout>;
     let storyData: Array<Story> = [];
     let activeStoryData = reactive<Story>({} as Story);
     let spotlight: Mesh;
-    const playBook = PlayBook();
-    let storyService: StoryService;
-    const audioDuration = 120;
 
     watch(
       () => props.storySelected,
@@ -69,8 +72,12 @@ export default defineComponent({
         console.log('You want to select story', props.storySelected);
         console.log('Can you choose a story?', chooseStory.value);
         storyData = stories.value;
-        if (chooseStory.value && value <= storyData.length && !storyService.storyIsSeen(storyData[value-1].id)) {
-          const _storyData = storyService.getStoryDataOfStory(storyData[value-1].id);
+        if (
+          chooseStory.value &&
+          value <= storyData.length &&
+          !storyService.storyIsSeen(storyData[value - 1].id)
+        ) {
+          const _storyData = storyService.getStoryDataOfStory(storyData[value - 1].id);
           chooseStory.value = false;
           currentStory.value = value - 1;
           currentFrame = _storyData.totalOfFramesSeen;
@@ -167,10 +174,18 @@ export default defineComponent({
           threeSvc.ClearScene();
           threeSvc.AddToScene(spotlight);
           spotlight.scale.set(4, 4, Layers.scene);
-          storyService.updateSeenFramesOfStory(activeStoryData.id,activeStoryData.frames[currentFrame]);
+          storyService.updateSeenFramesOfStory(
+            activeStoryData.id,
+            activeStoryData.frames[currentFrame],
+          );
 
-          const storiesWithTheirProgress = useStory().getStoriesWithTheirProgress(storyData,storyService.getStoryData());
-          threeSvc.AddGroupsToScene(StoryPaused(storyData).Create(storiesWithTheirProgress));
+          const storiesWithTheirProgress = useStory().getStoriesWithTheirProgress(
+            storyData,
+            storyService.getStoryData(),
+          );
+          threeSvc.AddGroupsToScene(
+            StoryPaused(storyData).Create(storiesWithTheirProgress),
+          );
           await MoveObject().startMoving(spotlight, new Vector3(0, 2.5, Layers.scene));
         },
         playBook.lastAction().time + Timing.frameOverview.spotLightMoved,

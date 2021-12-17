@@ -1,8 +1,8 @@
 import { Group, Vector3 } from 'three';
 import DefaultsPauseState from './defaults.pauseState';
-import GroupHelper from './GroupHelper';
-import TextHelper from './TextHelper';
-import { FontParams } from './Textschema';
+import GroupHelper from './helper.group';
+import TextHelper from './helper.text';
+import { FontParams } from './schema.text';
 
 const PauseState2 = (): {
   Create: (name: string) => Group;

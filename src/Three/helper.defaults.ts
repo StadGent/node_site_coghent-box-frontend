@@ -1,7 +1,7 @@
 import { Vector3 } from 'three';
-import CircleHelper from './CircleHelper';
+import CircleHelper from './helper.circle';
 import Defaults from './defaults.config';
-import DefaultLines from './LinesDefault';
+import DefaultLines from './defaults.lines';
 
 const DefaultsHelper = (): {
   Lines: (position: Vector3) => any;

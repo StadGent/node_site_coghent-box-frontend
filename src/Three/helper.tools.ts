@@ -1,12 +1,12 @@
 import Common from '@/composables/common';
 import ThreeService from '@/services/ThreeService';
 import { Vector3, Group } from 'three';
-import CircleHelper from './CircleHelper';
-import SchemaCircle from './CircleSchema';
+import CircleHelper from './helper.circle';
+import SchemaCircle from './schema.circle';
 import Colors from './defaults.color';
 import Layers from './defaults.layers';
-import GroupHelper from './GroupHelper';
-import SchemaLine, { LineSchema } from './LineSchema';
+import GroupHelper from './helper.group';
+import SchemaLine, { LineSchema } from './schema.line';
 
 const Tools = (): {
   Grid: () => Group;

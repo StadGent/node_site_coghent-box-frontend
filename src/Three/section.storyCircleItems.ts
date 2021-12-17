@@ -1,16 +1,16 @@
-import Correction from '@/Three/Correction';
-import CubeHelper from '@/Three/CubeHelper';
-import SchemaCube, { CubeParams, CubeSchema } from '@/Three/CubeSchema';
+import Correction from '@/Three/helper.correction';
+import CubeHelper from '@/Three/helper.cube';
+import SchemaCube, { CubeParams, CubeSchema } from '@/Three/schema.cube';
 import Colors from '@/Three/defaults.color';
 import DefaultColors from '@/Three/defaults.color';
-import DefaultsHelper from '@/Three/DefaultsHelper';
-import GroupHelper from '@/Three/GroupHelper';
-import LineHelper from '@/Three/LineHelper';
-import SchemaLine, { LineSchema } from '@/Three/LineSchema';
-import TextHelper from '@/Three/TextHelper';
-import { FontParams } from '@/Three/Textschema';
+import DefaultsHelper from '@/Three/helper.defaults';
+import GroupHelper from '@/Three/helper.group';
+import LineHelper from '@/Three/helper.line';
+import SchemaLine, { LineSchema } from '@/Three/schema.line';
+import TextHelper from '@/Three/helper.text';
+import { FontParams } from '@/Three/schema.text';
 import { Group, Mesh, Vector3 } from 'three';
-import BaseChapes from './BaseChapes';
+import BaseChapes from './shapes.base';
 import Layers from './defaults.layers';
 
 const StoryCircleItems = (): {

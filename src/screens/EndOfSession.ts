@@ -1,12 +1,12 @@
-import { CubeParams } from '@/Three/CubeSchema';
+import { CubeParams } from '@/Three/schema.cube';
 import Colors from '@/Three/defaults.color';
 import HelperText from '@/Three/defaults.helperText';
 import customText from '@/Three/defaults.text';
-import GroupHelper from '@/Three/GroupHelper';
-import Spot from '@/Three/Spotlight';
-import TextHelper from '@/Three/TextHelper';
-import { FontParams } from '@/Three/Textschema';
-import { Group, MeshBasicMaterial, Vector3 } from 'three';
+import GroupHelper from '@/Three/helper.group';
+import Spot from '@/Three/shapes.spotlight';
+import TextHelper from '@/Three/helper.text';
+import { FontParams } from '@/Three/schema.text';
+import { Group, Vector3 } from 'three';
 
 const EndOfSession = (
   position: Vector3,

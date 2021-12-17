@@ -1,6 +1,6 @@
 import { Vector3, Mesh } from 'three';
-import ChapeHelper from './Chapehelper';
-import DefaultsHelper from './DefaultsHelper';
+import ChapeHelper from './helper.chape';
+import DefaultsHelper from './helper.defaults';
 
 const Correction = (): {
   EndOfLineObjectPositionsRight: (index: number) => Vector3;

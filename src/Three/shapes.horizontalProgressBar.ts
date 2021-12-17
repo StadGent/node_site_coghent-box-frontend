@@ -1,11 +1,11 @@
 import { Vector3, Group, Mesh } from 'three';
-import CircleHelper from './CircleHelper';
-import SchemaCircle from './CircleSchema';
-import CubeHelper from './CubeHelper';
-import SchemaCube from './CubeSchema';
+import CircleHelper from './helper.circle';
+import SchemaCircle from './schema.circle';
+import CubeHelper from './helper.cube';
+import SchemaCube from './schema.cube';
 import Colors from './defaults.color';
 import Layers from './defaults.layers';
-import GroupHelper from './GroupHelper';
+import GroupHelper from './helper.group';
 
 const HorizontalProgressBar = (): {
   create: (

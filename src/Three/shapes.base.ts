@@ -13,7 +13,7 @@ import {
   LineDashedMaterialParameters,
   VideoTexture,
 } from 'three';
-import { CubeParams } from './CubeSchema';
+import { CubeParams } from './schema.cube';
 import DefaultColors from './defaults.color';
 
 const BaseChapes = (): {

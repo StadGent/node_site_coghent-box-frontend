@@ -3,17 +3,17 @@ import useStory from '@/composables/useStory';
 import { Story } from '@/models/GraphqlModel';
 import ThreeService from '@/services/ThreeService';
 import { Color, Group, Vector3 } from 'three';
-import CircleHelper from './CircleHelper';
-import { CircleSchema } from './CircleSchema';
-import CircularProgressBar from './CircularProgressbar';
+import CircleHelper from './helper.circle';
+import { CircleSchema } from './schema.circle';
+import CircularProgressBar from './shapes.circularProgressbar';
 import Colors from './defaults.color';
 import Layers from './defaults.layers';
 import Measurements from './defaults.measurements';
 import Timing from './defaults.timing';
-import GroupHelper from './GroupHelper';
-import DefaultLines from './LinesDefault';
-import StoryCircle from './SectionStoryCircle';
-import StoryCircleItems from './SectionStoryCircleItems';
+import GroupHelper from './helper.group';
+import DefaultLines from './defaults.lines';
+import StoryCircle from './section.storyCircle';
+import StoryCircleItems from './section.storyCircleItems';
 
 const useStoryCircle = (
   threeService: ThreeService,

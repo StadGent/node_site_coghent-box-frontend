@@ -7,9 +7,9 @@ import {
   BufferGeometry,
   LineBasicMaterial,
 } from 'three';
-import BaseChapes from './BaseChapes';
-import ChapeHelper from './Chapehelper';
-import CircleHelper from './CircleHelper';
+import BaseChapes from './shapes.base';
+import ChapeHelper from './helper.chape';
+import CircleHelper from './helper.circle';
 import DefaultColors from './defaults.color';
 import Layers from './defaults.layers';
 

@@ -4,15 +4,15 @@ import FrameOverview from '@/screens/FrameOverview';
 import ThreeService from '@/services/ThreeService';
 import { BoxBufferGeometry, Group, Mesh, Object3D, Vector3 } from 'three';
 import Layers from './defaults.layers';
-import HorizontalProgressBar from './HorizontalProgressBar';
+import HorizontalProgressBar from './shapes.horizontalProgressBar';
 import { PlayBookFunctions } from '@/composables/playbook';
 import Timing from './defaults.timing';
 import { Frame as modelFrame } from '@/models/GraphqlModel';
 import Common from '@/composables/common';
 import MoveObject from '@/composables/moveObject';
 import Defaults from './defaults.config';
-import LineHelper from './LineHelper';
-import GroupHelper from './GroupHelper';
+import LineHelper from './helper.line';
+import GroupHelper from './helper.group';
 import useFrame from '@/composables/useFrame';
 
 const useFrameAssetOverview = (

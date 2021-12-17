@@ -1,9 +1,9 @@
 import { CircleGeometry, Mesh, MeshBasicMaterial, Vector3 } from 'three';
-import BaseChapes from './BaseChapes';
-import { CirclePoint, CircleSchema } from './CircleSchema';
-import { CubeSchema } from './CubeSchema';
+import BaseChapes from './shapes.base';
+import { CirclePoint, CircleSchema } from './schema.circle';
+import { CubeSchema } from './schema.cube';
 import Colors from './defaults.color';
-import { TextSchema } from './Textschema';
+import { TextSchema } from './schema.text';
 
 const Defaults = (): {
   pixelInMeter: () => number;

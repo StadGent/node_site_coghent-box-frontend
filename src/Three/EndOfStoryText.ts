@@ -1,7 +1,7 @@
 import { Group } from 'three';
 import DefaultsPauseState from './defaults.pauseState';
-import GroupHelper from './GroupHelper';
-import TextHelper from './TextHelper';
+import GroupHelper from './helper.group';
+import TextHelper from './helper.text';
 
 const EndOfStoryText = (): {
   Create: (currentStory: string, name: string) => Group;

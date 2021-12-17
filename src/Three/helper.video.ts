@@ -1,6 +1,6 @@
 import { Mesh, Vector3 } from 'three';
 import { Ref } from 'vue-demi';
-import BaseChapes from './BaseChapes';
+import BaseChapes from './shapes.base';
 
 const VideoHelper = (): {
   videoElementAsCube:(video: Ref< HTMLVideoElement>,src: string, dimensions: Vector3) => Mesh;

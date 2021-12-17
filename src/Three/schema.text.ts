@@ -1,8 +1,8 @@
 import { Mesh, MeshBasicMaterial, BoxBufferGeometry, Vector3 } from 'three';
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
-import ChapeHelper from './Chapehelper';
-import { CubeParams } from './CubeSchema';
+import ChapeHelper from './helper.chape';
+import { CubeParams } from './schema.cube';
 import DefaultColors from './defaults.color';
 import Layers from './defaults.layers';
 

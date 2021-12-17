@@ -6,10 +6,10 @@ import {
   MeshBasicMaterial,
   Vector3,
 } from 'three';
-import BaseChapes from './BaseChapes';
-import ChapeHelper from './Chapehelper';
+import BaseChapes from './shapes.base';
+import ChapeHelper from './helper.chape';
 import DefaultColors from './defaults.color';
-import GroupHelper from './GroupHelper';
+import GroupHelper from './helper.group';
 
 export type LineSchema = {
   positions: Array<Vector3>;

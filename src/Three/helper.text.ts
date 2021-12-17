@@ -1,9 +1,9 @@
 import { Vector3, Mesh, Group } from 'three';
-import CubeHelper from './CubeHelper';
-import SchemaCube, { CubeParams } from './CubeSchema';
+import CubeHelper from './helper.cube';
+import SchemaCube, { CubeParams } from './schema.cube';
 import DefaultColors from './defaults.color';
-import GroupHelper from './GroupHelper';
-import SchemaText, { FontParams } from './Textschema';
+import GroupHelper from './helper.group';
+import SchemaText, { FontParams } from './schema.text';
 
 const TextHelper = (): {
   CreateTextFromRecord: (words: Record<string, Vector3>, color?: number) => Array<Mesh>;

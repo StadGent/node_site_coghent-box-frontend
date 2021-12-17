@@ -1,8 +1,8 @@
 import { Group, Vector3 } from 'three';
-import SchemaCube, { CubeParams } from './CubeSchema';
-import GroupHelper from './GroupHelper';
-import TextHelper from './TextHelper';
-import { FontParams } from './Textschema';
+import SchemaCube, { CubeParams } from './schema.cube';
+import GroupHelper from './helper.group';
+import TextHelper from './helper.text';
+import { FontParams } from './schema.text';
 
 const DefaultsPauseState = (): {
   topTextState1: Record<string, Vector3>;

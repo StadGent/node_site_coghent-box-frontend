@@ -1,4 +1,4 @@
-import { CirclePoint, CircleSchema } from './CircleSchema';
+import { CirclePoint, CircleSchema } from './schema.circle';
 import { Vector3 } from 'three';
 
 const CircleHelper = (): {

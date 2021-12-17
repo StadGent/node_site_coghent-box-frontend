@@ -3,12 +3,12 @@ import { PlayBookFunctions } from '@/composables/playbook';
 import { Story } from '@/models/GraphqlModel';
 import ThreeService from '@/services/ThreeService';
 import { Mesh, Vector3 } from 'three';
-import AudioHelper from './AudioHelper';
+import AudioHelper from './helper.audio';
 import Layers from './defaults.layers';
 import Timing from './defaults.timing';
-import Spot from './Spotlight';
-import useFrameAssetOverview from './useFrameAssetOverview.playbook';
-import useStoryCircle from './useStoryCircle.playbook';
+import Spot from './shapes.spotlight';
+import useFrameAssetOverview from './playbook.frameAssetOverview';
+import useStoryCircle from './playbook.storyCircle';
 import EndOfSession from '@/screens/EndOfSession';
 import Measurements from './defaults.measurements';
 

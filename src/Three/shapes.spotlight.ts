@@ -1,6 +1,6 @@
 import { Mesh, Vector3 } from 'three';
-import CircleHelper from './CircleHelper';
-import SchemaCircle from './CircleSchema';
+import CircleHelper from './helper.circle';
+import SchemaCircle from './schema.circle';
 import Colors from './defaults.color';
 import Layers from './defaults.layers';
 

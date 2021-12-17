@@ -8,10 +8,10 @@ import {
   MeshBasicMaterial,
   BoxGeometry,
 } from 'three';
-import BaseChapes from './BaseChapes';
+import BaseChapes from './shapes.base';
 import DefaultColors from './defaults.color';
 import Layers from './defaults.layers';
-import { LineSchema } from './LineSchema';
+import { LineSchema } from './schema.line';
 
 const LineHelper = (): {
   GetEndOfLine: (

@@ -1,14 +1,14 @@
-import SchemaCircle, { CircleSchema } from '@/Three/CircleSchema';
-import SchemaCube, { CubeParams } from '@/Three/CubeSchema';
+import SchemaCircle, { CircleSchema } from '@/Three/schema.circle';
+import SchemaCube, { CubeParams } from '@/Three/schema.cube';
 import DefaultColors from '@/Three/defaults.color';
-import GroupHelper from '@/Three/GroupHelper';
-import TextHelper from '@/Three/TextHelper';
-import { FontParams } from '@/Three/Textschema';
+import GroupHelper from '@/Three/helper.group';
+import TextHelper from '@/Three/helper.text';
+import { FontParams } from '@/Three/schema.text';
 import { Group, Mesh, Vector3 } from 'three';
-import CubeHelper from './CubeHelper';
+import CubeHelper from './helper.cube';
 import Layers from './defaults.layers';
 import customText from './defaults.text';
-import CircularprogressBar from '@/Three/CircularProgressbar';
+import CircularprogressBar from '@/Three/shapes.circularProgressbar';
 import Colors from '@/Three/defaults.color';
 import Measurements from './defaults.measurements';
 

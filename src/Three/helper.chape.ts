@@ -8,8 +8,8 @@ import {
   LineBasicMaterial,
   BoxGeometry,
 } from 'three';
-import CircleHelper from './CircleHelper';
-import { CirclePoint } from './CircleSchema';
+import CircleHelper from './helper.circle';
+import { CirclePoint } from './schema.circle';
 
 const ChapeHelper = (): {
   SetPosition: (

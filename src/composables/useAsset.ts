@@ -1,13 +1,13 @@
 import { Metadata } from '@/models/CollectionModel';
 import { Asset, ComponentMetadata, Story } from '@/models/GraphqlModel';
 import ThreeService from '@/services/ThreeService';
-import CubeHelper from '@/Three/CubeHelper';
-import { CubeParams } from '@/Three/CubeSchema';
+import CubeHelper from '@/Three/helper.cube';
+import { CubeParams } from '@/Three/schema.cube';
 import Layers from '@/Three/defaults.layers';
 import Measurements from '@/Three/defaults.measurements';
-import GroupHelper from '@/Three/GroupHelper';
-import TextHelper from '@/Three/TextHelper';
-import { FontParams } from '@/Three/Textschema';
+import GroupHelper from '@/Three/helper.group';
+import TextHelper from '@/Three/helper.text';
+import { FontParams } from '@/Three/schema.text';
 import { BoxBufferGeometry, Mesh, Vector3, Group, BoxGeometry } from 'three';
 import MoveObject from './moveObject';
 
