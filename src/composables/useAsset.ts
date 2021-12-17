@@ -25,7 +25,6 @@ const useAsset = (
   zoom: (
     assetImageCube: Mesh<BoxBufferGeometry, any>,
     position: Vector3,
-    spotlight: Mesh,
     scale: number,
   ) => void;
   setInactive: (assetImageCube: Mesh<BoxBufferGeometry, any>) => void;
@@ -86,12 +85,9 @@ const useAsset = (
   const zoom = (
     assetImageCube: Mesh<BoxBufferGeometry, any>,
     position: Vector3,
-    spotlight: Mesh,
     scale: number,
   ) => {
     assetImageCube.position.set(position.x, position.y, position.z);
-    // MoveObject().move(assetImageCube, new Vector3(assetImageCube.position.x, 0, assetImageCube.position.z))
-    moveSpotlightToAsset(spotlight, assetImageCube, scale);
     assetImageCube.material.opacity = 1;
     assetImageCube.scale.set(0, 0, 0);
     assetImageCube.scale.set(scale, scale, Layers.presentation);

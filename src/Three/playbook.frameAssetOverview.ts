@@ -82,7 +82,12 @@ const useFrameAssetOverview = (
     );
   };
 
-  const resetImage = (asset: Object3D<Event>, scale:number, imageCube: Group, currentAsset: number) => {
+  const resetImage = (
+    asset: Object3D<Event>,
+    scale: number,
+    imageCube: Group,
+    currentAsset: number,
+  ) => {
     threeService.state.scene.remove(imageCube);
     asset.scale.set(0, 0, 0);
     asset.scale.set(scale, scale, 0);
@@ -109,11 +114,19 @@ const useFrameAssetOverview = (
     const zoneDimensions = ZoneHelper(threeService.state.sceneDimensions).zoneDimensions(
       Defaults().screenZones(),
     );
-    let scale = zoneDimensions.width / asset.geometry.parameters.width - Defaults().scaleReducer();
-    if(Common().firstIsBiggest(asset.geometry.parameters.height, asset.geometry.parameters.width)){
-      scale = zoneDimensions.height / (asset.geometry.parameters.height - 1) - Defaults().scaleReducer();
-      while(scale* asset.geometry.parameters.width > zoneDimensions.width){
-        scale -= 0.05
+    let scale =
+      zoneDimensions.width / asset.geometry.parameters.width - Defaults().scaleReducer();
+    if (
+      Common().firstIsBiggest(
+        asset.geometry.parameters.height,
+        asset.geometry.parameters.width,
+      )
+    ) {
+      scale =
+        zoneDimensions.height / (asset.geometry.parameters.height - 1) -
+        Defaults().scaleReducer();
+      while (scale * asset.geometry.parameters.width > zoneDimensions.width) {
+        scale -= 0.05;
       }
       scale = scale - Defaults().scaleReducer();
     }
@@ -129,7 +142,6 @@ const useFrameAssetOverview = (
     useAsset(threeService).zoom(
       asset as Mesh<BoxBufferGeometry, any>,
       zoomSettings.zoomPosition,
-      spotlight,
       zoomSettings.scale,
     );
     const collections = useAsset(threeService).getCollections(assets[currentAsset]);
@@ -181,7 +193,7 @@ const useFrameAssetOverview = (
         if (relationMetadata.timestamp_start) {
           playBook.addToPlayBook(
             async () => {
-              if(Defaults().showZonesInOverview()){
+              if (Defaults().showZonesInOverview()) {
                 Tools().displayZones(threeService, zones);
               }
               await useAsset(threeService).moveSpotlightToAsset(
@@ -207,6 +219,7 @@ const useFrameAssetOverview = (
           );
           playBook.addToPlayBook(
             () => {
+              spotlight.scale.set(1,1,0);
               setAssetsInactive(asset as Mesh<BoxBufferGeometry, any>);
               zoomAndHighlightAsset(
                 asset as Mesh<BoxBufferGeometry, any>,
@@ -218,10 +231,14 @@ const useFrameAssetOverview = (
               Timing.frameOverview.spotLightMoved,
             `Zoom and highlight asset + set other assets inactive`,
           );
-
           playBook.addToPlayBook(
             async () => {
-              resetImage(asset as Object3D<Event>, relationMetadata.scale,highlightWithMetaInfo, index);
+              resetImage(
+                asset as Object3D<Event>,
+                relationMetadata.scale,
+                highlightWithMetaInfo,
+                index,
+              );
               await useAsset(threeService).moveSpotlightToAsset(
                 spotlight,
                 asset as Mesh<BoxBufferGeometry, any>,
