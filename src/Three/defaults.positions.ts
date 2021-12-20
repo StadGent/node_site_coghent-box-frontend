@@ -5,6 +5,7 @@ const Positions = (): {
   StoryPausePositions: () => Array<Vector3>;
   CenterWordPositions: () => Array<Vector3>;
   QRCodeScannerImage: Vector3;
+  endOfSession: () => Vector3;
 } => {
   const CenterWordPositions = () => {
     return [
@@ -28,10 +29,13 @@ const Positions = (): {
 
   const QRCodeScannerImage = new Vector3(0,-1,Layers.presentation);
 
+  const endOfSession = () => new Vector3(18,2,0); 
+
   return {
     StoryPausePositions,
     CenterWordPositions,
     QRCodeScannerImage,
+    endOfSession,
   }
 };
 

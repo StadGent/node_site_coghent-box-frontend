@@ -11,31 +11,22 @@ import StoryService from '@/services/StoryService';
 
 import { defineComponent, onMounted, PropType, reactive, Ref, ref, watch } from 'vue';
 import { Mesh, Vector3 } from 'three';
-import { Entity as _Entity, Frame, Story } from '@/models/GraphqlModel';
+import { Entity as _Entity, Story } from '@/models/GraphqlModel';
 
 import Tools from '@/Three/helper.tools';
 import AudioHelper from '@/Three/helper.audio';
 import VideoHelper from '@/Three/helper.video';
 import ZoneHelper, { Zone } from '@/Three/helper.zones';
-import LineHelper from '@/Three/helper.line';
-import GroupHelper from '@/Three/helper.group';
-import TextHelper from '@/Three/helper.text';
 
 import Defaults from '@/Three/defaults.config';
-import Colors from '@/Three/defaults.color';
 import Timing from '@/Three/defaults.timing';
 import Layers from '@/Three/defaults.layers';
 
 import PlayBookBuild from '@/Three/playbook.build';
-import StoryPaused from '@/screens/StoryPaused';
-import EndOfSession from '@/screens/EndOfSession';
-import PlayBook from '@/composables/playbook';
-import useFrame from '@/composables/useFrame';
-import MoveObject from '@/composables/moveObject';
-import Common from '@/composables/common';
-import useAsset from '@/composables/useAsset';
 
-import SchemaCube, { CubeSchema } from '@/Three/schema.cube';
+import PlayBook from '@/composables/playbook';
+
+import Positions from '@/Three/defaults.positions';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -146,6 +137,7 @@ export default defineComponent({
 
       spotlight = PlayBookBuild(
         threeSvc,
+        storyService,
         playBook,
         spotlight,
         activeStoryData,
@@ -163,12 +155,21 @@ export default defineComponent({
 
       const framePlaybook = PlayBook();
 
-      PlayBookBuild(threeSvc, framePlaybook, spotlight, activeStoryData).storyCircle(
-        currentFrame,
-        storyService.getStoryColor(activeStoryData.id),
-      );
+      PlayBookBuild(
+        threeSvc,
+        storyService,
+        framePlaybook,
+        spotlight,
+        activeStoryData,
+      ).storyCircle(currentFrame, storyService.getStoryColor(activeStoryData.id));
 
-      PlayBookBuild(threeSvc, framePlaybook, spotlight, activeStoryData).frameOverview(
+      PlayBookBuild(
+        threeSvc,
+        storyService,
+        framePlaybook,
+        spotlight,
+        activeStoryData,
+      ).frameOverview(
         zones,
         currentFrame,
         storyService.getStoryColor(activeStoryData.id),
@@ -178,27 +179,41 @@ export default defineComponent({
 
       playBook.addToPlayBook(
         async () => {
-          chooseStory.value = true;
-          audio.pause();
-          threeSvc.ClearScene();
-          threeSvc.AddToScene(spotlight);
-          spotlight.scale.set(4, 4, Layers.scene);
-          storyService.updateSeenFramesOfStory(
-            activeStoryData.id,
-            activeStoryData.frames[currentFrame],
-          );
+          PlayBookBuild(
+            threeSvc,
+            storyService,
+            framePlaybook,
+            spotlight,
+            activeStoryData,
+          ).storyData(storyService, activeStoryData, currentFrame);
+          if (storyService.isEndOfSession()) {
+            PlayBookBuild(
+              threeSvc,
+              storyService,
+              framePlaybook,
+              spotlight,
+              activeStoryData,
+            ).endOfSession(Positions().endOfSession());
+          } else {
+            chooseStory.value = true;
+            audio.pause();
+            threeSvc.ClearScene();
+            threeSvc.AddToScene(spotlight);
+            spotlight.scale.set(4, 4, Layers.scene);
 
-          const storiesWithTheirProgress = useStory().getStoriesWithTheirProgress(
-            storyData,
-            storyService.getStoryData(),
-          );
-          threeSvc.AddGroupsToScene(
-            StoryPaused(storyData).Create(storiesWithTheirProgress),
-          );
-          await MoveObject().startMoving(spotlight, new Vector3(0, 2.5, Layers.scene));
+            PlayBookBuild(
+              threeSvc,
+              storyService,
+              framePlaybook,
+              spotlight,
+              activeStoryData,
+            ).storyPaused(storyData);
+          }
         },
-        playBook.lastAction().time + Timing.frameOverview.spotLightMoved + Timing.delayNextCycle,
-        `Display story overview.`,
+        playBook.lastAction().time +
+          Timing.frameOverview.spotLightMoved +
+          Timing.delayNextCycle,
+        `Update storyData & show endOfSessions screen or the storyOverview`,
       );
 
       audio = AudioHelper().setAudioTrack(activeStoryData, currentFrame, audioFile);
@@ -230,7 +245,9 @@ export default defineComponent({
 
     onMounted(() => {
       threeSvc = new ThreeService(viewport);
-      const zonehelper = ZoneHelper(new Vector3(threeSvc.state.width,threeSvc.state.height,0));
+      const zonehelper = ZoneHelper(
+        new Vector3(threeSvc.state.width, threeSvc.state.height, 0),
+      );
       zones = zonehelper.createZonesXAxis(Defaults().screenZones());
 
       threeSvc.Animate();

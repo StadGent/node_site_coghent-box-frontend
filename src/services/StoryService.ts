@@ -30,45 +30,52 @@ export default class StoryService {
     this.assignColorToStories();
   }
 
-  getStoryData(){
+  getStoryData() {
     return this.storyData;
   }
 
-  getTotalOfSeenFrames(){
+  getTotalOfSeenFrames() {
     return this.totalOfSeenFrames;
   }
 
-  getStoryDataOfStory(storyId: string){
-    return this.storyData.filter(data => data.storyId == storyId)[0];
+  getStoryDataOfStory(storyId: string) {
+    return this.storyData.filter((data) => data.storyId == storyId)[0];
   }
 
-  getStoryColor(storyId: string){
-    return this.storyData.filter(data => data.storyId == storyId)[0].storyColor;
+  getStoryColor(storyId: string) {
+    return this.storyData.filter((data) => data.storyId == storyId)[0].storyColor;
   }
 
   updateSeenFramesOfStory(currentStoryId: string, seenFrame: Frame) {
-    if(this.storyData.length > 0 && seenFrame != undefined){
-      const storyToUpdate = this.storyData.filter(story => story.storyId === currentStoryId)[0];
-      if(!this.itemIsInRecord(currentStoryId, seenFrame)){
+    if (this.storyData.length > 0 && seenFrame != undefined) {
+      const storyToUpdate = this.storyData.filter(
+        (story) => story.storyId === currentStoryId,
+      )[0];
+      if (!this.itemIsInRecord(currentStoryId, seenFrame)) {
         this.totalOfSeenFrames++;
         this.addTimestampToSeenFrame(currentStoryId, seenFrame);
         storyToUpdate['totalOfFramesSeen'] = Object.keys(storyToUpdate.seenFrames).length;
-      }      
+      }
       storyToUpdate['storySeen'] = this.IHaveSeenTheStory(currentStoryId);
       storyToUpdate['storyColor'] = this.setStoryColor(storyToUpdate);
     }
+    return this.storyData;
   }
 
-  storyIsSeen(storyId: string){
-    return this.storyData.filter(data => data.storyId == storyId)[0].storySeen;
+  storyIsSeen(storyId: string) {
+    return this.storyData.filter((data) => data.storyId == storyId)[0].storySeen;
   }
 
-  private itemIsInRecord(storyId: string, frame:Frame){
-    const rec = this.getStoryDataOfStory(storyId).seenFrames
+  isEndOfSession() {
+    return this.totalOfSeenFrames == Defaults().maxFrames()
+  }
+
+  private itemIsInRecord(storyId: string, frame: Frame) {
+    const rec = this.getStoryDataOfStory(storyId).seenFrames;
     let exists = false;
-    for(const key in rec){
-      if(frame == rec[key]){
-         exists = true;
+    for (const key in rec) {
+      if (frame == rec[key]) {
+        exists = true;
       }
     }
     return exists;
@@ -79,24 +86,24 @@ export default class StoryService {
     this.getStoryDataOfStory(storyId).seenFrames[timestamp] = frame;
   }
 
-  private setStoryColor(storyData: StoryData){
+  private setStoryColor(storyData: StoryData) {
     let color = storyData.storyColor;
-    if(storyData.storySeen){
+    if (storyData.storySeen) {
       color = Colors().grey;
     }
     return color;
   }
 
-  private assignColorToStories(){
-    if(this.storyData.length >0){
+  private assignColorToStories() {
+    if (this.storyData.length > 0) {
       for (let index = 0; index < this.storyData.length; index++) {
-        this.storyData[index]['storyColor'] = Defaults().StoryColors()[index] 
+        this.storyData[index]['storyColor'] = Defaults().StoryColors()[index];
       }
     }
   }
 
-  private IHaveSeenTheStory(storyId: string){
-    const story =this.storyData.filter(story => story.storyId === storyId)?.[0]
+  private IHaveSeenTheStory(storyId: string) {
+    const story = this.storyData.filter((story) => story.storyId === storyId)?.[0];
     return story.totalOfFramesSeen === story.totalOfFrames;
   }
 
@@ -109,7 +116,7 @@ export default class StoryService {
     }
   }
 
-  private createStoryDataObject (story: Story, index: number) {
+  private createStoryDataObject(story: Story, index: number) {
     return {
       storyId: story.id,
       totalOfFrames: story.frames.length,
@@ -118,7 +125,7 @@ export default class StoryService {
       storySeen: false,
       storyColor: Colors().white,
       pausedPosition: Positions().StoryPausePositions()[index],
-    } as StoryData
+    } as StoryData;
   }
 
   private addStoryIdToStoryIds(story: Story) {
