@@ -61,6 +61,7 @@ export default defineComponent({
       DoEvent: (currentTime: number, eventTime: number) => boolean;
     };
     let currentFrame = 0;
+    let startSession;
     let interval: ReturnType<typeof setTimeout>;
     let storyData: Array<Story> = [];
     let activeStoryData = reactive<Story>({} as Story);
@@ -92,19 +93,36 @@ export default defineComponent({
       () => props.stories,
       (value) => {
         stories.value = value;
-
         // playStartVideo();
-        setup();
+        
       },
     );
 
     const setup = async () => {
-      if (stories.value) {
+      spotlight = PlayBookBuild(
+          threeSvc,
+          storyService,
+          playBook,
+          spotlight,
+          activeStoryData,
+        ).initialSpotLight();
+
+        startSession =PlayBookBuild(
+          threeSvc,
+          storyService,
+          playBook,
+          spotlight,
+          activeStoryData,
+        ).startOfSession();
+
+      //FIXME:
+      setTimeout(() => startSession = true, 1200)
+      if (stories.value && startSession) {
         audioHelper = AudioHelper();
         storyData = stories.value;
         storyService = new StoryService(storyData);
         console.log('StoryData', storyService.getStoryData());
-        buildStory(currentStory.value, '/Audio/example.mp3');
+        buildStory(currentStory.value, '/Audio/example.mp3')
       }
     };
 
@@ -137,14 +155,6 @@ export default defineComponent({
       threeSvc.ClearScene();
       activeStoryData = useStory().setActiveStory(storyData, currentStory);
 
-      spotlight = PlayBookBuild(
-        threeSvc,
-        storyService,
-        playBook,
-        spotlight,
-        activeStoryData,
-      ).initialSpotLight();
-
       playBook.addToPlayBook(
         () => {
           audio.pause();
@@ -155,72 +165,68 @@ export default defineComponent({
         `Starting new audio for frame`,
       );
 
-      playBook.addToPlayBook(() => {
-        scanQrCode(threeSvc, spotlight);
-      }, playBook.lastAction().time, 'Scan your qr code')
-
       const framePlaybook = PlayBook();
 
-      // PlayBookBuild(
-      //   threeSvc,
-      //   storyService,
-      //   framePlaybook,
-      //   spotlight,
-      //   activeStoryData,
-      // ).storyCircle(currentFrame, storyService.getStoryColor(activeStoryData.id));
+      PlayBookBuild(
+        threeSvc,
+        storyService,
+        framePlaybook,
+        spotlight,
+        activeStoryData,
+      ).storyCircle(currentFrame, storyService.getStoryColor(activeStoryData.id));
 
-      // PlayBookBuild(
-      //   threeSvc,
-      //   storyService,
-      //   framePlaybook,
-      //   spotlight,
-      //   activeStoryData,
-      // ).frameOverview(
-      //   zones,
-      //   currentFrame,
-      //   storyService.getStoryColor(activeStoryData.id),
-      //   audioDuration,
-      // );
-      // playBook.mergeActionsWithPlaybook(framePlaybook.getSortedPlayBookActions());
+      PlayBookBuild(
+        threeSvc,
+        storyService,
+        framePlaybook,
+        spotlight,
+        activeStoryData,
+      ).frameOverview(
+        zones,
+        currentFrame,
+        storyService.getStoryColor(activeStoryData.id),
+        audioDuration,
+      );
+      playBook.mergeActionsWithPlaybook(framePlaybook.getSortedPlayBookActions());
 
-      // playBook.addToPlayBook(
-      //   async () => {
-      //     PlayBookBuild(
-      //       threeSvc,
-      //       storyService,
-      //       framePlaybook,
-      //       spotlight,
-      //       activeStoryData,
-      //     ).storyData(storyService, activeStoryData, currentFrame);
-      //     if (storyService.isEndOfSession()) {
-      //       PlayBookBuild(
-      //         threeSvc,
-      //         storyService,
-      //         framePlaybook,
-      //         spotlight,
-      //         activeStoryData,
-      //       ).endOfSession(Positions().endOfSession());
-      //     } else {
-      //       chooseStory.value = true;
-      //       audio.pause();
-      //       threeSvc.ClearScene();
-      //       threeSvc.AddToScene(spotlight);
-      //       spotlight.scale.set(4, 4, Layers.scene);
+      playBook.addToPlayBook(
+        async () => {
+          PlayBookBuild(
+            threeSvc,
+            storyService,
+            framePlaybook,
+            spotlight,
+            activeStoryData,
+          ).storyData(storyService, activeStoryData, currentFrame);
+          if (storyService.isEndOfSession()) {
+            PlayBookBuild(
+              threeSvc,
+              storyService,
+              framePlaybook,
+              spotlight,
+              activeStoryData,
+            ).endOfSession(Positions().endOfSession());
+          } else {
+            chooseStory.value = true;
+            audio.pause();
+            threeSvc.ClearScene();
+            threeSvc.AddToScene(spotlight);
+            spotlight.scale.set(4, 4, Layers.scene);
 
-      //       PlayBookBuild(
-      //         threeSvc,
-      //         storyService,
-      //         framePlaybook,
-      //         spotlight,
-      //         activeStoryData,
-      //       ).storyPaused(storyData);
-      //     }
-      //   },
-      //   playBook.lastAction().time +
-      //     Timing.frameOverview.spotLightMoved +
-      //     Timing.delayNextCycle,
-      //   `Update storyData & show endOfSessions screen or the storyOverview`,
-      // );
+            PlayBookBuild(
+              threeSvc,
+              storyService,
+              framePlaybook,
+              spotlight,
+              activeStoryData,
+            ).storyPaused(storyData);
+          }
+        },
+        playBook.lastAction().time +
+          Timing.frameOverview.spotLightMoved +
+          Timing.delayNextCycle,
+        `Update storyData & show endOfSessions screen or the storyOverview`,
+      );
 
       audio = AudioHelper().setAudioTrack(activeStoryData, currentFrame, audioFile);
       audio.play();
@@ -249,20 +255,13 @@ export default defineComponent({
       }, 7000);
     };
 
-    const scanQrCode = (threeService: ThreeService, spotlight: Mesh) => {
-      threeService.AddToScene(spotlight);
-      spotlight.scale.set(4,4,0);
-      spotlight.position.set(Positions().QRCodeScanner().x,Positions().QRCodeScanner().y,Positions().QRCodeScanner().z);
-      threeSvc.AddGroupsToScene(ScanQR(new Vector3(Positions().QRCodeScanner().x,Positions().QRCodeScanner().y,Positions().QRCodeScanner().z)).create());
-    };
-
     onMounted(() => {
       threeSvc = new ThreeService(viewport);
       const zonehelper = ZoneHelper(
         new Vector3(threeSvc.state.width, threeSvc.state.height, 0),
       );
       zones = zonehelper.createZonesXAxis(Defaults().screenZones());
-
+      setup();
       threeSvc.Animate();
     });
 

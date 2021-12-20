@@ -21,8 +21,8 @@ const ScanQR = (position: Vector3): {
     const groups: Array<Group> = [];
     const textWithIcon = TextHelper().displayTextFromRecordWithIcon(HelperText().scanYourTicket(position),Colors().white,'',new Vector3(position.x,position.y - 1,position.z),new Vector3(2,2,0));
     const direction = arrow();
-    GroupHelper().AddObjectsTogroups(textWithIcon, groups)
-    GroupHelper().AddObjectsTogroups([direction], groups)
+    GroupHelper().AddObjectsTogroups(textWithIcon, groups);
+    GroupHelper().AddObjectsTogroups([direction], groups);
     return groups;
   };
 

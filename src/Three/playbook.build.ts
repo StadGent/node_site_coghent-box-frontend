@@ -16,6 +16,7 @@ import StoryService, { StoryData } from '@/services/StoryService';
 import MoveObject from '@/composables/moveObject';
 import useStory from '@/composables/useStory';
 import StoryPaused from '@/screens/StoryPaused';
+import useStartOfSession from './playbook.startOfSession';
 
 const PlayBookBuild = (
   threeService: ThreeService,
@@ -47,6 +48,7 @@ const PlayBookBuild = (
     storyData: Array<StoryData>;
     endOfSession: true | false;
   };
+  startOfSession: () => true | false;
 } => {
   const updateAudio = (
     audio: HTMLAudioElement,
@@ -103,11 +105,6 @@ const PlayBookBuild = (
       new Vector3(0, 0, Layers.scene),
       Measurements().spotLight.radius,
     );
-    playBook.addToPlayBook(
-      () => threeService.AddToScene(spotlight),
-      0,
-      `Add initial spotLight to the scene`,
-    );
     threeService.AddToScene(spotlight);
     return spotlight;
   };
@@ -143,6 +140,12 @@ const PlayBookBuild = (
     };
   };
 
+  const startOfSession = () => {
+    useStartOfSession(threeService, spotlight).create();
+
+    return false;
+  };
+
   return {
     updateAudio,
     storyCircle,
@@ -151,6 +154,7 @@ const PlayBookBuild = (
     endOfSession,
     storyPaused,
     storyData,
+    startOfSession,
   };
 };
 
