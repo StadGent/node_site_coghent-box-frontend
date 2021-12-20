@@ -113,7 +113,7 @@ const useAsset = (
     }
     metadataInfo.position.set(
       (object.position.x - rest / 2) * scale,
-      (object.position.y + object.geometry.parameters.height / 2) * scale,
+      (object.position.y + object.geometry.parameters.height / 2),
       object.position.z,
     );
     return metadataInfo;
