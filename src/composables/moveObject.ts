@@ -3,7 +3,7 @@ import { Mesh, Vector3 } from 'three';
 
 const MoveObject = (): {
   move: (object: Mesh, toPosition: Vector3) => void;
-  startMoving:(object: Mesh, toPosition: Vector3) => Promise<boolean>;
+  startMoving: (object: Mesh, toPosition: Vector3) => Promise<boolean>;
 } => {
   const setXPosition = (object: Mesh, toPosition: Vector3, stepX: number) => {
     if (object.position.x <= toPosition.x && object.position.x + stepX <= toPosition.x) {
@@ -56,27 +56,28 @@ const MoveObject = (): {
     ) {
       object.position.x = toPosition.x;
       reached = true;
-
     }
     setXPosition(object, toPosition, stepX);
     setYPosition(object, toPosition, stepY);
   };
 
   const startMoving = async (object: Mesh, toPosition: Vector3) => {
-    while(object.position.x != toPosition.x){
+    while (object.position.x != toPosition.x) {
       await sleep(object, toPosition);
     }
     return true;
-  }
-  
-   const timeout =  () => {
-    return new Promise(resolve => setTimeout(resolve, Timing.moveObject.refreshStep))
-  }
-  
+  };
+
+  const timeout = () => {
+    return new Promise((resolve) =>
+      setTimeout(resolve, Timing.moveObject.steps / Timing.moveObject.refreshStep),
+    );
+  };
+
   const sleep = async (object: Mesh, toPosition: Vector3) => {
-    await timeout()
-    return move(object,toPosition);
-  }
+    await timeout();
+    return move(object, toPosition);
+  };
 
   return { move, startMoving };
 };
