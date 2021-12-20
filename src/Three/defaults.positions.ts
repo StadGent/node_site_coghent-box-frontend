@@ -4,7 +4,7 @@ import Layers from './defaults.layers';
 const Positions = (): {
   StoryPausePositions: () => Array<Vector3>;
   CenterWordPositions: () => Array<Vector3>;
-  QRCodeScannerImage: Vector3;
+  QRCodeScanner: () => Vector3;
   endOfSession: () => Vector3;
 } => {
   const CenterWordPositions = () => {
@@ -27,16 +27,16 @@ const Positions = (): {
     ];
   };
 
-  const QRCodeScannerImage = new Vector3(0,-1,Layers.presentation);
+  const QRCodeScanner = () => new Vector3(-18, 2, Layers.scene);
 
-  const endOfSession = () => new Vector3(18,2,0); 
+  const endOfSession = () => new Vector3(18, 2, 0);
 
   return {
     StoryPausePositions,
     CenterWordPositions,
-    QRCodeScannerImage,
+    QRCodeScanner,
     endOfSession,
-  }
+  };
 };
 
 export default Positions;

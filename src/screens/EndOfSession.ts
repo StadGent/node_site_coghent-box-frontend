@@ -29,7 +29,7 @@ const EndOfSession = (
     );
     GroupHelper().AddObjectsTogroups(
       TextHelper().displayTextFromRecordWithIcon(
-        HelperText().scanYourTicket(new Vector3(position.x, position.y, position.z)),
+        HelperText().scanYourTicketAgain(new Vector3(position.x, position.y, position.z)),
         Colors().black,
         'https://cdn-icons-png.flaticon.com/512/844/844994.png',
         new Vector3(-position.x, position.y - 1, position.z),
