@@ -7,7 +7,7 @@ import { Vector3 } from 'three';
 export type StoryData = {
   storyId: string;
   totalOfFrames: number;
-  seenFrames: Array<Frame>;
+  seenFrames: Record<string, Frame>;
   totalOfFramesSeen: number;
   storySeen: boolean;
   storyColor: number;
@@ -19,6 +19,7 @@ export default class StoryService {
   private stories: Array<Story>;
   private storyIds: Array<string>;
   private totalOfSeenFrames: number;
+  private date = new Date();
 
   constructor(_stories: Array<Story>) {
     this.stories = _stories;
@@ -48,10 +49,10 @@ export default class StoryService {
   updateSeenFramesOfStory(currentStoryId: string, seenFrame: Frame) {
     if(this.storyData.length > 0 && seenFrame != undefined){
       const storyToUpdate = this.storyData.filter(story => story.storyId === currentStoryId)[0];
-      if(!storyToUpdate.seenFrames.includes(seenFrame)){
+      if(!this.itemIsInRecord(currentStoryId, seenFrame)){
         this.totalOfSeenFrames++;
-        storyToUpdate['seenFrames'].push(seenFrame);
-        storyToUpdate['totalOfFramesSeen'] = storyToUpdate.seenFrames.length;
+        this.addTimestampToSeenFrame(currentStoryId, seenFrame);
+        storyToUpdate['totalOfFramesSeen'] = Object.keys(storyToUpdate.seenFrames).length;
       }      
       storyToUpdate['storySeen'] = this.IHaveSeenTheStory(currentStoryId);
       storyToUpdate['storyColor'] = this.setStoryColor(storyToUpdate);
@@ -60,6 +61,22 @@ export default class StoryService {
 
   storyIsSeen(storyId: string){
     return this.storyData.filter(data => data.storyId == storyId)[0].storySeen;
+  }
+
+  private itemIsInRecord(storyId: string, frame:Frame){
+    const rec = this.getStoryDataOfStory(storyId).seenFrames
+    let exists = false;
+    for(const key in rec){
+      if(frame == rec[key]){
+         exists = true;
+      }
+    }
+    return exists;
+  }
+
+  private addTimestampToSeenFrame(storyId: string, frame: Frame) {
+    const timestamp = this.date.toLocaleString();
+    this.getStoryDataOfStory(storyId).seenFrames[timestamp] = frame;
   }
 
   private setStoryColor(storyData: StoryData){
@@ -96,7 +113,7 @@ export default class StoryService {
     return {
       storyId: story.id,
       totalOfFrames: story.frames.length,
-      seenFrames: [],
+      seenFrames: {} as Record<string, Frame>,
       totalOfFramesSeen: 0,
       storySeen: false,
       storyColor: Colors().white,

@@ -11,6 +11,7 @@ const Defaults = (): {
   screenZones: () => number;
   scaleReducer: () => number;
   showZonesInOverview: () => true | false;
+  maxFrames: () => number;
   circlePoints: () => Array<CirclePoint>;
   StoryColors: () => Array<number>;
   Circle: () => CircleSchema;
@@ -23,6 +24,7 @@ const Defaults = (): {
   const screenZones = () => 5;
   const scaleReducer = () => 0.2;
   const showZonesInOverview = () => true;
+  const maxFrames = () => 6;
   
   const circlePoints = () => {
     return [
@@ -88,6 +90,7 @@ const Defaults = (): {
     screenZones,
     scaleReducer,
     showZonesInOverview,
+    maxFrames,
     circlePoints,
     StoryColors,
     Circle,
