@@ -27,6 +27,7 @@ import PlayBookBuild from '@/Three/playbook.build';
 import PlayBook from '@/composables/playbook';
 
 import Positions from '@/Three/defaults.positions';
+import Measurements from '@/Three/defaults.measurements';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -208,7 +209,7 @@ export default defineComponent({
               framePlaybook,
               spotlight,
               activeStoryData,
-            ).endOfSession(Positions().endOfSession());
+            ).endOfSession(Positions().endOfSession(), Measurements().spotLight.radius);
           } else {
             chooseStory.value = true;
             audio.pause();

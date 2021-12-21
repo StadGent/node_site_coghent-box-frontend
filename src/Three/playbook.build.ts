@@ -9,7 +9,6 @@ import Timing from './defaults.timing';
 import Spot from './shapes.spotlight';
 import useFrameAssetOverview from './playbook.frameAssetOverview';
 import useStoryCircle from './playbook.storyCircle';
-import EndOfSession from '@/screens/EndOfSession';
 import Measurements from './defaults.measurements';
 import { Zone } from './helper.zones';
 import StoryService, { StoryData } from '@/services/StoryService';
@@ -17,6 +16,7 @@ import MoveObject from '@/composables/moveObject';
 import useStory from '@/composables/useStory';
 import StoryPaused from '@/screens/StoryPaused';
 import useStartOfSession from './playbook.startOfSession';
+import useEndOfSession from './playbook.endOfSession';
 
 const PlayBookBuild = (
   threeService: ThreeService,
@@ -38,7 +38,7 @@ const PlayBookBuild = (
     audioDuration: number,
   ) => void;
   initialSpotLight: () => Mesh;
-  endOfSession: (position: Vector3, spotRadius?: number) => void;
+  endOfSession: (position: Vector3, spotRadius: number) => void;
   storyPaused: (storyData: Array<Story>) => Promise<void>;
   storyData: (
     storyService: StoryService,
@@ -109,9 +109,8 @@ const PlayBookBuild = (
     return spotlight;
   };
 
-  const endOfSession = (position: Vector3, spotRadius?: number) => {
-    threeService.ClearScene();
-    threeService.AddGroupsToScene(EndOfSession(position, spotRadius).create());
+  const endOfSession = (position: Vector3, spotRadius: number) => {
+    useEndOfSession(threeService).create(position, spotRadius);
   };
 
   const storyPaused = async (storyData: Array<Story>) => {

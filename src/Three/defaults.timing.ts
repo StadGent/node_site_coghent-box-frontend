@@ -2,6 +2,9 @@ type Timings = {
   startOfSession: {
     videoDelay: number,
   },
+  endOfSession: {
+    countdown: number,
+  },
   moveObject: {
     refreshStep: number;
     steps: number;
@@ -18,6 +21,9 @@ type Timings = {
 const Timing: Timings = {
   startOfSession:{
     videoDelay: 3000,
+  },
+  endOfSession:{
+    countdown: 30000,
   },
   moveObject: {
     refreshStep: 12,
