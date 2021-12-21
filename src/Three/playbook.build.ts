@@ -38,7 +38,7 @@ const PlayBookBuild = (
     audioDuration: number,
   ) => void;
   initialSpotLight: () => Mesh;
-  endOfSession: (position: Vector3, spotRadius: number) => void;
+  endOfSession: (position: Vector3, spotRadius: number) => Promise<Boolean>;
   storyPaused: (storyData: Array<Story>) => Promise<void>;
   storyData: (
     storyService: StoryService,
@@ -110,7 +110,7 @@ const PlayBookBuild = (
   };
 
   const endOfSession = (position: Vector3, spotRadius: number) => {
-    useEndOfSession(threeService).create(position, spotRadius);
+    return useEndOfSession(threeService).create(position, spotRadius);
   };
 
   const storyPaused = async (storyData: Array<Story>) => {

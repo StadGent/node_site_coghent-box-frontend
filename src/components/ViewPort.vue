@@ -203,6 +203,7 @@ export default defineComponent({
             activeStoryData,
           ).storyData(storyService, activeStoryData, currentFrame);
           if (storyService.isEndOfSession()) {
+            //TODO: Restart the entire session flow
             PlayBookBuild(
               threeSvc,
               storyService,
