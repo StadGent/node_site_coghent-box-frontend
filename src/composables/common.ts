@@ -10,6 +10,7 @@ const Common = (): {
     child: Asset | Frame,
   ) => ComponentMetadata;
   firstIsBiggest: (first:number, second: number) => boolean;
+  awaitTimeout: (time: number) => Promise<unknown>;
 } => {
   const FilterOutIdAfterSlash = (str: string) => {
     const index = (str.indexOf('/') as number) + 1;
@@ -36,12 +37,19 @@ const Common = (): {
     return first > second;
   }
 
+  const awaitTimeout = (time: number) => {
+    return new Promise((resolve) =>
+      setTimeout(resolve, time),
+    );
+  }
+
   return {
     FilterOutIdAfterSlash,
     RemoveEntersFromString,
     pixelsToMeters,
     connectRelationMetadata,
     firstIsBiggest,
+    awaitTimeout,
   };
 };
 

@@ -1,5 +1,6 @@
 import Timing from '@/Three/defaults.timing';
 import { Mesh, Vector3 } from 'three';
+import Common from './common';
 
 const MoveObject = (): {
   move: (object: Mesh, toPosition: Vector3) => void;
@@ -68,14 +69,8 @@ const MoveObject = (): {
     return true;
   };
 
-  const timeout = () => {
-    return new Promise((resolve) =>
-      setTimeout(resolve, Timing.moveObject.steps / Timing.moveObject.refreshStep),
-    );
-  };
-
   const sleep = async (object: Mesh, toPosition: Vector3) => {
-    await timeout();
+    await Common().awaitTimeout(Timing.moveObject.steps / Timing.moveObject.refreshStep);
     return move(object, toPosition);
   };
 
