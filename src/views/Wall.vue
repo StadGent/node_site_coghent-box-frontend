@@ -1,18 +1,18 @@
 <template>
   <ViewPort :stories="stories" :storySelected="storySelected"/>
-  <mqtt @selectStory="setSelectStory"/>
+  <!-- <mqtt @selectStory="setSelectStory"/> -->
 </template>
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, onMounted, ref } from 'vue';
 import ViewPort from '@/components/ViewPort.vue';
-import { useQuery } from '@vue/apollo-composable';
-import { SearchFilter  } from 'coghent-vue-3-component-library/lib/queries';
-import { GetStoriesDocument  } from 'coghent-vue-3-component-library';
+import { useMutation, useQuery } from '@vue/apollo-composable';
+import { SearchFilter } from 'coghent-vue-3-component-library/lib/queries';
+import { GetStoriesDocument, CreationOfBoxVisitorDocument, GetBoxVisitersDocument } from 'coghent-vue-3-component-library';
 import mqtt from '@/components/mqtt.vue';
 
 export default defineComponent({
   name: 'Wall',
-  components: { ViewPort, mqtt },
+  components: { ViewPort },
 
   setup() {
     const searchValue: SearchFilter = {
@@ -26,7 +26,12 @@ export default defineComponent({
     const val = ref<any>();
 
     const { onResult: Stories } = useQuery(GetStoriesDocument,{searchValue: searchValue})
+    const {onResult: BoxVisiters} = useQuery(GetBoxVisitersDocument);
+    
 
+    BoxVisiters((visiters) => {
+      console.log({visiters});
+    });
     Stories((entities) => {
       const activeStories = entities.data.Entities?.results;
       if (activeStories) {
@@ -59,13 +64,17 @@ export default defineComponent({
             break;
         }
       };
-
       const setSelectStory = (sensorValue: {id: number, msg: boolean}) => {
         console.log(`MQTT data => `, sensorValue)
         if(sensorValue.msg){
           storySelected.value = sensorValue.id;
         }
       }
+
+      // onMounted(async () => {
+      //   const d = await mutate();
+      //   console.log(d);
+      // })
 
     return {
       stories,
