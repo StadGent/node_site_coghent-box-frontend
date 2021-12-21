@@ -7,19 +7,20 @@ import HelperText from '@/Three/defaults.helperText';
 import Colors from '@/Three/defaults.color';
 import SchemaCube, { CubeParams, CubeSchema } from '@/Three/schema.cube';
 import GroupHelper from '@/Three/helper.group';
+import Images from '@/Three/defaults.images';
 
 const ScanQR = (position: Vector3): {
   create: () => Array<Group>;
 } => {
 
   const arrow = () => {
-    const cube = SchemaCube().CreateCube({position: new Vector3(position.x, position.y + 3, position.z),params: {height: 1, width: 2, color: Colors().pink} as CubeParams} as CubeSchema); 
+    const cube = SchemaCube().CreateImageCube({position: new Vector3(position.x, position.y + 3, position.z),params: {height: 1, width: 2, url: Images.startOfSession.arrow, color: Colors().pink} as CubeParams} as CubeSchema); 
     return cube;
   }
   
   const create = () => {
     const groups: Array<Group> = [];
-    const textWithIcon = TextHelper().displayTextFromRecordWithIcon(HelperText().scanYourTicket(position),Colors().white,'/images/entrance_scan_qr_code.svg',new Vector3(position.x,position.y - 1.5,position.z),new Vector3(2,3,0));
+    const textWithIcon = TextHelper().displayTextFromRecordWithIcon(HelperText().scanYourTicket(position),Colors().white,Images.startOfSession.scanQrCode,new Vector3(position.x,position.y - 1.5,position.z),new Vector3(2,3,0));
     const direction = arrow();
     GroupHelper().AddObjectsTogroups(textWithIcon, groups);
     GroupHelper().AddObjectsTogroups([direction], groups);

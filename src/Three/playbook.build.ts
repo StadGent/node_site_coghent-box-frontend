@@ -38,7 +38,7 @@ const PlayBookBuild = (
     audioDuration: number,
   ) => void;
   initialSpotLight: () => Mesh;
-  endOfSession: (position: Vector3, spotRadius: number) => Promise<Boolean>;
+  endOfSession: (position: Vector3, spotRadius: number) => Promise<boolean>;
   storyPaused: (storyData: Array<Story>) => Promise<void>;
   storyData: (
     storyService: StoryService,
@@ -48,7 +48,7 @@ const PlayBookBuild = (
     storyData: Array<StoryData>;
     endOfSession: true | false;
   };
-  startOfSession: () => Promise<Boolean>;
+  startOfSession: () => Promise<true | false>;
 } => {
   const updateAudio = (
     audio: HTMLAudioElement,

@@ -7,6 +7,7 @@ import Spot from '@/Three/shapes.spotlight';
 import TextHelper from '@/Three/helper.text';
 import { FontParams } from '@/Three/schema.text';
 import { Group, Vector3 } from 'three';
+import Images from '@/Three/defaults.images';
 
 const EndOfSession = (
   position: Vector3,
@@ -30,10 +31,10 @@ const EndOfSession = (
     GroupHelper().AddObjectsTogroups(
       TextHelper().displayTextFromRecordWithIcon(
         HelperText().scanYourTicketAgain(new Vector3(position.x, position.y, position.z)),
-        Colors().black,
-        'https://cdn-icons-png.flaticon.com/512/844/844994.png',
-        new Vector3(-position.x, position.y - 1, position.z),
-        new Vector3(3, 2, 0),
+        Colors().white,
+        Images.endOfSession['scanQrCode'],
+        new Vector3(-position.x - 1, position.y - 1.5, position.z),
+        new Vector3(2, 3, 0),
       ),
       groups,
     );
@@ -48,10 +49,10 @@ const EndOfSession = (
     GroupHelper().AddObjectsTogroups(
       TextHelper().displayTextFromRecordWithIcon(
         HelperText().WalkToTouchtable,
-        Colors().black,
-        'https://cdn-icons-png.flaticon.com/512/844/844994.png',
-        new Vector3(0, position.y - 1, position.z),
-        new Vector3(3, 2, 0),
+        Colors().white,
+        Images.endOfSession['touchtable'],
+        new Vector3(-1, position.y - 2.5, position.z),
+        new Vector3(5, 4, 0),
       ),
       groups,
     );
@@ -66,10 +67,10 @@ const EndOfSession = (
     GroupHelper().AddObjectsTogroups(
       TextHelper().displayTextFromRecordWithIcon(
         HelperText().goToWebPortal(new Vector3(position.x, position.y, position.z)),
-        Colors().black,
-        'https://cdn-icons-png.flaticon.com/512/844/844994.png',
-        new Vector3(position.x, position.y - 1, position.z),
-        new Vector3(3, 2, 0),
+        Colors().white,
+        Images.endOfSession['webPortal'],
+        new Vector3(position.x - 1, position.y - 2.5, position.z),
+        new Vector3(4, 4, 0),
       ),
       groups,
     );
@@ -95,7 +96,7 @@ const EndOfSession = (
     GroupHelper().AddObjectsTogroups(
       [
         orOption(new Vector3(orTextPosition(), position.y - 1, position.z)),
-        orOption(new Vector3(-orTextPosition()+1, position.y - 1, position.z)),
+        orOption(new Vector3(-orTextPosition() + 1, position.y - 1, position.z)),
       ],
       groups,
     );

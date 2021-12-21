@@ -18,7 +18,7 @@ const useStartOfSession = (
   threeService: ThreeService,
   spotlight: Mesh,
 ): {
-  create: () => Promise<Boolean>;
+  create: () => Promise<true | false>;
 } => {
   const setSpotlightOnPosition = () => {
     threeService.AddToScene(spotlight);
@@ -50,7 +50,7 @@ const useStartOfSession = (
   const createCountDownNumber = (countdown: number) => {
     return TextHelper().CreateText(
       `${countdown}`,
-      new Vector3(1, 2, Layers.presentation),
+      new Vector3(1, 0, Layers.presentation),
       {} as CubeParams,
       { size: customText.size.veryBig, color: Colors().white } as FontParams,
     );
@@ -72,9 +72,9 @@ const useStartOfSession = (
     await Common().awaitTimeout(Timing.startOfSession.videoDelay);
     threeService.ClearScene();
     setSpotlightOnPosition();
-    await MoveObject().startMoving(spotlight, new Vector3(0, 2.5, Layers.scene));
+    await MoveObject().startMoving(spotlight, new Vector3(0, 1, Layers.scene));
     await countdown(Defaults().countdown());
-    return true
+    return true;
   };
 
   return { create };

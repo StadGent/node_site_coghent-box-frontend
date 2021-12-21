@@ -25,9 +25,9 @@ const HelperText = (): {
 
   const scanYourTicketAgain = (position: Vector3) => {
     return {
-      'Scan je ticket': new Vector3(-position.x + 1.6, 3, 0),
-      'opnieuw aan de zuil': new Vector3(-position.x + 1.4, 2.5, 0),
-      'om verder te gaan': new Vector3(-position.x + 1.4, 2, 0),
+      'Scan je ticket': new Vector3(-position.x + 1.4, 3, 0),
+      'opnieuw aan de zuil': new Vector3(-position.x + 1.2, 2.5, 0),
+      'om verder te gaan': new Vector3(-position.x + 1.2, 2, 0),
     };
   };
   const goToWebPortal = (position: Vector3) => {

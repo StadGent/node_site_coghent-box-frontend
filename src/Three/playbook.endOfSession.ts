@@ -13,7 +13,7 @@ import Common from '@/composables/common';
 const useEndOfSession = (
   threeService: ThreeService,
 ): {
-  create: (position: Vector3, spotRadius: number) => Promise<Boolean>;
+  create: (position: Vector3, spotRadius: number) => Promise<boolean>;
 } => {
   const timerCountdown = async (duration: number) => {
     let currentTime = duration;
@@ -21,7 +21,7 @@ const useEndOfSession = (
       const seconds = Math.floor((currentTime / 1000) % 60);
       const minutes = Math.floor((currentTime / (1000 * 60)) % 60);
       const text = TextHelper().CreateText(
-        `${minutes}:${seconds}`,
+        `0${minutes} :${seconds}`,
         Positions().timerCountdown(),
         {} as CubeParams,
         { size: customText.size.veryBig, color: Colors().white } as FontParams,
@@ -37,6 +37,7 @@ const useEndOfSession = (
     threeService.ClearScene();
     threeService.AddGroupsToScene(EndOfSession(position, spotRadius).create());
     await timerCountdown(Timing.endOfSession.countdown);
+    alert()
     return true;
   };
 
