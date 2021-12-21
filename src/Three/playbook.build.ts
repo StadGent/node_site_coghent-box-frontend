@@ -48,7 +48,7 @@ const PlayBookBuild = (
     storyData: Array<StoryData>;
     endOfSession: true | false;
   };
-  startOfSession: () => true | false;
+  startOfSession: () => Promise<Boolean>;
 } => {
   const updateAudio = (
     audio: HTMLAudioElement,
@@ -141,9 +141,7 @@ const PlayBookBuild = (
   };
 
   const startOfSession = () => {
-    useStartOfSession(threeService, spotlight).create();
-
-    return false;
+    return useStartOfSession(threeService, spotlight).create();
   };
 
   return {

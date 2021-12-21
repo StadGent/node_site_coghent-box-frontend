@@ -27,8 +27,6 @@ import PlayBookBuild from '@/Three/playbook.build';
 import PlayBook from '@/composables/playbook';
 
 import Positions from '@/Three/defaults.positions';
-import ScanQR from '@/screens/ScanQR';
-import Common from '@/composables/common';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -94,35 +92,32 @@ export default defineComponent({
       (value) => {
         stories.value = value;
         // playStartVideo();
-        
       },
     );
 
     const setup = async () => {
       spotlight = PlayBookBuild(
-          threeSvc,
-          storyService,
-          playBook,
-          spotlight,
-          activeStoryData,
-        ).initialSpotLight();
+        threeSvc,
+        storyService,
+        playBook,
+        spotlight,
+        activeStoryData,
+      ).initialSpotLight();
 
-        startSession =PlayBookBuild(
-          threeSvc,
-          storyService,
-          playBook,
-          spotlight,
-          activeStoryData,
-        ).startOfSession();
+      startSession = await PlayBookBuild(
+        threeSvc,
+        storyService,
+        playBook,
+        spotlight,
+        activeStoryData,
+      ).startOfSession();
 
-      //FIXME:
-      setTimeout(() => startSession = true, 1200)
       if (stories.value && startSession) {
         audioHelper = AudioHelper();
         storyData = stories.value;
         storyService = new StoryService(storyData);
         console.log('StoryData', storyService.getStoryData());
-        buildStory(currentStory.value, '/Audio/example.mp3')
+        buildStory(currentStory.value, '/Audio/example.mp3');
       }
     };
 
@@ -154,6 +149,14 @@ export default defineComponent({
     const buildStory = (currentStory: number, audioFile: string) => {
       threeSvc.ClearScene();
       activeStoryData = useStory().setActiveStory(storyData, currentStory);
+
+      spotlight = PlayBookBuild(
+        threeSvc,
+        storyService,
+        playBook,
+        spotlight,
+        activeStoryData,
+      ).initialSpotLight();
 
       playBook.addToPlayBook(
         () => {

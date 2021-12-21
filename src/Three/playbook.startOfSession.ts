@@ -1,7 +1,8 @@
+import Common from '@/composables/common';
 import MoveObject from '@/composables/moveObject';
 import ScanQR from '@/screens/ScanQR';
 import ThreeService from '@/services/ThreeService';
-import { Mesh, Object3D, Vector3 } from 'three';
+import { Mesh, Vector3 } from 'three';
 import Colors from './defaults.color';
 import Defaults from './defaults.config';
 import Layers from './defaults.layers';
@@ -9,13 +10,15 @@ import Measurements from './defaults.measurements';
 import Positions from './defaults.positions';
 import customText from './defaults.text';
 import Timing from './defaults.timing';
-import SchemaText, { FontParams, TextSchema } from './schema.text';
+import TextHelper from './helper.text';
+import { CubeParams } from './schema.cube';
+import { FontParams } from './schema.text';
 
 const useStartOfSession = (
   threeService: ThreeService,
   spotlight: Mesh,
 ): {
-  create: () => void;
+  create: () => Promise<Boolean>;
 } => {
   const setSpotlightOnPosition = () => {
     threeService.AddToScene(spotlight);
@@ -44,24 +47,34 @@ const useStartOfSession = (
     return scanText;
   };
 
-  const countdown = (count?: number) => {
-    const schema = {
-      text: `1`,
-      position: new Vector3(0, 2, Layers.presentation),
-      fontParams: { size: customText.size.veryBig, color: Colors().white } as FontParams,
-    } as TextSchema;
-    const text = SchemaText().LoadText(schema, 1);
-    text.name = 'countdown';
+  const createCountDownNumber = (countdown: number) => {
+    return TextHelper().CreateText(
+      `${countdown}`,
+      new Vector3(1, 2, Layers.presentation),
+      {} as CubeParams,
+      { size: customText.size.veryBig, color: Colors().white } as FontParams,
+    );
   };
 
-  const create = () => {
+  const countdown = async (maxCount: number) => {
+    let currentCount = maxCount;
+    while(currentCount != 0){
+      const text = createCountDownNumber(currentCount);
+      threeService.AddToScene(text);
+      await Common().awaitTimeout(1000);
+      currentCount--;
+      threeService.state.scene.remove(text);
+    }
+  };
+
+  const create = async () => {
     showScanImage();
-    setTimeout(async () => {
-      threeService.ClearScene();
-      setSpotlightOnPosition();
-      await MoveObject().startMoving(spotlight, new Vector3(0, 2.5, Layers.scene));
-    }, Timing.startOfSession.videoDelay);
-    countdown();
+    await Common().awaitTimeout(Timing.startOfSession.videoDelay);
+    threeService.ClearScene();
+    setSpotlightOnPosition();
+    await MoveObject().startMoving(spotlight, new Vector3(0, 2.5, Layers.scene));
+    await countdown(Defaults().countdown());
+    return true
   };
 
   return { create };
