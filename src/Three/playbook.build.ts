@@ -2,7 +2,7 @@ import useFrame from '@/composables/useFrame';
 import { PlayBookFunctions } from '@/composables/playbook';
 import { Story } from '@/models/GraphqlModel';
 import ThreeService from '@/services/ThreeService';
-import { Mesh, Vector3 } from 'three';
+import { Group, Mesh, Vector3 } from 'three';
 import AudioHelper from './helper.audio';
 import Layers from './defaults.layers';
 import Timing from './defaults.timing';
@@ -17,6 +17,7 @@ import useStory from '@/composables/useStory';
 import StoryPaused from '@/screens/StoryPaused';
 import useStartOfSession from './playbook.startOfSession';
 import useEndOfSession from './playbook.endOfSession';
+import HorizontalProgressBar from './shapes.horizontalProgressBar';
 
 const PlayBookBuild = (
   threeService: ThreeService,
@@ -37,6 +38,7 @@ const PlayBookBuild = (
     storyColor: number,
     audioDuration: number,
   ) => void;
+  progressOfFrame: (frameIndex:number, color: number, currentTime: number, audioDuration: number, progressbar: Array<Group>) => Array<Group>;
   initialSpotLight: () => Mesh;
   endOfSession: (position: Vector3, spotRadius: number) => Promise<boolean>;
   storyPaused: (storyData: Array<Story>) => Promise<void>;
@@ -100,6 +102,22 @@ const PlayBookBuild = (
     );
   };
 
+  const progressOfFrame = (frameIndex:number, color: number, currentTime: number, audioDuration: number, progressbar: Array<Group>) => {
+    const assetsWithTimestampStart = useFrame().getStartTimestampsWithTheirAsset(
+      activeStoryData.frames[frameIndex],
+    );
+    threeService.RemoveGroupsFromScene(progressbar);
+    progressbar = HorizontalProgressBar().create(
+      new Vector3(0, -7, Layers.scene),
+      Object.values(assetsWithTimestampStart),
+      audioDuration,
+      currentTime,
+      color,
+    );
+    threeService.AddGroupsToScene(progressbar);
+    return progressbar;
+  }
+
   const initialSpotLight = () => {
     const spotlight = Spot().create(
       new Vector3(0, 0, Layers.scene),
@@ -147,6 +165,7 @@ const PlayBookBuild = (
     updateAudio,
     storyCircle,
     frameOverview,
+    progressOfFrame,
     initialSpotLight,
     endOfSession,
     storyPaused,

@@ -10,7 +10,7 @@ import ThreeService from '@/services/ThreeService';
 import StoryService from '@/services/StoryService';
 
 import { defineComponent, onMounted, PropType, reactive, Ref, ref, watch } from 'vue';
-import { Mesh, Vector3 } from 'three';
+import { Group, Mesh, Vector3 } from 'three';
 import { Entity as _Entity, Story } from '@/models/GraphqlModel';
 
 import Tools from '@/Three/helper.tools';
@@ -61,6 +61,7 @@ export default defineComponent({
     let audioDuration = 120;
     let currentFrame = 0;
     let startSession = false;
+    let showProgressOfFrame = false;
     let interval: ReturnType<typeof setTimeout>;
     let storyData: Array<Story> = [];
     let activeStoryData = reactive<Story>({} as Story);
@@ -123,9 +124,11 @@ export default defineComponent({
       }
     };
 
+
     const timing = () => {
       let currentFunction = 0;
       interval = setInterval(() => {
+        showProgressOfFrame = true;
         if (
           audioHelper.DoEvent(
             audio.currentTime,
@@ -172,11 +175,30 @@ export default defineComponent({
       // );
 
       audio = AudioHelper().setAudioTrack(activeStoryData, currentFrame, audioFile);
+      let progress: Array<Group> = [];
+      audio.ontimeupdate = () => {
+        if (showProgressOfFrame) {
+          progress = PlayBookBuild(
+            threeSvc,
+            storyService,
+            framePlaybook,
+            spotlight,
+            activeStoryData,
+          ).progressOfFrame(
+            currentFrame,
+            storyService.getStoryColor(activeStoryData.id),
+            audio.currentTime,
+            audioDuration,
+            progress,
+          );
+        }
+      };
+
       audio.onloadedmetadata = () => {
         audioDuration = audio.duration;
         audio.play();
         timing();
-      };      
+      };
 
       const framePlaybook = PlayBook();
 
@@ -204,6 +226,7 @@ export default defineComponent({
 
       playBook.addToPlayBook(
         async () => {
+          showProgressOfFrame = false;
           PlayBookBuild(
             threeSvc,
             storyService,

@@ -77,6 +77,12 @@ export default class ThreeService {
     });
   }
 
+  RemoveGroupsFromScene(groups: Array<Group>){
+    if(groups){
+      groups.forEach(group => this.state.scene.remove(group));
+    }
+  }
+
   ClearScene() {
     while (this.state.scene.children.length > 0) {
       this.state.scene.remove(this.state.scene.children[0]);

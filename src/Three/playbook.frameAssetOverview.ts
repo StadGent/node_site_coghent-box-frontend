@@ -66,27 +66,6 @@ const useFrameAssetOverview = (
     );
   };
 
-  const displayProgressBar = (
-    storyColor: number,
-    currentTime: number,
-    maxTime: number,
-    checkpoints: Array<number>,
-  ) => {
-    if(progressbar){
-      progressbar.forEach(group => threeService.state.scene.remove(group));
-    }
-    progressbar = HorizontalProgressBar().create(
-      new Vector3(0, -7, Layers.scene),
-      checkpoints,
-      maxTime,
-      currentTime,
-      storyColor,
-    );
-    threeService.AddGroupsToScene(
-      progressbar
-    );
-  };
-
   const resetImage = (
     asset: Object3D<Event>,
     scale: number,
@@ -179,17 +158,6 @@ const useFrameAssetOverview = (
     storyColor = _storyColor;
     if (assets.length > 0) {
       displayAllAssets(activeStoryData.frames[currentFrame], timestamp);
-      playBook.addToPlayBook(
-        () =>
-          displayProgressBar(
-            storyColor,
-            0,
-            audioDuration,
-            Object.values(assetsWithTimestampStart),
-          ),
-        timestamp,
-        `Display progressbar.`,
-      );
       group.children.forEach((asset, index) => {
         const relationMetadata = Common().connectRelationMetadata(
           activeStoryData.frames[currentFrame],
@@ -209,18 +177,6 @@ const useFrameAssetOverview = (
             },
             relationMetadata.timestamp_start,
             `Move spotlight to asset ${assets[index].id}.`,
-          );
-          playBook.addToPlayBook(
-            () => {
-              displayProgressBar(
-                storyColor,
-                Object.values(assetsWithTimestampStart)[index],
-                audioDuration,
-                Object.values(assetsWithTimestampStart),
-              );
-            },
-            relationMetadata.timestamp_start + Timing.frameOverview.spotLightMoved,
-            `Update progressbar checkpoint.`,
           );
           playBook.addToPlayBook(
             () => {
