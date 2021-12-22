@@ -36,6 +36,7 @@ const useFrameAssetOverview = (
   let assets: Array<Asset> = [];
   let storyColor: number;
   let highlightWithMetaInfo: Group;
+  let progressbar: Array<Group>;
 
   const displayAllAssets = (frame: modelFrame, timestamp: number) => {
     threeService.state.scene.remove(group);
@@ -71,14 +72,18 @@ const useFrameAssetOverview = (
     maxTime: number,
     checkpoints: Array<number>,
   ) => {
+    if(progressbar){
+      progressbar.forEach(group => threeService.state.scene.remove(group));
+    }
+    progressbar = HorizontalProgressBar().create(
+      new Vector3(0, -7, Layers.scene),
+      checkpoints,
+      maxTime,
+      currentTime,
+      storyColor,
+    );
     threeService.AddGroupsToScene(
-      HorizontalProgressBar().create(
-        new Vector3(0, -7, Layers.scene),
-        checkpoints,
-        maxTime,
-        currentTime,
-        storyColor,
-      ),
+      progressbar
     );
   };
 
