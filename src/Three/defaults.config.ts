@@ -10,6 +10,7 @@ const Defaults = (): {
   zoomOfAsset: () => number;
   screenZones: () => number;
   scaleReducer: () => number;
+  zonePadding: () => number;
   showZonesInOverview: () => true | false;
   maxFrames: () => number;
   countdown: () => number;
@@ -24,10 +25,12 @@ const Defaults = (): {
   const zoomOfAsset = () => 1.5;
   const screenZones = () => 5;
   const scaleReducer = () => 0.2;
-  const showZonesInOverview = () => true;
+  const zonePadding = () => 0.1;
+  const showZonesInOverview = () => false;
   const maxFrames = () => 6;
   const countdown = () => 3;
   
+
   const circlePoints = () => {
     return [
       { angle: 25, radius: 3 },
@@ -91,6 +94,7 @@ const Defaults = (): {
     zoomOfAsset,
     screenZones,
     scaleReducer,
+    zonePadding,
     showZonesInOverview,
     maxFrames,
     countdown,

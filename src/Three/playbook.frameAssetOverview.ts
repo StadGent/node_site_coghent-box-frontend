@@ -94,22 +94,22 @@ const useFrameAssetOverview = (
     const zoneDimensions = ZoneHelper(threeService.state.sceneDimensions).zoneDimensions(
       Defaults().screenZones(),
     );
-    let scale =
-      zoneDimensions.width / asset.geometry.parameters.width - Defaults().scaleReducer();
+    let scale = zoneDimensions.width / asset.geometry.parameters.width;
+    while (scale * asset.geometry.parameters.height > zoneDimensions.height) {
+      scale -= 0.05;
+    }
     if (
       Common().firstIsBiggest(
         asset.geometry.parameters.height,
         asset.geometry.parameters.width,
       )
     ) {
-      scale =
-        zoneDimensions.height / (asset.geometry.parameters.height - 1) -
-        Defaults().scaleReducer();
+      scale = zoneDimensions.height / asset.geometry.parameters.height;
       while (scale * asset.geometry.parameters.width > zoneDimensions.width) {
         scale -= 0.05;
       }
-      scale = scale - Defaults().scaleReducer();
     }
+    scale = scale - Defaults().scaleReducer();
     return { scale: scale, zoomPosition: zoomTo };
   };
 
@@ -172,7 +172,7 @@ const useFrameAssetOverview = (
           );
           playBook.addToPlayBook(
             () => {
-              spotlight.scale.set(1,1,0);
+              spotlight.scale.set(1, 1, 0);
               setAssetsInactive(asset as Mesh<BoxBufferGeometry, any>);
               zoomAndHighlightAsset(
                 asset as Mesh<BoxBufferGeometry, any>,
@@ -181,7 +181,7 @@ const useFrameAssetOverview = (
               );
             },
             useAsset(threeService).setZoomTiming(relationMetadata) +
-              Timing.frameOverview.spotLightMoved,
+            Timing.frameOverview.spotLightMoved,
             `Zoom and highlight asset + set other assets inactive`,
           );
           playBook.addToPlayBook(

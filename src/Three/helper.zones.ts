@@ -1,5 +1,6 @@
 import Common from '@/composables/common';
 import { Mesh, Vector3 } from 'three';
+import Defaults from './defaults.config';
 import Layers from './defaults.layers';
 
 export type Zone = {
@@ -25,7 +26,7 @@ const ZoneHelper = (
       referencePosition.x - Common().pixelsToMeters(screen.x / 2) * 10;
     let XstartZonePosition = beginningOfScreen;
 
-    for (let index = 0; index < _zones; index++) {
+    for (let index = 0;index < _zones;index++) {
       zones.push({
         start: new Vector3(XstartZonePosition, 0, 0),
         end: new Vector3(XstartZonePosition + zoneWidth, 0, 0),
@@ -54,8 +55,8 @@ const ZoneHelper = (
 
   const zoneDimensions = (_zones: number) => {
     return {
-      width: Common().pixelsToMeters(screen.x / _zones) * 10,
-      height: Common().pixelsToMeters(screen.y) * 10,
+      width: (Common().pixelsToMeters(screen.x / _zones) - Defaults().zonePadding()) * 10,
+      height: (Common().pixelsToMeters(screen.y) - Defaults().zonePadding()) * 10,
     };
   };
 
