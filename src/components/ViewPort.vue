@@ -50,7 +50,6 @@ export default defineComponent({
     const videoElement = ref<HTMLVideoElement>();
 
     const playBook = PlayBook();
-    const audioDuration = 120;
 
     let threeSvc: ThreeService;
     let storyService: StoryService;
@@ -59,8 +58,9 @@ export default defineComponent({
     let audioHelper: {
       DoEvent: (currentTime: number, eventTime: number) => boolean;
     };
+    let audioDuration = 120;
     let currentFrame = 0;
-    let startSession;
+    let startSession = false;
     let interval: ReturnType<typeof setTimeout>;
     let storyData: Array<Story> = [];
     let activeStoryData = reactive<Story>({} as Story);
@@ -114,6 +114,7 @@ export default defineComponent({
       ).startOfSession();
 
       if (stories.value && startSession) {
+        alert('got stories and can start');
         audioHelper = AudioHelper();
         storyData = stories.value;
         storyService = new StoryService(storyData);
@@ -159,15 +160,23 @@ export default defineComponent({
         activeStoryData,
       ).initialSpotLight();
 
-      playBook.addToPlayBook(
-        () => {
-          audio.pause();
-          audio = AudioHelper().setAudioTrack(activeStoryData, currentFrame, audioFile);
-          audio.play();
-        },
-        playBook.lastAction().time,
-        `Starting new audio for frame`,
-      );
+      // playBook.addToPlayBook(
+      //   () => {
+      //     audio.pause();
+      //     audio = AudioHelper().setAudioTrack(activeStoryData, currentFrame, audioFile);
+      //     audio.play();
+      //     alert(audio.duration);
+      //   },
+      //   playBook.lastAction().time,
+      //   `Starting new audio for frame`,
+      // );
+
+      audio = AudioHelper().setAudioTrack(activeStoryData, currentFrame, audioFile);
+      audio.onloadedmetadata = () => {
+        audioDuration = audio.duration;
+        audio.play();
+        timing();
+      };      
 
       const framePlaybook = PlayBook();
 
@@ -203,6 +212,7 @@ export default defineComponent({
             activeStoryData,
           ).storyData(storyService, activeStoryData, currentFrame);
           if (storyService.isEndOfSession()) {
+            audio.pause();
             //TODO: Restart the entire session flow
             PlayBookBuild(
               threeSvc,
@@ -232,10 +242,6 @@ export default defineComponent({
           Timing.delayNextCycle,
         `Update storyData & show endOfSessions screen or the storyOverview`,
       );
-
-      audio = AudioHelper().setAudioTrack(activeStoryData, currentFrame, audioFile);
-      audio.play();
-      timing();
     };
 
     const resetStory = () => {
