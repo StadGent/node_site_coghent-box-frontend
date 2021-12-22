@@ -18,7 +18,7 @@ const HorizontalProgressBar = (): {
 } => {
   const CurrentTimeProgress = (startPosition: Vector3, length: number) => {
     const schema = CubeHelper().CreateSchema(
-      new Vector3(startPosition.x + length/2  ,startPosition.y, Layers.presentation),
+      new Vector3(startPosition.x + length / 2, startPosition.y, Layers.presentation),
       '',
       new Vector3(length, 0.16, Layers.presentation),
     );
@@ -27,14 +27,14 @@ const HorizontalProgressBar = (): {
     return cube;
   }
 
-  const createTimingDots = (timings: Array<number>, currentTime: number,startPosition: Vector3, dividing:number, radius: number, storyColor: number) => {
+  const createTimingDots = (timings: Array<number>, currentTime: number, startPosition: Vector3, dividing: number, radius: number, storyColor: number) => {
     const timingDots: Array<Mesh> = [];
     for (const timing of timings) {
       if (timing <= currentTime) {
         const timeDot = CircleHelper().CreateSchema(
           new Vector3(
-            startPosition.x + timing / dividing - radius * 2,
-            startPosition.y + 0.47 ,
+            startPosition.x + timing / dividing,
+            startPosition.y + 0.47,
             Layers.presentation,
           ),
           radius,
@@ -46,7 +46,7 @@ const HorizontalProgressBar = (): {
       } else {
         const timeDot = CircleHelper().CreateSchema(
           new Vector3(
-            startPosition.x + timing / dividing - radius * 2,
+            startPosition.x + timing / dividing - radius,
             startPosition.y + 0.47,
             Layers.presentation,
           ),
@@ -70,8 +70,8 @@ const HorizontalProgressBar = (): {
     // Time is in seconds
     const radius = 0.08;
     const length = 10;
-    const dividing = endtime / 10;
-    const startPos = new Vector3(position.x - length / 2 + radius, position.y, Layers.presentation);
+    const dividing = endtime / length;
+    const startPos = new Vector3(position.x, position.y, Layers.presentation);
     const schema = CubeHelper().CreateSchema(
       position,
       '',
@@ -81,8 +81,8 @@ const HorizontalProgressBar = (): {
     );
     const cube = SchemaCube().CreateCube(schema);
     const groups: Array<Group> = [];
-    const timingDots = createTimingDots(timings,currentTime,startPos,dividing,radius,storyColor);
-    const currenttimeBar = CurrentTimeProgress(new Vector3(startPos.x, startPos.y,Layers.presentation),currentTime/dividing - 0.16);
+    const timingDots = createTimingDots(timings, currentTime, new Vector3(startPos.x - ((length-1)/2), startPos.y, startPos.z), endtime/(length-1), radius, storyColor);
+    const currenttimeBar = CurrentTimeProgress(new Vector3(startPos.x - (length / 2), startPos.y, Layers.presentation), currentTime / dividing);
     GroupHelper().AddObjectsTogroups(timingDots, groups);
     GroupHelper().AddObjectsTogroups([cube, currenttimeBar], groups);
     return groups;

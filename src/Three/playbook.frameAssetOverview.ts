@@ -4,7 +4,6 @@ import FrameOverview from '@/screens/FrameOverview';
 import ThreeService from '@/services/ThreeService';
 import { BoxBufferGeometry, Group, Mesh, Object3D, Vector3 } from 'three';
 import Layers from './defaults.layers';
-import HorizontalProgressBar from './shapes.horizontalProgressBar';
 import { PlayBookFunctions } from '@/composables/playbook';
 import Timing from './defaults.timing';
 import { Frame as modelFrame } from '@/models/GraphqlModel';
@@ -13,7 +12,6 @@ import MoveObject from '@/composables/moveObject';
 import Defaults from './defaults.config';
 import LineHelper from './helper.line';
 import GroupHelper from './helper.group';
-import useFrame from '@/composables/useFrame';
 import ZoneHelper, { Zone } from './helper.zones';
 import Tools from './helper.tools';
 
@@ -28,7 +26,6 @@ const useFrameAssetOverview = (
     currentFrame: number,
     storyColor: number,
     timestamp: number,
-    audioDuration: number,
   ) => void;
 } => {
   const group: Group = new Group();
@@ -36,7 +33,6 @@ const useFrameAssetOverview = (
   let assets: Array<Asset> = [];
   let storyColor: number;
   let highlightWithMetaInfo: Group;
-  let progressbar: Array<Group>;
 
   const displayAllAssets = (frame: modelFrame, timestamp: number) => {
     threeService.state.scene.remove(group);
@@ -149,11 +145,7 @@ const useFrameAssetOverview = (
     currentFrame: number,
     _storyColor: number,
     timestamp: number,
-    audioDuration: number,
   ) => {
-    const assetsWithTimestampStart = useFrame().getStartTimestampsWithTheirAsset(
-      activeStoryData.frames[currentFrame],
-    );
     assets = useAsset(threeService).getAssetsFromFrame(activeStoryData, currentFrame);
     storyColor = _storyColor;
     if (assets.length > 0) {

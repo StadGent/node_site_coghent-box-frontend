@@ -220,7 +220,6 @@ export default defineComponent({
         zones,
         currentFrame,
         storyService.getStoryColor(activeStoryData.id),
-        audioDuration,
       );
       playBook.mergeActionsWithPlaybook(framePlaybook.getSortedPlayBookActions());
 

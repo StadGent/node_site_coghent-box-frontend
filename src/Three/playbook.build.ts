@@ -36,7 +36,6 @@ const PlayBookBuild = (
     zones: Array<Zone>,
     currentFrameIndex: number,
     storyColor: number,
-    audioDuration: number,
   ) => void;
   progressOfFrame: (frameIndex:number, color: number, currentTime: number, audioDuration: number, progressbar: Array<Group>) => Array<Group>;
   initialSpotLight: () => Mesh;
@@ -86,7 +85,6 @@ const PlayBookBuild = (
     zones: Array<Zone>,
     currentFrameIndex: number,
     storyColor: number,
-    audioDuration: number,
   ) => {
     useFrameAssetOverview(
       threeService,
@@ -98,7 +96,6 @@ const PlayBookBuild = (
       currentFrameIndex,
       storyColor,
       playBook.lastAction().time + Timing.delayNextCycle,
-      audioDuration,
     );
   };
 
