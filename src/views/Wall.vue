@@ -7,7 +7,7 @@ import { defineComponent, onMounted, ref } from 'vue';
 import ViewPort from '@/components/ViewPort.vue';
 import { useMutation, useQuery } from '@vue/apollo-composable';
 import { SearchFilter } from 'coghent-vue-3-component-library/lib/queries';
-import { GetStoriesDocument, CreationOfBoxVisitorDocument, GetBoxVisitersDocument } from 'coghent-vue-3-component-library';
+import { GetStoriesDocument, GetBoxVisitersDocument, GetBoxVisiterByCodeDocument, AddFrameToVisiterDocument } from 'coghent-vue-3-component-library';
 import mqtt from '@/components/mqtt.vue';
 
 export default defineComponent({
@@ -23,20 +23,30 @@ export default defineComponent({
     };
     let stories = ref<Array<any>>();
     const storySelected = ref<number>(1);
-    const val = ref<any>();
 
-    const { onResult: Stories } = useQuery(GetStoriesDocument,{searchValue: searchValue})
-    const {onResult: BoxVisiters} = useQuery(GetBoxVisitersDocument);
+    const { onResult: Stories } = useQuery(GetStoriesDocument)
+    // const {onResult: BoxVisiters} = useQuery(GetBoxVisitersDocument);
+    // const {onResult: BoxVisiter} = useQuery(GetBoxVisiterByCodeDocument, {code: "7682136782315678231657"});
+    // const { mutate, onDone } = useMutation(AddFrameToVisiterDocument, {variables: {visiterId: "3c3d73ed-584d-4ad0-9708-77da1d5464d2", frameId: "95072acc-b835-4bfe-84b3-1cc102efff34"}})
     
+    // BoxVisiters(async (visiters) => {
+    //   console.log({visiters});
+    //   const relations = await mutate();
+    // console.log({relations});
+    // });
+    // BoxVisiter((visiter) => {
+    //   console.log({visiter});
+    // });
 
-    BoxVisiters((visiters) => {
-      console.log({visiters});
-    });
-    Stories((entities) => {
-      const activeStories = entities.data.Entities?.results;
+    // onDone((_relations) => {
+    //   console.log({_relations});
+    // })
+    Stories((_stories) => {
+      console.log({_stories});
+      const activeStories = _stories.data.Stories.results;
       if (activeStories) {
         stories.value = [...activeStories];
-        console.log(`=> Stories <=`, entities);
+        console.log(`=> Stories <=`, _stories);
       }
     });
 

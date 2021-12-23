@@ -8,6 +8,7 @@ import useStory from '@/composables/useStory';
 
 import ThreeService from '@/services/ThreeService';
 import StoryService from '@/services/StoryService';
+import BoundaryService from '@/services/BoundaryService';
 
 import { defineComponent, onMounted, PropType, reactive, Ref, ref, watch } from 'vue';
 import { Group, Mesh, Vector3 } from 'three';
@@ -28,6 +29,8 @@ import PlayBook from '@/composables/playbook';
 
 import Positions from '@/Three/defaults.positions';
 import Measurements from '@/Three/defaults.measurements';
+import SchemaCube, { CubeSchema } from '@/Three/schema.cube';
+import Colors from '@/Three/defaults.color';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -93,6 +96,7 @@ export default defineComponent({
       () => props.stories,
       (value) => {
         stories.value = value;
+        setData();
         // playStartVideo();
       },
     );
@@ -113,17 +117,16 @@ export default defineComponent({
         spotlight,
         activeStoryData,
       ).startOfSession();
-
-      if (stories.value && startSession) {
-        alert('got stories and can start');
-        audioHelper = AudioHelper();
-        storyData = stories.value;
-        storyService = new StoryService(storyData);
-        console.log('StoryData', storyService.getStoryData());
-        buildStory(currentStory.value, '/Audio/example.mp3');
-      }
     };
 
+    const setData = () => {
+      alert('got stories and can start');
+      audioHelper = AudioHelper();
+      storyData = stories.value;
+      storyService = new StoryService(storyData);
+      console.log('StoryData', storyService.getStoryData());
+      buildStory(currentStory.value, '/Audio/example.mp3');
+    }
 
     const timing = () => {
       let currentFunction = 0;
@@ -290,6 +293,7 @@ export default defineComponent({
 
     onMounted(() => {
       threeSvc = new ThreeService(viewport);
+      threeSvc.ClearScene();
       const zonehelper = ZoneHelper(
         new Vector3(threeSvc.state.width, threeSvc.state.height, 0),
       );
