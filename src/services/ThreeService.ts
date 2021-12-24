@@ -1,3 +1,4 @@
+import threeDefaults from '@/Three/defaults.three';
 import {
   Camera,
   Scene,
@@ -6,6 +7,7 @@ import {
   Group,
   sRGBEncoding,
   Vector3,
+  MathUtils,
 } from 'three';
 import { Ref } from 'vue';
 
@@ -36,20 +38,26 @@ export default class ThreeService {
   constructor(_element: Ref) {
     this.state = initState;
     this.element = _element;
-    // this.SetViewPort(window.innerHeight * (48 / 9), window.innerHeight);
-    this.SetViewPort(window.innerWidth, 600);
+    this.SetViewPort(window.innerHeight * (48 / 9), window.innerHeight);
     this.InitializeRenderer();
     this.InitializeCamera();
+  }
+
+  private calculateDimensionsOfScene(){
+    const vFOV = MathUtils.degToRad(threeDefaults.camera.fov);
+    const height = 2 * Math.tan(vFOV / 2) * threeDefaults.camera.distance; // 
+    const width = height * (this.state.width/this.state.height);
+    this.state.sceneDimensions = new Vector3(width,height,0);
   }
 
   SetViewPort(width: number, height: number) {
     this.state.width = width;
     this.state.height = height;
-    this.state.sceneDimensions = new Vector3(width,height,0);
+    this.calculateDimensionsOfScene();
   }
   InitializeRenderer() {
-    this.state.renderer = new WebGLRenderer({ antialias: true });
-    this.state.renderer.gammaFactor = 2;
+    this.state.renderer = new WebGLRenderer({ antialias: threeDefaults.renderer.antialias });
+    this.state.renderer.gammaFactor = threeDefaults.renderer.gammaFactor;
     this.state.renderer.outputEncoding = sRGBEncoding;
     this.state.renderer.setPixelRatio(window.devicePixelRatio);
     this.state.renderer.setSize(this.state.width, this.state.height);
@@ -58,12 +66,12 @@ export default class ThreeService {
 
   InitializeCamera() {
     this.state.camera = new PerspectiveCamera(
-      60,
+      threeDefaults.camera.fov,
       this.state.width / this.state.height,
-      1,
-      100,
+      threeDefaults.camera.near,
+      threeDefaults.camera.far,
     );
-    this.state.camera.position.z = 15;
+    this.state.camera.position.z = threeDefaults.camera.distance;
   }
 
   AddToScene(item: any) {
