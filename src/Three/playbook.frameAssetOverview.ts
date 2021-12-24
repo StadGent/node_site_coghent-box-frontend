@@ -172,7 +172,7 @@ const useFrameAssetOverview = (
           );
           playBook.addToPlayBook(
             () => {
-              spotlight.scale.set(1, 1, 0);
+              spotlight.scale.set(0.1, 0.1, 0);
               setAssetsInactive(asset as Mesh<BoxBufferGeometry, any>);
               zoomAndHighlightAsset(
                 asset as Mesh<BoxBufferGeometry, any>,

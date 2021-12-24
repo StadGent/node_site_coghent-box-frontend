@@ -10,6 +10,7 @@ import TextHelper from '@/Three/helper.text';
 import { FontParams } from '@/Three/schema.text';
 import { BoxBufferGeometry, Mesh, Vector3, Group, BoxGeometry } from 'three';
 import MoveObject from './moveObject';
+import Positions from '@/Three/defaults.positions';
 
 const useAsset = (
   threeService: ThreeService,
@@ -106,14 +107,10 @@ const useAsset = (
       {} as CubeParams,
       { color: color } as FontParams,
     ) as Mesh<BoxGeometry, any>;
-    let rest =
-      object.geometry.parameters.width * scale - metadataInfo.geometry.parameters.width;
-    if (object.position.x < 0) {
-      rest = -rest;
-    }
+    const middleOfText = metadataInfo.geometry.parameters.width/2;
     metadataInfo.position.set(
-      (object.position.x - rest / 2) * scale,
-      (object.position.y + object.geometry.parameters.height / 2),
+      object.position.x - middleOfText,
+      (object.position.y + object.geometry.parameters.height / 2) + Positions().metadataInfoAboveImage().y,
       object.position.z,
     );
     return metadataInfo;

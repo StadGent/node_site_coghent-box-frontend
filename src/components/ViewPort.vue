@@ -93,7 +93,7 @@ export default defineComponent({
       () => props.stories,
       (value) => {
         stories.value = value;
-        // setData();
+        setData();
         // playStartVideo();
       },
     );
@@ -296,8 +296,8 @@ export default defineComponent({
       );
       zones = zonehelper.createZones(Defaults().screenZones());
 
-      Tools().displayZones(threeSvc,zones);
-      // setup();
+      // Tools().displayZones(threeSvc,zones);
+      setup();
       threeSvc.Animate();
     });
 

@@ -47,14 +47,12 @@ const LineHelper = (): {
     const linewidth = 3;
     const startPointX =
       cube.position.x -
-      cube.position.x * 0.03 * 2.03 -
       (cube.geometry.parameters.width * cube.scale.x) / 2 -
-      marginFromObject / 2;
+      marginFromObject/2;
     const startPointY =
       cube.position.y -
-      cube.position.y * 0.03 * 2.03 -
       (cube.geometry.parameters.height * cube.scale.y) / 2 -
-      marginFromObject / 2;
+      marginFromObject/2;
     const path: Array<Vector3> = [
       new Vector3(startPointX, startPointY, Layers.presentation),
       new Vector3(
