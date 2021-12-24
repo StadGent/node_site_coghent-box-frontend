@@ -11,6 +11,7 @@ const Defaults = (): {
   screenZones: () => number;
   scaleReducer: () => number;
   zonePadding: () => number;
+  boundaryPadding: () => number;
   showZonesInOverview: () => true | false;
   maxFrames: () => number;
   countdown: () => number;
@@ -22,13 +23,16 @@ const Defaults = (): {
   EndCircle: () => Mesh<CircleGeometry, MeshBasicMaterial>;
 } => {
   const pixelInMeter = () => 0.003;
-  const zoomOfAsset = () => 1.5;
+  const zoomOfAsset = () => 1.5; 
   const screenZones = () => 5;
   const scaleReducer = () => 0.2;
-  const zonePadding = () => 0.1;
-  const showZonesInOverview = () => false;
-  const maxFrames = () => 6;
+  const zonePadding = () => 2;
+  const boundaryPadding = () => 1;
+  const showZonesInOverview = () => true;
+  
+  const maxFrames = () => 2;
   const countdown = () => 3;
+
   
 
   const circlePoints = () => {
@@ -95,6 +99,7 @@ const Defaults = (): {
     screenZones,
     scaleReducer,
     zonePadding,
+    boundaryPadding,
     showZonesInOverview,
     maxFrames,
     countdown,

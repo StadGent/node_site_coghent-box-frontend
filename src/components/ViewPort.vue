@@ -8,7 +8,6 @@ import useStory from '@/composables/useStory';
 
 import ThreeService from '@/services/ThreeService';
 import StoryService from '@/services/StoryService';
-import BoundaryService from '@/services/BoundaryService';
 
 import { defineComponent, onMounted, PropType, reactive, Ref, ref, watch } from 'vue';
 import { Group, Mesh, Vector3 } from 'three';
@@ -29,8 +28,6 @@ import PlayBook from '@/composables/playbook';
 
 import Positions from '@/Three/defaults.positions';
 import Measurements from '@/Three/defaults.measurements';
-import SchemaCube, { CubeSchema } from '@/Three/schema.cube';
-import Colors from '@/Three/defaults.color';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -96,7 +93,7 @@ export default defineComponent({
       () => props.stories,
       (value) => {
         stories.value = value;
-        setData();
+        // setData();
         // playStartVideo();
       },
     );
@@ -295,10 +292,12 @@ export default defineComponent({
       threeSvc = new ThreeService(viewport);
       threeSvc.ClearScene();
       const zonehelper = ZoneHelper(
-        new Vector3(threeSvc.state.width, threeSvc.state.height, 0),
+        threeSvc.state.sceneDimensions,
       );
-      zones = zonehelper.createZonesXAxis(Defaults().screenZones());
-      setup();
+      zones = zonehelper.createZones(Defaults().screenZones());
+
+      Tools().displayZones(threeSvc,zones);
+      // setup();
       threeSvc.Animate();
     });
 
