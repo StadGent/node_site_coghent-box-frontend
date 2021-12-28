@@ -88,4 +88,13 @@ export default class ZoneService {
     }
     return zone;
   }
+
+  sceneZone(){
+    return {
+      start: new Vector3(-this.screen.x/2, 0,0),
+      end: new Vector3(this.screen.x/2,0,0),
+      width: this.screen.x,
+      height: this.screen.y,
+    } as Zone
+  }
 }

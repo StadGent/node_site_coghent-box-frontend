@@ -16,6 +16,7 @@ import { Entity as _Entity, Story } from '@/models/GraphqlModel';
 import Tools from '@/Three/helper.tools';
 import AudioHelper from '@/Three/helper.audio';
 import VideoHelper from '@/Three/helper.video';
+import BoundaryHelper from '@/Three/helper.boundary';
 
 import Defaults from '@/Three/defaults.config';
 import Timing from '@/Three/defaults.timing';
@@ -28,7 +29,7 @@ import PlayBook from '@/composables/playbook';
 
 import Positions from '@/Three/defaults.positions';
 import Measurements from '@/Three/defaults.measurements';
-import ZoneService from '@/services/ZoneService';
+import ZoneService, { Zone } from '@/services/ZoneService';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -115,9 +116,11 @@ export default defineComponent({
         playBook,
         spotlight,
         activeStoryData,
-      ).startOfSession().finally(() => {
-        setData();
-      });
+      )
+        .startOfSession()
+        .finally(() => {
+          setData();
+        });
     };
 
     const setData = () => {
@@ -127,7 +130,7 @@ export default defineComponent({
       storyService = new StoryService(storyData);
       console.log('StoryData', storyService.getStoryData());
       buildStory(currentStory.value, '/Audio/example.mp3');
-    }
+    };
 
     const timing = () => {
       let currentFunction = 0;
@@ -224,10 +227,7 @@ export default defineComponent({
         framePlaybook,
         spotlight,
         activeStoryData,
-      ).frameOverview(
-        currentFrame,
-        storyService.getStoryColor(activeStoryData.id),
-      );
+      ).frameOverview(currentFrame, storyService.getStoryColor(activeStoryData.id));
       playBook.mergeActionsWithPlaybook(framePlaybook.getSortedPlayBookActions());
 
       playBook.addToPlayBook(
@@ -302,8 +302,19 @@ export default defineComponent({
       threeSvc = new ThreeService(viewport, threeDefaultsWall);
       zoneService = new ZoneService(threeSvc.state.sceneDimensions,Defaults().screenZones());
       threeSvc.ClearScene();
+      
+      const innerBoundary = BoundaryHelper(zoneService.sceneZone(),Defaults().screenZonePadding()).createInnerBoundary();
+      const outerBoundary = BoundaryHelper(zoneService.sceneZone(), Defaults().screenZonePadding()).createOuterBoundary();
+      Tools().dotOnPosition(threeSvc, innerBoundary.TopLeft);
+      Tools().dotOnPosition(threeSvc, innerBoundary.TopRight);
+      Tools().dotOnPosition(threeSvc, innerBoundary.BottomLeft);
+      Tools().dotOnPosition(threeSvc, innerBoundary.BottomRight);
+      Tools().dotOnPosition(threeSvc, outerBoundary.TopLeft);
+      Tools().dotOnPosition(threeSvc, outerBoundary.TopRight);
+      Tools().dotOnPosition(threeSvc, outerBoundary.BottomLeft);
+      Tools().dotOnPosition(threeSvc, outerBoundary.BottomRight);
 
-      setup();
+      // setup();
       threeSvc.Animate();
     });
 
