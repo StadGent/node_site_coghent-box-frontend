@@ -10,7 +10,6 @@ import Spot from './shapes.spotlight';
 import useFrameAssetOverview from './playbook.frameAssetOverview';
 import useStoryCircle from './playbook.storyCircle';
 import Measurements from './defaults.measurements';
-import { Zone } from './helper.zones';
 import StoryService, { StoryData } from '@/services/StoryService';
 import MoveObject from '@/composables/moveObject';
 import useStory from '@/composables/useStory';
@@ -18,10 +17,12 @@ import StoryPaused from '@/screens/StoryPaused';
 import useStartOfSession from './playbook.startOfSession';
 import useEndOfSession from './playbook.endOfSession';
 import HorizontalProgressBar from './shapes.horizontalProgressBar';
+import ZoneService from '@/services/ZoneService';
 
 const PlayBookBuild = (
   threeService: ThreeService,
   storyService: StoryService,
+  zoneService: ZoneService,
   playBook: PlayBookFunctions,
   spotlight: Mesh,
   activeStoryData: Story,
@@ -33,7 +34,6 @@ const PlayBookBuild = (
   ) => void;
   storyCircle: (currentFrameIndex: number, storyColor: number) => void;
   frameOverview: (
-    zones: Array<Zone>,
     currentFrameIndex: number,
     storyColor: number,
   ) => void;
@@ -82,16 +82,15 @@ const PlayBookBuild = (
   };
 
   const frameOverview = (
-    zones: Array<Zone>,
     currentFrameIndex: number,
     storyColor: number,
   ) => {
     useFrameAssetOverview(
       threeService,
+      zoneService,
       activeStoryData,
       playBook,
       spotlight,
-      zones,
     ).create(
       currentFrameIndex,
       storyColor,

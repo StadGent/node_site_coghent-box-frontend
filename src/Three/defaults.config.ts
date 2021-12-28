@@ -26,7 +26,7 @@ const Defaults = (): {
   const zoomOfAsset = () => 1.5; 
   const screenZones = () => 5;
   const scaleReducer = () => 0.2;
-  const zonePadding = () => 2;
+  const zonePadding = () => 1;
   const boundaryPadding = () => 1;
   const showZonesInOverview = () => true;
   

@@ -1,5 +1,6 @@
+import Defaults from '@/Three/defaults.config';
 import Layers from '@/Three/defaults.layers';
-import { Vector3 } from 'three';
+import { Mesh, Vector3 } from 'three';
 
 export type Zone = {
   start: Vector3;
@@ -10,8 +11,9 @@ export type Zone = {
 
 export default class ZoneService {
   private screen: Vector3;
-  
-  zones: Array<Zone> = [];
+
+  public zones: Array<Zone> = [];
+  public zoneDimensions = new Vector3(0, 0, 0);
 
   constructor(_screen: Vector3, _zones: number) {
     this.screen = _screen;
@@ -40,6 +42,10 @@ export default class ZoneService {
     return zones;
   }
 
+  private setZoneDimensions(width: number, height: number) {
+    return new Vector3(width - Defaults().zonePadding(), height - Defaults().zonePadding(), 0);
+  }
+
   createZones(_zones: number) {
     let zones: Array<Zone> = [];
     let startLeft = 0;
@@ -48,6 +54,8 @@ export default class ZoneService {
 
     const widthOfOneZone = this.screen.x / _zones;
     const heightOfOneZone = this.screen.y / 1;
+
+    this.zoneDimensions = this.setZoneDimensions(widthOfOneZone, heightOfOneZone);
 
     if (_zones % 2 == 0) {
       startLeft = 0;
@@ -63,5 +71,21 @@ export default class ZoneService {
       zones.push(centerZone);
     }
     return zones;
-  };
+  }
+
+  getMiddleOfZone(zone: Zone) {
+    return new Vector3(zone.end.x - (zone.width / 2), 0, Layers.presentation);
+  }
+
+  objectIsInZone(object: Mesh) {
+    let zone: Zone = { start: new Vector3(0, 0, 0), end: new Vector3(0, 0, 0), width: 0, height: 0 };
+    if (this.zones.length > 0) {
+      this.zones.forEach(_zone => {
+        if (object.position.x > _zone.start.x && object.position.x < _zone.end.x) {
+          zone = _zone;
+        }
+      });
+    }
+    return zone;
+  }
 }

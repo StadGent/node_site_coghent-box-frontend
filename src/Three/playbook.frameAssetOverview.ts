@@ -12,15 +12,15 @@ import MoveObject from '@/composables/moveObject';
 import Defaults from './defaults.config';
 import LineHelper from './helper.line';
 import GroupHelper from './helper.group';
-import ZoneHelper, { Zone } from './helper.zones';
 import Tools from './helper.tools';
+import ZoneService from '@/services/ZoneService';
 
 const useFrameAssetOverview = (
   threeService: ThreeService,
+  zoneService: ZoneService,
   activeStoryData: Story,
   playBook: PlayBookFunctions,
   spotlight: Mesh,
-  zones: Array<Zone>,
 ): {
   create: (
     currentFrame: number,
@@ -86,16 +86,11 @@ const useFrameAssetOverview = (
   };
 
   const calculateZoomSettingsOfAsset = (asset: Mesh<BoxBufferGeometry, any>) => {
-    const inZone = ZoneHelper(threeService.state.sceneDimensions).objectIsInZone(
-      asset,
-      zones,
-    );
-    const zoomTo = ZoneHelper(threeService.state.sceneDimensions).getMiddleOfZone(inZone);
-    const zoneDimensions = ZoneHelper(threeService.state.sceneDimensions).zoneDimensions(
-      Defaults().screenZones(),
-    );
-    let scale = zoneDimensions.width / asset.geometry.parameters.width;
-    while (scale * asset.geometry.parameters.height > zoneDimensions.height) {
+    const inZone = zoneService.objectIsInZone(asset);
+    const zoomTo = zoneService.getMiddleOfZone(inZone);
+
+    let scale = zoneService.zoneDimensions.x / asset.geometry.parameters.width;
+    while (scale * asset.geometry.parameters.height > zoneService.zoneDimensions.y) {
       scale -= 0.05;
     }
     if (
@@ -104,8 +99,8 @@ const useFrameAssetOverview = (
         asset.geometry.parameters.width,
       )
     ) {
-      scale = zoneDimensions.height / asset.geometry.parameters.height;
-      while (scale * asset.geometry.parameters.width > zoneDimensions.width) {
+      scale = zoneService.zoneDimensions.y / asset.geometry.parameters.height;
+      while (scale * asset.geometry.parameters.width > zoneService.zoneDimensions.x) {
         scale -= 0.05;
       }
     }
@@ -159,7 +154,10 @@ const useFrameAssetOverview = (
           playBook.addToPlayBook(
             async () => {
               if (Defaults().showZonesInOverview()) {
-                Tools().displayZones(threeService, zones);
+                Tools().displayZones(threeService, zoneService.zones);
+                zoneService.zones.forEach(_zone => {
+                  Tools().dotOnPosition(threeService, zoneService.getMiddleOfZone(_zone));
+                });
               }
               await useAsset(threeService).moveSpotlightToAsset(
                 spotlight,

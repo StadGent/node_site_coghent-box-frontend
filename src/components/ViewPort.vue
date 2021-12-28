@@ -16,12 +16,11 @@ import { Entity as _Entity, Story } from '@/models/GraphqlModel';
 import Tools from '@/Three/helper.tools';
 import AudioHelper from '@/Three/helper.audio';
 import VideoHelper from '@/Three/helper.video';
-import ZoneHelper, { Zone } from '@/Three/helper.zones';
 
 import Defaults from '@/Three/defaults.config';
 import Timing from '@/Three/defaults.timing';
 import Layers from '@/Three/defaults.layers';
-import {threeDefaultsWall} from '@/Three/defaults.three';
+import { threeDefaultsWall } from '@/Three/defaults.three';
 
 import PlayBookBuild from '@/Three/playbook.build';
 
@@ -29,6 +28,7 @@ import PlayBook from '@/composables/playbook';
 
 import Positions from '@/Three/defaults.positions';
 import Measurements from '@/Three/defaults.measurements';
+import ZoneService from '@/services/ZoneService';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -54,6 +54,7 @@ export default defineComponent({
 
     let threeSvc: ThreeService;
     let storyService: StoryService;
+    let zoneService: ZoneService;
 
     let audio: HTMLAudioElement;
     let audioHelper: {
@@ -67,7 +68,6 @@ export default defineComponent({
     let storyData: Array<Story> = [];
     let activeStoryData = reactive<Story>({} as Story);
     let spotlight: Mesh;
-    let zones: Array<Zone>;
 
     watch(
       () => props.storySelected,
@@ -94,7 +94,6 @@ export default defineComponent({
       () => props.stories,
       (value) => {
         stories.value = value;
-        setData();
         // playStartVideo();
       },
     );
@@ -103,6 +102,7 @@ export default defineComponent({
       spotlight = PlayBookBuild(
         threeSvc,
         storyService,
+        zoneService,
         playBook,
         spotlight,
         activeStoryData,
@@ -111,10 +111,13 @@ export default defineComponent({
       startSession = await PlayBookBuild(
         threeSvc,
         storyService,
+        zoneService,
         playBook,
         spotlight,
         activeStoryData,
-      ).startOfSession();
+      ).startOfSession().finally(() => {
+        setData();
+      });
     };
 
     const setData = () => {
@@ -159,6 +162,7 @@ export default defineComponent({
       spotlight = PlayBookBuild(
         threeSvc,
         storyService,
+        zoneService,
         playBook,
         spotlight,
         activeStoryData,
@@ -182,6 +186,7 @@ export default defineComponent({
           progress = PlayBookBuild(
             threeSvc,
             storyService,
+            zoneService,
             framePlaybook,
             spotlight,
             activeStoryData,
@@ -206,6 +211,7 @@ export default defineComponent({
       PlayBookBuild(
         threeSvc,
         storyService,
+        zoneService,
         framePlaybook,
         spotlight,
         activeStoryData,
@@ -214,11 +220,11 @@ export default defineComponent({
       PlayBookBuild(
         threeSvc,
         storyService,
+        zoneService,
         framePlaybook,
         spotlight,
         activeStoryData,
       ).frameOverview(
-        zones,
         currentFrame,
         storyService.getStoryColor(activeStoryData.id),
       );
@@ -230,6 +236,7 @@ export default defineComponent({
           PlayBookBuild(
             threeSvc,
             storyService,
+            zoneService,
             framePlaybook,
             spotlight,
             activeStoryData,
@@ -240,6 +247,7 @@ export default defineComponent({
             PlayBookBuild(
               threeSvc,
               storyService,
+              zoneService,
               framePlaybook,
               spotlight,
               activeStoryData,
@@ -254,6 +262,7 @@ export default defineComponent({
             PlayBookBuild(
               threeSvc,
               storyService,
+              zoneService,
               framePlaybook,
               spotlight,
               activeStoryData,
@@ -291,13 +300,9 @@ export default defineComponent({
 
     onMounted(() => {
       threeSvc = new ThreeService(viewport, threeDefaultsWall);
+      zoneService = new ZoneService(threeSvc.state.sceneDimensions,Defaults().screenZones());
       threeSvc.ClearScene();
-      const zonehelper = ZoneHelper(
-        threeSvc.state.sceneDimensions,
-      );
-      zones = zonehelper.createZones(Defaults().screenZones());
 
-      // Tools().displayZones(threeSvc,zones);
       setup();
       threeSvc.Animate();
     });
