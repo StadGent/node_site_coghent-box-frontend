@@ -21,6 +21,7 @@ import ZoneHelper, { Zone } from '@/Three/helper.zones';
 import Defaults from '@/Three/defaults.config';
 import Timing from '@/Three/defaults.timing';
 import Layers from '@/Three/defaults.layers';
+import {threeDefaultsWall} from '@/Three/defaults.three';
 
 import PlayBookBuild from '@/Three/playbook.build';
 
@@ -289,7 +290,7 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      threeSvc = new ThreeService(viewport);
+      threeSvc = new ThreeService(viewport, threeDefaultsWall);
       threeSvc.ClearScene();
       const zonehelper = ZoneHelper(
         threeSvc.state.sceneDimensions,

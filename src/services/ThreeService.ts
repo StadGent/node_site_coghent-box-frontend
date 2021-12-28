@@ -1,4 +1,4 @@
-import threeDefaults from '@/Three/defaults.three';
+import { ThreeDefaults } from '@/Three/defaults.three';
 import {
   Camera,
   Scene,
@@ -18,7 +18,7 @@ type State = {
   scene: Scene;
   renderer: any;
   groups: Array<Group>;
-  sceneDimensions: Vector3,
+  sceneDimensions: Vector3;
 };
 
 export const initState: State = {
@@ -28,26 +28,28 @@ export const initState: State = {
   scene: new Scene(),
   renderer: null,
   groups: [],
-  sceneDimensions: new Vector3(0,0,0),
+  sceneDimensions: new Vector3(0, 0, 0),
 };
 
 export default class ThreeService {
   state: State;
   element: Ref;
+  defaultvalues: ThreeDefaults;
 
-  constructor(_element: Ref) {
+  constructor(_element: Ref, _defaultvalues: ThreeDefaults) {
     this.state = initState;
     this.element = _element;
-    this.SetViewPort(window.innerHeight * (48 / 9), window.innerHeight);
+    this.defaultvalues = _defaultvalues;
+    this.SetViewPort(_defaultvalues.viewport, window.innerHeight);
     this.InitializeRenderer();
     this.InitializeCamera();
   }
 
-  private calculateDimensionsOfScene(){
-    const vFOV = MathUtils.degToRad(threeDefaults.camera.fov);
-    const height = 2 * Math.tan(vFOV / 2) * threeDefaults.camera.distance; // 
-    const width = height * (this.state.width/this.state.height);
-    this.state.sceneDimensions = new Vector3(width,height,0);
+  private calculateDimensionsOfScene() {
+    const vFOV = MathUtils.degToRad(this.defaultvalues.camera.fov);
+    const height = 2 * Math.tan(vFOV / 2) * this.defaultvalues.camera.distance; //
+    const width = height * (this.state.width / this.state.height);
+    this.state.sceneDimensions = new Vector3(width, height, 0);
   }
 
   SetViewPort(width: number, height: number) {
@@ -56,8 +58,10 @@ export default class ThreeService {
     this.calculateDimensionsOfScene();
   }
   InitializeRenderer() {
-    this.state.renderer = new WebGLRenderer({ antialias: threeDefaults.renderer.antialias });
-    this.state.renderer.gammaFactor = threeDefaults.renderer.gammaFactor;
+    this.state.renderer = new WebGLRenderer({
+      antialias: this.defaultvalues.renderer.antialias,
+    });
+    this.state.renderer.gammaFactor = this.defaultvalues.renderer.gammaFactor;
     this.state.renderer.outputEncoding = sRGBEncoding;
     this.state.renderer.setPixelRatio(window.devicePixelRatio);
     this.state.renderer.setSize(this.state.width, this.state.height);
@@ -66,12 +70,12 @@ export default class ThreeService {
 
   InitializeCamera() {
     this.state.camera = new PerspectiveCamera(
-      threeDefaults.camera.fov,
+      this.defaultvalues.camera.fov,
       this.state.width / this.state.height,
-      threeDefaults.camera.near,
-      threeDefaults.camera.far,
+      this.defaultvalues.camera.near,
+      this.defaultvalues.camera.far,
     );
-    this.state.camera.position.z = threeDefaults.camera.distance;
+    this.state.camera.position.z = this.defaultvalues.camera.distance;
   }
 
   AddToScene(item: any) {
@@ -85,9 +89,9 @@ export default class ThreeService {
     });
   }
 
-  RemoveGroupsFromScene(groups: Array<Group>){
-    if(groups){
-      groups.forEach(group => this.state.scene.remove(group));
+  RemoveGroupsFromScene(groups: Array<Group>) {
+    if (groups) {
+      groups.forEach((group) => this.state.scene.remove(group));
     }
   }
 
