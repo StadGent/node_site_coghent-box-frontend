@@ -11,13 +11,25 @@ export type Zone = {
 
 export default class ZoneService {
   private screen: Vector3;
-
-  public zones: Array<Zone> = [];
+  
+  public zoneCenters: Array<Vector3>;
+  public middleZoneCenter: Vector3;
+  public zones: Array<Zone>;;
   public zoneDimensions = new Vector3(0, 0, 0);
 
   constructor(_screen: Vector3, _zones: number) {
     this.screen = _screen;
     this.zones = this.createZones(_zones);
+    this.zoneCenters = this.middleOfZones();
+    this.middleZoneCenter = this.zoneCenters[(this.zoneCenters.length-1)/2]
+  }
+
+  private middleOfZones(){
+    const centers: Array<Vector3> = [];
+    this.zones.forEach(_zone => {
+      centers.push(this.getMiddleOfZone(_zone));
+    })
+    return centers;
   }
 
   private calculateZones(times: number, width: number, height: number, startLeft: number, startRight: number) {
