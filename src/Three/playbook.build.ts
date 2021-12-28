@@ -39,7 +39,7 @@ const PlayBookBuild = (
   ) => void;
   progressOfFrame: (frameIndex:number, color: number, currentTime: number, audioDuration: number, progressbar: Array<Group>) => Array<Group>;
   initialSpotLight: () => Mesh;
-  endOfSession: (position: Vector3, spotRadius: number) => Promise<boolean>;
+  endOfSession: (spotRadius: number) => Promise<boolean>;
   storyPaused: (storyData: Array<Story>) => Promise<void>;
   storyData: (
     storyService: StoryService,
@@ -73,7 +73,7 @@ const PlayBookBuild = (
 
   const storyCircle = (currentFrameIndex: number, storyColor: number) => {
     useStoryCircle(threeService, activeStoryData, playBook).create(
-      new Vector3(0, 0, 0),
+      zoneService.middleZoneCenter,
       storyColor,
       currentFrameIndex,
       activeStoryData.frames.length,
@@ -116,15 +116,15 @@ const PlayBookBuild = (
 
   const initialSpotLight = () => {
     const spotlight = Spot().create(
-      new Vector3(0, 0, Layers.scene),
+      new Vector3(zoneService.middleZoneCenter.x, zoneService.middleZoneCenter.y, Layers.scene),
       Measurements().spotLight.radius,
     );
     threeService.AddToScene(spotlight);
     return spotlight;
   };
 
-  const endOfSession = (position: Vector3, spotRadius: number) => {
-    return useEndOfSession(threeService).create(position, spotRadius);
+  const endOfSession = (spotRadius: number) => {
+    return useEndOfSession(threeService, zoneService).create(spotRadius);
   };
 
   const storyPaused = async (storyData: Array<Story>) => {
@@ -154,7 +154,7 @@ const PlayBookBuild = (
   };
 
   const startOfSession = () => {
-    return useStartOfSession(threeService, spotlight).create();
+    return useStartOfSession(threeService, zoneService,spotlight).create();
   };
 
   return {

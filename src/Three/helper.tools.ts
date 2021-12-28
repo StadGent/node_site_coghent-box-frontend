@@ -7,7 +7,7 @@ import Colors from './defaults.color';
 import Layers from './defaults.layers';
 import GroupHelper from './helper.group';
 import SchemaLine, { LineSchema } from './schema.line';
-import { Zone } from './helper.zones';
+import { Zone } from '@/services/ZoneService';
 
 const Tools = (): {
   Grid: () => Group;
@@ -64,10 +64,10 @@ const Tools = (): {
       new Vector3(
         position.x - position.x * 0.03 * 2,
         position.y - position.y * 2 * 0.03,
-        position.z,
+        2,
       ),
-      0.1,
-      Colors().pink,
+      0.5,
+      Colors().lightBlue,
     );
     const circle = SchemaCircle().CreateCircle(schema, Layers.presentation);
     threeService.AddToScene(circle);

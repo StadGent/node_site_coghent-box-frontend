@@ -6,7 +6,7 @@ const HelperText = (): {
   scanYourTicketAgain: (position: Vector3) => Record<string, Vector3>;
   scanYourTicket: (position: Vector3) => Record<string, Vector3>;
   goToWebPortal: (position: Vector3) => Record<string, Vector3>;
-  WalkToTouchtable: Record<string, Vector3>;
+  WalkToTouchtable: (position: Vector3) => Record<string, Vector3>;
 } => {
   const EndOfStory: Record<string, Vector3> = {
     'Je hebt het hele': new Vector3(0, 3, 0),
@@ -25,28 +25,30 @@ const HelperText = (): {
 
   const scanYourTicketAgain = (position: Vector3) => {
     return {
-      'Scan je ticket': new Vector3(-position.x + 1.4, 3, 0),
-      'opnieuw aan de zuil': new Vector3(-position.x + 1.2, 2.5, 0),
-      'om verder te gaan': new Vector3(-position.x + 1.2, 2, 0),
+      'Scan je ticket': new Vector3(position.x + 2.4, position.y + 1, 0),
+      'opnieuw aan de zuil': new Vector3(position.x + 2.2, position.y + 0.5, 0),
+      'om verder te gaan': new Vector3(position.x + 2.2, position.y, 0),
     };
   };
   const goToWebPortal = (position: Vector3) => {
     return {
-      'Neem je ticket mee': new Vector3(position.x - 1.8, 3, 0),
-      'naar huis en ontdek de': new Vector3(position.x - 2, 2.5, 0),
-      'collectie verder online': new Vector3(position.x - 1.8, 2, 0),
-      'wwwcoghentbox.be': new Vector3(position.x - 1.8, 1.5, 0),
+      'Neem je ticket mee': new Vector3(position.x - 2.8, position.y + 1.5, 0),
+      'naar huis en ontdek de': new Vector3(position.x - 3, position.y + 1, 0),
+      'collectie verder online': new Vector3(position.x - 2.8, position.y + 0.5, 0),
+      'wwwcoghentbox.be': new Vector3(position.x - 2.8, position.y, 0),
     };
   };
-  const WalkToTouchtable: Record<string, Vector3> = {
-    'Ga de collectie': new Vector3(0, 3, 0),
-    'verder ontdekken': new Vector3(0, 2.5, 0),
-    'aan de tafel': new Vector3(0, 2, 0),
+  const WalkToTouchtable = (position: Vector3) => {
+    return {
+      'Ga de collectie': new Vector3(position.x, position.y + 1, 0),
+      'verder ontdekken': new Vector3(position.x, position.y + 0.5, 0),
+      'aan de tafel': new Vector3(position.x, position.y, 0),
+    } as Record<string, Vector3>
   };
   const scanYourTicket = (position: Vector3) => {
     return {
       'Scan je ticket': new Vector3(position.x + 1.2, 3, 0),
-      'opnieuw aan de zuil': new Vector3(position.x+ 0.8, 2.5, 0),
+      'opnieuw aan de zuil': new Vector3(position.x + 0.8, 2.5, 0),
       'om verder te gaan': new Vector3(position.x + 0.8, 2, 0),
     };
   };

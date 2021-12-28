@@ -9,11 +9,13 @@ import { FontParams } from './schema.text';
 import customText from './defaults.text';
 import Colors from './defaults.color';
 import Common from '@/composables/common';
+import ZoneService from '@/services/ZoneService';
 
 const useEndOfSession = (
   threeService: ThreeService,
+  zoneService: ZoneService,
 ): {
-  create: (position: Vector3, spotRadius: number) => Promise<boolean>;
+  create: (spotRadius: number) => Promise<boolean>;
 } => {
   const timerCountdown = async (duration: number) => {
     let currentTime = duration;
@@ -33,9 +35,9 @@ const useEndOfSession = (
     }
   };
 
-  const create = async (position: Vector3, spotRadius: number) => {
+  const create = async (spotRadius: number) => {
     threeService.ClearScene();
-    threeService.AddGroupsToScene(EndOfSession(position, spotRadius).create());
+    threeService.AddGroupsToScene(EndOfSession(zoneService,spotRadius).create());
     await timerCountdown(Timing.endOfSession.countdown);
     alert()
     return true;

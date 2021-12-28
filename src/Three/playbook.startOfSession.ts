@@ -2,6 +2,7 @@ import Common from '@/composables/common';
 import MoveObject from '@/composables/moveObject';
 import ScanQR from '@/screens/ScanQR';
 import ThreeService from '@/services/ThreeService';
+import ZoneService from '@/services/ZoneService';
 import { Mesh, Vector3 } from 'three';
 import Colors from './defaults.color';
 import Defaults from './defaults.config';
@@ -16,6 +17,7 @@ import { FontParams } from './schema.text';
 
 const useStartOfSession = (
   threeService: ThreeService,
+  zoneService: ZoneService,
   spotlight: Mesh,
 ): {
   create: () => Promise<true | false>;
