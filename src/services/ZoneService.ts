@@ -21,7 +21,7 @@ export default class ZoneService {
     this.screen = _screen;
     this.zones = this.createZones(_zones);
     this.zoneCenters = this.middleOfZones();
-    this.middleZoneCenter = this.zoneCenters[(this.zoneCenters.length-1)/2]
+    this.middleZoneCenter = this.zoneCenters[(this.zoneCenters.length-1)/2];
   }
 
   private middleOfZones(){
@@ -82,11 +82,11 @@ export default class ZoneService {
       const centerZone = { width: widthOfOneZone, height: heightOfOneZone, start: new Vector3(startLeft), end: new Vector3(startRight), } as Zone;
       zones.push(centerZone);
     }
-    return zones;
+    return zones.sort((a,b) => a.start.x - b.start.x);
   }
 
   getMiddleOfZone(zone: Zone) {
-    return new Vector3(zone.end.x - (zone.width / 2), 0, Layers.presentation);
+    return new Vector3(zone.end.x - ((zone.end.x-zone.start.x) / 2), 0, Layers.presentation);
   }
 
   objectIsInZone(object: Mesh) {
