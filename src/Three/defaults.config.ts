@@ -11,6 +11,7 @@ const Defaults = (): {
   screenZones: () => number;
   scaleReducer: () => number;
   zonePadding: () => number;
+  screenZonePadding: () => number;
   boundaryPadding: () => number;
   showZonesInOverview: () => true | false;
   maxFrames: () => number;
@@ -27,6 +28,7 @@ const Defaults = (): {
   const screenZones = () => 5;
   const scaleReducer = () => 0.2;
   const zonePadding = () => 1;
+  const screenZonePadding = () => 2;
   const boundaryPadding = () => 1;
   const showZonesInOverview = () => true;
   
@@ -99,6 +101,7 @@ const Defaults = (): {
     screenZones,
     scaleReducer,
     zonePadding,
+    screenZonePadding,
     boundaryPadding,
     showZonesInOverview,
     maxFrames,

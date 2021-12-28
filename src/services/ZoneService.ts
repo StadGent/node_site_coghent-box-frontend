@@ -27,15 +27,15 @@ export default class ZoneService {
       zones.push({
         width: width,
         height: height,
-        start: new Vector3(startLeft, height, Layers.presentation),
-        end: new Vector3(startLeft - width, height, Layers.presentation),
+        start: new Vector3(startLeft, 0, Layers.presentation),
+        end: new Vector3(startLeft - width, 0, Layers.presentation),
       } as Zone);
       startLeft = startLeft - width;
       zones.push({
         width: width,
         height: height,
-        start: new Vector3(startRight, height, Layers.presentation),
-        end: new Vector3(startRight + width, height, Layers.presentation),
+        start: new Vector3(startRight, 0, Layers.presentation),
+        end: new Vector3(startRight + width, 0, Layers.presentation),
       } as Zone);
       startRight = startRight + width;
     }
