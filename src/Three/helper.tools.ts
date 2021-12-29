@@ -8,6 +8,7 @@ import Layers from './defaults.layers';
 import GroupHelper from './helper.group';
 import SchemaLine, { LineSchema } from './schema.line';
 import { Zone } from '@/services/ZoneService';
+import { Boundary } from './helper.boundary';
 
 const Tools = (): {
   Grid: () => Group;
@@ -18,6 +19,7 @@ const Tools = (): {
     zones: number,) => void;
   displayZones: (threeService: ThreeService, zones: Array<Zone>) => void;
   dotOnPosition: (threeService: ThreeService, position: Vector3) => void;
+  displayBoundaryAsDots: (threeService: ThreeService, boundary: Boundary) => void;
 } => {
   const Grid = () => {
     const middleX = xAxis(new Vector3(0, 0, 0));
@@ -47,13 +49,13 @@ const Tools = (): {
     const startPosition = 0 - Common().pixelsToMeters(sceneWidth / 2) * 10;
     let updatedPosition = startPosition;
 
-    for (let i = 0; i < zones + 1; i++) {
+    for (let i = 0;i < zones + 1;i++) {
       threeService.AddToScene(Tools().yAxis(new Vector3(updatedPosition, 0, 0)));
       updatedPosition += Common().pixelsToMeters(zoneWidthInPixels) * 10;
     }
   };
 
-  const displayZones = (threeService: ThreeService ,zones: Array<Zone>) => {
+  const displayZones = (threeService: ThreeService, zones: Array<Zone>) => {
     zones.forEach(zone => {
       threeService.AddToScene(Tools().yAxis(new Vector3(zone.start.x, zone.start.y, zone.start.z)));
     })
@@ -73,7 +75,18 @@ const Tools = (): {
     threeService.AddToScene(circle);
   };
 
-  return { Grid, xAxis, yAxis, splitAreaInZones, displayZones, dotOnPosition };
+  const displayBoundaryAsDots = (threeService: ThreeService, boundary: Boundary) => {
+    dotOnPosition(threeService, boundary.TopLeft);
+    dotOnPosition(threeService, boundary.TopRight);
+    dotOnPosition(threeService, boundary.BottomLeft);
+    dotOnPosition(threeService, boundary.BottomRight);
+    dotOnPosition(threeService, boundary.TopLeft);
+    dotOnPosition(threeService, boundary.TopRight);
+    dotOnPosition(threeService, boundary.BottomLeft);
+    dotOnPosition(threeService, boundary.BottomRight);
+  }
+
+  return { Grid, xAxis, yAxis, splitAreaInZones, displayZones, dotOnPosition, displayBoundaryAsDots };
 };
 
 export default Tools;

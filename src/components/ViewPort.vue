@@ -316,14 +316,8 @@ export default defineComponent({
         zoneService.sceneZone(),
         Defaults().screenZonePadding(),
       ).createOuterBoundary();
-      Tools().dotOnPosition(threeSvc, innerBoundary.TopLeft);
-      Tools().dotOnPosition(threeSvc, innerBoundary.TopRight);
-      Tools().dotOnPosition(threeSvc, innerBoundary.BottomLeft);
-      Tools().dotOnPosition(threeSvc, innerBoundary.BottomRight);
-      Tools().dotOnPosition(threeSvc, outerBoundary.TopLeft);
-      Tools().dotOnPosition(threeSvc, outerBoundary.TopRight);
-      Tools().dotOnPosition(threeSvc, outerBoundary.BottomLeft);
-      Tools().dotOnPosition(threeSvc, outerBoundary.BottomRight);
+      Tools().displayBoundaryAsDots(threeSvc, outerBoundary);
+      Tools().displayBoundaryAsDots(threeSvc, innerBoundary);
 
       setup();
 
