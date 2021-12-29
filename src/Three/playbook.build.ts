@@ -119,7 +119,7 @@ const PlayBookBuild = (
       new Vector3(zoneService.middleZoneCenter.x, zoneService.middleZoneCenter.y, Layers.scene),
       Measurements().spotLight.radius,
     );
-    threeService.AddToScene(spotlight);
+    threeService.AddToScene(spotlight, 'spotlight', 'initialSpotlight');
     return spotlight;
   };
 

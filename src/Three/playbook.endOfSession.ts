@@ -28,7 +28,7 @@ const useEndOfSession = (
         {} as CubeParams,
         { size: customText.size.veryBig, color: Colors().white } as FontParams,
       );
-      threeService.AddToScene(text);
+      threeService.AddToScene(text, 'countdown text', 'EndOfSession countdown timer');
       await Common().awaitTimeout(1000);
       threeService.state.scene.remove(text);
       currentTime -= 1000;

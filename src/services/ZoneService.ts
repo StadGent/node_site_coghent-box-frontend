@@ -65,7 +65,6 @@ export default class ZoneService {
     let positionOfIndex = Math.floor(this.zoneCenters.length / 2);
     // zones.push(this.zoneCenters[positionOfIndex]);
     for (let index = 1;index < this.zoneCenters.length;index++) {
-      console.log({ positionOfIndex });
       if (index % 2 === 0) {
         positionOfIndex += index;
         zones.push(this.zoneCenters[positionOfIndex]);

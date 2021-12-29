@@ -75,7 +75,7 @@ const useStoryCircle = (
       threeService.AddGroupsToScene(progressBar.object);
     }, timestamp, `Add title cirle with progressbar to the scene.`);
     playBook.addToPlayBook(() => {
-      threeService.AddToScene(frameLineWithTitle(currentFrame, progressBar));
+      threeService.AddToScene(frameLineWithTitle(currentFrame, progressBar), `frame title`, 'Active frame title.');
     }, timestamp + Timing.storyCircle.showFrameTitle, `Add the frame title to the scene.`);
     threeService.state.scene.updateMatrixWorld(true);
   };

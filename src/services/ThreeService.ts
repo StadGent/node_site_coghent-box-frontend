@@ -10,6 +10,7 @@ import {
   MathUtils,
 } from 'three';
 import { Ref } from 'vue';
+import TaggingService from './TaggingService';
 
 type State = {
   width: number;
@@ -35,11 +36,13 @@ export default class ThreeService {
   state: State;
   element: Ref;
   defaultvalues: ThreeDefaults;
+  taggingService: TaggingService;
 
-  constructor(_element: Ref, _defaultvalues: ThreeDefaults) {
+  constructor(_element: Ref, _defaultvalues: ThreeDefaults, _taggingService: TaggingService) {
     this.state = initState;
     this.element = _element;
     this.defaultvalues = _defaultvalues;
+    this.taggingService = _taggingService;
     this.SetViewPort(_defaultvalues.viewport, window.innerHeight);
     this.InitializeRenderer();
     this.InitializeCamera();
@@ -78,7 +81,8 @@ export default class ThreeService {
     this.state.camera.position.z = this.defaultvalues.camera.distance;
   }
 
-  AddToScene(item: any) {
+  AddToScene(item: any, name: string, context?: string) {
+    this.taggingService.tag(name, item, context);
     this.state.scene.add(item);
   }
 

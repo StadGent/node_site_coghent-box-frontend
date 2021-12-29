@@ -50,14 +50,14 @@ const Tools = (): {
     let updatedPosition = startPosition;
 
     for (let i = 0;i < zones + 1;i++) {
-      threeService.AddToScene(Tools().yAxis(new Vector3(updatedPosition, 0, 0)));
+      threeService.AddToScene(Tools().yAxis(new Vector3(updatedPosition, 0, 0)),'xAxis', 'Helper line for the xAxis.');
       updatedPosition += Common().pixelsToMeters(zoneWidthInPixels) * 10;
     }
   };
 
   const displayZones = (threeService: ThreeService, zones: Array<Zone>) => {
     zones.forEach(zone => {
-      threeService.AddToScene(Tools().yAxis(new Vector3(zone.start.x, zone.start.y, zone.start.z)));
+      threeService.AddToScene(Tools().yAxis(new Vector3(zone.start.x, zone.start.y, zone.start.z)), 'yAxis', 'Helper line for the yAxis.');
     })
   }
 
@@ -72,7 +72,7 @@ const Tools = (): {
       Colors().lightBlue,
     );
     const circle = SchemaCircle().CreateCircle(schema, Layers.presentation);
-    threeService.AddToScene(circle);
+    threeService.AddToScene(circle, 'dot', 'Helper dot.');
   };
 
   const displayBoundaryAsDots = (threeService: ThreeService, boundary: Boundary) => {

@@ -8,6 +8,8 @@ import useStory from '@/composables/useStory';
 
 import ThreeService from '@/services/ThreeService';
 import StoryService from '@/services/StoryService';
+import ZoneService from '@/services/ZoneService';
+import TaggingService from '@/services/TaggingService';
 
 import { defineComponent, onMounted, PropType, reactive, Ref, ref, watch } from 'vue';
 import { Group, Mesh, Vector3 } from 'three';
@@ -28,7 +30,6 @@ import PlayBookBuild from '@/Three/playbook.build';
 import PlayBook from '@/composables/playbook';
 
 import Measurements from '@/Three/defaults.measurements';
-import ZoneService from '@/services/ZoneService';
 import Common from '@/composables/common';
 
 export default defineComponent({
@@ -52,6 +53,8 @@ export default defineComponent({
     const videoElement = ref<HTMLVideoElement>();
 
     const playBook = PlayBook();
+
+    const taggingService = new TaggingService();
 
     let threeSvc: ThreeService;
     let storyService: StoryService;
@@ -234,6 +237,7 @@ export default defineComponent({
 
       playBook.addToPlayBook(
         async () => {
+          console.log('tag',taggingService.taggedObjects);
           showProgressOfFrame = false;
           PlayBookBuild(
             threeSvc,
@@ -258,7 +262,7 @@ export default defineComponent({
             chooseStory.value = true;
             audio.pause();
             threeSvc.ClearScene();
-            threeSvc.AddToScene(spotlight);
+            threeSvc.AddToScene(spotlight, 'spotlight', 'Spotlight of story paused');
             spotlight.scale.set(4, 4, Layers.scene);
 
             PlayBookBuild(
@@ -292,7 +296,7 @@ export default defineComponent({
         videoSrc,
         new Vector3(8, 8, 0),
       );
-      threeSvc.AddToScene(videoCube);
+      threeSvc.AddToScene(videoCube, 'videocube', 'Test of the video cube');
       videoElement.value?.play();
       setTimeout(() => {
         console.log('currenttime', videoElement.value?.currentTime);
@@ -301,7 +305,7 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      threeSvc = new ThreeService(viewport, threeDefaultsWall);
+      threeSvc = new ThreeService(viewport, threeDefaultsWall, taggingService);
       zoneService = new ZoneService(
         threeSvc.state.sceneDimensions,
         Defaults().screenZones(),
@@ -320,7 +324,6 @@ export default defineComponent({
       Tools().displayBoundaryAsDots(threeSvc, innerBoundary);
 
       setup();
-
       threeSvc.Animate();
     });
 

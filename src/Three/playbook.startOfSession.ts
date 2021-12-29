@@ -22,7 +22,7 @@ const useStartOfSession = (
   create: () => Promise<true | false>;
 } => {
   const setSpotlightOnPosition = () => {
-    threeService.AddToScene(spotlight);
+    threeService.AddToScene(spotlight, 'spotlight', 'Spotlight for the start of the session.');
     spotlight.scale.set(
       Measurements().spotLight.radius,
       Measurements().spotLight.radius,
@@ -61,7 +61,7 @@ const useStartOfSession = (
     let currentCount = maxCount;
     while(currentCount != 0){
       const text = createCountDownNumber(currentCount);
-      threeService.AddToScene(text);
+      threeService.AddToScene(text, 'countdown text', 'StartOfSession countdown timer text.');
       await Common().awaitTimeout(1000);
       currentCount--;
       threeService.state.scene.remove(text);

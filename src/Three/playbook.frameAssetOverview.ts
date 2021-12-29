@@ -53,8 +53,8 @@ const useFrameAssetOverview = (
 
     playBook.addToPlayBook(
       async () => {
-        threeService.AddToScene(group);
-        threeService.AddToScene(spotlight);
+        threeService.AddToScene(group, 'all assets', ' Group of all the assets from the frame');
+        threeService.AddToScene(spotlight, 'spotlight', 'Spotlight to move over all the assets of the frame.');
         await MoveObject().startMoving(spotlight, Object.values(data)[0]);
       },
       timestamp,
@@ -133,7 +133,7 @@ const useFrameAssetOverview = (
       metadataInfo,
     ]);
 
-    threeService.AddToScene(highlightWithMetaInfo);
+    threeService.AddToScene(highlightWithMetaInfo, 'hightlight', 'Highlight with metadata info.');
   };
 
   const create = (

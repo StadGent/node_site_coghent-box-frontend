@@ -9,6 +9,7 @@ import ThreeService from '@/services/ThreeService';
 import {
   threeDefaultsTouchTable,
 } from '@/Three/defaults.three';
+import TaggingService from '@/services/TaggingService';
 
 export default defineComponent({
   name: 'TouchTable',
@@ -20,7 +21,7 @@ export default defineComponent({
 
     onMounted(() => {
       console.log(canvas)
-      threeSvc = new ThreeService(canvas, threeDefaultsTouchTable);
+      threeSvc = new ThreeService(canvas, threeDefaultsTouchTable, new TaggingService());
       threeSvc.ClearScene();
       console.log(threeSvc.state)
 
