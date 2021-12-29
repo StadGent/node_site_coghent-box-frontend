@@ -44,6 +44,10 @@ export default defineComponent({
       required: true,
       default: 1,
     },
+    storyService: {
+      type: StoryService,
+      required: true,
+    },
   },
   setup(props) {
     const viewport = ref(null);
@@ -101,6 +105,12 @@ export default defineComponent({
         // playStartVideo();
       },
     );
+    watch(
+      () => props.storyService,
+      (value) => {
+        storyService = value;
+      },
+    );
 
     const setup = async () => {
       spotlight = PlayBookBuild(
@@ -130,8 +140,7 @@ export default defineComponent({
       alert('got stories and can start');
       audioHelper = AudioHelper();
       await Common().awaitTimeout(1000);
-      storyData = stories.value;
-      storyService = new StoryService(storyData);
+      storyData = storyService.stories;
       storyService.setStoryPausedPositions(zoneService.zonesInnerToOuter);
       console.log('StoryData', storyService.getStoryData());
       buildStory(currentStory.value, '/Audio/example.mp3');

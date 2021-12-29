@@ -1,5 +1,9 @@
 <template>
-  <ViewPort :stories="stories" :storySelected="storySelected" />
+  <ViewPort
+    :stories="stories"
+    :storySelected="storySelected"
+    :storyService="storyService"
+  />
   <!-- <mqtt @selectStory="setSelectStory"/> -->
 </template>
 <script lang="ts">
@@ -13,6 +17,7 @@ import {
 } from 'coghent-vue-3-component-library';
 import mqtt from '@/components/mqtt.vue';
 import { BoxVisiter } from '@/models/GraphqlModel';
+import StoryService from '@/services/StoryService';
 
 export default defineComponent({
   name: 'Wall',
@@ -22,6 +27,7 @@ export default defineComponent({
     let stories = ref<Array<any>>();
     const storySelected = ref<number>(1);
     let visiter: BoxVisiter;
+    let storyService = ref<StoryService>();
 
     // const { onResult: BoxVisiter } = useQuery(GetBoxVisiterByCodeDocument, {
     //   code: 'eaedf3ab-4de9-473f-9668-5e3e6d5b0510',
@@ -41,6 +47,10 @@ export default defineComponent({
       console.log({ _stories });
       const activeStories = _stories.data.Stories.results;
       if (activeStories) {
+        storyService.value = new StoryService(
+          activeStories,
+          'eaedf3ab-4de9-473f-9668-5e3e6d5b0510',
+        );
         stories.value = [...activeStories];
         console.log(`=> Stories <=`, _stories);
       }
@@ -86,6 +96,7 @@ export default defineComponent({
       stories,
       storySelected,
       setSelectStory,
+      storyService,
     };
   },
 });

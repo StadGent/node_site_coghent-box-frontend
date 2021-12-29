@@ -16,13 +16,17 @@ export type StoryData = {
 
 export default class StoryService {
   private storyData: Array<StoryData>;
-  private stories: Array<Story>;
   private storyIds: Array<string>;
   private totalOfSeenFrames: number;
   private date = new Date();
 
-  constructor(_stories: Array<Story>) {
+  stories: Array<Story>;
+  visiterId: string;
+
+
+  constructor(_stories: Array<Story>, _visiterId: string) {
     this.stories = _stories;
+    this.visiterId = _visiterId;
     this.storyIds = [];
     this.storyData = [];
     this.totalOfSeenFrames = 0;
@@ -53,6 +57,7 @@ export default class StoryService {
       )[0];
       if (!this.itemIsInRecord(currentStoryId, seenFrame)) {
         this.totalOfSeenFrames++;
+        //TODO: useQuery for updateing the metadata on the user with the frameId
         this.addTimestampToSeenFrame(currentStoryId, seenFrame);
         storyToUpdate['totalOfFramesSeen'] = Object.keys(storyToUpdate.seenFrames).length;
       }
