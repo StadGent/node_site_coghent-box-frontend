@@ -18,6 +18,7 @@ import useStartOfSession from './playbook.startOfSession';
 import useEndOfSession from './playbook.endOfSession';
 import HorizontalProgressBar from './shapes.horizontalProgressBar';
 import ZoneService from '@/services/ZoneService';
+import { Tags } from '@/services/TaggingService';
 
 const PlayBookBuild = (
   threeService: ThreeService,
@@ -110,7 +111,7 @@ const PlayBookBuild = (
       currentTime,
       color,
     );
-    threeService.AddGroupsToScene(progressbar);
+    threeService.AddGroupsToScene(progressbar, Tags.HorizontalProgressBar, 'Horizontal progressbar of frame.');
     return progressbar;
   }
 
@@ -119,7 +120,7 @@ const PlayBookBuild = (
       new Vector3(zoneService.middleZoneCenter.x, zoneService.middleZoneCenter.y, Layers.scene),
       Measurements().spotLight.radius,
     );
-    threeService.AddToScene(spotlight, 'spotlight', 'initialSpotlight');
+    threeService.AddToScene(spotlight, Tags.Spotlight, 'InitialSpotlight');
     return spotlight;
   };
 
@@ -133,7 +134,7 @@ const PlayBookBuild = (
       storyService.getStoryData(),
     );
     threeService.AddGroupsToScene(
-      StoryPaused(storyData).Create(storiesWithTheirProgress),
+      StoryPaused(storyData).Create(storiesWithTheirProgress), Tags.Stories, 'All stories when session is paused.'
     );
     await MoveObject().startMoving(spotlight, new Vector3(0, 2.5, Layers.scene));
   };

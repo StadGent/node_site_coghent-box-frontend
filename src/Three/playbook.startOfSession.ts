@@ -1,6 +1,7 @@
 import Common from '@/composables/common';
 import MoveObject from '@/composables/moveObject';
 import ScanQR from '@/screens/ScanQR';
+import { Tags } from '@/services/TaggingService';
 import ThreeService from '@/services/ThreeService';
 import ZoneService from '@/services/ZoneService';
 import { Mesh, Vector3 } from 'three';
@@ -22,7 +23,7 @@ const useStartOfSession = (
   create: () => Promise<true | false>;
 } => {
   const setSpotlightOnPosition = () => {
-    threeService.AddToScene(spotlight, 'spotlight', 'Spotlight for the start of the session.');
+    threeService.AddToScene(spotlight, Tags.Spotlight, 'Spotlight for the start of the session.');
     spotlight.scale.set(
       Measurements().spotLight.radius,
       Measurements().spotLight.radius,
@@ -44,7 +45,7 @@ const useStartOfSession = (
       zoneService.zoneCenters[0].z,
      ),
     ).create();
-    threeService.AddGroupsToScene(scanText);
+    threeService.AddGroupsToScene(scanText, Tags.Text, 'Scan your ticket text.');
     return scanText;
   };
 
@@ -61,10 +62,10 @@ const useStartOfSession = (
     let currentCount = maxCount;
     while(currentCount != 0){
       const text = createCountDownNumber(currentCount);
-      threeService.AddToScene(text, 'countdown text', 'StartOfSession countdown timer text.');
+      threeService.AddToScene(text, Tags.Countdown, 'StartOfSession countdown timer text.');
       await Common().awaitTimeout(1000);
       currentCount--;
-      threeService.state.scene.remove(text);
+      threeService.RemoveFromScene(text);
     }
   };
 

@@ -9,7 +9,7 @@ import useStory from '@/composables/useStory';
 import ThreeService from '@/services/ThreeService';
 import StoryService from '@/services/StoryService';
 import ZoneService from '@/services/ZoneService';
-import TaggingService from '@/services/TaggingService';
+import TaggingService, { Tags } from '@/services/TaggingService';
 
 import { defineComponent, onMounted, PropType, reactive, Ref, ref, watch } from 'vue';
 import { Group, Mesh, Vector3 } from 'three';
@@ -237,7 +237,6 @@ export default defineComponent({
 
       playBook.addToPlayBook(
         async () => {
-          console.log('tag',taggingService.taggedObjects);
           showProgressOfFrame = false;
           PlayBookBuild(
             threeSvc,
@@ -262,7 +261,7 @@ export default defineComponent({
             chooseStory.value = true;
             audio.pause();
             threeSvc.ClearScene();
-            threeSvc.AddToScene(spotlight, 'spotlight', 'Spotlight of story paused');
+            threeSvc.AddToScene(spotlight, Tags.Spotlight, 'Spotlight of story paused');
             spotlight.scale.set(4, 4, Layers.scene);
 
             PlayBookBuild(
@@ -274,6 +273,7 @@ export default defineComponent({
               activeStoryData,
             ).storyPaused(storyData);
           }
+          console.log('tag',taggingService.taggedObjects);
         },
         playBook.lastAction().time +
           Timing.frameOverview.spotLightMoved +
@@ -296,7 +296,7 @@ export default defineComponent({
         videoSrc,
         new Vector3(8, 8, 0),
       );
-      threeSvc.AddToScene(videoCube, 'videocube', 'Test of the video cube');
+      threeSvc.AddToScene(videoCube, Tags.Video, 'Test of the video cube');
       videoElement.value?.play();
       setTimeout(() => {
         console.log('currenttime', videoElement.value?.currentTime);

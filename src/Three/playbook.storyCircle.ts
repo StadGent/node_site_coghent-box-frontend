@@ -14,6 +14,7 @@ import GroupHelper from './helper.group';
 import DefaultLines from './defaults.lines';
 import StoryCircle from './section.storyCircle';
 import StoryCircleItems from './section.storyCircleItems';
+import { Tags } from '@/services/TaggingService';
 
 const useStoryCircle = (
   threeService: ThreeService,
@@ -71,11 +72,11 @@ const useStoryCircle = (
     );
 
     playBook.addToPlayBook(() => {
-      threeService.AddGroupsToScene(titleCircle(position, storyColor, currentFrame + 1));
-      threeService.AddGroupsToScene(progressBar.object);
+      threeService.AddGroupsToScene(titleCircle(position, storyColor, currentFrame + 1), Tags.TitleCircle, 'The title circle of a storycircle.');
+      threeService.AddGroupsToScene(progressBar.object, Tags.CircularProgressBar, 'Circular progressbar for current frame.');
     }, timestamp, `Add title cirle with progressbar to the scene.`);
     playBook.addToPlayBook(() => {
-      threeService.AddToScene(frameLineWithTitle(currentFrame, progressBar), `frame title`, 'Active frame title.');
+      threeService.AddToScene(frameLineWithTitle(currentFrame, progressBar), Tags.FrameTitle, 'Active frame title.');
     }, timestamp + Timing.storyCircle.showFrameTitle, `Add the frame title to the scene.`);
     threeService.state.scene.updateMatrixWorld(true);
   };

@@ -9,6 +9,7 @@ import GroupHelper from './helper.group';
 import SchemaLine, { LineSchema } from './schema.line';
 import { Zone } from '@/services/ZoneService';
 import { Boundary } from './helper.boundary';
+import { Tags } from '@/services/TaggingService';
 
 const Tools = (): {
   Grid: () => Group;
@@ -50,14 +51,14 @@ const Tools = (): {
     let updatedPosition = startPosition;
 
     for (let i = 0;i < zones + 1;i++) {
-      threeService.AddToScene(Tools().yAxis(new Vector3(updatedPosition, 0, 0)),'xAxis', 'Helper line for the xAxis.');
+      threeService.AddToScene(Tools().yAxis(new Vector3(updatedPosition, 0, 0)), Tags.XAxis, 'Helper line for the xAxis.');
       updatedPosition += Common().pixelsToMeters(zoneWidthInPixels) * 10;
     }
   };
 
   const displayZones = (threeService: ThreeService, zones: Array<Zone>) => {
     zones.forEach(zone => {
-      threeService.AddToScene(Tools().yAxis(new Vector3(zone.start.x, zone.start.y, zone.start.z)), 'yAxis', 'Helper line for the yAxis.');
+      threeService.AddToScene(Tools().yAxis(new Vector3(zone.start.x, zone.start.y, zone.start.z)), Tags.YAxis, 'Helper line for the yAxis.');
     })
   }
 
@@ -72,7 +73,7 @@ const Tools = (): {
       Colors().lightBlue,
     );
     const circle = SchemaCircle().CreateCircle(schema, Layers.presentation);
-    threeService.AddToScene(circle, 'dot', 'Helper dot.');
+    threeService.AddToScene(circle, Tags.Dot, 'Helper dot.');
   };
 
   const displayBoundaryAsDots = (threeService: ThreeService, boundary: Boundary) => {

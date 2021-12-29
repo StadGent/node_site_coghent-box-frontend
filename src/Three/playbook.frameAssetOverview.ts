@@ -14,6 +14,7 @@ import LineHelper from './helper.line';
 import GroupHelper from './helper.group';
 import Tools from './helper.tools';
 import ZoneService from '@/services/ZoneService';
+import { Tags } from '@/services/TaggingService';
 
 const useFrameAssetOverview = (
   threeService: ThreeService,
@@ -35,7 +36,7 @@ const useFrameAssetOverview = (
   let highlightWithMetaInfo: Group;
 
   const displayAllAssets = (frame: modelFrame, timestamp: number) => {
-    threeService.state.scene.remove(group);
+    threeService.RemoveFromScene(group);
     const data: Record<number, Vector3> = {};
     for (const asset of assets) {
       const relationMetadata = Common().connectRelationMetadata(frame, asset);
@@ -53,8 +54,8 @@ const useFrameAssetOverview = (
 
     playBook.addToPlayBook(
       async () => {
-        threeService.AddToScene(group, 'all assets', ' Group of all the assets from the frame');
-        threeService.AddToScene(spotlight, 'spotlight', 'Spotlight to move over all the assets of the frame.');
+        threeService.AddToScene(group, Tags.GroupOfAssets, ' Group of all the assets from the frame');
+        threeService.AddToScene(spotlight, Tags.Spotlight, 'Spotlight to move over all the assets of the frame.');
         await MoveObject().startMoving(spotlight, Object.values(data)[0]);
       },
       timestamp,
@@ -68,7 +69,7 @@ const useFrameAssetOverview = (
     imageCube: Group,
     currentAsset: number,
   ) => {
-    threeService.state.scene.remove(imageCube);
+    threeService.RemoveFromScene(imageCube);
     asset.scale.set(0, 0, 0);
     asset.scale.set(scale, scale, 0);
     asset.position.set(
@@ -133,7 +134,7 @@ const useFrameAssetOverview = (
       metadataInfo,
     ]);
 
-    threeService.AddToScene(highlightWithMetaInfo, 'hightlight', 'Highlight with metadata info.');
+    threeService.AddToScene(highlightWithMetaInfo, Tags.Highlight, 'Highlight with metadata info.');
   };
 
   const create = (

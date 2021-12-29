@@ -1,6 +1,5 @@
 import EndOfSession from '@/screens/EndOfSession';
 import ThreeService from '@/services/ThreeService';
-import { Vector3 } from 'three';
 import Timing from './defaults.timing';
 import TextHelper from './helper.text';
 import Positions from './defaults.positions';
@@ -10,6 +9,7 @@ import customText from './defaults.text';
 import Colors from './defaults.color';
 import Common from '@/composables/common';
 import ZoneService from '@/services/ZoneService';
+import { Tags } from '@/services/TaggingService';
 
 const useEndOfSession = (
   threeService: ThreeService,
@@ -28,16 +28,16 @@ const useEndOfSession = (
         {} as CubeParams,
         { size: customText.size.veryBig, color: Colors().white } as FontParams,
       );
-      threeService.AddToScene(text, 'countdown text', 'EndOfSession countdown timer');
+      threeService.AddToScene(text, Tags.Countdown, 'EndOfSession countdown timer');
       await Common().awaitTimeout(1000);
-      threeService.state.scene.remove(text);
+      threeService.RemoveFromScene(text);
       currentTime -= 1000;
     }
   };
 
   const create = async (spotRadius: number) => {
     threeService.ClearScene();
-    threeService.AddGroupsToScene(EndOfSession(zoneService,spotRadius).create());
+    threeService.AddGroupsToScene(EndOfSession(zoneService,spotRadius).create(), Tags.EndOfSession, 'The endOfSession screen.');
     await timerCountdown(Timing.endOfSession.countdown);
     alert()
     return true;

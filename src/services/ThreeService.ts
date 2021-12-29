@@ -10,7 +10,7 @@ import {
   MathUtils,
 } from 'three';
 import { Ref } from 'vue';
-import TaggingService from './TaggingService';
+import TaggingService, { Tags } from './TaggingService';
 
 type State = {
   width: number;
@@ -81,25 +81,32 @@ export default class ThreeService {
     this.state.camera.position.z = this.defaultvalues.camera.distance;
   }
 
-  AddToScene(item: any, name: string, context?: string) {
-    this.taggingService.tag(name, item, context);
+  AddToScene(item: any, tag: Tags, context?: string, name?: string) {
+    this.taggingService.tag(tag, item, context, name);
     this.state.scene.add(item);
   }
 
-  AddGroupsToScene(groups: Array<Group>) {
+  AddGroupsToScene(groups: Array<Group>, tag: Tags, context?: string, name?: string) {
+    this.taggingService.tag(tag, groups, context, name);
     groups.map((group) => {
       this.state.scene.add(group);
       this.state.scene.updateMatrixWorld(true);
     });
   }
 
+  RemoveFromScene(item: any) {
+    if (this.state.scene.remove(item))
+      this.taggingService.removeTaggedObject(item);
+  }
+
   RemoveGroupsFromScene(groups: Array<Group>) {
     if (groups) {
-      groups.forEach((group) => this.state.scene.remove(group));
+      groups.forEach((group) => this.RemoveFromScene(group));
     }
   }
 
   ClearScene() {
+    this.taggingService.clearTaggedObjects();
     while (this.state.scene.children.length > 0) {
       this.state.scene.remove(this.state.scene.children[0]);
     }
