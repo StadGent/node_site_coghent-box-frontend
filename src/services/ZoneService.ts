@@ -11,7 +11,8 @@ export type Zone = {
 
 export default class ZoneService {
   private screen: Vector3;
-  
+
+  public zonesInnerToOuter: Array<Vector3>;
   public zoneCenters: Array<Vector3>;
   public middleZoneCenter: Vector3;
   public zones: Array<Zone>;;
@@ -21,10 +22,11 @@ export default class ZoneService {
     this.screen = _screen;
     this.zones = this.createZones(_zones);
     this.zoneCenters = this.middleOfZones();
-    this.middleZoneCenter = this.zoneCenters[(this.zoneCenters.length-1)/2];
+    this.middleZoneCenter = this.zoneCenters[(this.zoneCenters.length - 1) / 2];
+    this.zonesInnerToOuter = this.orderZoneCentersFromInnerToOuterPosition();
   }
 
-  private middleOfZones(){
+  private middleOfZones() {
     const centers: Array<Vector3> = [];
     this.zones.forEach(_zone => {
       centers.push(this.getMiddleOfZone(_zone));
@@ -58,6 +60,23 @@ export default class ZoneService {
     return new Vector3(width - Defaults().zonePadding(), height - Defaults().zonePadding(), 0);
   }
 
+  private orderZoneCentersFromInnerToOuterPosition() {
+    const zones: Array<Vector3> = [];
+    let positionOfIndex = Math.floor(this.zoneCenters.length / 2);
+    // zones.push(this.zoneCenters[positionOfIndex]);
+    for (let index = 1;index < this.zoneCenters.length;index++) {
+      console.log({ positionOfIndex });
+      if (index % 2 === 0) {
+        positionOfIndex += index;
+        zones.push(this.zoneCenters[positionOfIndex]);
+      } else if (Math.abs(index % 2) == 1) {
+        positionOfIndex -= index;
+        zones.push(this.zoneCenters[positionOfIndex]);
+      }
+    }
+    return zones;
+  }
+
   createZones(_zones: number) {
     let zones: Array<Zone> = [];
     let startLeft = 0;
@@ -82,11 +101,11 @@ export default class ZoneService {
       const centerZone = { width: widthOfOneZone, height: heightOfOneZone, start: new Vector3(startLeft), end: new Vector3(startRight), } as Zone;
       zones.push(centerZone);
     }
-    return zones.sort((a,b) => a.start.x - b.start.x);
+    return zones.sort((a, b) => a.start.x - b.start.x);
   }
 
   getMiddleOfZone(zone: Zone) {
-    return new Vector3(zone.end.x - ((zone.end.x-zone.start.x) / 2), 0, Layers.presentation);
+    return new Vector3(zone.end.x - ((zone.end.x - zone.start.x) / 2), 0, Layers.presentation);
   }
 
   objectIsInZone(object: Mesh) {
@@ -101,10 +120,10 @@ export default class ZoneService {
     return zone;
   }
 
-  sceneZone(){
+  sceneZone() {
     return {
-      start: new Vector3(-this.screen.x/2, 0,0),
-      end: new Vector3(this.screen.x/2,0,0),
+      start: new Vector3(-this.screen.x / 2, 0, 0),
+      end: new Vector3(this.screen.x / 2, 0, 0),
       width: this.screen.x,
       height: this.screen.y,
     } as Zone

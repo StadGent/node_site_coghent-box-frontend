@@ -29,6 +29,7 @@ import PlayBook from '@/composables/playbook';
 
 import Measurements from '@/Three/defaults.measurements';
 import ZoneService from '@/services/ZoneService';
+import Common from '@/composables/common';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -122,11 +123,13 @@ export default defineComponent({
         });
     };
 
-    const setData = () => {
+    const setData = async () => {
       alert('got stories and can start');
       audioHelper = AudioHelper();
+      await Common().awaitTimeout(1000);
       storyData = stories.value;
       storyService = new StoryService(storyData);
+      storyService.setStoryPausedPositions(zoneService.zonesInnerToOuter);
       console.log('StoryData', storyService.getStoryData());
       buildStory(currentStory.value, '/Audio/example.mp3');
     };
@@ -299,11 +302,20 @@ export default defineComponent({
 
     onMounted(() => {
       threeSvc = new ThreeService(viewport, threeDefaultsWall);
-      zoneService = new ZoneService(threeSvc.state.sceneDimensions,Defaults().screenZones());
+      zoneService = new ZoneService(
+        threeSvc.state.sceneDimensions,
+        Defaults().screenZones(),
+      );
       threeSvc.ClearScene();
-      
-      const innerBoundary = BoundaryHelper(zoneService.sceneZone(),Defaults().screenZonePadding()).createInnerBoundary();
-      const outerBoundary = BoundaryHelper(zoneService.sceneZone(), Defaults().screenZonePadding()).createOuterBoundary();
+
+      const innerBoundary = BoundaryHelper(
+        zoneService.sceneZone(),
+        Defaults().screenZonePadding(),
+      ).createInnerBoundary();
+      const outerBoundary = BoundaryHelper(
+        zoneService.sceneZone(),
+        Defaults().screenZonePadding(),
+      ).createOuterBoundary();
       Tools().dotOnPosition(threeSvc, innerBoundary.TopLeft);
       Tools().dotOnPosition(threeSvc, innerBoundary.TopRight);
       Tools().dotOnPosition(threeSvc, innerBoundary.BottomLeft);
@@ -313,7 +325,8 @@ export default defineComponent({
       Tools().dotOnPosition(threeSvc, outerBoundary.BottomLeft);
       Tools().dotOnPosition(threeSvc, outerBoundary.BottomRight);
 
-      // setup();
+      setup();
+
       threeSvc.Animate();
     });
 
