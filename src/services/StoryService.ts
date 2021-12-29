@@ -70,6 +70,12 @@ export default class StoryService {
     return this.totalOfSeenFrames == Defaults().maxFrames()
   }
 
+  setStoryPausedPositions(positions: Array<Vector3>){
+    this.storyData.map((_data, index) => {
+      _data['pausedPosition'] = positions[index];
+    })
+  }
+
   private itemIsInRecord(storyId: string, frame: Frame) {
     const rec = this.getStoryDataOfStory(storyId).seenFrames;
     let exists = false;
