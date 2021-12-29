@@ -33,7 +33,7 @@ const Positions = (): {
 
   const endOfSession = () => new Vector3(18, 2, Layers.presentation);
   const timerCountdown = () => new Vector3(0, 5.5, 0);
-  const metadataInfoAboveImage = () => new Vector3(0, 0.24, 0);
+  const metadataInfoAboveImage = () => new Vector3(0, 1.24, 0);
 
   return {
     StoryPausePositions,
