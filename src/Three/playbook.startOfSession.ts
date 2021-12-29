@@ -8,7 +8,6 @@ import Colors from './defaults.color';
 import Defaults from './defaults.config';
 import Layers from './defaults.layers';
 import Measurements from './defaults.measurements';
-import Positions from './defaults.positions';
 import customText from './defaults.text';
 import Timing from './defaults.timing';
 import TextHelper from './helper.text';
@@ -30,20 +29,20 @@ const useStartOfSession = (
       0,
     );
     spotlight.position.set(
-      Positions().QRCodeScanner().x,
-      Positions().QRCodeScanner().y,
-      Positions().QRCodeScanner().z,
+      zoneService.zoneCenters[0].x + 2,
+      zoneService.zoneCenters[0].y,
+      zoneService.zoneCenters[0].z,
     );
   };
 
   const showScanImage = () => {
     setSpotlightOnPosition();
     const scanText = ScanQR(
-      new Vector3(
-        Positions().QRCodeScanner().x,
-        Positions().QRCodeScanner().y,
-        Positions().QRCodeScanner().z,
-      ),
+     new Vector3(
+      zoneService.zoneCenters[0].x,
+      zoneService.zoneCenters[0].y -1,
+      zoneService.zoneCenters[0].z,
+     ),
     ).create();
     threeService.AddGroupsToScene(scanText);
     return scanText;
