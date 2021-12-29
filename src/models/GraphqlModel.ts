@@ -91,3 +91,9 @@ export type Asset = {
   mediafiles: Array<Mediafiles>;
   relations: Array<Relation>
 };
+
+export type BoxVisiter = {
+  id: string;
+  type: string;
+  qrCode: string;
+}
