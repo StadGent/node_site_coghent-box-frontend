@@ -1,11 +1,32 @@
 type AnimationTime = {
-  fadeStep: 0.04,
-  fadeUpdateTime: 50,
+  fadeUpdateTime: number,
+}
+type AnimationValues = {
+  opacityInactive: number,
+  opacityActive: number,
+  fadeStep: number,
+  scaleReducer: number,
+  zoomOfAsset: number,
 }
 
-const AnimtationTimings: AnimationTime = {
-  fadeStep: 0.04,
-  fadeUpdateTime: 50,
+type AnimationDefault = {
+  timing: AnimationTime,
+  values: AnimationValues,
 }
 
-export default AnimtationTimings;
+
+const AnimationDefaults: AnimationDefault = {
+  timing: {
+    fadeUpdateTime: 50,
+  },
+  values: {
+    opacityActive: 1,
+    opacityInactive: 0.5,
+    fadeStep: 0.04,
+    scaleReducer: 0.2,
+    zoomOfAsset: 1.5,
+  }
+
+}
+
+export default AnimationDefaults;

@@ -7,9 +7,7 @@ import { TextSchema } from './schema.text';
 
 const Defaults = (): {
   pixelInMeter: () => number;
-  zoomOfAsset: () => number;
   screenZones: () => number;
-  scaleReducer: () => number;
   zonePadding: () => number;
   screenZonePadding: () => number;
   boundaryPadding: () => number;
@@ -24,17 +22,14 @@ const Defaults = (): {
   EndCircle: () => Mesh<CircleGeometry, MeshBasicMaterial>;
 } => {
   const pixelInMeter = () => 0.003;
-  const zoomOfAsset = () => 1.5; 
   const screenZones = () => 5;
-  const scaleReducer = () => 0.2;
   const zonePadding = () => 1;
   const screenZonePadding = () => 2;
   const boundaryPadding = () => 1;
   const showZonesInOverview = () => true;
   
   const maxFrames = () => 2;
-  const countdown = () => 3;
- 
+  const countdown = () => 3; 
 
   const circlePoints = () => {
     return [
@@ -96,9 +91,7 @@ const Defaults = (): {
 
   return {
     pixelInMeter,
-    zoomOfAsset,
     screenZones,
-    scaleReducer,
     zonePadding,
     screenZonePadding,
     boundaryPadding,

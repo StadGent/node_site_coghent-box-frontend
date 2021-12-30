@@ -11,6 +11,8 @@ import { FontParams } from '@/Three/schema.text';
 import { BoxBufferGeometry, Mesh, Vector3, Group, BoxGeometry } from 'three';
 import MoveObject from './moveObject';
 import Positions from '@/Three/defaults.positions';
+import CustomAnimation from './animation';
+import AnimationDefaults from '@/Three/defaults.animation';
 
 const useAsset = (
   threeService: ThreeService,
@@ -28,8 +30,8 @@ const useAsset = (
     position: Vector3,
     scale: number,
   ) => void;
-  setInactive: (assetImageCube: Mesh<BoxBufferGeometry, any>) => void;
-  setActive: (assetImageCube: Mesh<BoxBufferGeometry, any>) => void;
+  setInactive: (assetImageCube: Mesh<BoxBufferGeometry, any>) => Promise<void>;
+  setActive: (assetImageCube: Mesh<BoxBufferGeometry, any>) => Promise<void>;
   addMetadata: (
     zoomPosition: Vector3,
     object: Mesh<BoxBufferGeometry, any>,
@@ -152,14 +154,14 @@ const useAsset = (
     return GroupHelper().CreateGroup([text, cube]);
   };
 
-  const setInactive = (assetImageCube: Mesh<BoxBufferGeometry, any>) => {
-    assetImageCube.material.opacity = 0.5;
+  const setInactive = async (assetImageCube: Mesh<BoxBufferGeometry, any>) => {
     assetImageCube.position.z = Layers.scene;
+    await CustomAnimation().fadeOut(assetImageCube,AnimationDefaults.values.opacityInactive, AnimationDefaults.values.fadeStep);    
   };
 
-  const setActive = (assetImageCube: Mesh<BoxBufferGeometry, any>) => {
-    assetImageCube.material.opacity = 1;
+  const setActive = async (assetImageCube: Mesh<BoxBufferGeometry, any>) => {
     assetImageCube.position.z = Layers.scene;
+    await CustomAnimation().fadeIn(assetImageCube,AnimationDefaults.values.opacityActive, AnimationDefaults.values.fadeStep);
   };
 
   const getAssetsFromFrame = (activeStory: Story, frame: number) => {

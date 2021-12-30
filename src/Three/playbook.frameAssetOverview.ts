@@ -15,6 +15,7 @@ import GroupHelper from './helper.group';
 import Tools from './helper.tools';
 import ZoneService from '@/services/ZoneService';
 import { Tags } from '@/services/TaggingService';
+import AnimationDefaults from './defaults.animation';
 
 const useFrameAssetOverview = (
   threeService: ThreeService,
@@ -79,10 +80,10 @@ const useFrameAssetOverview = (
     );
   };
 
-  const setAssetsInactive = (displayedAsset: Mesh<BoxBufferGeometry, any>) => {
+  const setAssetsInactive = async (displayedAsset: Mesh<BoxBufferGeometry, any>) => {
     const inactiveAssets = group.children.filter((_asset) => _asset != displayedAsset);
-    inactiveAssets.forEach((_asset) => {
-      useAsset(threeService).setInactive(_asset as Mesh<BoxBufferGeometry, any>);
+    inactiveAssets.forEach(async (_asset) => {
+      await useAsset(threeService).setInactive(_asset as Mesh<BoxBufferGeometry, any>);
     });
   };
 
@@ -105,7 +106,7 @@ const useFrameAssetOverview = (
         scale -= 0.05;
       }
     }
-    scale = scale - Defaults().scaleReducer();
+    scale = scale - AnimationDefaults.values.scaleReducer;
     return { scale: scale, zoomPosition: zoomTo };
   };
 
@@ -160,6 +161,7 @@ const useFrameAssetOverview = (
                   Tools().dotOnPosition(threeService, zoneService.getMiddleOfZone(_zone));
                 });
               }
+              await setAssetsInactive(asset as Mesh<BoxBufferGeometry, any>);
               await useAsset(threeService).moveSpotlightToAsset(
                 spotlight,
                 asset as Mesh<BoxBufferGeometry, any>,
@@ -172,11 +174,10 @@ const useFrameAssetOverview = (
           playBook.addToPlayBook(
             () => {
               spotlight.scale.set(0.1, 0.1, 0);
-              setAssetsInactive(asset as Mesh<BoxBufferGeometry, any>);
               zoomAndHighlightAsset(
                 asset as Mesh<BoxBufferGeometry, any>,
                 index,
-                Defaults().zoomOfAsset(),
+                AnimationDefaults.values.zoomOfAsset,
               );
             },
             useAsset(threeService).setZoomTiming(relationMetadata) +

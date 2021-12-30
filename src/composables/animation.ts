@@ -1,4 +1,4 @@
-import AnimtaionTimings from '@/Three/defaults.animation';
+import AnimationDefaults from '@/Three/defaults.animation';
 import { Mesh, MeshBasicMaterial } from 'three';
 import Common from './common';
 
@@ -9,14 +9,14 @@ const CustomAnimation = (): {
 
   const fadeOut = async (object: Mesh<any, MeshBasicMaterial>, fadeTo: number, step: number) => {
     while (object.material.opacity - step >= fadeTo) {
-      await Common().awaitTimeout(AnimtaionTimings.fadeUpdateTime);
+      await Common().awaitTimeout(AnimationDefaults.timing.fadeUpdateTime);
       object.material.opacity -= step;
     }
   };
 
   const fadeIn = async (object: Mesh<any, MeshBasicMaterial>, fadeTo: number, step: number) => {
     while (object.material.opacity + step <= fadeTo) {
-      await Common().awaitTimeout(AnimtaionTimings.fadeUpdateTime);
+      await Common().awaitTimeout(AnimationDefaults.timing.fadeUpdateTime);
       object.material.opacity += step;
     }
   };
