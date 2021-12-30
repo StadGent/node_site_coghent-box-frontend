@@ -34,8 +34,7 @@ const Defaults = (): {
   
   const maxFrames = () => 2;
   const countdown = () => 3;
-
-  
+ 
 
   const circlePoints = () => {
     return [

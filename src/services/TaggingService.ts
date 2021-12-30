@@ -22,6 +22,7 @@ export enum Tags {
   CircularProgressBar,
   EndOfSession,
   TitleCircle,
+  Testing,
 }
 
 export default class TaggingService {

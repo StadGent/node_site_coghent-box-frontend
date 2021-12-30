@@ -4,16 +4,14 @@
 </template>
 
 <script lang="ts">
-import useStory from '@/composables/useStory';
+import { defineComponent, onMounted, PropType, reactive, Ref, ref, watch } from 'vue';
+import { Group, Mesh, Vector3 } from 'three';
+import { Entity as _Entity, Story } from '@/models/GraphqlModel';
 
 import ThreeService from '@/services/ThreeService';
 import StoryService from '@/services/StoryService';
 import ZoneService from '@/services/ZoneService';
 import TaggingService, { Tags } from '@/services/TaggingService';
-
-import { defineComponent, onMounted, PropType, reactive, Ref, ref, watch } from 'vue';
-import { Group, Mesh, Vector3 } from 'three';
-import { Entity as _Entity, Story } from '@/models/GraphqlModel';
 
 import Tools from '@/Three/helper.tools';
 import AudioHelper from '@/Three/helper.audio';
@@ -23,14 +21,19 @@ import BoundaryHelper from '@/Three/helper.boundary';
 import Defaults from '@/Three/defaults.config';
 import Timing from '@/Three/defaults.timing';
 import Layers from '@/Three/defaults.layers';
-import { threeDefaultsWall } from '@/Three/defaults.three';
+import AnimationTimings from '@/Three/defaults.animation';
 
 import PlayBookBuild from '@/Three/playbook.build';
 
 import PlayBook from '@/composables/playbook';
+import Common from '@/composables/common';
+import useStory from '@/composables/useStory';
+import CustomAnimation from '@/composables/animation';
 
 import Measurements from '@/Three/defaults.measurements';
-import Common from '@/composables/common';
+import SchemaCube, { CubeSchema } from '@/Three/schema.cube';
+import Colors from '@/Three/defaults.color';
+import { threeDefaultsWall } from '@/Three/defaults.three';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -320,7 +323,7 @@ export default defineComponent({
       }, 7000);
     };
 
-    onMounted(() => {
+    onMounted(async () => {
       threeSvc = new ThreeService(viewport, threeDefaultsWall, taggingService);
       zoneService = new ZoneService(
         threeSvc.state.sceneDimensions,
@@ -339,7 +342,11 @@ export default defineComponent({
       Tools().displayBoundaryAsDots(threeSvc, outerBoundary);
       Tools().displayBoundaryAsDots(threeSvc, innerBoundary);
 
-      setup();
+      // setup();
+      const cube = SchemaCube().CreateImageCube({position: new Vector3(0,0,0), params: {width: 3, height: 3, color: Colors().white}} as CubeSchema);
+      threeSvc.AddToScene(cube, Tags.Testing);
+      await CustomAnimation().fadeOut(cube,0, AnimationTimings.fadeStep);
+      await CustomAnimation().fadeIn(cube,1, AnimationTimings.fadeStep);
       threeSvc.Animate();
     });
 
