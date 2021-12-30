@@ -21,7 +21,7 @@ import BoundaryHelper from '@/Three/helper.boundary';
 import Defaults from '@/Three/defaults.config';
 import Timing from '@/Three/defaults.timing';
 import Layers from '@/Three/defaults.layers';
-import AnimationTimings from '@/Three/defaults.animation';
+import AnimationDefaults from '@/Three/defaults.animation';
 
 import PlayBookBuild from '@/Three/playbook.build';
 
@@ -345,8 +345,8 @@ export default defineComponent({
       // setup();
       const cube = SchemaCube().CreateImageCube({position: new Vector3(0,0,0), params: {width: 3, height: 3, color: Colors().white}} as CubeSchema);
       threeSvc.AddToScene(cube, Tags.Testing);
-      await CustomAnimation().fadeOut(cube,0, AnimationTimings.fadeStep);
-      await CustomAnimation().fadeIn(cube,1, AnimationTimings.fadeStep);
+      await CustomAnimation().grow(cube, 2, AnimationDefaults.values.scaleStep);
+      await CustomAnimation().shrink(cube, 1, AnimationDefaults.values.scaleStep);
       threeSvc.Animate();
     });
 
