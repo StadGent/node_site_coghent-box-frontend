@@ -49,7 +49,8 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props) {
+  emits: ['restartSession'],
+  setup(props, { emit }) {
     const viewport = ref(null);
     const stories = ref(props.stories);
     const currentStory = ref<number>(props.storySelected - 1);
@@ -113,6 +114,7 @@ export default defineComponent({
     );
 
     const setup = async () => {
+      threeSvc.ClearScene();
       spotlight = PlayBookBuild(
         threeSvc,
         storyService,
@@ -265,7 +267,12 @@ export default defineComponent({
               framePlaybook,
               spotlight,
               activeStoryData,
-            ).endOfSession(Measurements().spotLight.radius);
+            )
+              .endOfSession(Measurements().spotLight.radius)
+              .then((_start) => {
+                emit('restartSession', _start);
+                setup();
+              });
           } else {
             chooseStory.value = true;
             audio.pause();
@@ -282,7 +289,7 @@ export default defineComponent({
               activeStoryData,
             ).storyPaused(storyData);
           }
-          console.log('tag',taggingService.taggedObjects);
+          console.log('tag', taggingService.taggedObjects);
         },
         playBook.lastAction().time +
           Timing.frameOverview.spotLightMoved +

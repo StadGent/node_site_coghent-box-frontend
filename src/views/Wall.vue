@@ -3,11 +3,12 @@
     :stories="stories"
     :storySelected="storySelected"
     :storyService="storyService"
+    @restartSession="restartSession"
   />
   <!-- <mqtt @selectStory="setSelectStory"/> -->
 </template>
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
+import { defineComponent, ref } from 'vue';
 import ViewPort from '@/components/ViewPort.vue';
 import { useMutation, useQuery } from '@vue/apollo-composable';
 import {
@@ -27,11 +28,14 @@ export default defineComponent({
     let stories = ref<Array<any>>();
     const storySelected = ref<number>(1);
     let visiter: BoxVisiter;
-    let storyService = ref<StoryService>();
+    const storyService = ref<StoryService>();
 
-    // const { onResult: BoxVisiter } = useQuery(GetBoxVisiterByCodeDocument, {
-    //   code: 'eaedf3ab-4de9-473f-9668-5e3e6d5b0510',
-    // });
+    // const { onResult: BoxVisiter, fetchMore: GetVisiter } = useQuery(
+    //   GetBoxVisiterByCodeDocument,
+    //   {
+    //     code: '8bd94ccf-bd08-4f67-bd81-0b3fdbd9919e',
+    //   },
+    // );
     const { onResult: Stories } = useQuery(GetStoriesDocument);
     // const { mutate, onDone } = useMutation(AddFrameToVisiterDocument, {variables: {visiterId: "eaedf3ab-4de9-473f-9668-5e3e6d5b0510"}})
 
@@ -55,6 +59,18 @@ export default defineComponent({
         console.log(`=> Stories <=`, _stories);
       }
     });
+
+    const restartSession = async (start: boolean) => {
+      console.log({ start });
+      console.log('Restart session');
+      // const _visiter = await GetVisiter({
+      //   variables: { code: 'b5e5034f-07c7-4b5c-8855-0ac3d04c62c0' },
+      //   updateQuery: (prevVisiter, { fetchMoreResult }) => {
+      //     return fetchMoreResult;
+      //   },
+      // });
+      // console.log({_visiter});
+    };
 
     window.onkeydown = (key: KeyboardEvent) => {
       switch (key.code) {
@@ -97,6 +113,7 @@ export default defineComponent({
       storySelected,
       setSelectStory,
       storyService,
+      restartSession,
     };
   },
 });
