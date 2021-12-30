@@ -36,10 +36,10 @@ const threeDefaultsWall: ThreeDefaults = {
 
 const threeDefaultsTouchTable: ThreeDefaults = {
   camera: {
-    fov: 60,
-    near: 1,
+    fov: 40,
+    near: 10,
     far: 100,
-    distance: 15,
+    distance: 101,
   },
   scene: {
     ratioX: 48,
@@ -49,7 +49,7 @@ const threeDefaultsTouchTable: ThreeDefaults = {
     gammaFactor: 2,
     antialias: true,
   },
-  viewport: window.innerHeight * (48 / 9),
+  viewport: window.innerWidth,
 };
 
 export { threeDefaultsWall, threeDefaultsTouchTable, ThreeDefaults };

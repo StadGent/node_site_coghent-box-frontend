@@ -9,7 +9,10 @@ import ThreeService from '@/services/ThreeService';
 import {
   threeDefaultsTouchTable,
 } from '@/Three/defaults.three';
-import TaggingService from '@/services/TaggingService';
+import CubeHelper from '@/Three/helper.cube'
+import SchemaCube from '@/Three/schema.cube'
+import { Vector3 } from 'three';
+import TaggingService, { Tags } from '@/services/TaggingService';
 
 export default defineComponent({
   name: 'TouchTable',
@@ -20,10 +23,16 @@ export default defineComponent({
     let threeSvc: ThreeService;
 
     onMounted(() => {
-      console.log(canvas)
-      threeSvc = new ThreeService(canvas, threeDefaultsTouchTable, new TaggingService());
+      const taggingService = new TaggingService()
+      threeSvc = new ThreeService(canvas, threeDefaultsTouchTable, taggingService);
       threeSvc.ClearScene();
-      console.log(threeSvc.state)
+      threeSvc.ChangeSceneBackgroundColor(0xefefef)
+      threeSvc.Animate()
+      threeSvc.setupZoom()
+      const schema = CubeHelper().CreateSchema(new Vector3(0,0,0), '../assets/logo.png');
+      const cube = SchemaCube().CreateImageCube(schema);
+      threeSvc.AddToScene(cube, Tags.Testing)
+      console.log({threeSvc})
 
   })
     return {canvas}

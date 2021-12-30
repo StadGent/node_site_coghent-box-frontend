@@ -8,9 +8,12 @@ import {
   sRGBEncoding,
   Vector3,
   MathUtils,
+  Color,
 } from 'three';
+import * as d3 from 'd3';
 import { Ref } from 'vue';
 import TaggingService, { Tags } from './TaggingService';
+import ZoomHelper from '@/Three/helper.zoom';
 
 type State = {
   width: number;
@@ -38,7 +41,11 @@ export default class ThreeService {
   defaultvalues: ThreeDefaults;
   taggingService: TaggingService;
 
-  constructor(_element: Ref, _defaultvalues: ThreeDefaults, _taggingService: TaggingService) {
+  constructor(
+    _element: Ref,
+    _defaultvalues: ThreeDefaults,
+    _taggingService: TaggingService,
+  ) {
     this.state = initState;
     this.element = _element;
     this.defaultvalues = _defaultvalues;
@@ -95,14 +102,28 @@ export default class ThreeService {
   }
 
   RemoveFromScene(item: any) {
-    if (this.state.scene.remove(item))
-      this.taggingService.removeTaggedObject(item);
+    if (this.state.scene.remove(item)) this.taggingService.removeTaggedObject(item);
   }
 
   RemoveGroupsFromScene(groups: Array<Group>) {
     if (groups) {
       groups.forEach((group) => this.RemoveFromScene(group));
     }
+  }
+
+  ChangeSceneBackgroundColor(color: number) {
+    this.state.scene.background = new Color(color);
+  }
+
+  setupZoom() {
+    const view = d3.select(this.element.value);
+    view.call(ZoomHelper().zoom(this));
+    const initial_scale = ZoomHelper().getScaleFromZ(this.defaultvalues.camera.far, this);
+    const initial_transform = d3.zoomIdentity
+      .translate(this.state.width / 2, this.state.height / 2)
+      .scale(initial_scale);
+    view.attr('transform', initial_transform.toString);
+    this.state.camera.position.set(0, 0, this.defaultvalues.camera.far);
   }
 
   ClearScene() {
