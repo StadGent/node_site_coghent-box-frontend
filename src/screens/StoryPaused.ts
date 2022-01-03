@@ -12,8 +12,9 @@ import SchemaCube from '@/Three/schema.cube';
 import CubeHelper from '@/Three/helper.cube';
 import HelperText from '@/Three/defaults.helperText';
 import { StoryData } from '@/services/StoryService';
+import TaggingService, { Tags } from '@/services/TaggingService';
 
-const StoryPaused = (storyData: Array<Story>): {
+const StoryPaused = (storyData: Array<Story>, taggingService: TaggingService): {
   Create: (storiesWithTheirProgress: Record<string, StoryData>) => Array<Group>;
 } => {
   const storyCircle = (story: Story, currentFrame: number, position: Vector3, storyColor: number) => {
@@ -36,6 +37,7 @@ const StoryPaused = (storyData: Array<Story>): {
     );
     GroupHelper().AddObjectsTogroups(titleCircle, groups);
     GroupHelper().AddObjectsTogroups(progressBar.object, groups);
+    taggingService.tag(Tags.StoryCircle, groups, `StoryCircle with progress for story ${story.id}`, story.id)
     return groups;
   };
 

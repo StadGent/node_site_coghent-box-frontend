@@ -88,6 +88,7 @@ export default defineComponent({
     watch(
       () => props.storySelected,
       (value) => {
+        //TODO: Move stories out of the scene and bring selected to the middle
         console.log('You want to select story', props.storySelected);
         console.log('Can you choose a story?', chooseStory.value);
         storyData = stories.value;
@@ -101,7 +102,16 @@ export default defineComponent({
           currentStory.value = value - 1;
           currentFrame = _storyData.totalOfFramesSeen;
           console.log('Selected story => ', currentStory.value);
-          resetStory();
+          const storyCircles = taggingService.getByTag(Tags.StoryCircle);
+          console.log('filterd out storycircle', storyCircles);
+          storyCircles.forEach((_storyCircle) => {
+            console.log({_storyCircle});
+            if (_storyCircle.name != storyService.stories[currentStory.value].id) {
+              MoveObject().moveGroups(_storyCircle.object, new Vector3(0.01, 12, 1));
+            }
+          });
+
+          // resetStory();
         }
       },
     );
@@ -118,7 +128,7 @@ export default defineComponent({
       (value) => {
         storyService = value;
         // setup();
-        // setData();
+        setData();
       },
     );
 
@@ -295,8 +305,9 @@ export default defineComponent({
               framePlaybook,
               spotlight,
               activeStoryData,
-            ).storyPaused(storyData);
+            ).storyPaused(storyData, taggingService);
           }
+
           console.log('tag', taggingService.taggedObjects);
         },
         playBook.lastAction().time +
@@ -348,25 +359,49 @@ export default defineComponent({
       // Tools().displayBoundaryAsDots(threeSvc, innerBoundary);
 
       // setup();
-      const imagecube = SchemaCube().CreateImageCube({position: new Vector3(0,0,0), params: {width: 3, height: 3, color: Colors().white, isTransparant: true}} as CubeSchema);
-      const cube = SchemaCube().CreateCube({position: new Vector3(-5,0,0), params: {width: 3, height: 3, color: Colors().white}} as CubeSchema);
+      const imagecube = SchemaCube().CreateImageCube({
+        position: new Vector3(0, 0, 0),
+        params: { width: 3, height: 3, color: Colors().white, isTransparant: true },
+      } as CubeSchema);
+      const cube = SchemaCube().CreateCube({
+        position: new Vector3(-5, 0, 0),
+        params: { width: 3, height: 3, color: Colors().white },
+      } as CubeSchema);
       threeSvc.AddToScene(cube, Tags.Testing);
       threeSvc.AddToScene(imagecube, Tags.Testing);
-      const testGroup = GroupHelper().CreateGroup([cube,imagecube]);
+      const testGroup = GroupHelper().CreateGroup([cube, imagecube]);
       threeSvc.AddToScene(testGroup, Tags.Testing);
-      testGroup.position.set(5,2,0);
-      await CustomAnimation().fadeOutGroups([testGroup], 0.2, AnimationDefaults.values.fadeStep);
-      const _storyCircle = StoryCircle().Create('my title',{params: {radius: 2, color: Colors().green}, position: new Vector3(0,0,0)} as CircleSchema,[0,0], '', false,true)
+      testGroup.position.set(5, 2, 0);
+      await CustomAnimation().fadeOutGroups(
+        [testGroup],
+        0.2,
+        AnimationDefaults.values.fadeStep,
+      );
+      const _storyCircle = StoryCircle().Create(
+        'my title',
+        {
+          params: { radius: 2, color: Colors().green },
+          position: new Vector3(0, 0, 0),
+        } as CircleSchema,
+        [0, 0],
+        '',
+        false,
+        true,
+      );
       threeSvc.AddGroupsToScene(_storyCircle, Tags.Testing);
-      await CustomAnimation().fadeOutGroups(_storyCircle, 0.2, AnimationDefaults.values.fadeStep);
-      MoveObject().moveGroups(_storyCircle, new Vector3(0,3,0));
-      
-      console.log({_storyCircle});
+      await CustomAnimation().fadeOutGroups(
+        _storyCircle,
+        0.2,
+        AnimationDefaults.values.fadeStep,
+      );
+      MoveObject().moveGroups(_storyCircle, new Vector3(0, 3, 0));
+
+      console.log({ _storyCircle });
       // _storyCircle[0].position
 
       // await CustomAnimation().grow(cube, 2, AnimationDefaults.values.scaleStep);
       // await CustomAnimation().shrink(cube, 1, AnimationDefaults.values.scaleStep);
-      console.log('TaggedObjects => ',taggingService.taggedObjects);
+      console.log('TaggedObjects => ', taggingService.taggedObjects);
       threeSvc.Animate();
     });
 

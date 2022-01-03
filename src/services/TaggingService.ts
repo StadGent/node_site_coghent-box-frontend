@@ -49,6 +49,10 @@ export default class TaggingService {
     }
   }
 
+  getByTag(tag: Tags){
+    return this.taggedObjects.filter(_object => _object.tag == Tags[tag]);
+  }
+
   clearTaggedObjects() {
     this.taggedObjects = [];
   }

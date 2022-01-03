@@ -18,7 +18,7 @@ import useStartOfSession from './playbook.startOfSession';
 import useEndOfSession from './playbook.endOfSession';
 import HorizontalProgressBar from './shapes.horizontalProgressBar';
 import ZoneService from '@/services/ZoneService';
-import { Tags } from '@/services/TaggingService';
+import TaggingService, { Tags } from '@/services/TaggingService';
 
 const PlayBookBuild = (
   threeService: ThreeService,
@@ -41,7 +41,7 @@ const PlayBookBuild = (
   progressOfFrame: (frameIndex:number, color: number, currentTime: number, audioDuration: number, progressbar: Array<Group>) => Array<Group>;
   initialSpotLight: () => Mesh;
   endOfSession: (spotRadius: number) => Promise<boolean>;
-  storyPaused: (storyData: Array<Story>) => Promise<void>;
+  storyPaused: (storyData: Array<Story>, taggingService: TaggingService) => Promise<void>;
   storyData: (
     storyService: StoryService,
     activeStoryData: Story,
@@ -128,13 +128,13 @@ const PlayBookBuild = (
     return useEndOfSession(threeService, zoneService).create(spotRadius);
   };
 
-  const storyPaused = async (storyData: Array<Story>) => {
+  const storyPaused = async (storyData: Array<Story>, taggingService: TaggingService) => {
     const storiesWithTheirProgress = useStory().getStoriesWithTheirProgress(
       storyData,
       storyService.getStoryData(),
     );
     threeService.AddGroupsToScene(
-      StoryPaused(storyData).Create(storiesWithTheirProgress), Tags.Stories, 'All stories when session is paused.'
+      StoryPaused(storyData, taggingService).Create(storiesWithTheirProgress), Tags.Stories, 'All stories when session is paused.'
     );
     await MoveObject().startMoving(spotlight, new Vector3(0, 2.5, Layers.scene));
   };
