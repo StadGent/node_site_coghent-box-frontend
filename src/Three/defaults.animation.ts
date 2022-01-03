@@ -26,7 +26,7 @@ const AnimationDefaults: AnimationDefault = {
     opacityActive: 1,
     opacityInactive: 0.5,
     fadeStep: 0.04,
-    scaleStep: 0.02,
+    scaleStep: 0.2,
     scaleReducer: 0.2,
     zoomOfAsset: 1.5,
   }

@@ -110,13 +110,13 @@ const useFrameAssetOverview = (
     return { scale: scale, zoomPosition: zoomTo };
   };
 
-  const zoomAndHighlightAsset = (
+  const zoomAndHighlightAsset = async (
     asset: Mesh<BoxBufferGeometry, any>,
     currentAsset: number,
     scale: number,
   ) => {
     const zoomSettings = calculateZoomSettingsOfAsset(asset);
-    useAsset(threeService).zoom(
+    await useAsset(threeService).zoom(
       asset as Mesh<BoxBufferGeometry, any>,
       zoomSettings.zoomPosition,
       zoomSettings.scale,
@@ -172,9 +172,9 @@ const useFrameAssetOverview = (
             `Move spotlight to asset ${assets[index].id}.`,
           );
           playBook.addToPlayBook(
-            () => {
+            async () => {
               spotlight.scale.set(0.1, 0.1, 0);
-              zoomAndHighlightAsset(
+              await zoomAndHighlightAsset(
                 asset as Mesh<BoxBufferGeometry, any>,
                 index,
                 AnimationDefaults.values.zoomOfAsset,

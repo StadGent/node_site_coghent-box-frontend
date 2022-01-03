@@ -1,11 +1,9 @@
 import { Metadata } from '@/models/CollectionModel';
 import { Asset, ComponentMetadata, Story } from '@/models/GraphqlModel';
 import ThreeService from '@/services/ThreeService';
-import CubeHelper from '@/Three/helper.cube';
 import { CubeParams } from '@/Three/schema.cube';
 import Layers from '@/Three/defaults.layers';
 import Measurements from '@/Three/defaults.measurements';
-import GroupHelper from '@/Three/helper.group';
 import TextHelper from '@/Three/helper.text';
 import { FontParams } from '@/Three/schema.text';
 import { BoxBufferGeometry, Mesh, Vector3, Group, BoxGeometry } from 'three';
@@ -29,7 +27,7 @@ const useAsset = (
     assetImageCube: Mesh<BoxBufferGeometry, any>,
     position: Vector3,
     scale: number,
-  ) => void;
+  ) => Promise<void>;
   setInactive: (assetImageCube: Mesh<BoxBufferGeometry, any>) => Promise<void>;
   setActive: (assetImageCube: Mesh<BoxBufferGeometry, any>) => Promise<void>;
   addMetadata: (
@@ -39,11 +37,6 @@ const useAsset = (
     scale: number,
     text: string,
   ) => Mesh<BoxBufferGeometry, any>;
-  addMetadataToZoomedImage: (
-    asset: Asset,
-    assetImageCube: Mesh<BoxBufferGeometry, any>,
-    storyColor: number,
-  ) => Group;
   getAssetsFromFrame: (activeStory: Story, frame: number) => Array<Asset>;
   setZoomTiming: (relationMetadata: ComponentMetadata) => number;
 } => {
@@ -85,14 +78,15 @@ const useAsset = (
     setActive(asset);
   };
 
-  const zoom = (
+  const zoom = async (
     assetImageCube: Mesh<BoxBufferGeometry, any>,
     position: Vector3,
     scale: number,
   ) => {
     assetImageCube.position.set(position.x, position.y, position.z);
     assetImageCube.material.opacity = 1;
-    assetImageCube.scale.set(0, 0, 0);
+    await CustomAnimation().grow(assetImageCube, scale, AnimationDefaults.values.scaleStep);
+
     assetImageCube.scale.set(scale, scale, Layers.presentation);
   };
 
@@ -112,46 +106,10 @@ const useAsset = (
     const middleOfText = metadataInfo.geometry.parameters.width/2;
     metadataInfo.position.set(
       object.position.x - middleOfText,
-      (object.position.y + object.geometry.parameters.height / 2) + Positions().metadataInfoAboveImage().y,
+      object.position.y + Positions().metadataInfoAboveImage().y + (object.geometry.parameters.height * scale) ,
       object.position.z,
     );
     return metadataInfo;
-  };
-
-  const addMetadataToZoomedImage = (
-    asset: Asset,
-    assetImageCube: Mesh<BoxBufferGeometry, any>,
-    storyColor: number,
-  ) => {
-    const cubeParams = CubeHelper().GetCubeParams(assetImageCube);
-    const schema = CubeHelper().CreateSchema(
-      assetImageCube.position,
-      '',
-      new Vector3(cubeParams.width, cubeParams.height, Layers.presentation),
-    );
-    schema.params.color = storyColor;
-    schema.position.z = Layers.presentation;
-    const cube = CubeHelper().HighlightImage(schema, storyColor);
-    cube.scale.set(assetImageCube.scale.x, assetImageCube.scale.y, Layers.presentation);
-
-    const textPosition = new Vector3(
-      assetImageCube.position.x - (cubeParams.width / 2.5) * cube.scale.x,
-      assetImageCube.position.y + (cubeParams.height / 2) * cube.scale.y,
-      assetImageCube.position.z,
-    );
-
-    const text = TextHelper().CreateText(
-      `${getTitle(asset) ? !undefined : ''} (${
-        getCollections(asset)[0]?.value ? !undefined : ''
-      })`,
-      textPosition,
-      undefined,
-      {
-        color: storyColor,
-      } as FontParams,
-    );
-
-    return GroupHelper().CreateGroup([text, cube]);
   };
 
   const setInactive = async (assetImageCube: Mesh<BoxBufferGeometry, any>) => {
@@ -187,7 +145,6 @@ const useAsset = (
     moveSpotlightToAsset,
     zoom,
     addMetadata,
-    addMetadataToZoomedImage,
     setInactive,
     setActive,
     getAssetsFromFrame,
