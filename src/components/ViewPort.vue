@@ -5,7 +5,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, PropType, reactive, Ref, ref, watch } from 'vue';
-import { Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
+import { Group, Mesh, MeshBasicMaterial, Object3D, Vector3 } from 'three';
 import { Entity as _Entity, Story } from '@/models/GraphqlModel';
 
 import ThreeService from '@/services/ThreeService';
@@ -356,9 +356,13 @@ export default defineComponent({
       threeSvc.AddToScene(testGroup, Tags.Testing);
       testGroup.position.set(5,2,0);
       await CustomAnimation().fadeOutGroups([testGroup], 0.2, AnimationDefaults.values.fadeStep);
-      const _storyCircle = StoryCircle().Create('my title',{params: {radius: 2, color: Colors().green}, position: new Vector3(-5,0,0)} as CircleSchema,[0,0], '', false,true)
+      const _storyCircle = StoryCircle().Create('my title',{params: {radius: 2, color: Colors().green}, position: new Vector3(0,0,0)} as CircleSchema,[0,0], '', false,true)
       threeSvc.AddGroupsToScene(_storyCircle, Tags.Testing);
       await CustomAnimation().fadeOutGroups(_storyCircle, 0.2, AnimationDefaults.values.fadeStep);
+      MoveObject().moveGroups(_storyCircle, new Vector3(0,3,0));
+      
+      console.log({_storyCircle});
+      // _storyCircle[0].position
 
       // await CustomAnimation().grow(cube, 2, AnimationDefaults.values.scaleStep);
       // await CustomAnimation().shrink(cube, 1, AnimationDefaults.values.scaleStep);

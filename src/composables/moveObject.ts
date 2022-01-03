@@ -1,10 +1,11 @@
 import Timing from '@/Three/defaults.timing';
-import { Mesh, Vector3 } from 'three';
+import { Group, Mesh, Vector3 } from 'three';
 import Common from './common';
 
 const MoveObject = (): {
   move: (object: Mesh, toPosition: Vector3) => void;
-  startMoving: (object: Mesh, toPosition: Vector3) => Promise<boolean>;
+  startMoving: (object: any, toPosition: Vector3) => Promise<boolean>;
+  moveGroups: (_groups: Array<Group>, toPosition: Vector3) => void;
 } => {
   const setXPosition = (object: Mesh, toPosition: Vector3, stepX: number) => {
     if (object.position.x <= toPosition.x && object.position.x + stepX <= toPosition.x) {
@@ -69,12 +70,26 @@ const MoveObject = (): {
     return true;
   };
 
+  const moveGroups = (_groups: Array<Group>, toPosition: Vector3) => {
+    let _stepsX = toPosition.x - _groups[0].position.x;
+    let _stepsY = toPosition.y - _groups[0].position.y;
+    if (_groups[0].position.x > toPosition.x) {
+      _stepsX = -_stepsX;
+    }
+    if (_groups[0].position.y > toPosition.y) {
+      _stepsY = -_stepsY;
+    }
+    _groups.map((_group: any) => {
+      MoveObject().startMoving(_group, new Vector3(_group.position.x + _stepsX, _group.position.y + _stepsY, _group.position.z))
+    });
+  }
+
   const sleep = async (object: Mesh, toPosition: Vector3) => {
     await Common().awaitTimeout(Timing.moveObject.steps / Timing.moveObject.refreshStep);
     return move(object, toPosition);
   };
 
-  return { move, startMoving };
+  return { move, startMoving, moveGroups };
 };
 
 export default MoveObject;
