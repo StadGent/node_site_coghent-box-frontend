@@ -52,9 +52,8 @@ const BaseChapes = (): {
     isTransparant?: true | false,
   ) => {
     const geometry = new CircleGeometry(radius, segments);
-    const material = new MeshBasicMaterial({ color: color, opacity: opacity || 1 });
+    const material = new MeshBasicMaterial({ color: color, opacity: opacity || 1, transparent: isTransparant || true });
     material.color.convertSRGBToLinear();
-    material.transparent = isTransparant || false;
 
     return new Mesh(geometry, material);
   };

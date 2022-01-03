@@ -5,7 +5,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, PropType, reactive, Ref, ref, watch } from 'vue';
-import { Group, Mesh, Vector3 } from 'three';
+import { Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
 import { Entity as _Entity, Story } from '@/models/GraphqlModel';
 
 import ThreeService from '@/services/ThreeService';
@@ -34,6 +34,10 @@ import Measurements from '@/Three/defaults.measurements';
 import SchemaCube, { CubeSchema } from '@/Three/schema.cube';
 import Colors from '@/Three/defaults.color';
 import { threeDefaultsWall } from '@/Three/defaults.three';
+import GroupHelper from '@/Three/helper.group';
+import StoryCircle from '@/Three/section.storyCircle';
+import { CircleSchema } from '@/Three/schema.circle';
+import MoveObject from '@/composables/moveObject';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -113,6 +117,8 @@ export default defineComponent({
       () => props.storyService,
       (value) => {
         storyService = value;
+        // setup();
+        // setData();
       },
     );
 
@@ -144,7 +150,6 @@ export default defineComponent({
     const setData = async () => {
       alert('got stories and can start');
       audioHelper = AudioHelper();
-      await Common().awaitTimeout(1000);
       storyData = storyService.stories;
       storyService.setStoryPausedPositions(zoneService.zonesInnerToOuter);
       console.log('StoryData', storyService.getStoryData());
@@ -339,14 +344,25 @@ export default defineComponent({
         zoneService.sceneZone(),
         Defaults().screenZonePadding(),
       ).createOuterBoundary();
-      Tools().displayBoundaryAsDots(threeSvc, outerBoundary);
-      Tools().displayBoundaryAsDots(threeSvc, innerBoundary);
+      // Tools().displayBoundaryAsDots(threeSvc, outerBoundary);
+      // Tools().displayBoundaryAsDots(threeSvc, innerBoundary);
 
       // setup();
-      const cube = SchemaCube().CreateImageCube({position: new Vector3(0,0,0), params: {width: 3, height: 3, color: Colors().white}} as CubeSchema);
+      const imagecube = SchemaCube().CreateImageCube({position: new Vector3(0,0,0), params: {width: 3, height: 3, color: Colors().white, isTransparant: true}} as CubeSchema);
+      const cube = SchemaCube().CreateCube({position: new Vector3(-5,0,0), params: {width: 3, height: 3, color: Colors().white}} as CubeSchema);
       threeSvc.AddToScene(cube, Tags.Testing);
-      await CustomAnimation().grow(cube, 2, AnimationDefaults.values.scaleStep);
-      await CustomAnimation().shrink(cube, 1, AnimationDefaults.values.scaleStep);
+      threeSvc.AddToScene(imagecube, Tags.Testing);
+      const testGroup = GroupHelper().CreateGroup([cube,imagecube]);
+      threeSvc.AddToScene(testGroup, Tags.Testing);
+      testGroup.position.set(5,2,0);
+      await CustomAnimation().fadeOutGroups([testGroup], 0.2, AnimationDefaults.values.fadeStep);
+      const _storyCircle = StoryCircle().Create('my title',{params: {radius: 2, color: Colors().green}, position: new Vector3(-5,0,0)} as CircleSchema,[0,0], '', false,true)
+      threeSvc.AddGroupsToScene(_storyCircle, Tags.Testing);
+      await CustomAnimation().fadeOutGroups(_storyCircle, 0.2, AnimationDefaults.values.fadeStep);
+
+      // await CustomAnimation().grow(cube, 2, AnimationDefaults.values.scaleStep);
+      // await CustomAnimation().shrink(cube, 1, AnimationDefaults.values.scaleStep);
+      console.log('TaggedObjects => ',taggingService.taggedObjects);
       threeSvc.Animate();
     });
 

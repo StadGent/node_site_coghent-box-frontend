@@ -38,6 +38,8 @@ const SchemaCube = (): {
 
   const CreateCube = (schema: CubeSchema) => {
     const cube = BaseChapes().DrawCube(schema.params);
+    cube.material.transparent = true;
+    cube.material.opacity = 1;
     chapeHelper.SetPosition(schema.position, cube);
     cube.position.z = 0;
     return cube;
