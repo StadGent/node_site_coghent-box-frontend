@@ -24,6 +24,7 @@ const PlayBookBuild = (
   threeService: ThreeService,
   storyService: StoryService,
   zoneService: ZoneService,
+  taggingService: TaggingService,
   playBook: PlayBookFunctions,
   spotlight: Mesh,
   activeStoryData: Story,
@@ -38,7 +39,7 @@ const PlayBookBuild = (
     currentFrameIndex: number,
     storyColor: number,
   ) => void;
-  progressOfFrame: (frameIndex:number, color: number, currentTime: number, audioDuration: number, progressbar: Array<Group>) => Array<Group>;
+  progressOfFrame: (frameIndex: number, color: number, currentTime: number, audioDuration: number, progressbar: Array<Group>) => Array<Group>;
   initialSpotLight: () => Mesh;
   endOfSession: (spotRadius: number) => Promise<boolean>;
   storyPaused: (storyData: Array<Story>, taggingService: TaggingService) => Promise<void>;
@@ -51,6 +52,7 @@ const PlayBookBuild = (
     endOfSession: true | false;
   };
   startOfSession: () => Promise<true | false>;
+  setSelectedStory: (currentStory: number) => void;
 } => {
   const updateAudio = (
     audio: HTMLAudioElement,
@@ -99,7 +101,7 @@ const PlayBookBuild = (
     );
   };
 
-  const progressOfFrame = (frameIndex:number, color: number, currentTime: number, audioDuration: number, progressbar: Array<Group>) => {
+  const progressOfFrame = (frameIndex: number, color: number, currentTime: number, audioDuration: number, progressbar: Array<Group>) => {
     const assetsWithTimestampStart = useFrame().getStartTimestampsWithTheirAsset(
       activeStoryData.frames[frameIndex],
     );
@@ -155,7 +157,18 @@ const PlayBookBuild = (
   };
 
   const startOfSession = () => {
-    return useStartOfSession(threeService, zoneService,spotlight).create();
+    return useStartOfSession(threeService, zoneService, spotlight).create();
+  };
+
+  const setSelectedStory = (currentStory: number) => {
+    const storyCircles = taggingService.getByTag(Tags.StoryCircle);
+    const selectedStoryCircle = storyCircles.filter(_object => _object.name == storyService.stories[currentStory].id)[0];
+    const storyCircleToMove = storyCircles.filter(_object => _object.name != storyService.stories[currentStory].id);
+    for (const _storyCircle of storyCircleToMove) {
+      MoveObject().moveGroups(_storyCircle.object, new Vector3(0.01, 12, 1));
+    }
+    const storyDataOfSelectedStory = storyService.getStoryDataOfStory(storyService.stories[currentStory].id);
+    MoveObject().moveGroups(selectedStoryCircle.object, new Vector3(-storyDataOfSelectedStory.pausedPosition.x, -storyDataOfSelectedStory.pausedPosition.y, -storyDataOfSelectedStory.pausedPosition.z));
   };
 
   return {
@@ -168,6 +181,7 @@ const PlayBookBuild = (
     storyPaused,
     storyData,
     startOfSession,
+    setSelectedStory,
   };
 };
 

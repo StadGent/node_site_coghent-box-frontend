@@ -102,46 +102,16 @@ export default defineComponent({
           currentStory.value = value - 1;
           currentFrame = _storyData.totalOfFramesSeen;
           console.log('Selected story => ', currentStory.value);
-          const storyCircles = taggingService.getByTag(Tags.StoryCircle);
-          console.log('filterd Tags storycircle', storyCircles);
-          storyCircles.forEach((_storyCircle) => {
-            console.log({ _storyCircle });
-            if (_storyCircle.name != storyService.stories[currentStory.value].id) {
-              console.log('position of other circles', _storyCircle.object.position);
-              MoveObject().moveGroups(_storyCircle.object, new Vector3(0.01, 12, 1));
-            } else {
-              console.log(
-                'PAUSED POSITION FROM STORYSERVICE',
-                storyService.getStoryDataOfStory(_storyCircle.name).pausedPosition,
-              );
-              threeSvc.state.scene.getObjectById(_storyCircle.object[0].position);
-              console.log('position', _storyCircle.object.position);
-              const selectedStoryPosition = storyService.getStoryDataOfStory(
-                _storyCircle.name,
-              ).pausedPosition;
-              MoveObject().moveGroups(
-                [threeSvc.state.scene.getObjectById(_storyCircle.object[0].id) as Group],
-                new Vector3(
-                  -selectedStoryPosition.x,
-                  selectedStoryPosition.y,
-                  selectedStoryPosition.z,
-                ),
-              );
-              MoveObject().moveGroups(
-                [threeSvc.state.scene.getObjectById(_storyCircle.object[1].id) as Group],
-                new Vector3(
-                  -selectedStoryPosition.x,
-                  selectedStoryPosition.y,
-                  selectedStoryPosition.z,
-                ),
-              );
-            }
-          });
-
+          PlayBookBuild(
+            threeSvc,
+            storyService,
+            zoneService,
+            taggingService,
+            playBook,
+            spotlight,
+            activeStoryData,
+          ).setSelectedStory(currentStory.value);
           // resetStory();
-          threeSvc.RemoveGroupsFromScene(storyCircles[0].object);
-          threeSvc.RemoveGroupsFromScene(storyCircles[1].object);
-          threeSvc.RemoveGroupsFromScene(storyCircles[2].object);
           console.log('tagged => ', taggingService.taggedObjects);
         }
       },
@@ -169,6 +139,7 @@ export default defineComponent({
         threeSvc,
         storyService,
         zoneService,
+        taggingService,
         playBook,
         spotlight,
         activeStoryData,
@@ -178,6 +149,7 @@ export default defineComponent({
         threeSvc,
         storyService,
         zoneService,
+        taggingService,
         playBook,
         spotlight,
         activeStoryData,
@@ -231,6 +203,7 @@ export default defineComponent({
         threeSvc,
         storyService,
         zoneService,
+        taggingService,
         playBook,
         spotlight,
         activeStoryData,
@@ -255,6 +228,7 @@ export default defineComponent({
             threeSvc,
             storyService,
             zoneService,
+            taggingService,
             framePlaybook,
             spotlight,
             activeStoryData,
@@ -275,11 +249,12 @@ export default defineComponent({
       };
 
       const framePlaybook = PlayBook();
-
+      
       PlayBookBuild(
         threeSvc,
         storyService,
         zoneService,
+        taggingService,
         framePlaybook,
         spotlight,
         activeStoryData,
@@ -289,6 +264,7 @@ export default defineComponent({
         threeSvc,
         storyService,
         zoneService,
+        taggingService,
         framePlaybook,
         spotlight,
         activeStoryData,
@@ -302,6 +278,7 @@ export default defineComponent({
             threeSvc,
             storyService,
             zoneService,
+            taggingService,
             framePlaybook,
             spotlight,
             activeStoryData,
@@ -313,6 +290,7 @@ export default defineComponent({
               threeSvc,
               storyService,
               zoneService,
+              taggingService,
               framePlaybook,
               spotlight,
               activeStoryData,
@@ -333,6 +311,7 @@ export default defineComponent({
               threeSvc,
               storyService,
               zoneService,
+              taggingService,
               framePlaybook,
               spotlight,
               activeStoryData,
@@ -390,62 +369,12 @@ export default defineComponent({
       // Tools().displayBoundaryAsDots(threeSvc, innerBoundary);
 
       // setup();
-      const imagecube = SchemaCube().CreateImageCube({
-        position: new Vector3(0, 0, 0),
-        params: { width: 3, height: 3, color: Colors().white, isTransparant: true },
-      } as CubeSchema);
+
       const cube = SchemaCube().CreateCube({
         position: new Vector3(-5, 0, 0),
         params: { width: 3, height: 3, color: Colors().white },
       } as CubeSchema);
-      threeSvc.AddToScene(cube, Tags.Testing);
-      threeSvc.AddToScene(imagecube, Tags.Testing);
-      const testGroup = GroupHelper().CreateGroup([cube, imagecube]);
-      threeSvc.AddToScene(testGroup, Tags.Testing);
-      testGroup.position.set(5, 2, 0);
-      await CustomAnimation().fadeOutGroups(
-        [testGroup],
-        0.2,
-        AnimationDefaults.values.fadeStep,
-      );
-      const _storyCircle = StoryCircle().Create(
-        'my title',
-        {
-          params: { radius: 2, color: Colors().green },
-          position: new Vector3(18, 2, 0),
-        } as CircleSchema,
-        [0, 0],
-        '',
-        false,
-        true,
-      );
-      const _storyCircle2 = StoryCircle().Create(
-        'my title',
-        {
-          params: { radius: 2, color: Colors().green },
-          position: new Vector3(-18, 2, 0),
-        } as CircleSchema,
-        [0, 0],
-        '',
-        false,
-        true,
-      );
-      threeSvc.AddGroupsToScene(_storyCircle, Tags.Testing);
-      threeSvc.AddGroupsToScene(_storyCircle2, Tags.Testing);
-      await CustomAnimation().fadeOutGroups(
-        _storyCircle,
-        0.2,
-        AnimationDefaults.values.fadeStep,
-      );
-      await CustomAnimation().fadeOutGroups(
-        _storyCircle2,
-        0.2,
-        AnimationDefaults.values.fadeStep,
-      );
-      // MoveObject().moveGroups(_storyCircle, new Vector3(-18, 0, 0));
-      // MoveObject().moveGroups(_storyCircle2, new Vector3(18, 0, 0));
 
-      console.log('TaggedObjects => ', taggingService.taggedObjects);
       threeSvc.Animate();
     });
 
