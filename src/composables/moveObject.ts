@@ -44,7 +44,6 @@ const MoveObject = (): {
     }
   };
   const move = (object: Mesh, toPosition: Vector3) => {
-    let reached = false;
     const stepY = Math.abs(object.position.y - toPosition.y) / Timing.moveObject.steps;
     const stepX = Math.abs(object.position.x - toPosition.x) / Timing.moveObject.steps;
 
@@ -57,7 +56,6 @@ const MoveObject = (): {
       object.position.y != toPosition.y
     ) {
       object.position.x = toPosition.x;
-      reached = true;
     }
     setXPosition(object, toPosition, stepX);
     setYPosition(object, toPosition, stepY);
@@ -71,18 +69,13 @@ const MoveObject = (): {
   };
 
   const moveGroups = (_groups: Array<Group>, toPosition: Vector3) => {
-    let _stepsX = toPosition.x - _groups[0].position.x;
-    let _stepsY = toPosition.y - _groups[0].position.y;
-    if (_groups[0].position.x > toPosition.x) {
-      _stepsX = -_stepsX;
+    const _stepsX = toPosition.x;
+    const _stepsY = toPosition.y;
+
+    for (const item of _groups) {
+      MoveObject().startMoving(item, new Vector3(item.position.x + _stepsX, item.position.y + _stepsY, item.position.z))
     }
-    if (_groups[0].position.y > toPosition.y) {
-      _stepsY = -_stepsY;
-    }
-    _groups.map((_group: any) => {
-      MoveObject().startMoving(_group, new Vector3(_group.position.x + _stepsX, _group.position.y + _stepsY, _group.position.z))
-    });
-  }
+  };
 
   const sleep = async (object: Mesh, toPosition: Vector3) => {
     await Common().awaitTimeout(Timing.moveObject.steps / Timing.moveObject.refreshStep);

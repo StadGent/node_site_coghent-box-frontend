@@ -103,15 +103,46 @@ export default defineComponent({
           currentFrame = _storyData.totalOfFramesSeen;
           console.log('Selected story => ', currentStory.value);
           const storyCircles = taggingService.getByTag(Tags.StoryCircle);
-          console.log('filterd out storycircle', storyCircles);
+          console.log('filterd Tags storycircle', storyCircles);
           storyCircles.forEach((_storyCircle) => {
-            console.log({_storyCircle});
+            console.log({ _storyCircle });
             if (_storyCircle.name != storyService.stories[currentStory.value].id) {
+              console.log('position of other circles', _storyCircle.object.position);
               MoveObject().moveGroups(_storyCircle.object, new Vector3(0.01, 12, 1));
+            } else {
+              console.log(
+                'PAUSED POSITION FROM STORYSERVICE',
+                storyService.getStoryDataOfStory(_storyCircle.name).pausedPosition,
+              );
+              threeSvc.state.scene.getObjectById(_storyCircle.object[0].position);
+              console.log('position', _storyCircle.object.position);
+              const selectedStoryPosition = storyService.getStoryDataOfStory(
+                _storyCircle.name,
+              ).pausedPosition;
+              MoveObject().moveGroups(
+                [threeSvc.state.scene.getObjectById(_storyCircle.object[0].id) as Group],
+                new Vector3(
+                  -selectedStoryPosition.x,
+                  selectedStoryPosition.y,
+                  selectedStoryPosition.z,
+                ),
+              );
+              MoveObject().moveGroups(
+                [threeSvc.state.scene.getObjectById(_storyCircle.object[1].id) as Group],
+                new Vector3(
+                  -selectedStoryPosition.x,
+                  selectedStoryPosition.y,
+                  selectedStoryPosition.z,
+                ),
+              );
             }
           });
 
           // resetStory();
+          threeSvc.RemoveGroupsFromScene(storyCircles[0].object);
+          threeSvc.RemoveGroupsFromScene(storyCircles[1].object);
+          threeSvc.RemoveGroupsFromScene(storyCircles[2].object);
+          console.log('tagged => ', taggingService.taggedObjects);
         }
       },
     );
@@ -245,24 +276,24 @@ export default defineComponent({
 
       const framePlaybook = PlayBook();
 
-      PlayBookBuild(
-        threeSvc,
-        storyService,
-        zoneService,
-        framePlaybook,
-        spotlight,
-        activeStoryData,
-      ).storyCircle(currentFrame, storyService.getStoryColor(activeStoryData.id));
+      // PlayBookBuild(
+      //   threeSvc,
+      //   storyService,
+      //   zoneService,
+      //   framePlaybook,
+      //   spotlight,
+      //   activeStoryData,
+      // ).storyCircle(currentFrame, storyService.getStoryColor(activeStoryData.id));
 
-      PlayBookBuild(
-        threeSvc,
-        storyService,
-        zoneService,
-        framePlaybook,
-        spotlight,
-        activeStoryData,
-      ).frameOverview(currentFrame, storyService.getStoryColor(activeStoryData.id));
-      playBook.mergeActionsWithPlaybook(framePlaybook.getSortedPlayBookActions());
+      // PlayBookBuild(
+      //   threeSvc,
+      //   storyService,
+      //   zoneService,
+      //   framePlaybook,
+      //   spotlight,
+      //   activeStoryData,
+      // ).frameOverview(currentFrame, storyService.getStoryColor(activeStoryData.id));
+      // playBook.mergeActionsWithPlaybook(framePlaybook.getSortedPlayBookActions());
 
       playBook.addToPlayBook(
         async () => {
@@ -381,7 +412,18 @@ export default defineComponent({
         'my title',
         {
           params: { radius: 2, color: Colors().green },
-          position: new Vector3(0, 0, 0),
+          position: new Vector3(18, 2, 0),
+        } as CircleSchema,
+        [0, 0],
+        '',
+        false,
+        true,
+      );
+      const _storyCircle2 = StoryCircle().Create(
+        'my title',
+        {
+          params: { radius: 2, color: Colors().green },
+          position: new Vector3(-18, 2, 0),
         } as CircleSchema,
         [0, 0],
         '',
@@ -389,18 +431,20 @@ export default defineComponent({
         true,
       );
       threeSvc.AddGroupsToScene(_storyCircle, Tags.Testing);
+      threeSvc.AddGroupsToScene(_storyCircle2, Tags.Testing);
       await CustomAnimation().fadeOutGroups(
         _storyCircle,
         0.2,
         AnimationDefaults.values.fadeStep,
       );
-      MoveObject().moveGroups(_storyCircle, new Vector3(0, 3, 0));
+      await CustomAnimation().fadeOutGroups(
+        _storyCircle2,
+        0.2,
+        AnimationDefaults.values.fadeStep,
+      );
+      MoveObject().moveGroups(_storyCircle, new Vector3(-18, 0, 0));
+      MoveObject().moveGroups(_storyCircle2, new Vector3(18, 0, 0));
 
-      console.log({ _storyCircle });
-      // _storyCircle[0].position
-
-      // await CustomAnimation().grow(cube, 2, AnimationDefaults.values.scaleStep);
-      // await CustomAnimation().shrink(cube, 1, AnimationDefaults.values.scaleStep);
       console.log('TaggedObjects => ', taggingService.taggedObjects);
       threeSvc.Animate();
     });
