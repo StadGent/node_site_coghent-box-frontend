@@ -276,24 +276,24 @@ export default defineComponent({
 
       const framePlaybook = PlayBook();
 
-      // PlayBookBuild(
-      //   threeSvc,
-      //   storyService,
-      //   zoneService,
-      //   framePlaybook,
-      //   spotlight,
-      //   activeStoryData,
-      // ).storyCircle(currentFrame, storyService.getStoryColor(activeStoryData.id));
+      PlayBookBuild(
+        threeSvc,
+        storyService,
+        zoneService,
+        framePlaybook,
+        spotlight,
+        activeStoryData,
+      ).storyCircle(currentFrame, storyService.getStoryColor(activeStoryData.id));
 
-      // PlayBookBuild(
-      //   threeSvc,
-      //   storyService,
-      //   zoneService,
-      //   framePlaybook,
-      //   spotlight,
-      //   activeStoryData,
-      // ).frameOverview(currentFrame, storyService.getStoryColor(activeStoryData.id));
-      // playBook.mergeActionsWithPlaybook(framePlaybook.getSortedPlayBookActions());
+      PlayBookBuild(
+        threeSvc,
+        storyService,
+        zoneService,
+        framePlaybook,
+        spotlight,
+        activeStoryData,
+      ).frameOverview(currentFrame, storyService.getStoryColor(activeStoryData.id));
+      playBook.mergeActionsWithPlaybook(framePlaybook.getSortedPlayBookActions());
 
       playBook.addToPlayBook(
         async () => {
@@ -442,8 +442,8 @@ export default defineComponent({
         0.2,
         AnimationDefaults.values.fadeStep,
       );
-      MoveObject().moveGroups(_storyCircle, new Vector3(-18, 0, 0));
-      MoveObject().moveGroups(_storyCircle2, new Vector3(18, 0, 0));
+      // MoveObject().moveGroups(_storyCircle, new Vector3(-18, 0, 0));
+      // MoveObject().moveGroups(_storyCircle2, new Vector3(18, 0, 0));
 
       console.log('TaggedObjects => ', taggingService.taggedObjects);
       threeSvc.Animate();
