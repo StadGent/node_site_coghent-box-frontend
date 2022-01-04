@@ -87,7 +87,7 @@ export default defineComponent({
 
     watch(
       () => props.storySelected,
-      (value) => {
+      async (value) => {
         //TODO: Move stories out of the scene and bring selected to the middle
         console.log('You want to select story', props.storySelected);
         console.log('Can you choose a story?', chooseStory.value);
@@ -111,7 +111,8 @@ export default defineComponent({
             spotlight,
             activeStoryData,
           ).setSelectedStory(currentStory.value);
-          // resetStory();
+          await Common().awaitTimeout(2000);
+          resetStory();
           console.log('tagged => ', taggingService.taggedObjects);
         }
       },
@@ -128,8 +129,8 @@ export default defineComponent({
       () => props.storyService,
       (value) => {
         storyService = value;
-        // setup();
-        setData();
+        setup();
+        // setData();
       },
     );
 
@@ -155,7 +156,8 @@ export default defineComponent({
         activeStoryData,
       )
         .startOfSession()
-        .finally(() => {
+        .finally(async () => {
+          await Common().awaitTimeout(3000);
           setData();
         });
     };

@@ -26,7 +26,7 @@ const Defaults = (): {
   const zonePadding = () => 1;
   const screenZonePadding = () => 2;
   const boundaryPadding = () => 1;
-  const showZonesInOverview = () => true;
+  const showZonesInOverview = () => false;
   
   const maxFrames = () => 2;
   const countdown = () => 3; 
