@@ -105,6 +105,7 @@ export default defineComponent({
           currentStory.value = value - 1;
           currentFrame = _storyData.totalOfFramesSeen;
           console.log('Selected story => ', currentStory.value);
+          garbageHelper.newStorySelected();
           PlayBookBuild(
             threeSvc,
             storyService,

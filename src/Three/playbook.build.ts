@@ -141,7 +141,7 @@ const PlayBookBuild = (
     threeService.AddGroupsToScene(
       StoryPaused(storyData, taggingService).Create(storiesWithTheirProgress), Tags.Stories, 'All stories when session is paused.'
     );
-    await MoveObject().startMoving(spotlight, new Vector3(0, 2.5, Layers.scene));
+    await MoveObject().startMoving(spotlight, new Vector3(0, 0, Layers.background));
   };
 
   const storyData = (

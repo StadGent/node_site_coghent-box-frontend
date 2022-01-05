@@ -6,8 +6,9 @@ import AnimationDefaults from './defaults.animation';
 
 const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingService): {
   pauseScreen: () => void;
+  newStorySelected: () => void;
 } => {
-  const pauseScreen = async () => {
+  const pauseScreen = () => {
     const progressBarTag = taggingService.getByTag(Tags.FrameProgressbar);
     const storyCircleTag = taggingService.getByTag(Tags.ActiveStoryCircle);
     const circularProgresbarTag = taggingService.getByTag(Tags.CircularProgressBar);
@@ -18,8 +19,18 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     threeService.RemoveFromScene(frameTitleTag[0].object);
   };
 
+  const newStorySelected = async () => {
+    const groupOfAssetsTags = taggingService.getByTag(Tags.GroupOfAssets);
+    const storyEndTextTags = taggingService.getByTag(Tags.StoryEndText);
+    await CustomAnimation().fadeOutGroups([groupOfAssetsTags[0].object], 0, AnimationDefaults.values.fadeStep);
+    console.log({storyEndTextTags});
+    threeService.RemoveGroupsFromScene(storyEndTextTags[0].object);
+    // threeService.RemoveFromScene(groupOfAssetsTags[0].object);
+  }
+
   return {
     pauseScreen,
+    newStorySelected,
   }
 };
 

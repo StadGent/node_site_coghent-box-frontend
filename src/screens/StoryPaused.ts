@@ -44,7 +44,7 @@ const StoryPaused = (storyData: Array<Story>, taggingService: TaggingService): {
   const storyEndText = () => {
     const groups: Array<Group> = [];
     const text = TextHelper().CreateTextFromRecord(
-      HelperText().EndOfStory,
+      HelperText().EndOfStory(new Vector3(0,0,0)),
       Colors().black,
     );
     const manSchema = CubeHelper().CreateSchema(new Vector3(0,0,0),"@/assets/man.svg", new Vector3(3,2,0));

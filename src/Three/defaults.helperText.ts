@@ -1,19 +1,21 @@
 import { Vector3 } from 'three';
 
 const HelperText = (): {
-  EndOfStory: Record<string, Vector3>;
+  EndOfStory: (position: Vector3) => Record<string, Vector3>;
   personSteppedOfSensor: Record<string, Vector3>;
   scanYourTicketAgain: (position: Vector3) => Record<string, Vector3>;
   scanYourTicket: (position: Vector3) => Record<string, Vector3>;
   goToWebPortal: (position: Vector3) => Record<string, Vector3>;
   WalkToTouchtable: (position: Vector3) => Record<string, Vector3>;
 } => {
-  const EndOfStory: Record<string, Vector3> = {
-    'Je hebt het hele': new Vector3(0, 3, 0),
-    'hoofdstuk gezien': new Vector3(-0.2, 2.5, 0),
-    'Maak een nieuwe keuze': new Vector3(-0.8, 2, 0),
-    'door op de lichtgevende': new Vector3(-0.9, 1.5, 0),
-    'bol te gaan staan.': new Vector3(-0.1, 1, 0),
+  const EndOfStory = (position: Vector3) => {
+    return {
+      'Je hebt het hele': new Vector3(0, position.y + 1, 0),
+      'hoofdstuk gezien': new Vector3(-0.2, position.y + 0.5, 0),
+      'Maak een nieuwe keuze': new Vector3(-0.8, position.y, 0),
+      'door op de lichtgevende': new Vector3(-0.9, position.y - 0.5, 0),
+      'bol te gaan staan.': new Vector3(-0.1, position.y - 1, 0),
+    }
   };
 
   const personSteppedOfSensor: Record<string, Vector3> = {
