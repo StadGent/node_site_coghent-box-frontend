@@ -66,6 +66,8 @@ const SchemaText = (): {
         transparent: true,
         opacity: opacity,
       });
+      txt_mat.transparent = true;
+      txt_mat.opacity = opacity;
       txt_mat.color.convertSRGBToLinear();
       const txt_mesh = new Mesh(txtGeometry, txt_mat);
       txt_mesh.position.y = 0.5;

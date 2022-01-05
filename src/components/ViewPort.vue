@@ -31,13 +31,15 @@ import useStory from '@/composables/useStory';
 import CustomAnimation from '@/composables/animation';
 
 import Measurements from '@/Three/defaults.measurements';
-import SchemaCube, { CubeSchema } from '@/Three/schema.cube';
+import SchemaCube, { CubeParams, CubeSchema } from '@/Three/schema.cube';
 import Colors from '@/Three/defaults.color';
 import { threeDefaultsWall } from '@/Three/defaults.three';
 import GroupHelper from '@/Three/helper.group';
 import StoryCircle from '@/Three/section.storyCircle';
 import { CircleSchema } from '@/Three/schema.circle';
 import MoveObject from '@/composables/moveObject';
+import SchemaText, { FontParams, TextSchema } from '@/Three/schema.text';
+import TextHelper from '@/Three/helper.text';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -111,8 +113,8 @@ export default defineComponent({
             spotlight,
             activeStoryData,
           ).setSelectedStory(currentStory.value);
-          await Common().awaitTimeout(2000);
-          resetStory();
+          // await Common().awaitTimeout(2000);
+          // resetStory();
           console.log('tagged => ', taggingService.taggedObjects);
         }
       },
@@ -129,7 +131,7 @@ export default defineComponent({
       () => props.storyService,
       (value) => {
         storyService = value;
-        setup();
+        // setup();
         // setData();
       },
     );
@@ -377,6 +379,12 @@ export default defineComponent({
         params: { width: 3, height: 3, color: Colors().white },
       } as CubeSchema);
 
+      const text = TextHelper().CreateText('my text', new Vector3(0,0,0),undefined,undefined, 0.2);
+      console.log({text});
+      console.log(text.material);
+      // await CustomAnimation().fadeOut(text as Mesh<any, MeshBasicMaterial>, 0.2, AnimationDefaults.values.fadeStep) 
+      
+      threeSvc.AddToScene(text, Tags.Testing);
       threeSvc.Animate();
     });
 
