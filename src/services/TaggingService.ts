@@ -24,6 +24,8 @@ export enum Tags {
   TitleCircle,
   Testing,
   StoryEndText,
+  FrameProgressbar,
+  ActiveStoryCircle,
 }
 
 export default class TaggingService {
@@ -50,7 +52,15 @@ export default class TaggingService {
     }
   }
 
-  getByTag(tag: Tags){
+  removeAllTagsFrom(_tag: Tags) {
+    for (let index = 0;index < this.taggedObjects.length;index++) {
+      if (this.taggedObjects[index].tag == Object.values(Tags)[_tag]) {
+        this.taggedObjects.splice(index, 1)
+      }
+    }
+  }
+
+  getByTag(tag: Tags) {
     return this.taggedObjects.filter(_object => _object.tag == Tags[tag]);
   }
 

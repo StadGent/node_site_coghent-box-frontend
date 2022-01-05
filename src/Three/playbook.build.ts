@@ -107,6 +107,7 @@ const PlayBookBuild = (
     const assetsWithTimestampStart = useFrame().getStartTimestampsWithTheirAsset(
       activeStoryData.frames[frameIndex],
     );
+    taggingService.removeAllTagsFrom(Tags.FrameProgressbar);
     threeService.RemoveGroupsFromScene(progressbar);
     progressbar = HorizontalProgressBar().create(
       new Vector3(0, -7, Layers.scene),
@@ -115,7 +116,7 @@ const PlayBookBuild = (
       currentTime,
       color,
     );
-    threeService.AddGroupsToScene(progressbar, Tags.HorizontalProgressBar, 'Horizontal progressbar of frame.');
+    threeService.AddGroupsToScene(progressbar, Tags.FrameProgressbar, 'Horizontal progressbar of frame.');
     return progressbar;
   }
 

@@ -62,7 +62,6 @@ const useStoryCircle = (
   const create = (position: Vector3, storyColor: number, currentFrame: number, frames: number, timestamp: number) => {
     threeService.state.scene.background = new Color(Colors().black);
     playBook.addToPlayBook(() => threeService.ClearScene(), timestamp), `Clear scene for storyCircle`;
-
     const progressBar = CircularProgressBar().createActiveSegment(
       new Vector3(0, 0, 0),
       Measurements().progressBar.radius,
@@ -72,7 +71,7 @@ const useStoryCircle = (
     );
 
     playBook.addToPlayBook(() => {
-      threeService.AddGroupsToScene(titleCircle(position, storyColor, currentFrame + 1), Tags.TitleCircle, 'The title circle of a storycircle.');
+      threeService.AddGroupsToScene(titleCircle(position, storyColor, currentFrame + 1), Tags.ActiveStoryCircle, 'The title circle of a storycircle.');
       threeService.AddGroupsToScene(progressBar.object, Tags.CircularProgressBar, 'Circular progressbar for current frame.');
     }, timestamp, `Add title cirle with progressbar to the scene.`);
     playBook.addToPlayBook(() => {

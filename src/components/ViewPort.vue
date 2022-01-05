@@ -5,7 +5,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, PropType, reactive, Ref, ref, watch } from 'vue';
-import { Group, Mesh, Vector3 } from 'three';
+import { Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
 import { Entity as _Entity, Story } from '@/models/GraphqlModel';
 
 import ThreeService from '@/services/ThreeService';
@@ -17,6 +17,7 @@ import Tools from '@/Three/helper.tools';
 import AudioHelper from '@/Three/helper.audio';
 import VideoHelper from '@/Three/helper.video';
 import BoundaryHelper from '@/Three/helper.boundary';
+import WallGarbageHelper from '@/Three/helper.wall.garbage';
 
 import TestSingleComponent from '@/Three/test.components'
 
@@ -77,6 +78,7 @@ export default defineComponent({
     let audioHelper: {
       DoEvent: (currentTime: number, eventTime: number) => boolean;
     };
+    let garbageHelper: any;
     let audioDuration = 120;
     let currentFrame = 0;
     let startSession = false;
@@ -212,21 +214,11 @@ export default defineComponent({
         activeStoryData,
       ).initialSpotLight();
 
-      // playBook.addToPlayBook(
-      //   () => {
-      //     audio.pause();
-      //     audio = AudioHelper().setAudioTrack(activeStoryData, currentFrame, audioFile);
-      //     audio.play();
-      //     alert(audio.duration);
-      //   },
-      //   playBook.lastAction().time,
-      //   `Starting new audio for frame`,
-      // );
-
       audio = AudioHelper().setAudioTrack(activeStoryData, currentFrame, audioFile);
       let progress: Array<Group> = [];
       audio.ontimeupdate = () => {
         if (showProgressOfFrame) {
+
           progress = PlayBookBuild(
             threeSvc,
             storyService,
@@ -306,10 +298,9 @@ export default defineComponent({
           } else {
             chooseStory.value = true;
             audio.pause();
-            threeSvc.ClearScene();
+            garbageHelper.pauseScreen();
             threeSvc.AddToScene(spotlight, Tags.Spotlight, 'Spotlight of story paused');
             spotlight.scale.set(4, 4, Layers.scene);
-
             PlayBookBuild(
               threeSvc,
               storyService,
@@ -358,6 +349,7 @@ export default defineComponent({
         threeSvc.state.sceneDimensions,
         Defaults().screenZones(),
       );
+      garbageHelper = WallGarbageHelper(threeSvc,taggingService);
       threeSvc.ClearScene();
 
       const innerBoundary = BoundaryHelper(
@@ -383,8 +375,13 @@ export default defineComponent({
       console.log(text.material);
       // await CustomAnimation().fadeOut(text as Mesh<any, MeshBasicMaterial>, 0.2, AnimationDefaults.values.fadeStep) 
 
+      const testProgressbar = TestSingleComponent().circularProgressbar;
+      threeSvc.AddToScene(testProgressbar, Tags.Testing)
+      CustomAnimation().fadeOut(testProgressbar as Mesh<any, MeshBasicMaterial>, 0, AnimationDefaults.values.fadeStep);
+      threeSvc.AddGroupsToScene(TestSingleComponent().circularProgressbarActiveSegments(new Vector3(0,0,0)).object, Tags.Testing)
 
-      threeSvc.AddGroupsToScene(TestSingleComponent().horizontalProgressbar, Tags.Testing)
+      threeSvc.AddGroupsToScene(TestSingleComponent().circularProgressbarActiveSegments(new Vector3(-8,0,0)).object, Tags.Testing)
+      threeSvc.AddGroupsToScene(TestSingleComponent().circularProgressbarActiveSegments(new Vector3(8,0,0)).object, Tags.Testing)
       threeSvc.AddToScene(text, Tags.Testing);
       threeSvc.Animate();
     });
