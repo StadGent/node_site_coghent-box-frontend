@@ -23,6 +23,7 @@ export enum Tags {
   EndOfSession,
   TitleCircle,
   Testing,
+  StoryEndText,
 }
 
 export default class TaggingService {

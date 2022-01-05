@@ -51,6 +51,7 @@ const StoryPaused = (storyData: Array<Story>, taggingService: TaggingService): {
     const man = SchemaCube().CreateImageCube(manSchema);
     GroupHelper().AddObjectsTogroups(text, groups);
     GroupHelper().AddObjectsTogroups([man], groups);
+    taggingService.tag(Tags.StoryEndText, groups, `Text displayed on the pause screen where all the stories are shown.`)
     return groups;
   };
 
