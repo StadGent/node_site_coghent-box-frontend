@@ -5,7 +5,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, PropType, reactive, Ref, ref, watch } from 'vue';
-import { Group, Mesh, MeshBasicMaterial, Object3D, Vector3 } from 'three';
+import { Group, Mesh, Vector3 } from 'three';
 import { Entity as _Entity, Story } from '@/models/GraphqlModel';
 
 import ThreeService from '@/services/ThreeService';
@@ -17,6 +17,8 @@ import Tools from '@/Three/helper.tools';
 import AudioHelper from '@/Three/helper.audio';
 import VideoHelper from '@/Three/helper.video';
 import BoundaryHelper from '@/Three/helper.boundary';
+
+import TestSingleComponent from '@/Three/test.components'
 
 import Defaults from '@/Three/defaults.config';
 import Timing from '@/Three/defaults.timing';
@@ -35,10 +37,7 @@ import SchemaCube, { CubeParams, CubeSchema } from '@/Three/schema.cube';
 import Colors from '@/Three/defaults.color';
 import { threeDefaultsWall } from '@/Three/defaults.three';
 import GroupHelper from '@/Three/helper.group';
-import StoryCircle from '@/Three/section.storyCircle';
-import { CircleSchema } from '@/Three/schema.circle';
 import MoveObject from '@/composables/moveObject';
-import SchemaText, { FontParams, TextSchema } from '@/Three/schema.text';
 import TextHelper from '@/Three/helper.text';
 
 export default defineComponent({
@@ -132,7 +131,7 @@ export default defineComponent({
       (value) => {
         storyService = value;
         // setup();
-        // setData();
+        setData();
       },
     );
 
@@ -379,11 +378,13 @@ export default defineComponent({
         params: { width: 3, height: 3, color: Colors().white },
       } as CubeSchema);
 
-      const text = TextHelper().CreateText('my text', new Vector3(0,0,0),undefined,undefined, 0.2);
+      const text = TextHelper().CreateText('The wall', new Vector3(0,0,0),undefined,undefined, 0.2);
       console.log({text});
       console.log(text.material);
       // await CustomAnimation().fadeOut(text as Mesh<any, MeshBasicMaterial>, 0.2, AnimationDefaults.values.fadeStep) 
-      
+
+
+      threeSvc.AddGroupsToScene(TestSingleComponent().horizontalProgressbar, Tags.Testing)
       threeSvc.AddToScene(text, Tags.Testing);
       threeSvc.Animate();
     });

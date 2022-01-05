@@ -83,11 +83,11 @@ const useAsset = (
     position: Vector3,
     scale: number,
   ) => {
-    assetImageCube.position.set(position.x, position.y, position.z);
+    assetImageCube.position.set(position.x, position.y, Layers.display);
     assetImageCube.material.opacity = 1;
     await CustomAnimation().grow(assetImageCube, scale, AnimationDefaults.values.scaleStep);
 
-    assetImageCube.scale.set(scale, scale, Layers.presentation);
+    assetImageCube.scale.set(scale, scale, Layers.display);
   };
 
   const addMetadata = (
@@ -99,7 +99,7 @@ const useAsset = (
   ) => {
     const metadataInfo = TextHelper().CreateText(
       text,
-      zoomPosition,
+      new Vector3(zoomPosition.x, zoomPosition.y, Layers.display),
       {} as CubeParams,
       { color: color } as FontParams,
     ) as Mesh<BoxGeometry, any>;
@@ -107,7 +107,7 @@ const useAsset = (
     metadataInfo.position.set(
       object.position.x - middleOfText,
       object.position.y + Positions().metadataInfoAboveImage().y + (object.geometry.parameters.height * scale) ,
-      object.position.z,
+      Layers.display,
     );
     return metadataInfo;
   };

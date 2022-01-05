@@ -32,6 +32,7 @@ const ChapeHelper = (): {
   ) => {
     chape.position.x = position.x;
     chape.position.y = position.y;
+    chape.position.z = position.z;
   };
 
   const GetCirclePointsForCircle = (circlePoints: Array<CirclePoint>) => {

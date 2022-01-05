@@ -54,23 +54,23 @@ const LineHelper = (): {
       (cube.geometry.parameters.height * cube.scale.y) / 2 -
       marginFromObject/2;
     const path: Array<Vector3> = [
-      new Vector3(startPointX, startPointY, Layers.presentation),
+      new Vector3(startPointX, startPointY, Layers.display),
       new Vector3(
         startPointX + cube.geometry.parameters.width * cube.scale.x + marginFromObject,
         startPointY,
-        Layers.presentation,
+        Layers.display,
       ),
       new Vector3(
         startPointX + cube.geometry.parameters.width * cube.scale.x + marginFromObject,
         startPointY + cube.geometry.parameters.height * cube.scale.y + marginFromObject,
-        Layers.presentation,
+        Layers.display,
       ),
       new Vector3(
         startPointX,
         startPointY + cube.geometry.parameters.height * cube.scale.y + marginFromObject,
-        Layers.presentation,
+        Layers.display,
       ),
-      new Vector3(startPointX, startPointY, Layers.presentation),
+      new Vector3(startPointX, startPointY, Layers.display),
     ];
 
     const geometry = new BufferGeometry().setFromPoints(path);

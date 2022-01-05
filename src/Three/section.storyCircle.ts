@@ -33,13 +33,14 @@ const StoryCircle = (): {
   ) => Array<Group>;
 } => {
   const main = (schema: CircleSchema) => {
-    return SchemaCircle().CreateCircle(schema, Layers.presentation);
+    return SchemaCircle().CreateCircle(schema);
   };
   const shadedCircle = (schema: CircleSchema) => {
     schema.params.radius = Measurements().storyCircle.outerCircle;
     schema.params.color = schema.params.color || Colors().green;
     schema.params.opacity = 0.4;
-    return SchemaCircle().CreateCircle(schema, Layers.scene, true);
+    schema.position.z = schema.position.z - Layers.fraction;
+    return SchemaCircle().CreateCircle(schema, true);
   };
 
   const icon = (position: Vector3, url: string) => {

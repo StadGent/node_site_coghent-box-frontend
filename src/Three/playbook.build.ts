@@ -19,6 +19,8 @@ import useEndOfSession from './playbook.endOfSession';
 import HorizontalProgressBar from './shapes.horizontalProgressBar';
 import ZoneService from '@/services/ZoneService';
 import TaggingService, { Tags } from '@/services/TaggingService';
+import CustomAnimation from '@/composables/animation';
+import AnimationDefaults from './defaults.animation';
 
 const PlayBookBuild = (
   threeService: ThreeService,
@@ -164,6 +166,9 @@ const PlayBookBuild = (
     const storyCircles = taggingService.getByTag(Tags.StoryCircle);
     const selectedStoryCircle = storyCircles.filter(_object => _object.name == storyService.stories[currentStory].id)[0];
     const storyCircleToMove = storyCircles.filter(_object => _object.name != storyService.stories[currentStory].id);
+    // FIXME: const endTexts = taggingService.getByTag(Tags.StoryEndText);
+    // console.log({endTexts});
+    // CustomAnimation().fadeOutGroups(endTexts[0].object, 0, AnimationDefaults.values.fadeStep)
     for (const _storyCircle of storyCircleToMove) {
       MoveObject().moveGroups(_storyCircle.object, new Vector3(0.01, 12, 1));
     }

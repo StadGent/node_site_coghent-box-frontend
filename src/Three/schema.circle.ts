@@ -11,7 +11,6 @@ import BaseChapes from './shapes.base';
 import ChapeHelper from './helper.chape';
 import CircleHelper from './helper.circle';
 import DefaultColors from './defaults.color';
-import Layers from './defaults.layers';
 
 export type CirclePoint = {
   angle: number;
@@ -33,7 +32,6 @@ export type CircleSchema = {
 const SchemaCircle = (): {
   CreateCircle: (
     schema: CircleSchema,
-    layer: number,
     isTransparant?: true | false,
   ) => Mesh<CircleGeometry, MeshBasicMaterial>;
   CreateCircles: (
@@ -45,7 +43,7 @@ const SchemaCircle = (): {
     color?: number,
   ) => Line<BufferGeometry, LineBasicMaterial>;
 } => {
-  const CreateCircle = (schema: CircleSchema, layer: number, isTransparant?: true | false) => {
+  const CreateCircle = (schema: CircleSchema, isTransparant?: true | false) => {
     const circle = BaseChapes().DrawCircle(
       schema.params.radius,
       schema.params.color || DefaultColors().green,
@@ -54,14 +52,13 @@ const SchemaCircle = (): {
       isTransparant || false,
     );
     ChapeHelper().SetPosition(schema.position, circle);
-    circle.position.z = layer;
     return circle;
   };
 
   const CreateCircles = (schemas: Array<CircleSchema>) => {
     const circles: Array<Mesh<CircleGeometry, MeshBasicMaterial>> = [];
     schemas.forEach((schema: CircleSchema) => {
-      circles.push(CreateCircle(schema, Layers.presentation));
+      circles.push(CreateCircle(schema));
     });
     return circles;
   };

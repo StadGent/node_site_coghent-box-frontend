@@ -72,7 +72,7 @@ const Tools = (): {
       0.5,
       Colors().lightBlue,
     );
-    const circle = SchemaCircle().CreateCircle(schema, Layers.presentation);
+    const circle = SchemaCircle().CreateCircle(schema);
     threeService.AddToScene(circle, Tags.Dot, 'Helper dot.');
   };
 

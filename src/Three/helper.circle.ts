@@ -10,7 +10,7 @@ const CircleHelper = (): {
   const CalculatePointOfCircle = (point: CirclePoint, position: Vector3) => {
     const posX = Math.sin(point.angle * (Math.PI / 180)) * point.radius;
     const posY = Math.cos(point.angle * (Math.PI / 180)) * point.radius;
-    return { x: posX + position.x, y: posY + position.y, z: 0 } as Vector3;
+    return { x: posX + position.x, y: posY + position.y, z: position.z } as Vector3;
   };
 
   const CreateSchema = (position: Vector3, radius: number, color: number, opacity?: number) => {

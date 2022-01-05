@@ -22,12 +22,11 @@ const Spot = (): SpotlightFunctions => {
   const create = (startPosition: Vector3, radius: number, color?: number) => {
     spotlight = SchemaCircle().CreateCircle(
       CircleHelper().CreateSchema(
-        new Vector3(startPosition.x, startPosition.y, Layers.scene),
+        new Vector3(startPosition.x, startPosition.y, Layers.background),
         1,
         color || Colors().white,
         0.2,
       ),
-      Layers.scene,
       true,
     );
     move(startPosition, radius);
@@ -35,8 +34,8 @@ const Spot = (): SpotlightFunctions => {
   };
 
   const move = (position: Vector3, widestLenght: number) => {
-    spotlight.position.set(position.x, position.y, Layers.scene);
-    spotlight.scale.set(widestLenght / 2 + 1, widestLenght / 2 + 1, Layers.scene);
+    spotlight.position.set(position.x, position.y, Layers.background);
+    spotlight.scale.set(widestLenght / 2 + 1, widestLenght / 2 + 1, Layers.background);
   };
 
   return { SpotLight, create, move };

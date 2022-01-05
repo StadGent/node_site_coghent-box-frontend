@@ -1,9 +1,12 @@
-import { Vector3 } from 'three';
+import { Group, Vector3 } from 'three';
+import Colors from './defaults.color';
+import HorizontalProgressBar from './shapes.horizontalProgressBar';
 
 const TestData = (): {
   storyWordLinks: Record<string, string>;
   centerWords: Record<string, Vector3>;
   titles: () => Array<string>;
+  horizontalProgressbar: Array<Group>;
 } => {
   const storyWordLinks: Record<string, string> = {
     Migratie:
@@ -36,7 +39,10 @@ const TestData = (): {
     ];
   };
 
-  return { storyWordLinks, centerWords, titles };
+  const horizontalProgressbar = HorizontalProgressBar().create(new Vector3(0,0,1), [2,3,4], 8, 5, Colors().yellow);
+
+
+  return { storyWordLinks, centerWords, titles, horizontalProgressbar };
 };
 
 export default TestData;
