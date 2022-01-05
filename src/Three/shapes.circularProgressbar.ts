@@ -68,18 +68,18 @@ const CircularProgressBar = (): {
     color?: number,
   ) => {
     const mesh = create(position, radius, segments, progress,  Colors().white);
-    const points = CircleHelper().SplitCircleInSegments(position, radius, segments);
+    const points = CircleHelper().SplitCircleInSegments(new Vector3(position.x,position.y,position.z + Layers.fraction), radius, segments);
     const schemas = CircleHelper().CreateSchemas(points, 0.4, color || Colors().white);
     const progressDots: Array<Group> = [];
     for (let i = 0; i < schemas.length; i++) {
       const innerSchema = innerDotSchema(schemas[i],color|| Colors().white,progress,i);
-      schemas[i].position = Correction().CorrectionForDotOnProgressBar(schemas[i].position, 0.10);
+      schemas[i].position = Correction().CorrectionForDotOnProgressBar(schemas[i].position, 0.1);
       innerSchema.position = Correction().CorrectionForDotOnProgressBar(
         schemas[i].position,
-        0.10,
+        0.1,
       );
-      const circle = SchemaCircle().CreateCircle(schemas[i], Layers.presentation);
-      const innerCircle = SchemaCircle().CreateCircle(innerSchema, Layers.presentation);
+      const circle = SchemaCircle().CreateCircle(schemas[i]);
+      const innerCircle = SchemaCircle().CreateCircle(innerSchema);
       progressDots.push(GroupHelper().CreateGroup([circle, innerCircle]))
     }
     GroupHelper().AddObjectsTogroups([mesh], progressDots)

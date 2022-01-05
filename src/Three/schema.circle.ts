@@ -76,6 +76,7 @@ const SchemaCircle = (): {
       points.push({
         x: pos.x,
         y: pos.y,
+        z: pos.z,
       } as Vector3);
     }
     return BaseChapes().DrawLine(points, { color: color || DefaultColors().green });
