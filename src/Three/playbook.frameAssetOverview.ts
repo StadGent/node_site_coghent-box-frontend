@@ -16,6 +16,7 @@ import Tools from './helper.tools';
 import ZoneService from '@/services/ZoneService';
 import { Tags } from '@/services/TaggingService';
 import AnimationDefaults from './defaults.animation';
+import CustomAnimation from '@/composables/animation';
 
 const useFrameAssetOverview = (
   threeService: ThreeService,
@@ -56,6 +57,7 @@ const useFrameAssetOverview = (
     playBook.addToPlayBook(
       async () => {
         threeService.AddToScene(group, Tags.GroupOfAssets, ' Group of all the assets from the frame');
+        await CustomAnimation().fadeInGroups([group], 1, AnimationDefaults.values.fadeStep);
         threeService.AddToScene(spotlight, Tags.Spotlight, 'Spotlight to move over all the assets of the frame.');
         await MoveObject().startMoving(spotlight, Object.values(data)[0]);
       },

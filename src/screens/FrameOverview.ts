@@ -22,6 +22,7 @@ const FrameOverview = (threeService: ThreeService): {
     const cube = SchemaCube().CreateImageCube(schema);
     cube.scale.set(0,0,0);
     cube.scale.set(scale,scale,0);
+    cube.material.opacity = 0;
     return cube;
   };
 

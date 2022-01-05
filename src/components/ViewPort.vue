@@ -19,7 +19,7 @@ import VideoHelper from '@/Three/helper.video';
 import BoundaryHelper from '@/Three/helper.boundary';
 import WallGarbageHelper from '@/Three/helper.wall.garbage';
 
-import TestSingleComponent from '@/Three/test.components'
+import TestSingleComponent from '@/Three/test.components';
 
 import Defaults from '@/Three/defaults.config';
 import Timing from '@/Three/defaults.timing';
@@ -219,7 +219,6 @@ export default defineComponent({
       let progress: Array<Group> = [];
       audio.ontimeupdate = () => {
         if (showProgressOfFrame) {
-
           progress = PlayBookBuild(
             threeSvc,
             storyService,
@@ -245,7 +244,7 @@ export default defineComponent({
       };
 
       const framePlaybook = PlayBook();
-      
+
       PlayBookBuild(
         threeSvc,
         storyService,
@@ -350,7 +349,7 @@ export default defineComponent({
         threeSvc.state.sceneDimensions,
         Defaults().screenZones(),
       );
-      garbageHelper = WallGarbageHelper(threeSvc,taggingService);
+      garbageHelper = WallGarbageHelper(threeSvc, taggingService);
       threeSvc.ClearScene();
 
       const innerBoundary = BoundaryHelper(
@@ -371,18 +370,45 @@ export default defineComponent({
         params: { width: 3, height: 3, color: Colors().white },
       } as CubeSchema);
 
-      const text = TextHelper().CreateText('The wall', new Vector3(0,0,0),undefined,undefined, 0.2);
-      console.log({text});
+      const text = TextHelper().CreateText(
+        'The wall',
+        new Vector3(0, 0, 0),
+        undefined,
+        undefined,
+        0.2,
+      );
+      console.log({ text });
       console.log(text.material);
-      // await CustomAnimation().fadeOut(text as Mesh<any, MeshBasicMaterial>, 0.2, AnimationDefaults.values.fadeStep) 
+      // await CustomAnimation().fadeOut(text as Mesh<any, MeshBasicMaterial>, 0.2, AnimationDefaults.values.fadeStep)
 
       const testProgressbar = TestSingleComponent().circularProgressbar;
-      threeSvc.AddToScene(testProgressbar, Tags.Testing)
-      CustomAnimation().fadeOut(testProgressbar as Mesh<any, MeshBasicMaterial>, 0, AnimationDefaults.values.fadeStep);
-      threeSvc.AddGroupsToScene(TestSingleComponent().circularProgressbarActiveSegments(new Vector3(0,0,0)).object, Tags.Testing)
-
-      threeSvc.AddGroupsToScene(TestSingleComponent().circularProgressbarActiveSegments(new Vector3(-8,0,0)).object, Tags.Testing)
-      threeSvc.AddGroupsToScene(TestSingleComponent().circularProgressbarActiveSegments(new Vector3(8,0,0)).object, Tags.Testing)
+      threeSvc.AddToScene(testProgressbar, Tags.Testing);
+      CustomAnimation().fadeOut(
+        testProgressbar as Mesh<any, MeshBasicMaterial>,
+        0,
+        AnimationDefaults.values.fadeStep,
+      );
+      threeSvc.AddGroupsToScene(
+        TestSingleComponent().circularProgressbarActiveSegments(new Vector3(0, 0, 0))
+          .object,
+        Tags.Testing,
+      );
+      const testActiveSegementsProgress =
+        TestSingleComponent().circularProgressbarActiveSegments(
+          new Vector3(-8, 0, 0),
+        ).object;
+      threeSvc.AddGroupsToScene(testActiveSegementsProgress, Tags.Testing);
+  
+      await CustomAnimation().fadeInGroups(
+        testActiveSegementsProgress,
+        1,
+        AnimationDefaults.values.fadeStep,
+      );
+      threeSvc.AddGroupsToScene(
+        TestSingleComponent().circularProgressbarActiveSegments(new Vector3(8, 0, 0))
+          .object,
+        Tags.Testing,
+      );
       threeSvc.AddToScene(text, Tags.Testing);
       threeSvc.Animate();
     });
