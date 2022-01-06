@@ -36,7 +36,6 @@ const useEndOfSession = (
   };
 
   const create = async (spotRadius: number) => {
-    threeService.ClearScene();
     threeService.AddGroupsToScene(EndOfSession(zoneService,spotRadius).create(), Tags.EndOfSession, 'The endOfSession screen.');
     await timerCountdown(Timing.endOfSession.countdown);
     alert()

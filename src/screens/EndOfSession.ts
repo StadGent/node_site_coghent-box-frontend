@@ -19,10 +19,6 @@ const EndOfSession = (
   goOnline: () => Array<Group>;
   create: () => Array<Group>;
 } => {
-  const orTextPosition = () => {
-    return zoneService.middleZoneCenter.x / 2;
-  };
-
   const scanTicket = () => {
     const groups: Array<Group> = [];
     GroupHelper().AddObjectsTogroups(

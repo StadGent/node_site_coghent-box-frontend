@@ -72,7 +72,6 @@ const useStartOfSession = (
   const create = async () => {
     showScanImage();
     await Common().awaitTimeout(Timing.startOfSession.videoDelay);
-    threeService.ClearScene();
     setSpotlightOnPosition();
     await MoveObject().startMoving(spotlight, new Vector3(0, 1, Layers.scene));
     await countdown(Defaults().countdown());

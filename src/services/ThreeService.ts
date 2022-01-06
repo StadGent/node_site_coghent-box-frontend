@@ -106,7 +106,7 @@ export default class ThreeService {
   }
 
   RemoveGroupsFromScene(groups: Array<Group>) {
-    if (groups) {
+    if (groups && groups.length > 0) {
       groups.forEach((group) => this.RemoveFromScene(group));
     }
   }
