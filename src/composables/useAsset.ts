@@ -83,7 +83,7 @@ const useAsset = (
     position: Vector3,
     scale: number,
   ) => {
-    assetImageCube.position.set(position.x, position.y, Layers.display);
+    MoveObject().startMoving(assetImageCube, new Vector3(position.x, position.y, Layers.display));
     assetImageCube.material.opacity = 1;
     await CustomAnimation().grow(assetImageCube, scale, AnimationDefaults.values.scaleStep);
 

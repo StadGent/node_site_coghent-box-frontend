@@ -2,7 +2,7 @@ import useAsset from '@/composables/useAsset';
 import { Asset, Story } from '@/models/GraphqlModel';
 import FrameOverview from '@/screens/FrameOverview';
 import ThreeService from '@/services/ThreeService';
-import { BoxBufferGeometry, Group, Mesh, Object3D, Vector3 } from 'three';
+import { BoxBufferGeometry, Group, Mesh, MeshBasicMaterial, Object3D, Vector3 } from 'three';
 import Layers from './defaults.layers';
 import { PlayBookFunctions } from '@/composables/playbook';
 import Timing from './defaults.timing';
@@ -66,20 +66,15 @@ const useFrameAssetOverview = (
     );
   };
 
-  const resetImage = (
+  const resetImage = async (
     asset: Object3D<Event>,
     scale: number,
     imageCube: Group,
     currentAsset: number,
   ) => {
     threeService.RemoveFromScene(imageCube);
-    asset.scale.set(0, 0, 0);
-    asset.scale.set(scale, scale, 0);
-    asset.position.set(
-      positions[currentAsset].x,
-      positions[currentAsset].y,
-      positions[currentAsset].z,
-    );
+    CustomAnimation().shrink(asset as unknown as Mesh<any, MeshBasicMaterial>,scale, AnimationDefaults.values.scaleStep);
+    await MoveObject().startMoving(asset,positions[currentAsset]);
   };
 
   const setAssetsInactive = async (displayedAsset: Mesh<BoxBufferGeometry, any>) => {
@@ -188,7 +183,7 @@ const useFrameAssetOverview = (
           );
           playBook.addToPlayBook(
             async () => {
-              resetImage(
+              await resetImage(
                 asset as Object3D<Event>,
                 relationMetadata.scale,
                 highlightWithMetaInfo,
