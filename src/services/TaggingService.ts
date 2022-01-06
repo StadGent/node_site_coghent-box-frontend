@@ -64,6 +64,10 @@ export default class TaggingService {
     return this.taggedObjects.filter(_object => _object.tag == Tags[tag]);
   }
 
+  tagAlreadyInList(_searchTag: Tags){
+    return this.taggedObjects.filter(_tag => _tag.tag == Tags[_searchTag]).length > 0;
+  }
+
   clearTaggedObjects() {
     this.taggedObjects = [];
   }

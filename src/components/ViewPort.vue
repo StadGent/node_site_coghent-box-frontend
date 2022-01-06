@@ -17,7 +17,7 @@ import Tools from '@/Three/helper.tools';
 import AudioHelper from '@/Three/helper.audio';
 import VideoHelper from '@/Three/helper.video';
 import BoundaryHelper from '@/Three/helper.boundary';
-import WallGarbageHelper from '@/Three/helper.wall.garbage';
+import WallGarbageHelper, { GarabageHelperForWall } from '@/Three/helper.wall.garbage';
 
 import TestSingleComponent from '@/Three/test.components';
 
@@ -78,7 +78,7 @@ export default defineComponent({
     let audioHelper: {
       DoEvent: (currentTime: number, eventTime: number) => boolean;
     };
-    let garbageHelper: any;
+    let garbageHelper: GarabageHelperForWall;
     let audioDuration = 120;
     let currentFrame = 0;
     let startSession = false;
@@ -115,8 +115,8 @@ export default defineComponent({
             spotlight,
             activeStoryData,
           ).setSelectedStory(currentStory.value);
-          // await Common().awaitTimeout(2000);
-          // resetStory();
+          await Common().awaitTimeout(2000);
+          resetStory();
           console.log('tagged => ', taggingService.taggedObjects);
         }
       },
@@ -202,7 +202,6 @@ export default defineComponent({
     };
 
     const buildStory = (currentStory: number, audioFile: string) => {
-      threeSvc.ClearScene();
       activeStoryData = useStory().setActiveStory(storyData, currentStory);
 
       spotlight = PlayBookBuild(
@@ -244,7 +243,7 @@ export default defineComponent({
       };
 
       const framePlaybook = PlayBook();
-
+      console.log('DOES IT EXIST',taggingService.tagAlreadyInList(Tags.ActiveStoryCircle));
       PlayBookBuild(
         threeSvc,
         storyService,
@@ -253,7 +252,7 @@ export default defineComponent({
         framePlaybook,
         spotlight,
         activeStoryData,
-      ).storyCircle(currentFrame, storyService.getStoryColor(activeStoryData.id));
+      ).storyCircle(currentFrame, storyService.getStoryColor(activeStoryData.id), !taggingService.tagAlreadyInList(Tags.ActiveStoryCircle));
 
       PlayBookBuild(
         threeSvc,
@@ -281,6 +280,7 @@ export default defineComponent({
           if (storyService.isEndOfSession()) {
             audio.pause();
             //TODO: Restart the entire session flow
+            garbageHelper.endOfSessionScreen();
             PlayBookBuild(
               threeSvc,
               storyService,
@@ -377,39 +377,13 @@ export default defineComponent({
         undefined,
         0.2,
       );
-      console.log({ text });
-      console.log(text.material);
       // await CustomAnimation().fadeOut(text as Mesh<any, MeshBasicMaterial>, 0.2, AnimationDefaults.values.fadeStep)
-
-      const testProgressbar = TestSingleComponent().circularProgressbar;
-      threeSvc.AddToScene(testProgressbar, Tags.Testing);
-      CustomAnimation().fadeOut(
-        testProgressbar as Mesh<any, MeshBasicMaterial>,
-        0,
-        AnimationDefaults.values.fadeStep,
-      );
-      threeSvc.AddGroupsToScene(
-        TestSingleComponent().circularProgressbarActiveSegments(new Vector3(0, 0, 0))
-          .object,
-        Tags.Testing,
-      );
-      const testActiveSegementsProgress =
-        TestSingleComponent().circularProgressbarActiveSegments(
-          new Vector3(-8, 0, 0),
-        ).object;
-      threeSvc.AddGroupsToScene(testActiveSegementsProgress, Tags.Testing);
-  
-      await CustomAnimation().fadeInGroups(
-        testActiveSegementsProgress,
-        1,
-        AnimationDefaults.values.fadeStep,
-      );
-      threeSvc.AddGroupsToScene(
-        TestSingleComponent().circularProgressbarActiveSegments(new Vector3(8, 0, 0))
-          .object,
-        Tags.Testing,
-      );
+      const test_endOfText = TestSingleComponent().endOfStoryText(new Vector3(0, 0, 0));
+      threeSvc.AddToScene(test_endOfText, Tags.Testing);
+      console.log({ test_endOfText });
+      threeSvc.RemoveFromScene(test_endOfText);
       threeSvc.AddToScene(text, Tags.Testing);
+
       threeSvc.Animate();
     });
 

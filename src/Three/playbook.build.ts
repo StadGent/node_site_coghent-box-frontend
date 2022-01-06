@@ -36,7 +36,7 @@ const PlayBookBuild = (
     activeFrameIndex: number,
     backupAudioFile: string,
   ) => void;
-  storyCircle: (currentFrameIndex: number, storyColor: number) => void;
+  storyCircle: (currentFrameIndex: number, storyColor: number, canAddToSCene: boolean) => void;
   frameOverview: (
     currentFrameIndex: number,
     storyColor: number,
@@ -76,13 +76,14 @@ const PlayBookBuild = (
     );
   };
 
-  const storyCircle = (currentFrameIndex: number, storyColor: number) => {
+  const storyCircle = (currentFrameIndex: number, storyColor: number, canAddToSCene: boolean) => {
     useStoryCircle(threeService, activeStoryData, playBook).create(
       zoneService.middleZoneCenter,
       storyColor,
       currentFrameIndex,
       activeStoryData.frames.length,
       playBook.lastAction().time,
+      canAddToSCene,
     );
   };
 

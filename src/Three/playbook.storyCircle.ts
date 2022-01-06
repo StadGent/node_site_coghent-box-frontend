@@ -21,7 +21,7 @@ const useStoryCircle = (
   activeStoryData: Story,
   playBook: PlayBookFunctions,
 ): {
-  create: (position: Vector3, storyColor: number, currentFrame: number, frames: number, timestamp: number) => void;
+  create: (position: Vector3, storyColor: number, currentFrame: number, frames: number, timestamp: number, canAddToSCene: boolean) => void;
 } => {
   const titleCircle = (position: Vector3, storyColor: number, currentFrame: number) => {
     return StoryCircle().Create(
@@ -59,24 +59,25 @@ const useStoryCircle = (
     return GroupHelper().CreateGroup([activeFrameLine.object, progressOfFrame]);
   };
 
-  const create = (position: Vector3, storyColor: number, currentFrame: number, frames: number, timestamp: number) => {
+  const create = (position: Vector3, storyColor: number, currentFrame: number, frames: number, timestamp: number, canAddToSCene: boolean) => {
     threeService.state.scene.background = new Color(Colors().black);
-    playBook.addToPlayBook(() => threeService.ClearScene(), timestamp), `Clear scene for storyCircle`;
-    const progressBar = CircularProgressBar().createActiveSegment(
-      new Vector3(0, 0, 0),
-      Measurements().progressBar.radius,
-      frames,
-      currentFrame + 1,
-      storyColor,
-    );
-
-    playBook.addToPlayBook(() => {
-      threeService.AddGroupsToScene(titleCircle(position, storyColor, currentFrame + 1), Tags.ActiveStoryCircle, 'The title circle of a storycircle.');
-      threeService.AddGroupsToScene(progressBar.object, Tags.CircularProgressBar, 'Circular progressbar for current frame.');
-    }, timestamp, `Add title cirle with progressbar to the scene.`);
-    playBook.addToPlayBook(() => {
-      threeService.AddToScene(frameLineWithTitle(currentFrame, progressBar), Tags.FrameTitle, 'Active frame title.');
-    }, timestamp + Timing.storyCircle.showFrameTitle, `Add the frame title to the scene.`);
+    if(canAddToSCene){
+      const progressBar = CircularProgressBar().createActiveSegment(
+        new Vector3(0, 0, 0),
+        Measurements().progressBar.radius,
+        frames,
+        currentFrame + 1,
+        storyColor,
+      );
+  
+      playBook.addToPlayBook(() => {
+        threeService.AddGroupsToScene(titleCircle(position, storyColor, currentFrame + 1), Tags.ActiveStoryCircle, 'The title circle of a storycircle.');
+        threeService.AddGroupsToScene(progressBar.object, Tags.CircularProgressBar, 'Circular progressbar for current frame.');
+      }, timestamp, `Add title cirle with progressbar to the scene.`);
+      playBook.addToPlayBook(() => {
+        threeService.AddToScene(frameLineWithTitle(currentFrame, progressBar), Tags.FrameTitle, 'Active frame title.');
+      }, timestamp + Timing.storyCircle.showFrameTitle, `Add the frame title to the scene.`);
+    }
     threeService.state.scene.updateMatrixWorld(true);
   };
 

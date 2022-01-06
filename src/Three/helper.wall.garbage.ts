@@ -14,7 +14,7 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
 
   const removeGroupsByTag = (_tag: Tags) => {
     const _groups = taggingService.getByTag(_tag);
-    threeService.RemoveGroupsFromScene(_groups[0].object);
+    if (_groups.length > 0) threeService.RemoveGroupsFromScene(_groups[0].object);
   }
 
   const pauseScreen = () => {
