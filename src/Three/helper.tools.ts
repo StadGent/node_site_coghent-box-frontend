@@ -40,15 +40,9 @@ const Tools = (): {
 
   const displayZones = (threeService: ThreeService, zones: Array<Zone>) => {
     zones.forEach(zone => {
-      console.log('start', zone.start);
-      console.log('end', zone.center);
-      console.log('end', zone.end);
-      console.log('width', zone.width);
-      console.log('height', zone.height);
-      console.log('height', );
-      threeService.AddToScene(Tools().yAxis(new Vector3(zone.start.x, zone.end.y, Layers.presentation)), Tags.YAxis, 'Helper line for the start of the zone.');
-      threeService.AddToScene(Tools().yAxis(new Vector3(zone.end.x, zone.end.y, Layers.presentation)), Tags.YAxis, 'Helper line for the end of the zone.');
-      threeService.AddToScene(Tools().dotOnPosition(threeService, new Vector3(zone.center.x, zone.end.y, Layers.presentation)), Tags.YAxis, 'Helper line for the end of the zone.');
+      threeService.AddToScene(Tools().yAxis(new Vector3(zone.start.x, zone.height, Layers.presentation)), Tags.YAxis, 'Helper line for the start of the zone.');
+      threeService.AddToScene(Tools().yAxis(new Vector3(zone.end.x, zone.height, Layers.presentation)), Tags.YAxis, 'Helper line for the end of the zone.');
+      threeService.AddToScene(Tools().yAxis(new Vector3(zone.center.x, zone.height, Layers.presentation)), Tags.YAxis, 'Helper line for the center of the zone.');
     })
   }
 
