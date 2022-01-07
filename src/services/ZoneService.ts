@@ -22,44 +22,21 @@ export default class ZoneService {
   constructor(_screen: Vector3, _zones: number) {
     this.screen = _screen;
     this.zones = this.createZones(_zones);
-    this.zoneCenters = this.middleOfZones();
+    this.zoneCenters = this.centerOfZones();
     this.middleZoneCenter = this.zoneCenters[(this.zoneCenters.length - 1) / 2];
     this.zonesInnerToOuter = this.orderZoneCentersFromInnerToOuterPosition();
   }
 
-  private middleOfZones() {
+  private centerOfZones() {
     const centers: Array<Vector3> = [];
     this.zones.forEach(_zone => {
-      centers.push(this.getMiddleOfZone(_zone));
+      centers.push(_zone.center);
     })
     return centers;
   }
 
-  private calculateZones(times: number, width: number, height: number, startLeft: number, startRight: number) {
-    const zones: Array<Zone> = [];
-
-    for (let _zone = 0;_zone < times;_zone++) {
-      zones.push({
-        width: width,
-        height: height,
-        start: new Vector3(startLeft, 0, Layers.presentation),
-        end: new Vector3(startLeft - width, 0, Layers.presentation),
-      } as Zone);
-      startLeft = startLeft - width;
-      zones.push({
-        width: width,
-        height: height,
-        start: new Vector3(startRight, 0, Layers.presentation),
-        end: new Vector3(startRight + width, 0, Layers.presentation),
-      } as Zone);
-      startRight = startRight + width;
-    }
-    return zones;
-  }
-
   private setZoneDimensions(width: number, height: number) {
-    return new Vector3(width, height, 0);
-    // return new Vector3(width - Defaults().zonePadding(), height - Defaults().zonePadding(), 0);
+    return new Vector3(width - Defaults().zonePadding(), height - Defaults().zonePadding(), 0);
   }
 
   private orderZoneCentersFromInnerToOuterPosition() {
@@ -83,45 +60,34 @@ export default class ZoneService {
     const screenEnd = this.screen.x / 2;
     const zoneWidth = this.screen.x / _zones;
     const zoneheight = this.screen.y / 1;
-    const centerOfWidth = zoneWidth / 2;
+
+    let pointer = screenStart;
 
     this.zoneDimensions = this.setZoneDimensions(zoneWidth, zoneheight);
-
-
-    zones.push({ start: new Vector3(-centerOfWidth, 0, Layers.presentation), end: new Vector3(centerOfWidth, 0, Layers.presentation),center: new Vector3(0,0,0), width: this.zoneDimensions.x, height: this.zoneDimensions.y } as Zone)
-    let pointerRight = centerOfWidth;
-    let pointerLeft = -centerOfWidth;
-    while (pointerLeft - zoneWidth >= screenStart) {
-      zones.push({ start: new Vector3(pointerLeft, 0, Layers.presentation), end: new Vector3(pointerLeft - zoneWidth, 0, Layers.presentation), center: new Vector3(pointerLeft + (zoneWidth/2)), width: this.zoneDimensions.x, height: this.zoneDimensions.y } as Zone)
-      pointerLeft -= zoneWidth;
+    while (pointer + zoneWidth <= screenEnd) {
+      zones.push({
+        start: new Vector3(pointer, zoneheight, Layers.display),
+        end: new Vector3(pointer + zoneWidth, zoneheight, Layers.display),
+        center: new Vector3(pointer + (zoneWidth / 2), 0, Layers.display),
+        width: zoneWidth,
+        height: zoneheight
+      } as Zone);
+      pointer += zoneWidth;
     }
-    while (pointerRight + zoneWidth <= screenEnd) {
-      zones.push({ start: new Vector3(pointerRight, 0, Layers.presentation), end: new Vector3(pointerRight + zoneWidth, 0, Layers.presentation), center: new Vector3(pointerRight + (zoneWidth/2)), width: this.zoneDimensions.x, height: this.zoneDimensions.y } as Zone)
-      pointerRight += zoneWidth;
-    }
-    return zones.sort((a, b) => a.start.x - b.start.x);
-  }
-
-  getMiddleOfZone(zone: Zone) {
-    console.log('zonedimensions', this.zoneDimensions);
-    console.log(zone);
-    let middle = this.zoneDimensions.x/2;
-    if(zone.end.x > 0){
-      middle = -middle;
-    }
-    return new Vector3(zone.end.x + middle, 0, Layers.presentation);
+    this.zones = zones.sort((a, b) => a.start.x - b.start.x);
+    return this.zones;
   }
 
   objectIsInZone(object: Mesh) {
-    let zone: Zone = { start: new Vector3(0, 0, 0), end: new Vector3(0, 0, 0),center: new Vector3(0, 0, 0),  width: 0, height: 0 };
+    let zone: Zone = { start: new Vector3(0, 0, 0), end: new Vector3(0, 0, 0), center: new Vector3(0, 0, 0), width: 0, height: 0 };
     if (this.zones.length > 0) {
-      this.zones.forEach(_zone => {
+      for (const _zone of this.zones) {
         if (object.position.x > 0 && object.position.x > _zone.start.x && object.position.x < _zone.end.x) {
           zone = _zone;
-        } else if (object.position.x < 0 && object.position.x < _zone.start.x && object.position.x > _zone.end.x) {
+        } else if (object.position.x < 0 && object.position.x > _zone.start.x && object.position.x < _zone.end.x) {
           zone = _zone;
         }
-      });
+      }
     }
     return zone;
   }
