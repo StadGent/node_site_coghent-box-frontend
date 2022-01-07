@@ -15,9 +15,6 @@ const Tools = (): {
   Grid: () => Group;
   yAxis: (position: Vector3) => Group;
   xAxis: (position: Vector3) => Group;
-  splitAreaInZones: (threeService: ThreeService,
-    sceneWidth: number,
-    zones: number,) => void;
   displayZones: (threeService: ThreeService, zones: Array<Zone>) => void;
   dotOnPosition: (threeService: ThreeService, position: Vector3) => void;
   displayBoundaryAsDots: (threeService: ThreeService, boundary: Boundary) => void;
@@ -41,32 +38,25 @@ const Tools = (): {
     } as LineSchema);
   };
 
-  const splitAreaInZones = (
-    threeService: ThreeService,
-    sceneWidth: number,
-    zones: number,
-  ) => {
-    const zoneWidthInPixels = sceneWidth / zones;
-    const startPosition = 0 - Common().pixelsToMeters(sceneWidth / 2) * 10;
-    let updatedPosition = startPosition;
-
-    for (let i = 0;i < zones + 1;i++) {
-      threeService.AddToScene(Tools().yAxis(new Vector3(updatedPosition, 0, 0)), Tags.XAxis, 'Helper line for the xAxis.');
-      updatedPosition += Common().pixelsToMeters(zoneWidthInPixels) * 10;
-    }
-  };
-
   const displayZones = (threeService: ThreeService, zones: Array<Zone>) => {
     zones.forEach(zone => {
-      threeService.AddToScene(Tools().yAxis(new Vector3(zone.start.x, zone.start.y, zone.start.z)), Tags.YAxis, 'Helper line for the yAxis.');
+      console.log('start', zone.start);
+      console.log('end', zone.center);
+      console.log('end', zone.end);
+      console.log('width', zone.width);
+      console.log('height', zone.height);
+      console.log('height', );
+      threeService.AddToScene(Tools().yAxis(new Vector3(zone.start.x, zone.end.y, Layers.presentation)), Tags.YAxis, 'Helper line for the start of the zone.');
+      threeService.AddToScene(Tools().yAxis(new Vector3(zone.end.x, zone.end.y, Layers.presentation)), Tags.YAxis, 'Helper line for the end of the zone.');
+      threeService.AddToScene(Tools().dotOnPosition(threeService, new Vector3(zone.center.x, zone.end.y, Layers.presentation)), Tags.YAxis, 'Helper line for the end of the zone.');
     })
   }
 
   const dotOnPosition = (threeService: ThreeService, position: Vector3) => {
     const schema = CircleHelper().CreateSchema(
       new Vector3(
-        position.x - position.x * 0.03 * 2,
-        position.y - position.y * 2 * 0.03,
+        position.x,
+        position.y,
         2,
       ),
       0.5,
@@ -87,7 +77,7 @@ const Tools = (): {
     dotOnPosition(threeService, boundary.BottomRight);
   }
 
-  return { Grid, xAxis, yAxis, splitAreaInZones, displayZones, dotOnPosition, displayBoundaryAsDots };
+  return { Grid, xAxis, yAxis, displayZones, dotOnPosition, displayBoundaryAsDots };
 };
 
 export default Tools;
