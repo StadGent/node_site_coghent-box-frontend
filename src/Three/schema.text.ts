@@ -72,7 +72,7 @@ const SchemaText = (): {
       const txt_mesh = new Mesh(txtGeometry, txt_mat);
       txt_mesh.position.y = 0.5;
       txt_mesh.position.x = -1.5;
-      // txt_mesh.position.z = Layers.presentation;
+      // txt_mesh.position.z = Layers.scene;
       txtBox.add(txt_mesh);
       // txtBox.position.z = Layers.scene;
     });

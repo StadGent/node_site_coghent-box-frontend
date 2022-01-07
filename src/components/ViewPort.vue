@@ -133,7 +133,7 @@ export default defineComponent({
       () => props.storyService,
       (value) => {
         storyService = value;
-        // setup();
+        setup();
         setData();
       },
     );
@@ -150,20 +150,20 @@ export default defineComponent({
         activeStoryData,
       ).initialSpotLight();
 
-      startSession = await PlayBookBuild(
-        threeSvc,
-        storyService,
-        zoneService,
-        taggingService,
-        playBook,
-        spotlight,
-        activeStoryData,
-      )
-        .startOfSession()
-        .finally(async () => {
-          await Common().awaitTimeout(3000);
-          setData();
-        });
+      // startSession = await PlayBookBuild(
+      //   threeSvc,
+      //   storyService,
+      //   zoneService,
+      //   taggingService,
+      //   playBook,
+      //   spotlight,
+      //   activeStoryData,
+      // )
+      //   .startOfSession()
+      //   .finally(async () => {
+      //     await Common().awaitTimeout(3000);
+      //     setData();
+      //   });
     };
 
     const setData = async () => {
@@ -204,16 +204,6 @@ export default defineComponent({
     const buildStory = (currentStory: number, audioFile: string) => {
       activeStoryData = useStory().setActiveStory(storyData, currentStory);
 
-      spotlight = PlayBookBuild(
-        threeSvc,
-        storyService,
-        zoneService,
-        taggingService,
-        playBook,
-        spotlight,
-        activeStoryData,
-      ).initialSpotLight();
-
       audio = AudioHelper().setAudioTrack(activeStoryData, currentFrame, audioFile);
       let progress: Array<Group> = [];
       audio.ontimeupdate = () => {
@@ -243,7 +233,6 @@ export default defineComponent({
       };
 
       const framePlaybook = PlayBook();
-      console.log('DOES IT EXIST',taggingService.tagAlreadyInList(Tags.ActiveStoryCircle));
       PlayBookBuild(
         threeSvc,
         storyService,
@@ -252,7 +241,11 @@ export default defineComponent({
         framePlaybook,
         spotlight,
         activeStoryData,
-      ).storyCircle(currentFrame, storyService.getStoryColor(activeStoryData.id), !taggingService.tagAlreadyInList(Tags.ActiveStoryCircle));
+      ).storyCircle(
+        currentFrame,
+        storyService.getStoryColor(activeStoryData.id),
+        !taggingService.tagAlreadyInList(Tags.ActiveStoryCircle),
+      );
 
       PlayBookBuild(
         threeSvc,
@@ -360,10 +353,8 @@ export default defineComponent({
         zoneService.sceneZone(),
         Defaults().screenZonePadding(),
       ).createOuterBoundary();
-      // Tools().displayBoundaryAsDots(threeSvc, outerBoundary);
-      // Tools().displayBoundaryAsDots(threeSvc, innerBoundary);
-
-      // setup();
+      Tools().displayBoundaryAsDots(threeSvc, outerBoundary);
+      Tools().displayBoundaryAsDots(threeSvc, innerBoundary);
 
       const cube = SchemaCube().CreateCube({
         position: new Vector3(-5, 0, 0),
@@ -377,11 +368,6 @@ export default defineComponent({
         undefined,
         0.2,
       );
-      // await CustomAnimation().fadeOut(text as Mesh<any, MeshBasicMaterial>, 0.2, AnimationDefaults.values.fadeStep)
-      const test_endOfText = TestSingleComponent().endOfStoryText(new Vector3(0, 0, 0));
-      threeSvc.AddToScene(test_endOfText, Tags.Testing);
-      console.log({ test_endOfText });
-      threeSvc.RemoveFromScene(test_endOfText);
       threeSvc.AddToScene(text, Tags.Testing);
 
       threeSvc.Animate();

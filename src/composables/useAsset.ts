@@ -11,6 +11,9 @@ import MoveObject from './moveObject';
 import Positions from '@/Three/defaults.positions';
 import CustomAnimation from './animation';
 import AnimationDefaults from '@/Three/defaults.animation';
+import Tools from '@/Three/helper.tools';
+import Colors from '@/Three/defaults.color';
+import { Tags } from '@/services/TaggingService';
 
 const useAsset = (
   threeService: ThreeService,
@@ -83,11 +86,20 @@ const useAsset = (
     position: Vector3,
     scale: number,
   ) => {
-    MoveObject().startMoving(assetImageCube, new Vector3(position.x, position.y, Layers.display));
-    assetImageCube.material.opacity = 1;
-    await CustomAnimation().grow(assetImageCube, scale, AnimationDefaults.values.scaleStep);
+    // MoveObject().startMoving(assetImageCube, new Vector3(position.x, position.y, Layers.presentation));
+    assetImageCube.scale.set(scale, scale, scale);
+    // console.log('asset position', assetImageCube.position);
+    // console.log('zoom position', position);
+    // threeService.AddToScene(Tools().yAxis(assetImageCube.position, Colors().pink), Tags.Testing)
+    // threeService.AddToScene(Tools().yAxis(position, Colors().yellow), Tags.Testing)
+    
 
-    assetImageCube.scale.set(scale, scale, Layers.display);
+    assetImageCube.position.set(position.x,position.y,Layers.scene)
+    // console.log('asset position', assetImageCube.position);
+    // threeService.state.scene.updateMatrixWorld(true);
+    assetImageCube.material.opacity = 1;
+    // await CustomAnimation().grow(assetImageCube, scale, AnimationDefaults.values.scaleStep);
+
   };
 
   const addMetadata = (
@@ -99,7 +111,7 @@ const useAsset = (
   ) => {
     const metadataInfo = TextHelper().CreateText(
       text,
-      new Vector3(zoomPosition.x, zoomPosition.y, Layers.display),
+      new Vector3(zoomPosition.x, zoomPosition.y, Layers.scene),
       {} as CubeParams,
       { color: color } as FontParams,
     ) as Mesh<BoxGeometry, any>;
@@ -107,18 +119,16 @@ const useAsset = (
     metadataInfo.position.set(
       object.position.x - middleOfText,
       object.position.y + Positions().metadataInfoAboveImage().y + (object.geometry.parameters.height * scale) ,
-      Layers.display,
+      Layers.scene,
     );
     return metadataInfo;
   };
 
   const setInactive = async (assetImageCube: Mesh<BoxBufferGeometry, any>) => {
-    assetImageCube.position.z = Layers.scene;
     await CustomAnimation().fadeOut(assetImageCube,AnimationDefaults.values.opacityInactive, AnimationDefaults.values.fadeStep);    
   };
 
   const setActive = async (assetImageCube: Mesh<BoxBufferGeometry, any>) => {
-    assetImageCube.position.z = Layers.scene;
     await CustomAnimation().fadeIn(assetImageCube,AnimationDefaults.values.opacityActive, AnimationDefaults.values.fadeStep);
   };
 

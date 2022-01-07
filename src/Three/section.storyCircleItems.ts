@@ -29,7 +29,7 @@ const StoryCircleItems = (): {
       dashSize: 0.1,
       gapSize: 1,
     });
-    line.position.z = Layers.presentation;
+    line.position.z = Layers.scene;
     const enddOfLine = LineHelper().GetEndOfLine(line);
     enddOfLine.x.toFixed(2);
     enddOfLine.y.toFixed(2);

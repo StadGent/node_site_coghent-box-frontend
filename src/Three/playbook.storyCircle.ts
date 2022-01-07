@@ -51,7 +51,7 @@ const useStoryCircle = (
       new Vector3(
         activeFrameLine.endOfLine.x,
         activeFrameLine.endOfLine.y + 0.8,
-        Layers.presentation,
+        Layers.scene,
       ),
       Colors().white,
     );

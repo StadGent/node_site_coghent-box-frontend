@@ -17,11 +17,11 @@ const FrameOverview = (threeService: ThreeService): {
 } => {
 
   const addImage = (asset: Asset, scale: number, position: Vector3) => {
-    const schema = CubeHelper().CreateSchema(position,useAsset(threeService).getImage(asset),new Vector3(3,2,0));
-    // const schema = CubeHelper().CreateSchema(position,useAsset(threeService).getImage(asset),new Vector3(Common().pixelsToMeters(asset.mediafiles[0]?.mediainfo.width), Common().pixelsToMeters(asset.mediafiles[0]?.mediainfo.height),0));
+    // const schema = CubeHelper().CreateSchema(position,useAsset(threeService).getImage(asset),new Vector3(3,2,0));
+    const schema = CubeHelper().CreateSchema(position,useAsset(threeService).getImage(asset),new Vector3(Common().pixelsToMeters(asset.mediafiles[0]?.mediainfo.width), Common().pixelsToMeters(asset.mediafiles[0]?.mediainfo.height),0));
     const cube = SchemaCube().CreateImageCube(schema);
-    cube.scale.set(0,0,0);
-    cube.scale.set(scale,scale,0);
+    // cube.scale.set(0,0,0);
+    cube.scale.set(scale,scale,scale);
     cube.material.opacity = 0;
     return cube;
   };
@@ -32,7 +32,7 @@ const FrameOverview = (threeService: ThreeService): {
     let pos = -15;
     for (const key in assets) {
       const schema = CubeHelper().CreateSchema(
-        new Vector3(pos, 0, Layers.presentation),
+        new Vector3(pos, 0, Layers.scene),
         assets[key],
         new Vector3(4, 4, 0),
       );

@@ -78,7 +78,7 @@ const PlayBookBuild = (
 
   const storyCircle = (currentFrameIndex: number, storyColor: number, canAddToSCene: boolean) => {
     useStoryCircle(threeService, activeStoryData, playBook).create(
-      zoneService.middleZoneCenter,
+      new Vector3(zoneService.middleZoneCenter.x, zoneService.middleZoneCenter.y, Layers.scene),
       storyColor,
       currentFrameIndex,
       activeStoryData.frames.length,
@@ -100,7 +100,7 @@ const PlayBookBuild = (
     ).create(
       currentFrameIndex,
       storyColor,
-      playBook.lastAction().time + Timing.delayNextCycle,
+      playBook.lastAction().time,
     );
   };
 
@@ -142,7 +142,7 @@ const PlayBookBuild = (
     threeService.AddGroupsToScene(
       StoryPaused(storyData, taggingService).Create(storiesWithTheirProgress), Tags.Stories, 'All stories when session is paused.'
     );
-    await MoveObject().startMoving(spotlight, new Vector3(0, 0, Layers.background));
+    await MoveObject().startMoving(spotlight, new Vector3(0, 0, Layers.scene));
   };
 
   const storyData = (

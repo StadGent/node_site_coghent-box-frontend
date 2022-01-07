@@ -13,10 +13,10 @@ import { Tags } from '@/services/TaggingService';
 
 const Tools = (): {
   Grid: () => Group;
-  yAxis: (position: Vector3) => Group;
+  yAxis: (position: Vector3, color?: number) => Group;
   xAxis: (position: Vector3) => Group;
   displayZones: (threeService: ThreeService, zones: Array<Zone>) => void;
-  dotOnPosition: (threeService: ThreeService, position: Vector3) => void;
+  dotOnPosition: (threeService: ThreeService, position: Vector3, color?: number) => void;
   displayBoundaryAsDots: (threeService: ThreeService, boundary: Boundary) => void;
 } => {
   const Grid = () => {
@@ -25,10 +25,10 @@ const Tools = (): {
     return GroupHelper().CreateGroup([middleX, middleY]);
   };
 
-  const yAxis = (position: Vector3) => {
+  const yAxis = (position: Vector3, color?: number) => {
     return SchemaLine().CreateLine({
       positions: [new Vector3(position.x, 30, 0), new Vector3(position.x, -30, 0)],
-      params: { color: 0x0f000 },
+      params: { color: color || Colors().green },
     } as LineSchema);
   };
   const xAxis = (position: Vector3) => {
@@ -40,21 +40,21 @@ const Tools = (): {
 
   const displayZones = (threeService: ThreeService, zones: Array<Zone>) => {
     zones.forEach(zone => {
-      threeService.AddToScene(Tools().yAxis(new Vector3(zone.start.x, zone.height, Layers.presentation)), Tags.YAxis, 'Helper line for the start of the zone.');
-      threeService.AddToScene(Tools().yAxis(new Vector3(zone.end.x, zone.height, Layers.presentation)), Tags.YAxis, 'Helper line for the end of the zone.');
-      threeService.AddToScene(Tools().yAxis(new Vector3(zone.center.x, zone.height, Layers.presentation)), Tags.YAxis, 'Helper line for the center of the zone.');
+      threeService.AddToScene(Tools().yAxis(new Vector3(zone.start.x, zone.height, Layers.scene)), Tags.YAxis, 'Helper line for the start of the zone.');
+      threeService.AddToScene(Tools().yAxis(new Vector3(zone.end.x, zone.height, Layers.scene)), Tags.YAxis, 'Helper line for the end of the zone.');
+      threeService.AddToScene(Tools().yAxis(new Vector3(zone.center.x, zone.height, Layers.scene), Colors().white), Tags.YAxis, 'Helper line for the center of the zone.');
     })
   }
 
-  const dotOnPosition = (threeService: ThreeService, position: Vector3) => {
+  const dotOnPosition = (threeService: ThreeService, position: Vector3, color?: number) => {
     const schema = CircleHelper().CreateSchema(
       new Vector3(
         position.x,
         position.y,
         2,
       ),
-      0.5,
-      Colors().lightBlue,
+      0.2,
+      color || Colors().lightBlue,
     );
     const circle = SchemaCircle().CreateCircle(schema);
     threeService.AddToScene(circle, Tags.Dot, 'Helper dot.');

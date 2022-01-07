@@ -52,7 +52,7 @@ const useStartOfSession = (
   const createCountDownNumber = (countdown: number) => {
     return TextHelper().CreateText(
       `${countdown}`,
-      new Vector3(1, 0, Layers.presentation),
+      new Vector3(1, 0, Layers.scene),
       {} as CubeParams,
       { size: customText.size.veryBig, color: Colors().white } as FontParams,
     );

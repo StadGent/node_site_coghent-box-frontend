@@ -46,7 +46,7 @@ const CircularProgressBar = (): {
     material.color.convertSRGBToLinear();
     const mesh = new Mesh(geometry, material);
     ChapeHelper().SetPosition(position, mesh);
-    mesh.position.z = Layers.presentation - 0.1;
+    mesh.position.z = Layers.scene - 0.1;
     return mesh;
   };
 

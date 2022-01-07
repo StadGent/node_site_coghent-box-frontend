@@ -23,10 +23,10 @@ const Defaults = (): {
 } => {
   const pixelInMeter = () => 0.003;
   const screenZones = () => 5;
-  const zonePadding = () => 1;
+  const zonePadding = () => 2;
   const screenZonePadding = () => 2;
   const boundaryPadding = () => 1;
-  const showZonesInOverview = () => false;
+  const showZonesInOverview = () => true;
   
   const maxFrames = () => 2;
   const countdown = () => 3; 

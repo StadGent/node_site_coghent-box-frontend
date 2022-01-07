@@ -66,9 +66,9 @@ export default class ZoneService {
     this.zoneDimensions = this.setZoneDimensions(zoneWidth, zoneheight);
     while (pointer + zoneWidth <= screenEnd) {
       zones.push({
-        start: new Vector3(pointer, zoneheight, Layers.display),
-        end: new Vector3(pointer + zoneWidth, zoneheight, Layers.display),
-        center: new Vector3(pointer + (zoneWidth / 2), 0, Layers.display),
+        start: new Vector3(pointer, zoneheight, Layers.scene),
+        end: new Vector3(pointer + zoneWidth, zoneheight, Layers.scene),
+        center: new Vector3(pointer + (zoneWidth / 2), 0, Layers.scene),
         width: zoneWidth,
         height: zoneheight
       } as Zone);

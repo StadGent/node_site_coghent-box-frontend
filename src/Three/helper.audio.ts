@@ -6,7 +6,7 @@ const AudioHelper = (): {
   setAudioTrack: (activeStoryData: Story, currentFrameIndex: number, backupAudioFile: string) => HTMLAudioElement;
 } => {
   const DoEvent = (currentTime: number, eventTime: number) => {
-    console.log(`current: ${currentTime}; event: ${eventTime}`);
+    // console.log(`current: ${currentTime}; event: ${eventTime}`);
     return currentTime < eventTime + 2 && currentTime > eventTime;
   };
 

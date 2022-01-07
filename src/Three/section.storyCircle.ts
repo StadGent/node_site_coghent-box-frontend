@@ -97,7 +97,7 @@ const StoryCircle = (): {
           new Vector3(
             circleSchema.position.x,
             circleSchema.position.y - 1,
-            Layers.presentation,
+            Layers.scene,
           ),
           circleSchema.params.color || DefaultColors().green,
         ),
@@ -106,7 +106,7 @@ const StoryCircle = (): {
           new Vector3(
             circleSchema.position.x,
             circleSchema.position.y - 0.5,
-            Layers.presentation,
+            Layers.scene,
           ),
           circleSchema.params.color || DefaultColors().green,
         ),
@@ -114,7 +114,7 @@ const StoryCircle = (): {
           new Vector3(
             circleSchema.position.x,
             circleSchema.position.y + 1.2,
-            Layers.presentation - 0.1,
+            Layers.scene - 0.1,
           ),
           iconUrl,
         ),

@@ -42,7 +42,7 @@ const useFrameAssetOverview = (
     const data: Record<number, Vector3> = {};
     for (const asset of assets) {
       const relationMetadata = Common().connectRelationMetadata(frame, asset);
-      const position = new Vector3(0, 0, Layers.presentation);
+      const position = new Vector3(0, 0, Layers.scene);
       if (relationMetadata?.position != null || undefined) {
         position.x = relationMetadata.position.x;
         position.y = relationMetadata.position.y;
@@ -57,7 +57,7 @@ const useFrameAssetOverview = (
     playBook.addToPlayBook(
       async () => {
         threeService.AddToScene(group, Tags.GroupOfAssets, ' Group of all the assets from the frame');
-        await CustomAnimation().fadeInGroups([group], 1, AnimationDefaults.values.fadeStep);
+        await CustomAnimation().fadeInGroups([group], AnimationDefaults.values.opacityActive, AnimationDefaults.values.fadeStep);
         threeService.AddToScene(spotlight, Tags.Spotlight, 'Spotlight to move over all the assets of the frame.');
         await MoveObject().startMoving(spotlight, Object.values(data)[0]);
       },
@@ -73,8 +73,10 @@ const useFrameAssetOverview = (
     currentAsset: number,
   ) => {
     threeService.RemoveFromScene(imageCube);
-    CustomAnimation().shrink(asset as unknown as Mesh<any, MeshBasicMaterial>,scale, AnimationDefaults.values.scaleStep);
-    await MoveObject().startMoving(asset,positions[currentAsset]);
+    asset.scale.set(scale,scale,scale);
+    asset.position.set(positions[currentAsset].x,positions[currentAsset].y,positions[currentAsset].z);
+    // CustomAnimation().shrink(asset as unknown as Mesh<any, MeshBasicMaterial>, scale, AnimationDefaults.values.scaleStep);
+    // await MoveObject().startMoving(asset, positions[currentAsset]);
   };
 
   const setAssetsInactive = async (displayedAsset: Mesh<BoxBufferGeometry, any>) => {
@@ -85,13 +87,11 @@ const useFrameAssetOverview = (
   };
 
   const calculateZoomSettingsOfAsset = (asset: Mesh<BoxBufferGeometry, any>) => {
+    console.log('asset position', asset.position);
     const inZone = zoneService.objectIsInZone(asset);
-    const zoomTo = zoneService.getMiddleOfZone(inZone);
+    console.log({inZone});    
 
-    let scale = zoneService.zoneDimensions.x / asset.geometry.parameters.width;
-    while (scale * asset.geometry.parameters.height > zoneService.zoneDimensions.y) {
-      scale -= 0.05;
-    }
+    let scale: number;
     if (
       Common().firstIsBiggest(
         asset.geometry.parameters.height,
@@ -102,9 +102,14 @@ const useFrameAssetOverview = (
       while (scale * asset.geometry.parameters.width > zoneService.zoneDimensions.x) {
         scale -= 0.05;
       }
+    } else {
+      scale = zoneService.zoneDimensions.x / asset.geometry.parameters.width;
+      while (scale * asset.geometry.parameters.height > zoneService.zoneDimensions.y) {
+        scale -= 0.05;
+      }
     }
     scale = scale - AnimationDefaults.values.scaleReducer;
-    return { scale: scale, zoomPosition: zoomTo };
+    return { scale: scale, zoomPosition: inZone.center };
   };
 
   const zoomAndHighlightAsset = async (
@@ -154,9 +159,6 @@ const useFrameAssetOverview = (
             async () => {
               if (Defaults().showZonesInOverview()) {
                 Tools().displayZones(threeService, zoneService.zones);
-                zoneService.zones.forEach(_zone => {
-                  Tools().dotOnPosition(threeService, zoneService.getMiddleOfZone(_zone));
-                });
               }
               await setAssetsInactive(asset as Mesh<BoxBufferGeometry, any>);
               await useAsset(threeService).moveSpotlightToAsset(

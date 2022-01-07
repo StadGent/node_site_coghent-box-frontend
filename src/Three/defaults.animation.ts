@@ -23,7 +23,7 @@ const AnimationDefaults: AnimationDefault = {
     scaleUpdateTime: 15,
   },
   values: {
-    opacityActive: 1,
+    opacityActive: 0.9,
     opacityInactive: 0.5,
     fadeStep: 0.04,
     scaleStep: 0.2,
