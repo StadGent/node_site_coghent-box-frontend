@@ -6,7 +6,7 @@ import Layers from '@/Three/defaults.layers';
 import Measurements from '@/Three/defaults.measurements';
 import TextHelper from '@/Three/helper.text';
 import { FontParams } from '@/Three/schema.text';
-import { BoxBufferGeometry, Mesh, Vector3, Group, BoxGeometry } from 'three';
+import { BoxBufferGeometry, Mesh, Vector3, Group, BoxGeometry, MeshBasicMaterial } from 'three';
 import MoveObject from './moveObject';
 import Positions from '@/Three/defaults.positions';
 import CustomAnimation from './animation';
@@ -63,21 +63,23 @@ const useAsset = (
     scale: number,
   ) => {
     const widest = asset.geometry.parameters.width > asset.geometry.parameters.height;
+
     if (widest) {
-      spotlight.scale.set(
-        (asset.geometry.parameters.width / 2) * scale  + Measurements().spotLight.spaceAroundObject,
-        (asset.geometry.parameters.width / 2) * scale + Measurements().spotLight.spaceAroundObject,
-        Layers.scene,
-      );
-      await MoveObject().startMoving(spotlight, asset.position);
+      const scaleForSpotlight = (asset.geometry.parameters.width / 2) * scale  + Measurements().spotLight.spaceAroundObject;
+      if(scaleForSpotlight > scale){
+        CustomAnimation().grow(spotlight as Mesh<any, MeshBasicMaterial>,scaleForSpotlight, AnimationDefaults.values.scaleStep);
+      }else{
+        CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>,scaleForSpotlight, AnimationDefaults.values.scaleStep);
+      }
     } else {
-      spotlight.scale.set(
-        (asset.geometry.parameters.height / 2) * scale + Measurements().spotLight.spaceAroundObject,
-        (asset.geometry.parameters.height / 2) * scale + Measurements().spotLight.spaceAroundObject,
-        Layers.scene,
-      );
-      await MoveObject().startMoving(spotlight, asset.position);
+      const scaleForSpotlight = (asset.geometry.parameters.height / 2) * scale  + Measurements().spotLight.spaceAroundObject;
+      if(scaleForSpotlight > scale){
+        CustomAnimation().grow(spotlight as Mesh<any, MeshBasicMaterial>,scaleForSpotlight, AnimationDefaults.values.scaleStep);
+      }else{
+        CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>,scaleForSpotlight, AnimationDefaults.values.scaleStep);
+      }
     }
+    await MoveObject().startMoving(spotlight, asset.position);
     setActive(asset);
   };
 
@@ -86,20 +88,10 @@ const useAsset = (
     position: Vector3,
     scale: number,
   ) => {
-    // MoveObject().startMoving(assetImageCube, new Vector3(position.x, position.y, Layers.presentation));
-    assetImageCube.scale.set(scale, scale, scale);
-    // console.log('asset position', assetImageCube.position);
-    // console.log('zoom position', position);
-    // threeService.AddToScene(Tools().yAxis(assetImageCube.position, Colors().pink), Tags.Testing)
-    // threeService.AddToScene(Tools().yAxis(position, Colors().yellow), Tags.Testing)
-    
-
-    assetImageCube.position.set(position.x,position.y,Layers.scene)
-    // console.log('asset position', assetImageCube.position);
-    // threeService.state.scene.updateMatrixWorld(true);
     assetImageCube.material.opacity = 1;
-    // await CustomAnimation().grow(assetImageCube, scale, AnimationDefaults.values.scaleStep);
-
+    await MoveObject().startMoving(assetImageCube, new Vector3(position.x, position.y, position.z));
+    assetImageCube.position.z = Layers.scene + Layers.fraction;
+    await CustomAnimation().grow(assetImageCube, scale, AnimationDefaults.values.scaleStep);
   };
 
   const addMetadata = (
@@ -111,15 +103,15 @@ const useAsset = (
   ) => {
     const metadataInfo = TextHelper().CreateText(
       text,
-      new Vector3(zoomPosition.x, zoomPosition.y, Layers.scene),
+      new Vector3(zoomPosition.x, zoomPosition.y, Layers.scene + Layers.fraction),
       {} as CubeParams,
       { color: color } as FontParams,
     ) as Mesh<BoxGeometry, any>;
     const middleOfText = metadataInfo.geometry.parameters.width/2;
     metadataInfo.position.set(
       object.position.x - middleOfText,
-      object.position.y + Positions().metadataInfoAboveImage().y + (object.geometry.parameters.height * scale) ,
-      Layers.scene,
+      object.position.y + ((object.geometry.parameters.height/2) * object.scale.x),
+      Layers.scene + Layers.fraction,
     );
     return metadataInfo;
   };

@@ -21,6 +21,7 @@ const LineHelper = (): {
   drawLineArroundCube: (
     cube: Mesh<BoxGeometry, MeshBasicMaterial>,
     color: number,
+    layer?: number,
   ) => Line;
 } => {
   const GetEndOfLine = (line: any) => {
@@ -42,6 +43,7 @@ const LineHelper = (): {
   const drawLineArroundCube = (
     cube: Mesh<BoxGeometry, MeshBasicMaterial>,
     color: number,
+    layer?: number,
   ) => {
     const marginFromObject = 0.16;
     const linewidth = 3;
@@ -54,23 +56,23 @@ const LineHelper = (): {
       (cube.geometry.parameters.height * cube.scale.y) / 2 -
       marginFromObject/2;
     const path: Array<Vector3> = [
-      new Vector3(startPointX, startPointY, Layers.scene),
+      new Vector3(startPointX, startPointY, layer || Layers.scene),
       new Vector3(
         startPointX + cube.geometry.parameters.width * cube.scale.x + marginFromObject,
         startPointY,
-        Layers.scene,
+        layer || Layers.scene,
       ),
       new Vector3(
         startPointX + cube.geometry.parameters.width * cube.scale.x + marginFromObject,
         startPointY + cube.geometry.parameters.height * cube.scale.y + marginFromObject,
-        Layers.scene,
+        layer || Layers.scene,
       ),
       new Vector3(
         startPointX,
         startPointY + cube.geometry.parameters.height * cube.scale.y + marginFromObject,
-        Layers.scene,
+        layer ||Layers.scene,
       ),
-      new Vector3(startPointX, startPointY, Layers.scene),
+      new Vector3(startPointX, startPointY, layer || Layers.scene),
     ];
 
     const geometry = new BufferGeometry().setFromPoints(path);

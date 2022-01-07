@@ -1,4 +1,10 @@
 type DefaultImages = {
+  story: {
+    defaultIcon: string;
+  },
+  pauseScreen : {
+    man: string;
+  },
   startOfSession : {
     arrow: string;
     scanQrCode: string;
@@ -11,6 +17,12 @@ type DefaultImages = {
 }
 
 const Images: DefaultImages = {
+  story: {
+    defaultIcon: '/images/Bucket.svg',
+  },
+  pauseScreen : {
+    man: '/images/man.svg',
+  },
   startOfSession : {
     arrow: '/images/arrow.svg',
     scanQrCode: '/images/scanQrCode.svg',

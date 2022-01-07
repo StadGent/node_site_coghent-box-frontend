@@ -73,10 +73,9 @@ const useFrameAssetOverview = (
     currentAsset: number,
   ) => {
     threeService.RemoveFromScene(imageCube);
-    asset.scale.set(scale,scale,scale);
-    asset.position.set(positions[currentAsset].x,positions[currentAsset].y,positions[currentAsset].z);
-    // CustomAnimation().shrink(asset as unknown as Mesh<any, MeshBasicMaterial>, scale, AnimationDefaults.values.scaleStep);
-    // await MoveObject().startMoving(asset, positions[currentAsset]);
+    asset.position.set(positions[currentAsset].x, positions[currentAsset].y, positions[currentAsset].z);
+    await CustomAnimation().shrink(asset as unknown as Mesh<any, MeshBasicMaterial>, scale, AnimationDefaults.values.scaleStep);
+    await MoveObject().startMoving(asset, positions[currentAsset]);
   };
 
   const setAssetsInactive = async (displayedAsset: Mesh<BoxBufferGeometry, any>) => {
@@ -87,9 +86,7 @@ const useFrameAssetOverview = (
   };
 
   const calculateZoomSettingsOfAsset = (asset: Mesh<BoxBufferGeometry, any>) => {
-    console.log('asset position', asset.position);
     const inZone = zoneService.objectIsInZone(asset);
-    console.log({inZone});    
 
     let scale: number;
     if (
@@ -133,7 +130,7 @@ const useFrameAssetOverview = (
       `${title}, Me (${collections[0].value})`,
     );
     highlightWithMetaInfo = GroupHelper().CreateGroup([
-      LineHelper().drawLineArroundCube(asset, storyColor),
+      LineHelper().drawLineArroundCube(asset, storyColor, Layers.scene + Layers.fraction),
       metadataInfo,
     ]);
 

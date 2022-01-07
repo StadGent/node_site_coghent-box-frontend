@@ -13,6 +13,7 @@ import CubeHelper from '@/Three/helper.cube';
 import HelperText from '@/Three/defaults.helperText';
 import { StoryData } from '@/services/StoryService';
 import TaggingService, { Tags } from '@/services/TaggingService';
+import Images from '@/Three/defaults.images';
 
 const StoryPaused = (storyData: Array<Story>, taggingService: TaggingService): {
   Create: (storiesWithTheirProgress: Record<string, StoryData>) => Array<Group>;
@@ -23,7 +24,7 @@ const StoryPaused = (storyData: Array<Story>, taggingService: TaggingService): {
       useStory().title(story),
       CircleHelper().CreateSchema(position, 2, storyColor),
       [currentFrame, story.frames.length],
-      'https://cdn-icons-png.flaticon.com/512/844/844994.png',
+      Images.story.defaultIcon,
       true,
       false
     );
@@ -44,10 +45,10 @@ const StoryPaused = (storyData: Array<Story>, taggingService: TaggingService): {
   const storyEndText = () => {
     const groups: Array<Group> = [];
     const text = TextHelper().CreateTextFromRecord(
-      HelperText().EndOfStory(new Vector3(0,0,0)),
+      HelperText().EndOfStory(new Vector3(0,2,0)),
       Colors().black,
     );
-    const manSchema = CubeHelper().CreateSchema(new Vector3(0,0,0),"@/assets/man.svg", new Vector3(3,2,0));
+    const manSchema = CubeHelper().CreateSchema(new Vector3(0,-0.5,0),Images.pauseScreen.man, new Vector3(4,3,0));
     const man = SchemaCube().CreateImageCube(manSchema);
     GroupHelper().AddObjectsTogroups(text, groups);
     GroupHelper().AddObjectsTogroups([man], groups);

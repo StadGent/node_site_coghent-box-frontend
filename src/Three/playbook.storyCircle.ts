@@ -15,6 +15,7 @@ import DefaultLines from './defaults.lines';
 import StoryCircle from './section.storyCircle';
 import StoryCircleItems from './section.storyCircleItems';
 import { Tags } from '@/services/TaggingService';
+import Images from './defaults.images';
 
 const useStoryCircle = (
   threeService: ThreeService,
@@ -28,7 +29,7 @@ const useStoryCircle = (
       useStory().title(activeStoryData),
       CircleHelper().CreateSchema(position, Measurements().storyCircle.radius, storyColor),
       [currentFrame, activeStoryData.frames.length],
-      'https://cdn-icons-png.flaticon.com/512/844/844994.png',
+      Images.story.defaultIcon,
       true,
       true
     );
@@ -63,7 +64,7 @@ const useStoryCircle = (
     threeService.state.scene.background = new Color(Colors().black);
     if(canAddToSCene){
       const progressBar = CircularProgressBar().createActiveSegment(
-        new Vector3(0, 0, 0),
+        new Vector3(0, 0, position.z),
         Measurements().progressBar.radius,
         frames,
         currentFrame + 1,

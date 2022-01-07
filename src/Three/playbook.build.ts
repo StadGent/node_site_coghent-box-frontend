@@ -78,7 +78,7 @@ const PlayBookBuild = (
 
   const storyCircle = (currentFrameIndex: number, storyColor: number, canAddToSCene: boolean) => {
     useStoryCircle(threeService, activeStoryData, playBook).create(
-      new Vector3(zoneService.middleZoneCenter.x, zoneService.middleZoneCenter.y, Layers.scene),
+      zoneService.middleZoneCenter,
       storyColor,
       currentFrameIndex,
       activeStoryData.frames.length,
@@ -124,7 +124,7 @@ const PlayBookBuild = (
   const initialSpotLight = () => {
     const spotlight = Spot().create(
       new Vector3(zoneService.middleZoneCenter.x, zoneService.middleZoneCenter.y, Layers.scene),
-      Measurements().spotLight.radius,
+      Measurements().storyCircle.radius + Measurements().spotLight.spaceAroundObject,
     );
     threeService.AddToScene(spotlight, Tags.Spotlight, 'InitialSpotlight');
     return spotlight;

@@ -7,7 +7,6 @@ const Positions = (): {
   QRCodeScanner: () => Vector3;
   endOfSession: () => Vector3;
   timerCountdown: () => Vector3;
-  metadataInfoAboveImage: () => Vector3;
 } => {
   const CenterWordPositions = () => {
     return [
@@ -33,7 +32,6 @@ const Positions = (): {
 
   const endOfSession = () => new Vector3(18, 2, Layers.scene);
   const timerCountdown = () => new Vector3(0, 5.5, 0);
-  const metadataInfoAboveImage = () => new Vector3(0, 1.24, 0);
 
   return {
     StoryPausePositions,
@@ -41,7 +39,6 @@ const Positions = (): {
     QRCodeScanner,
     endOfSession,
     timerCountdown,
-    metadataInfoAboveImage
   };
 };
 
