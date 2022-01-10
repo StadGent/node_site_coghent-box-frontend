@@ -1,5 +1,5 @@
 <template>
-  <div ref="viewport" class="viewport"/>
+  <div ref="viewport" class="viewport" />
   <video ref="videoElement" />
 </template>
 
@@ -179,7 +179,7 @@ export default defineComponent({
 
     const timing = () => {
       let currentFunction = 0;
-      interval = setInterval(() => {
+      interval = setInterval(async () => {
         //DEMO: Show progress of the frame removed for demo
         // showProgressOfFrame = true;
         if (
@@ -299,8 +299,13 @@ export default defineComponent({
             chooseStory.value = true;
             audio.pause();
             garbageHelper.pauseScreen();
-            threeSvc.AddToScene(spotlight, Tags.Spotlight, 'Spotlight of story paused');
-            spotlight.scale.set(4, 4, Layers.scene);
+            await MoveObject().startMoving(spotlight, zoneService.middleZoneCenter);
+            // threeSvc.AddToScene(spotlight, Tags.Spotlight, 'Spotlight of story paused');
+            spotlight.scale.set(
+              Measurements().storyCircle.outerCircle,
+              Measurements().storyCircle.outerCircle,
+              Measurements().storyCircle.outerCircle,
+            );
             PlayBookBuild(
               threeSvc,
               storyService,
@@ -385,22 +390,20 @@ export default defineComponent({
 });
 </script>
 <style>
-  .viewport {
-    position: relative;
-  }
+.viewport {
+  position: relative;
+}
 
-  .viewport::before {
-    content: '';
-    background: linear-gradient(
-          rgba(0, 0, 0, 0.7), 
-          rgba(0, 0, 0, 0.7)
-        ),url('/background.png');
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    filter: blur(20px);
-    z-index: -10;
-  }
+.viewport::before {
+  content: '';
+  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+    url('/background.png');
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  filter: blur(20px);
+  z-index: -10;
+}
 </style>

@@ -3,7 +3,7 @@ import { Group, Mesh, Vector3 } from 'three';
 import Common from './common';
 
 const MoveObject = (): {
-  startMoving: (object: any, toPosition: Vector3) => Promise<boolean>;
+  startMoving: (object: any, toPosition: Vector3) => Promise<unknown>;
   moveGroups: (_groups: Array<Group>, toPosition: Vector3) => void;
 } => {
   const setXPosition = (object: Mesh, toPosition: Vector3, stepX: number) => {
@@ -70,8 +70,7 @@ const MoveObject = (): {
     while (object.position.x != toPosition.x || reached) {
       reached = await sleep(object, toPosition, stepX, stepY);
     }
-
-    return true;
+    return Promise.resolve();
   };
 
   const moveGroups = (_groups: Array<Group>, toPosition: Vector3) => {

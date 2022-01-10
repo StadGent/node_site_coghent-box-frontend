@@ -124,7 +124,7 @@ const PlayBookBuild = (
   const initialSpotLight = () => {
     const spotlight = Spot().create(
       new Vector3(zoneService.middleZoneCenter.x, zoneService.middleZoneCenter.y, Layers.scene),
-      Measurements().storyCircle.radius + Measurements().spotLight.spaceAroundObject,
+      Measurements().storyCircle.outerCircle,
     );
     threeService.AddToScene(spotlight, Tags.Spotlight, 'InitialSpotlight');
     return spotlight;

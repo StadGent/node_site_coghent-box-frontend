@@ -79,8 +79,8 @@ const useAsset = (
         CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>,scaleForSpotlight, AnimationDefaults.values.scaleStep);
       }
     }
-    await MoveObject().startMoving(spotlight, asset.position);
     setActive(asset);
+    await MoveObject().startMoving(spotlight, asset.position);
   };
 
   const zoom = async (

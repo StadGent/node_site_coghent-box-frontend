@@ -156,8 +156,7 @@ const useFrameAssetOverview = (
               if (Defaults().showZonesInOverview()) {
                 Tools().displayZones(threeService, zoneService.zones);
               }
-              //DEMO: Not visible enough on canvas
-              // await setAssetsInactive(asset as Mesh<BoxBufferGeometry, any>);
+              await setAssetsInactive(asset as Mesh<BoxBufferGeometry, any>);
               await useAsset(threeService).moveSpotlightToAsset(
                 spotlight,
                 asset as Mesh<BoxBufferGeometry, any>,
