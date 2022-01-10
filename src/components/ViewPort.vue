@@ -1,5 +1,5 @@
 <template>
-  <div ref="viewport" class="viewport" />
+  <div ref="viewport" />
   <video ref="videoElement" />
 </template>
 
@@ -134,7 +134,6 @@ export default defineComponent({
       (value) => {
         storyService = value;
         setup();
-        setData();
       },
     );
 
@@ -149,6 +148,8 @@ export default defineComponent({
         spotlight,
         activeStoryData,
       ).initialSpotLight();
+
+      setData();
 
       // startSession = await PlayBookBuild(
       //   threeSvc,
@@ -167,7 +168,8 @@ export default defineComponent({
     };
 
     const setData = async () => {
-      alert('got stories and can start');
+      //DEMO:
+      // alert('got stories and can start');
       audioHelper = AudioHelper();
       storyData = storyService.stories;
       storyService.setStoryPausedPositions(zoneService.zonesInnerToOuter);
@@ -178,7 +180,8 @@ export default defineComponent({
     const timing = () => {
       let currentFunction = 0;
       interval = setInterval(() => {
-        showProgressOfFrame = true;
+        //DEMO: Show progress of the frame removed for demo
+        // showProgressOfFrame = true;
         if (
           audioHelper.DoEvent(
             audio.currentTime,
@@ -291,6 +294,8 @@ export default defineComponent({
                 setup();
               });
           } else {
+            //DEMO:
+            // alert('storyPaused')
             chooseStory.value = true;
             audio.pause();
             garbageHelper.pauseScreen();

@@ -24,7 +24,8 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     const frameTitleTag = taggingService.getByTag(Tags.FrameTitle);
     threeService.RemoveGroupsFromScene(storyCircleTag[0].object);
     threeService.RemoveGroupsFromScene(circularProgresbarTag[0].object);
-    threeService.RemoveFromScene(frameTitleTag[0].object);
+    // DEMO:
+    // threeService.RemoveFromScene(frameTitleTag[0].object);
   };
 
   const newStorySelected = async () => {

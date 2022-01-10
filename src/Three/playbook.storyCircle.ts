@@ -105,17 +105,18 @@ const useStoryCircle = (
         timestamp,
         `Add title cirle with progressbar to the scene.`,
       );
-      playBook.addToPlayBook(
-        () => {
-          threeService.AddToScene(
-            frameLineWithTitle(currentFrame, progressBar),
-            Tags.FrameTitle,
-            'Active frame title.',
-          );
-        },
-        timestamp + Timing.storyCircle.showFrameTitle,
-        `Add the frame title to the scene.`,
-      );
+      //DEMO: Removed frame title for demo
+      // playBook.addToPlayBook(
+      //   () => {
+      //     threeService.AddToScene(
+      //       frameLineWithTitle(currentFrame, progressBar),
+      //       Tags.FrameTitle,
+      //       'Active frame title.',
+      //     );
+      //   },
+      //   timestamp + Timing.storyCircle.showFrameTitle,
+      //   `Add the frame title to the scene.`,
+      // );
     }
     threeService.state.scene.updateMatrixWorld(true);
   };

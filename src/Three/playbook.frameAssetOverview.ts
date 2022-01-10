@@ -58,7 +58,6 @@ const useFrameAssetOverview = (
       async () => {
         threeService.AddToScene(group, Tags.GroupOfAssets, ' Group of all the assets from the frame');
         await CustomAnimation().fadeInGroups([group], AnimationDefaults.values.opacityActive, AnimationDefaults.values.fadeStep);
-        threeService.AddToScene(spotlight, Tags.Spotlight, 'Spotlight to move over all the assets of the frame.');
         await MoveObject().startMoving(spotlight, Object.values(data)[0]);
       },
       timestamp,
@@ -169,7 +168,8 @@ const useFrameAssetOverview = (
           );
           playBook.addToPlayBook(
             async () => {
-              spotlight.scale.set(0.1, 0.1, 0);
+              CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>, 0.01,AnimationDefaults.values.scaleStep)
+              // spotlight.scale.set(0.01, 0.01, 0);
               await zoomAndHighlightAsset(
                 asset as Mesh<BoxBufferGeometry, any>,
                 index,

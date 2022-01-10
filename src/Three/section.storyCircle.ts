@@ -110,14 +110,15 @@ const StoryCircle = (): {
           ),
           circleSchema.params.color || DefaultColors().green,
         ),
-        icon(
-          new Vector3(
-            circleSchema.position.x,
-            circleSchema.position.y + 1.2,
-            circleSchema.position.z,
-          ),
-          iconUrl,
-        ),
+        //DEMO: Removed for demo
+        // icon(
+        //   new Vector3(
+        //     circleSchema.position.x,
+        //     circleSchema.position.y + 1.2,
+        //     circleSchema.position.z,
+        //   ),
+        //   iconUrl,
+        // ),
       ],
       groups,
     );
