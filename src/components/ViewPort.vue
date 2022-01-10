@@ -388,5 +388,6 @@
     height: 100%;
     background-color: #000000;
     filter: blur(20px);
+    z-index: -10;
   }
 </style>
