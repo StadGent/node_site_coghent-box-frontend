@@ -28,6 +28,10 @@ type FabricDefaults = {
         tr: boolean;
         mtr: boolean;
       };
+      origin: {
+        originX: string;
+        originY: string;
+      };
     };
     secondaryImage: {
       scale: {
@@ -50,8 +54,8 @@ const fabricdefaults: FabricDefaults = {
     },
     selectedImage: {
       canvasPosition: {
-        left: 20,
-        top: 20,
+        left: window.innerWidth / 2,
+        top: window.innerHeight - 20,
       },
       scale: {
         scaleX: 0.3,
@@ -67,6 +71,10 @@ const fabricdefaults: FabricDefaults = {
         tl: false,
         tr: false,
         mtr: false,
+      },
+      origin: {
+        originX: 'center',
+        originY: 'bottom',
       },
     },
     secondaryImage: {
