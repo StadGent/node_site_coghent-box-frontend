@@ -70,18 +70,13 @@ const useFrame = (): {
   };
   
   const getAudioForFrame = (frame: Frame) => {
-    const audioFiles: Array<string> = [];
+    let audioFiles: Array<string> = [];
     let audio = 'No audio for frame';
-    frame.assets.map(asset => {
-      asset.relations.map(relation => {
-        if(relation.audioFile?.includes('download')){
-          audioFiles.push(relation.audioFile);
-        }
-      });
-    });
+    audioFiles = [...frame.relationMetadata.filter(_data => _data.audioFile?.includes('download')).map(_item => _item.audioFile as string)];
     if(audioFiles.length >0){
       audio = audioFiles[0];
     }
+    console.log({audio});
     return audio;
   }
 
