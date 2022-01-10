@@ -378,6 +378,10 @@
   });
 </script>
 <style>
+  .viewport {
+    position: relative;
+  }
+
   .viewport::before {
     content: '';
     background-image: url('/background.png');

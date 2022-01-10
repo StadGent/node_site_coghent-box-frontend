@@ -65,6 +65,9 @@ export default class ThreeService {
   SetViewPort(width: number, height: number) {
     this.state.width = width;
     this.state.height = height;
+    document.querySelectorAll<HTMLElement>(
+      '.viewport',
+    )[0].style.width = `${width.toString()}px`;
     this.calculateDimensionsOfScene();
   }
   InitializeRenderer() {
