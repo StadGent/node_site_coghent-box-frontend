@@ -391,13 +391,15 @@ export default defineComponent({
 
   .viewport::before {
     content: '';
-    background-image: url('/background.png');
+    background: linear-gradient(
+          rgba(0, 0, 0, 0.7), 
+          rgba(0, 0, 0, 0.7)
+        ),url('/background.png');
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: #000000;
     filter: blur(20px);
     z-index: -10;
   }
