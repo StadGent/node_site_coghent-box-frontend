@@ -69,12 +69,14 @@ export default class ThreeService {
   }
   InitializeRenderer() {
     this.state.renderer = new WebGLRenderer({
+      alpha: true,
       antialias: this.defaultvalues.renderer.antialias,
     });
     this.state.renderer.gammaFactor = this.defaultvalues.renderer.gammaFactor;
     this.state.renderer.outputEncoding = sRGBEncoding;
     this.state.renderer.setPixelRatio(window.devicePixelRatio);
     this.state.renderer.setSize(this.state.width, this.state.height);
+    this.state.renderer.setClearColor(0xffffff, 0);
     this.element.value.appendChild(this.state.renderer.domElement);
   }
 
