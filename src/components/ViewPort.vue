@@ -1,5 +1,5 @@
 <template>
-  <div ref="viewport" />
+  <div ref="viewport" class="viewport"/>
   <video ref="videoElement" />
 </template>
 

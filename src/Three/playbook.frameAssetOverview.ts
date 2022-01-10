@@ -156,7 +156,8 @@ const useFrameAssetOverview = (
               if (Defaults().showZonesInOverview()) {
                 Tools().displayZones(threeService, zoneService.zones);
               }
-              await setAssetsInactive(asset as Mesh<BoxBufferGeometry, any>);
+              //DEMO: Not visible enough on canvas
+              // await setAssetsInactive(asset as Mesh<BoxBufferGeometry, any>);
               await useAsset(threeService).moveSpotlightToAsset(
                 spotlight,
                 asset as Mesh<BoxBufferGeometry, any>,
@@ -169,7 +170,6 @@ const useFrameAssetOverview = (
           playBook.addToPlayBook(
             async () => {
               CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>, 0.01,AnimationDefaults.values.scaleStep)
-              // spotlight.scale.set(0.01, 0.01, 0);
               await zoomAndHighlightAsset(
                 asset as Mesh<BoxBufferGeometry, any>,
                 index,

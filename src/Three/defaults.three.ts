@@ -28,7 +28,7 @@ const threeDefaultsWall: ThreeDefaults = {
     ratioY: 9,
   },
   renderer: {
-    gammaFactor: 2,
+    gammaFactor: 1,
     antialias: true,
   },
   viewport: window.innerHeight * (48 / 9),
