@@ -63,29 +63,30 @@ const useAsset = (
     scale: number,
   ) => {
     const widest = asset.geometry.parameters.width > asset.geometry.parameters.height;
-
+    setActive(asset);
     if (widest) {
       const scaleForSpotlight = (asset.geometry.parameters.width / 2) * scale  + Measurements().spotLight.spaceAroundObject;
       // spotlight.scale.set(scaleForSpotlight,scaleForSpotlight,scaleForSpotlight);
       //TEMP: no animation
       if(scaleForSpotlight > scale){
-        await CustomAnimation().grow(spotlight as Mesh<any, MeshBasicMaterial>,scaleForSpotlight, AnimationDefaults.values.scaleStep);
+        CustomAnimation().grow(spotlight as Mesh<any, MeshBasicMaterial>,scaleForSpotlight, AnimationDefaults.values.scaleStep);
       }else{
-        await CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>,scaleForSpotlight, AnimationDefaults.values.scaleStep);
+        CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>,scaleForSpotlight, AnimationDefaults.values.scaleStep);
       }
+      await MoveObject().startMoving(spotlight, asset.position);
     } else {
       const scaleForSpotlight = (asset.geometry.parameters.height / 2) * scale  + Measurements().spotLight.spaceAroundObject;
       // spotlight.scale.set(scaleForSpotlight,scaleForSpotlight,scaleForSpotlight);
       //TEMP: no animation
       if(scaleForSpotlight > scale){
-        await CustomAnimation().grow(spotlight as Mesh<any, MeshBasicMaterial>,scaleForSpotlight, AnimationDefaults.values.scaleStep);
+        CustomAnimation().grow(spotlight as Mesh<any, MeshBasicMaterial>,scaleForSpotlight, AnimationDefaults.values.scaleStep);
       }else{
-        await CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>,scaleForSpotlight, AnimationDefaults.values.scaleStep);
+        CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>,scaleForSpotlight, AnimationDefaults.values.scaleStep);
       }
+      await MoveObject().startMoving(spotlight, asset.position);
     }
-    setActive(asset);
+    
     //TEMP: no animation
-    await MoveObject().startMoving(spotlight, asset.position);
     // spotlight.position.set(asset.position.x,asset.position.y, asset.position.z);
   };
 

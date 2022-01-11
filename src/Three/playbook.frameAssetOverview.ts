@@ -58,6 +58,8 @@ const useFrameAssetOverview = (
       async () => {
         threeService.AddToScene(group, Tags.GroupOfAssets, ' Group of all the assets from the frame');
         await CustomAnimation().fadeInGroups([group], AnimationDefaults.values.opacityActive, AnimationDefaults.values.fadeStep);
+        //TODO: Scale needs to set depending of the size of the asset
+        CustomAnimation().grow(spotlight as Mesh<any, MeshBasicMaterial>, 6.5, AnimationDefaults.values.scaleStep)
         await MoveObject().startMoving(spotlight, Object.values(data)[0]);
       },
       timestamp + 2,
@@ -171,7 +173,7 @@ const useFrameAssetOverview = (
           );
           playBook.addToPlayBook(
             async () => {
-              await CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>, 0.01,AnimationDefaults.values.scaleStep)
+              await CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>, 0.001,AnimationDefaults.values.scaleStep)
               await zoomAndHighlightAsset(
                 asset as Mesh<BoxBufferGeometry, any>,
                 index,
