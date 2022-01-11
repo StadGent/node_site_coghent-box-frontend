@@ -73,8 +73,10 @@ const useFrameAssetOverview = (
   ) => {
     threeService.RemoveFromScene(imageCube);
     asset.position.set(positions[currentAsset].x, positions[currentAsset].y, positions[currentAsset].z);
-    await CustomAnimation().shrink(asset as unknown as Mesh<any, MeshBasicMaterial>, scale, AnimationDefaults.values.scaleStep);
-    await MoveObject().startMoving(asset, positions[currentAsset]);
+    asset.scale.set(scale,scale,scale);
+    //TEMP: no animation
+    // await CustomAnimation().shrink(asset as unknown as Mesh<any, MeshBasicMaterial>, scale, AnimationDefaults.values.scaleStep);
+    // await MoveObject().startMoving(asset, positions[currentAsset]);
   };
 
   const setAssetsInactive = async (displayedAsset: Mesh<BoxBufferGeometry, any>) => {
@@ -113,14 +115,20 @@ const useFrameAssetOverview = (
     currentAsset: number,
     scale: number,
   ) => {
+    console.log('Zoom asset');
     const zoomSettings = calculateZoomSettingsOfAsset(asset);
+    console.log({scale});
+    console.log({zoomSettings});
     await useAsset(threeService).zoom(
       asset as Mesh<BoxBufferGeometry, any>,
       zoomSettings.zoomPosition,
       zoomSettings.scale,
     );
+    console.log('After zoom');
     const collections = useAsset(threeService).getCollections(assets[currentAsset]);
     const title = useAsset(threeService).getTitle(assets[currentAsset]);
+    console.log({collections});
+    console.log({title});
     const metadataInfo = useAsset(threeService).addMetadata(
       zoomSettings.zoomPosition,
       asset,
@@ -157,6 +165,7 @@ const useFrameAssetOverview = (
                 Tools().displayZones(threeService, zoneService.zones);
               }
               await setAssetsInactive(asset as Mesh<BoxBufferGeometry, any>);
+              console.log('---------------------');
               await useAsset(threeService).moveSpotlightToAsset(
                 spotlight,
                 asset as Mesh<BoxBufferGeometry, any>,
@@ -168,12 +177,13 @@ const useFrameAssetOverview = (
           );
           playBook.addToPlayBook(
             async () => {
-              CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>, 0.01,AnimationDefaults.values.scaleStep)
+              await CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>, 0.01,AnimationDefaults.values.scaleStep)
               await zoomAndHighlightAsset(
                 asset as Mesh<BoxBufferGeometry, any>,
                 index,
                 AnimationDefaults.values.zoomOfAsset,
               );
+              console.log('---------------------');
             },
             useAsset(threeService).setZoomTiming(relationMetadata) +
             Timing.frameOverview.spotLightMoved,

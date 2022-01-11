@@ -24,15 +24,13 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     const frameTitleTag = taggingService.getByTag(Tags.FrameTitle);
     threeService.RemoveGroupsFromScene(storyCircleTag[0].object);
     threeService.RemoveGroupsFromScene(circularProgresbarTag[0].object);
-    // DEMO:
     // threeService.RemoveFromScene(frameTitleTag[0].object);
   };
 
   const newStorySelected = async () => {
     const groupOfAssetsTags = taggingService.getByTag(Tags.GroupOfAssets);
-    const storyEndTextTags = taggingService.getByTag(Tags.StoryEndText);
+    removeGroupsByTag(Tags.StoryEndText);
     await CustomAnimation().fadeOutGroups([groupOfAssetsTags[0].object], 0, AnimationDefaults.values.fadeStep);
-    threeService.RemoveFromScene(storyEndTextTags[0].object);
     threeService.RemoveFromScene(groupOfAssetsTags[0].object);
   };
 

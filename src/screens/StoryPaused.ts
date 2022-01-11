@@ -14,6 +14,7 @@ import HelperText from '@/Three/defaults.helperText';
 import { StoryData } from '@/services/StoryService';
 import TaggingService, { Tags } from '@/services/TaggingService';
 import Images from '@/Three/defaults.images';
+import Layers from '@/Three/defaults.layers';
 
 const StoryPaused = (storyData: Array<Story>, taggingService: TaggingService): {
   Create: (storiesWithTheirProgress: Record<string, StoryData>) => Array<Group>;
@@ -63,7 +64,8 @@ const StoryPaused = (storyData: Array<Story>, taggingService: TaggingService): {
             storyCircle(
               useStory().getStory(storyData,storiesWithTheirProgress[key].storyId),
               storiesWithTheirProgress[key].totalOfFramesSeen,
-              storiesWithTheirProgress[key].pausedPosition,
+              //DEMO: Changed from storiesWithTheirProgress[key].pausedPosition
+              new Vector3(storiesWithTheirProgress[key].pausedPosition.x,storiesWithTheirProgress[key].pausedPosition.y, Layers.scene + Layers.fraction),
               storiesWithTheirProgress[key].storyColor,
             ),
             groups,

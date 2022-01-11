@@ -135,6 +135,8 @@ const PlayBookBuild = (
   };
 
   const storyPaused = async (storyData: Array<Story>, taggingService: TaggingService) => {
+    alert('storyPaused in Build')
+    await MoveObject().startMoving(spotlight, new Vector3(0, 0, Layers.scene));
     const storiesWithTheirProgress = useStory().getStoriesWithTheirProgress(
       storyData,
       storyService.getStoryData(),
@@ -142,7 +144,6 @@ const PlayBookBuild = (
     threeService.AddGroupsToScene(
       StoryPaused(storyData, taggingService).Create(storiesWithTheirProgress), Tags.Stories, 'All stories when session is paused.'
     );
-    await MoveObject().startMoving(spotlight, new Vector3(0, 0, Layers.scene));
   };
 
   const storyData = (
@@ -175,6 +176,7 @@ const PlayBookBuild = (
       MoveObject().moveGroups(_storyCircle.object, new Vector3(0.01, 12, 1));
     }
     const storyDataOfSelectedStory = storyService.getStoryDataOfStory(storyService.stories[currentStory].id);
+    console.log({storyDataOfSelectedStory});
     MoveObject().moveGroups(selectedStoryCircle.object, new Vector3(-storyDataOfSelectedStory.pausedPosition.x, -storyDataOfSelectedStory.pausedPosition.y, -storyDataOfSelectedStory.pausedPosition.z));
   };
 
