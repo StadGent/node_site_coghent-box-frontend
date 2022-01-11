@@ -152,6 +152,7 @@ export default defineComponent({
     );
 
     const setup = async () => {
+      threeSvc.ClearScene();
       spotlight = PlayBookBuild(
         threeSvc,
         storyService,
@@ -305,7 +306,7 @@ export default defineComponent({
               .endOfSession(Measurements().spotLight.radius)
               .then((_start) => {
                 emit('restartSession', _start);
-                setup();
+                // setup();
               });
           } else {
             //DEMO:

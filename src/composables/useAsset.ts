@@ -66,27 +66,27 @@ const useAsset = (
 
     if (widest) {
       const scaleForSpotlight = (asset.geometry.parameters.width / 2) * scale  + Measurements().spotLight.spaceAroundObject;
-      spotlight.scale.set(scaleForSpotlight,scaleForSpotlight,scaleForSpotlight);
+      // spotlight.scale.set(scaleForSpotlight,scaleForSpotlight,scaleForSpotlight);
       //TEMP: no animation
-      // if(scaleForSpotlight > scale){
-      //   await CustomAnimation().grow(spotlight as Mesh<any, MeshBasicMaterial>,scaleForSpotlight, AnimationDefaults.values.scaleStep);
-      // }else{
-      //   await CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>,scaleForSpotlight, AnimationDefaults.values.scaleStep);
-      // }
+      if(scaleForSpotlight > scale){
+        await CustomAnimation().grow(spotlight as Mesh<any, MeshBasicMaterial>,scaleForSpotlight, AnimationDefaults.values.scaleStep);
+      }else{
+        await CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>,scaleForSpotlight, AnimationDefaults.values.scaleStep);
+      }
     } else {
       const scaleForSpotlight = (asset.geometry.parameters.height / 2) * scale  + Measurements().spotLight.spaceAroundObject;
-      spotlight.scale.set(scaleForSpotlight,scaleForSpotlight,scaleForSpotlight);
+      // spotlight.scale.set(scaleForSpotlight,scaleForSpotlight,scaleForSpotlight);
       //TEMP: no animation
-      // if(scaleForSpotlight > scale){
-      //   await CustomAnimation().grow(spotlight as Mesh<any, MeshBasicMaterial>,scaleForSpotlight, AnimationDefaults.values.scaleStep);
-      // }else{
-      //   await CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>,scaleForSpotlight, AnimationDefaults.values.scaleStep);
-      // }
+      if(scaleForSpotlight > scale){
+        await CustomAnimation().grow(spotlight as Mesh<any, MeshBasicMaterial>,scaleForSpotlight, AnimationDefaults.values.scaleStep);
+      }else{
+        await CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>,scaleForSpotlight, AnimationDefaults.values.scaleStep);
+      }
     }
     setActive(asset);
     //TEMP: no animation
-    // await MoveObject().startMoving(spotlight, asset.position);
-    spotlight.position.set(asset.position.x,asset.position.y, asset.position.z);
+    await MoveObject().startMoving(spotlight, asset.position);
+    // spotlight.position.set(asset.position.x,asset.position.y, asset.position.z);
   };
 
   const zoom = async (
@@ -96,12 +96,12 @@ const useAsset = (
   ) => {
     assetImageCube.material.opacity = 1;
     assetImageCube.position.set(position.x, position.y, position.z);
-    //TEMP: no animation
+    //TEMP: no animation this breaks the zoom asset in some frames
     // await MoveObject().startMoving(assetImageCube, new Vector3(position.x, position.y, position.z));
     assetImageCube.position.z = Layers.scene + Layers.fraction;
-    assetImageCube.scale.set(scale,scale,scale);
+    // assetImageCube.scale.set(scale,scale,scale);
     //TEMP: no animation
-    // await CustomAnimation().grow(assetImageCube, scale, AnimationDefaults.values.scaleStep);
+    await CustomAnimation().grow(assetImageCube, scale, AnimationDefaults.values.scaleStep);
   };
 
   const addMetadata = (

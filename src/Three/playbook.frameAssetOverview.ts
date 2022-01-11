@@ -74,9 +74,10 @@ const useFrameAssetOverview = (
     threeService.RemoveFromScene(imageCube);
     asset.position.set(positions[currentAsset].x, positions[currentAsset].y, positions[currentAsset].z);
     asset.scale.set(scale,scale,scale);
+    
+    await CustomAnimation().shrink(asset as unknown as Mesh<any, MeshBasicMaterial>, scale, AnimationDefaults.values.scaleStep);
     //TEMP: no animation
-    // await CustomAnimation().shrink(asset as unknown as Mesh<any, MeshBasicMaterial>, scale, AnimationDefaults.values.scaleStep);
-    // await MoveObject().startMoving(asset, positions[currentAsset]);
+    await MoveObject().startMoving(asset, positions[currentAsset]);
   };
 
   const setAssetsInactive = async (displayedAsset: Mesh<BoxBufferGeometry, any>) => {

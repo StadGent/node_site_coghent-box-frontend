@@ -36,6 +36,7 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     removeGroupsByTag(Tags.StoryCircle);
     removeGroupsByTag(Tags.ActiveStoryCircle);
     removeGroupsByTag(Tags.Stories);
+    removeGroupsByTag(Tags.CircularProgressBar);
     const groupOfAssetsTags = taggingService.getByTag(Tags.GroupOfAssets);
     threeService.RemoveFromScene(groupOfAssetsTags[0].object);
     console.log('After end screen cleared', taggingService.taggedObjects);

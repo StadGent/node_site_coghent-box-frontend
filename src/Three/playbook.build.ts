@@ -132,6 +132,7 @@ const PlayBookBuild = (
   };
 
   const endOfSession = (spotRadius: number) => {
+    MoveObject().startMoving(spotlight, new Vector3(0, 0, Layers.scene));
     return useEndOfSession(threeService, zoneService).create(spotRadius);
   };
 
@@ -141,7 +142,7 @@ const PlayBookBuild = (
     // const activeStoryposition = storyService.getStoryDataOfStory(storyService.activeStory.id).pausedPosition
     // await MoveObject().startMoving(spotlight, new Vector3(activeStoryposition.x, activeStoryposition.y, Layers.scene));
     await MoveObject().startMoving(spotlight, new Vector3(0, 0, Layers.scene));
-    await CustomAnimation().fadeOut(spotlight as Mesh<any, MeshBasicMaterial>,-1 , AnimationDefaults.values.fadeStep)
+    CustomAnimation().fadeOut(spotlight as Mesh<any, MeshBasicMaterial>,-1 , AnimationDefaults.values.fadeStep)
     const storiesWithTheirProgress = useStory().getStoriesWithTheirProgress(
       storyData,
       storyService.getStoryData(),
@@ -152,6 +153,7 @@ const PlayBookBuild = (
   };
 
   const storyData = (
+
     storyService: StoryService,
     activeStoryData: Story,
     frameIndex: number,
