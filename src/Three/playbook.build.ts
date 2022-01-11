@@ -21,6 +21,7 @@ import ZoneService from '@/services/ZoneService';
 import TaggingService, { Tags } from '@/services/TaggingService';
 import CustomAnimation from '@/composables/animation';
 import AnimationDefaults from './defaults.animation';
+import Common from '@/composables/common';
 
 const PlayBookBuild = (
   threeService: ThreeService,
@@ -135,7 +136,10 @@ const PlayBookBuild = (
   };
 
   const storyPaused = async (storyData: Array<Story>, taggingService: TaggingService) => {
-    alert('storyPaused in Build')
+    // alert('storyPaused in Build')
+    //FIXME:
+    // const activeStoryposition = storyService.getStoryDataOfStory(storyService.activeStory.id).pausedPosition
+    // await MoveObject().startMoving(spotlight, new Vector3(activeStoryposition.x, activeStoryposition.y, Layers.scene));
     await MoveObject().startMoving(spotlight, new Vector3(0, 0, Layers.scene));
     const storiesWithTheirProgress = useStory().getStoriesWithTheirProgress(
       storyData,
@@ -172,12 +176,17 @@ const PlayBookBuild = (
     // FIXME: const endTexts = taggingService.getByTag(Tags.StoryEndText);
     // console.log({endTexts});
     // CustomAnimation().fadeOutGroups(endTexts[0].object, 0, AnimationDefaults.values.fadeStep)
-    for (const _storyCircle of storyCircleToMove) {
+    for (const _storyCircle of storyCircles) {
       MoveObject().moveGroups(_storyCircle.object, new Vector3(0.01, 12, 1));
     }
-    const storyDataOfSelectedStory = storyService.getStoryDataOfStory(storyService.stories[currentStory].id);
-    console.log({storyDataOfSelectedStory});
-    MoveObject().moveGroups(selectedStoryCircle.object, new Vector3(-storyDataOfSelectedStory.pausedPosition.x, -storyDataOfSelectedStory.pausedPosition.y, -storyDataOfSelectedStory.pausedPosition.z));
+    //DON'T?
+    // const storyDataOfSelectedStory = storyService.getStoryDataOfStory(storyService.stories[currentStory].id);
+    // console.log({storyDataOfSelectedStory});
+    // if(storyDataOfSelectedStory.pausedPosition.x > 0){
+    //   MoveObject().moveGroups(selectedStoryCircle.object, new Vector3(-storyDataOfSelectedStory.pausedPosition.x, -storyDataOfSelectedStory.pausedPosition.y, storyDataOfSelectedStory.pausedPosition.z));
+    // }else{
+    //   MoveObject().moveGroups(selectedStoryCircle.object, new Vector3(storyDataOfSelectedStory.pausedPosition.x, storyDataOfSelectedStory.pausedPosition.y, storyDataOfSelectedStory.pausedPosition.z));
+    // }
   };
 
   return {

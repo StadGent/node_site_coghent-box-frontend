@@ -60,7 +60,7 @@ const useFrameAssetOverview = (
         await CustomAnimation().fadeInGroups([group], AnimationDefaults.values.opacityActive, AnimationDefaults.values.fadeStep);
         await MoveObject().startMoving(spotlight, Object.values(data)[0]);
       },
-      timestamp,
+      timestamp + 2,
       `Add all assets to scene.`,
     );
   };

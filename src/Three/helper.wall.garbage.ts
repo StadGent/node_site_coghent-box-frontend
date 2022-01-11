@@ -18,19 +18,16 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
   }
 
   const pauseScreen = () => {
-    removeGroupsByTag(Tags.FrameProgressbar);
-    const storyCircleTag = taggingService.getByTag(Tags.ActiveStoryCircle);
-    const circularProgresbarTag = taggingService.getByTag(Tags.CircularProgressBar);
-    const frameTitleTag = taggingService.getByTag(Tags.FrameTitle);
-    threeService.RemoveGroupsFromScene(storyCircleTag[0].object);
-    threeService.RemoveGroupsFromScene(circularProgresbarTag[0].object);
-    // threeService.RemoveFromScene(frameTitleTag[0].object);
+    removeGroupsByTag(Tags.ActiveStoryCircle);
+    removeGroupsByTag(Tags.ActiveStoryCircle);
+    removeGroupsByTag(Tags.CircularProgressBar);
   };
 
   const newStorySelected = async () => {
     const groupOfAssetsTags = taggingService.getByTag(Tags.GroupOfAssets);
-    removeGroupsByTag(Tags.StoryEndText);
     await CustomAnimation().fadeOutGroups([groupOfAssetsTags[0].object], 0, AnimationDefaults.values.fadeStep);
+    removeGroupsByTag(Tags.ActiveStoryCircle);
+    removeGroupsByTag(Tags.Stories);
     threeService.RemoveFromScene(groupOfAssetsTags[0].object);
   };
 

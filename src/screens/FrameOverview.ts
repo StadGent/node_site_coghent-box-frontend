@@ -27,6 +27,7 @@ const FrameOverview = (threeService: ThreeService): {
   };
 
   const createImageCubes = (assets: Record<string, string>) => {
+  
     const cubes: Array<Mesh> = [];
     const schemas: Array<CubeSchema> = [];
     let pos = -15;

@@ -22,6 +22,7 @@ export default class StoryService {
 
   stories: Array<Story>;
   visiterId: string;
+  activeStory!: Story;
 
 
   constructor(_stories: Array<Story>, _visiterId: string) {
@@ -36,6 +37,10 @@ export default class StoryService {
 
   getStoryData() {
     return this.storyData;
+  }
+
+  setActiveStory(_id: string) {
+    this.activeStory = this.stories.filter(_story => _story.id == _id)[0];
   }
 
   getTotalOfSeenFrames() {
