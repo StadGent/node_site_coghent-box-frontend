@@ -71,7 +71,8 @@ const StoryPaused = (storyData: Array<Story>, taggingService: TaggingService): {
             groups,
           );
     }
-    GroupHelper().AddObjectsTogroups(storyEndText(), groups);
+    //DEMO: Couldn't get it to disappear
+    // GroupHelper().AddObjectsTogroups(storyEndText(), groups);
     return groups
   };
   return { Create };
