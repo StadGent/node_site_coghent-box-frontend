@@ -46,7 +46,7 @@ const CircularProgressBar = (): {
     material.color.convertSRGBToLinear();
     const mesh = new Mesh(geometry, material);
     ChapeHelper().SetPosition(position, mesh);
-    mesh.position.z = Layers.scene - 0.1;
+    mesh.position.z = Layers.scene - Layers.fraction;
     return mesh;
   };
 
@@ -68,7 +68,7 @@ const CircularProgressBar = (): {
     color?: number,
   ) => {
     const mesh = create(position, radius, segments, progress,  Colors().white);
-    const points = CircleHelper().SplitCircleInSegments(new Vector3(position.x,position.y,position.z + Layers.fraction), radius, segments);
+    const points = CircleHelper().SplitCircleInSegments(new Vector3(position.x,position.y,position.z + Layers.fraction - 0.05), radius, segments);
     const schemas = CircleHelper().CreateSchemas(points, 0.4, color || Colors().white);
     const progressDots: Array<Group> = [];
     for (let i = 0; i < schemas.length; i++) {

@@ -55,7 +55,7 @@ const StoryCircle = (): {
   ) => {
     const progress = TextHelper().CreateText(
       `Deel ${progressState[0]} van ${progressState[1]}`,
-      new Vector3(position.x,position.y, position.z + Layers.fraction),
+      new Vector3(position.x,position.y, position.z + Layers.fraction - 0.05),
       {
         color: color,
         width: 0,
@@ -68,7 +68,7 @@ const StoryCircle = (): {
   const title = (title: string, position: Vector3, color: number) => {
     const storyTitle = TextHelper().CreateText(
       title,
-      new Vector3(position.x,position.y, position.z + Layers.fraction),
+      new Vector3(position.x,position.y, position.z + Layers.fraction - 0.05),
       {
         color: color,
         width: 0,
