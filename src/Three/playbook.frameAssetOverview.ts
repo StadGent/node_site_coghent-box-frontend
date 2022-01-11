@@ -115,20 +115,14 @@ const useFrameAssetOverview = (
     currentAsset: number,
     scale: number,
   ) => {
-    console.log('Zoom asset');
     const zoomSettings = calculateZoomSettingsOfAsset(asset);
-    console.log({scale});
-    console.log({zoomSettings});
     await useAsset(threeService).zoom(
       asset as Mesh<BoxBufferGeometry, any>,
       zoomSettings.zoomPosition,
       zoomSettings.scale,
     );
-    console.log('After zoom');
     const collections = useAsset(threeService).getCollections(assets[currentAsset]);
     const title = useAsset(threeService).getTitle(assets[currentAsset]);
-    console.log({collections});
-    console.log({title});
     const metadataInfo = useAsset(threeService).addMetadata(
       zoomSettings.zoomPosition,
       asset,
@@ -165,7 +159,6 @@ const useFrameAssetOverview = (
                 Tools().displayZones(threeService, zoneService.zones);
               }
               await setAssetsInactive(asset as Mesh<BoxBufferGeometry, any>);
-              console.log('---------------------');
               await useAsset(threeService).moveSpotlightToAsset(
                 spotlight,
                 asset as Mesh<BoxBufferGeometry, any>,
@@ -183,7 +176,6 @@ const useFrameAssetOverview = (
                 index,
                 AnimationDefaults.values.zoomOfAsset,
               );
-              console.log('---------------------');
             },
             useAsset(threeService).setZoomTiming(relationMetadata) +
             Timing.frameOverview.spotLightMoved,

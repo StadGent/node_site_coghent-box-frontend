@@ -19,8 +19,7 @@ import Layers from '@/Three/defaults.layers';
 const StoryPaused = (storyData: Array<Story>, taggingService: TaggingService): {
   Create: (storiesWithTheirProgress: Record<string, StoryData>) => Array<Group>;
 } => {
-  const storyCircle = (story: Story, currentFrame: number, _position: Vector3, storyColor: number) => {
-    const position = new Vector3(_position.x,_position.y, Layers.scene + Layers.fraction)
+  const storyCircle = (story: Story, currentFrame: number, position: Vector3, storyColor: number) => {
     const groups: Array<Group> = [];
     const titleCircle = StoryCircle().Create(
       useStory().title(story),

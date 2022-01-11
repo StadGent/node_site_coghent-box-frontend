@@ -66,7 +66,6 @@ const useAsset = (
 
     if (widest) {
       const scaleForSpotlight = (asset.geometry.parameters.width / 2) * scale  + Measurements().spotLight.spaceAroundObject;
-      console.log({scaleForSpotlight});
       spotlight.scale.set(scaleForSpotlight,scaleForSpotlight,scaleForSpotlight);
       //TEMP: no animation
       // if(scaleForSpotlight > scale){
@@ -76,7 +75,6 @@ const useAsset = (
       // }
     } else {
       const scaleForSpotlight = (asset.geometry.parameters.height / 2) * scale  + Measurements().spotLight.spaceAroundObject;
-      console.log({scaleForSpotlight});
       spotlight.scale.set(scaleForSpotlight,scaleForSpotlight,scaleForSpotlight);
       //TEMP: no animation
       // if(scaleForSpotlight > scale){
@@ -101,11 +99,9 @@ const useAsset = (
     //TEMP: no animation
     // await MoveObject().startMoving(assetImageCube, new Vector3(position.x, position.y, position.z));
     assetImageCube.position.z = Layers.scene + Layers.fraction;
-    console.log('Moved asset to front layers');
     assetImageCube.scale.set(scale,scale,scale);
     //TEMP: no animation
     // await CustomAnimation().grow(assetImageCube, scale, AnimationDefaults.values.scaleStep);
-    console.log('after grow animation of asset');
   };
 
   const addMetadata = (
@@ -115,7 +111,6 @@ const useAsset = (
     scale: number,
     text: string,
   ) => {
-    console.log('Add metadata for asset');
     const metadataInfo = TextHelper().CreateText(
       text,
       new Vector3(zoomPosition.x, zoomPosition.y, Layers.scene + Layers.fraction),

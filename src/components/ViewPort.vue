@@ -80,7 +80,7 @@ export default defineComponent({
     };
     let garbageHelper: GarabageHelperForWall;
     let audioDuration = 120;
-    let currentFrame = 1;
+    let currentFrame = 0;
     let startSession = false;
     let showProgressOfFrame = false;
     let interval: ReturnType<typeof setTimeout>;
@@ -106,6 +106,7 @@ export default defineComponent({
           currentStory.value = value - 1;
           currentFrame = _storyData.totalOfFramesSeen;
           console.log('Selected story => ', currentStory.value);
+          garbageHelper.newStorySelected();
           threeSvc.ClearScene();
           spotlight = PlayBookBuild(
             threeSvc,
@@ -116,6 +117,7 @@ export default defineComponent({
             spotlight,
             activeStoryData,
           ).initialSpotLight();
+          
           PlayBookBuild(
             threeSvc,
             storyService,
@@ -125,7 +127,7 @@ export default defineComponent({
             spotlight,
             activeStoryData,
           ).setSelectedStory(currentStory.value);
-          garbageHelper.newStorySelected();
+          
           // await Common().awaitTimeout(2000);
           resetStory();
           console.log('tagged => ', taggingService.taggedObjects);
@@ -150,7 +152,6 @@ export default defineComponent({
     );
 
     const setup = async () => {
-      threeSvc.ClearScene();
       spotlight = PlayBookBuild(
         threeSvc,
         storyService,
@@ -378,22 +379,6 @@ export default defineComponent({
         zoneService.sceneZone(),
         Defaults().screenZonePadding(),
       ).createOuterBoundary();
-      Tools().displayBoundaryAsDots(threeSvc, outerBoundary);
-      Tools().displayBoundaryAsDots(threeSvc, innerBoundary);
-
-      const cube = SchemaCube().CreateCube({
-        position: new Vector3(-5, 0, 0),
-        params: { width: 3, height: 3, color: Colors().white },
-      } as CubeSchema);
-
-      const text = TextHelper().CreateText(
-        'The wall',
-        new Vector3(0, 0, 0),
-        undefined,
-        undefined,
-        0.2,
-      );
-      threeSvc.AddToScene(text, Tags.Testing);
 
       threeSvc.Animate();
     });
