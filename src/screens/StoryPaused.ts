@@ -72,7 +72,7 @@ const StoryPaused = (storyData: Array<Story>, taggingService: TaggingService): {
           );
     }
     //DEMO: Couldn't get it to disappear
-    // GroupHelper().AddObjectsTogroups(storyEndText(), groups);
+    GroupHelper().AddObjectsTogroups(storyEndText(), groups);
     return groups
   };
   return { Create };
