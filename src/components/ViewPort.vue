@@ -201,7 +201,7 @@ export default defineComponent({
       let currentFunction = 0;
       interval = setInterval(async () => {
         //DEMO: Show progress of the frame removed for demo
-        // showProgressOfFrame = true;
+        showProgressOfFrame = true;
         if (
           audioHelper.DoEvent(
             audio.currentTime,
@@ -327,7 +327,7 @@ export default defineComponent({
               Measurements().storyCircle.outerCircle,
               Measurements().storyCircle.outerCircle,
             );
-            await PlayBookBuild(
+            PlayBookBuild(
               threeSvc,
               storyService,
               zoneService,

@@ -22,6 +22,7 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     removeGroupsByTag(Tags.ActiveStoryCircle);
     removeGroupsByTag(Tags.ActiveStoryCircle);
     removeGroupsByTag(Tags.CircularProgressBar);
+    removeGroupsByTag(Tags.FrameProgressbar)
   };
 
   const newStorySelected = async () => {

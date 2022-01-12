@@ -88,7 +88,9 @@ const useFrame = (): {
     const relationMetadata = getRelationMetadata(frame)
     const assetWithStartTime: Record<string,number> = {};
     relationMetadata.map(metadata => {
-      assetWithStartTime[Common().FilterOutIdAfterSlash(metadata.key)] = metadata.timestamp_start;
+      if(!metadata.key.includes('mediafiles/')){
+        assetWithStartTime[Common().FilterOutIdAfterSlash(metadata.key)] = metadata.timestamp_start;
+      }
     })
     return assetWithStartTime;
   }

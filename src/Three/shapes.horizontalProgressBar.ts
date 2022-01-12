@@ -45,7 +45,7 @@ const HorizontalProgressBar = (): {
       } else {
         const timeDot = CircleHelper().CreateSchema(
           new Vector3(
-            startPosition.x + (timing / dividing) + (radius * 2),
+            startPosition.x + (timing / dividing) + (radius * 3),
             startPosition.y,
             startPosition.z,
           ),
