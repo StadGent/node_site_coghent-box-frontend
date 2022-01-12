@@ -11,7 +11,6 @@ export enum Tags {
   GroupOfAssets,
   Video,
   Countdown,
-  Text,
   StoryCircle,
   FrameTitle,
   XAxis,
@@ -26,6 +25,8 @@ export enum Tags {
   StoryEndText,
   FrameProgressbar,
   ActiveStoryCircle,
+  startSessionText,
+  startOfSessionCountdown,
 }
 
 export default class TaggingService {

@@ -1,10 +1,12 @@
+import CustomAnimation from '@/composables/animation';
 import Common from '@/composables/common';
 import MoveObject from '@/composables/moveObject';
 import ScanQR from '@/screens/ScanQR';
 import { Tags } from '@/services/TaggingService';
 import ThreeService from '@/services/ThreeService';
 import ZoneService from '@/services/ZoneService';
-import { Mesh, Vector3 } from 'three';
+import { Mesh, MeshBasicMaterial, Vector3 } from 'three';
+import AnimationDefaults from './defaults.animation';
 import Colors from './defaults.color';
 import Defaults from './defaults.config';
 import Layers from './defaults.layers';
@@ -45,7 +47,7 @@ const useStartOfSession = (
       zoneService.zoneCenters[0].z,
      ),
     ).create();
-    threeService.AddGroupsToScene(scanText, Tags.Text, 'Scan your ticket text.');
+    threeService.AddGroupsToScene(scanText, Tags.startSessionText, 'Scan your ticket text.');
     return scanText;
   };
 
@@ -62,7 +64,7 @@ const useStartOfSession = (
     let currentCount = maxCount;
     while(currentCount != 0){
       const text = createCountDownNumber(currentCount);
-      threeService.AddToScene(text, Tags.Countdown, 'StartOfSession countdown timer text.');
+      threeService.AddToScene(text, Tags.startOfSessionCountdown, 'StartOfSession countdown timer text.');
       await Common().awaitTimeout(1000);
       currentCount--;
       threeService.RemoveFromScene(text);
@@ -72,9 +74,11 @@ const useStartOfSession = (
   const create = async () => {
     showScanImage();
     await Common().awaitTimeout(Timing.startOfSession.videoDelay);
-    setSpotlightOnPosition();
-    await MoveObject().startMoving(spotlight, new Vector3(0, 1, Layers.scene));
+    MoveObject().startMoving(spotlight, new Vector3(0, 0, Layers.scene));
     await countdown(Defaults().countdown());
+    await CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>, Measurements().spotLight.radius, AnimationDefaults.values.scaleStep);
+    //TODO: Removed spotlight of scene because otherwise it made the spotlight for the frame crash => movement needs improvement
+    threeService.RemoveFromScene(spotlight);
     return true;
   };
 

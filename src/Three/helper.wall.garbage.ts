@@ -8,6 +8,7 @@ export type GarabageHelperForWall = {
   pauseScreen: () => void;
   newStorySelected: () => Promise<void>;
   endOfSessionScreen: () => void;
+  startOfSession: () => void;
 };
 
 const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingService): GarabageHelperForWall => {
@@ -39,7 +40,10 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     removeGroupsByTag(Tags.CircularProgressBar);
     const groupOfAssetsTags = taggingService.getByTag(Tags.GroupOfAssets);
     threeService.RemoveFromScene(groupOfAssetsTags[0].object);
-    console.log('After end screen cleared', taggingService.taggedObjects);
+  };
+
+  const startOfSession = () => {
+    removeGroupsByTag(Tags.startSessionText);
   };
 
   return {
@@ -47,6 +51,7 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     newStorySelected,
     endOfSessionScreen,
     removeGroupsByTag,
+    startOfSession,
   }
 };
 

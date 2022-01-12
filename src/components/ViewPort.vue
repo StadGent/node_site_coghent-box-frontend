@@ -117,7 +117,7 @@ export default defineComponent({
             spotlight,
             activeStoryData,
           ).initialSpotLight();
-          
+
           PlayBookBuild(
             threeSvc,
             storyService,
@@ -127,8 +127,6 @@ export default defineComponent({
             spotlight,
             activeStoryData,
           ).setSelectedStory(currentStory.value);
-          
-          // await Common().awaitTimeout(2000);
           resetStory();
           console.log('tagged => ', taggingService.taggedObjects);
         }
@@ -163,22 +161,30 @@ export default defineComponent({
         activeStoryData,
       ).initialSpotLight();
 
-      setData();
-
-      // startSession = await PlayBookBuild(
-      //   threeSvc,
-      //   storyService,
-      //   zoneService,
-      //   taggingService,
-      //   playBook,
-      //   spotlight,
-      //   activeStoryData,
-      // )
-      //   .startOfSession()
-      //   .finally(async () => {
-      //     await Common().awaitTimeout(3000);
-      //     setData();
-      //   });
+      startSession = await PlayBookBuild(
+        threeSvc,
+        storyService,
+        zoneService,
+        taggingService,
+        playBook,
+        spotlight,
+        activeStoryData,
+      )
+        .startOfSession()
+        .finally(async () => {
+          garbageHelper.startOfSession();
+          //TEMP: Creating a new spotlight that is used for the rest of the session
+          spotlight = PlayBookBuild(
+            threeSvc,
+            storyService,
+            zoneService,
+            taggingService,
+            playBook,
+            spotlight,
+            activeStoryData,
+          ).initialSpotLight();
+          setData();
+        });
     };
 
     const setData = async () => {

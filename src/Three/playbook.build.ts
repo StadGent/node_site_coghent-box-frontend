@@ -142,7 +142,7 @@ const PlayBookBuild = (
     // const activeStoryposition = storyService.getStoryDataOfStory(storyService.activeStory.id).pausedPosition
     // await MoveObject().startMoving(spotlight, new Vector3(activeStoryposition.x, activeStoryposition.y, Layers.scene));
     await MoveObject().startMoving(spotlight, new Vector3(0, 0, Layers.scene));
-    CustomAnimation().fadeOut(spotlight as Mesh<any, MeshBasicMaterial>,-1 , AnimationDefaults.values.fadeStep)
+    // CustomAnimation().fadeOut(spotlight as Mesh<any, MeshBasicMaterial>,-1 , AnimationDefaults.values.fadeStep)
     const storiesWithTheirProgress = useStory().getStoriesWithTheirProgress(
       storyData,
       storyService.getStoryData(),
@@ -168,8 +168,8 @@ const PlayBookBuild = (
     };
   };
 
-  const startOfSession = () => {
-    return useStartOfSession(threeService, zoneService, spotlight).create();
+  const startOfSession = async () => {
+    return await useStartOfSession(threeService, zoneService, spotlight).create();
   };
 
   const setSelectedStory = (currentStory: number) => {
