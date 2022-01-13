@@ -36,7 +36,7 @@ const TextHelper = (): {
       position: position as Vector3,
       fontParams: {
         color: params?.color || DefaultColors().white,
-        size: params?.size || Measurements().text.size,
+        size: params?.size || Measurements().text.size.small,
         path: '/Fonts/myFont.json',
       },
       textBoxParams: {

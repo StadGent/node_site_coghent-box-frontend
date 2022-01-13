@@ -11,7 +11,6 @@ import Colors from './defaults.color';
 import Defaults from './defaults.config';
 import Layers from './defaults.layers';
 import Measurements from './defaults.measurements';
-import customText from './defaults.text';
 import Timing from './defaults.timing';
 import TextHelper from './helper.text';
 import { CubeParams } from './schema.cube';
@@ -56,7 +55,7 @@ const useStartOfSession = (
       `${countdown}`,
       new Vector3(1, 0, Layers.scene),
       {} as CubeParams,
-      { size: customText.size.veryBig, color: Colors().white } as FontParams,
+      { size: Measurements().text.size.veryBig, color: Colors().white } as FontParams,
     );
   };
 

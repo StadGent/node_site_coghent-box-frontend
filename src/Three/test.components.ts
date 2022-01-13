@@ -1,4 +1,4 @@
-import { BoxGeometry, BufferGeometry, Group, Material, Mesh, Vector3 } from 'three';
+import { BufferGeometry, Group, Material, Mesh, Vector3 } from 'three';
 import Colors from './defaults.color';
 import Defaults from './defaults.config';
 import HelperText from './defaults.helperText';
@@ -35,7 +35,7 @@ const TestSingleComponent = (): {
   };
 
   const metadataLabel = (position: Vector3, text: string) => {
-    return MetadataLabel(position).create(text);
+    return MetadataLabel(position).create(text, Colors().green);
   };
 
   return {

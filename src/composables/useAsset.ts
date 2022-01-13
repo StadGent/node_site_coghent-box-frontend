@@ -14,6 +14,7 @@ import AnimationDefaults from '@/Three/defaults.animation';
 import Tools from '@/Three/helper.tools';
 import Colors from '@/Three/defaults.color';
 import { Tags } from '@/services/TaggingService';
+import MetadataLabel from '@/Three/shapes.metadataLabel';
 
 const useAsset = (
   threeService: ThreeService,
@@ -39,7 +40,7 @@ const useAsset = (
     color: number,
     scale: number,
     text: string,
-  ) => Mesh<BoxBufferGeometry, any>;
+  ) => Group;
   getAssetsFromFrame: (activeStory: Story, frame: number) => Array<Asset>;
   setZoomTiming: (relationMetadata: ComponentMetadata) => number;
 } => {
@@ -100,8 +101,6 @@ const useAsset = (
     //TEMP: no animation this breaks the zoom asset in some frames
     // await MoveObject().startMoving(assetImageCube, new Vector3(position.x, position.y, position.z));
     assetImageCube.position.z = Layers.scene + Layers.fraction;
-    // assetImageCube.scale.set(scale,scale,scale);
-    //TEMP: no animation
     await CustomAnimation().grow(assetImageCube, scale, AnimationDefaults.values.scaleStep);
   };
 
@@ -112,18 +111,13 @@ const useAsset = (
     scale: number,
     text: string,
   ) => {
-    const metadataInfo = TextHelper().CreateText(
-      text,
-      new Vector3(zoomPosition.x, zoomPosition.y, Layers.scene + Layers.fraction),
-      {} as CubeParams,
-      { color: color } as FontParams,
-    ) as Mesh<BoxGeometry, any>;
-    const middleOfText = metadataInfo.geometry.parameters.width/2;
-    metadataInfo.position.set(
-      object.position.x - middleOfText,
-      object.position.y + ((object.geometry.parameters.height/2) * object.scale.x),
-      Layers.scene + Layers.fraction,
-    );
+    const metadataInfo = MetadataLabel(
+      new Vector3(
+        object.position.x,
+        object.position.y + ((object.geometry.parameters.height/2) * object.scale.x) + 0.6,
+        Layers.scene + Layers.fraction
+      )
+    ).create(text, color);
     return metadataInfo;
   };
 

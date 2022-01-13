@@ -9,13 +9,17 @@ export type GarabageHelperForWall = {
   newStorySelected: () => Promise<void>;
   endOfSessionScreen: () => void;
   startOfSession: () => void;
+  highlightedAsset: () => void;
 };
 
 const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingService): GarabageHelperForWall => {
 
   const removeGroupsByTag = (_tag: Tags) => {
-    const _groups = taggingService.getByTag(_tag);
-    if (_groups.length > 0) threeService.RemoveGroupsFromScene(_groups[0].object);
+    let _groups = taggingService.getByTag(_tag);
+    if (_groups.length > 0) {
+      threeService.RemoveGroupsFromScene(_groups[0].object);
+      _groups = taggingService.getByTag(_tag);
+    }
   }
 
   const pauseScreen = () => {
@@ -47,12 +51,21 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     removeGroupsByTag(Tags.startSessionText);
   };
 
+  const highlightedAsset = () => {
+    removeGroupsByTag(Tags.HighlightedMetadata);
+    const border = taggingService.getByTag(Tags.HighlightBorder);    
+    threeService.RemoveFromScene(border[0].object);
+    const metadata = taggingService.getByTag(Tags.HighlightedMetadata);    
+    threeService.RemoveFromScene(metadata[0].object);
+  }
+
   return {
     pauseScreen,
     newStorySelected,
     endOfSessionScreen,
     removeGroupsByTag,
     startOfSession,
+    highlightedAsset,
   }
 };
 

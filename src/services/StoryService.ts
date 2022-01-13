@@ -60,7 +60,9 @@ export default class StoryService {
       const storyToUpdate = this.storyData.filter(
         (story) => story.storyId === currentStoryId,
       )[0];
+      // console.log('OLD data', storyToUpdate);
       if (!this.itemIsInRecord(currentStoryId, seenFrame)) {
+        // console.log('ITEM does not exist yet');
         this.totalOfSeenFrames++;
         //TODO: useQuery for updateing the metadata on the user with the frameId
         this.addTimestampToSeenFrame(currentStoryId, seenFrame);
@@ -68,7 +70,9 @@ export default class StoryService {
       }
       storyToUpdate['storySeen'] = this.IHaveSeenTheStory(currentStoryId);
       storyToUpdate['storyColor'] = this.setStoryColor(storyToUpdate);
+      // console.log('NEW data', storyToUpdate);
     }
+    // console.log('storydata', this.storyData);
     return this.storyData;
   }
 
@@ -90,10 +94,14 @@ export default class StoryService {
     const rec = this.getStoryDataOfStory(storyId).seenFrames;
     let exists = false;
     for (const key in rec) {
+      // console.log('key', key);
       if (frame == rec[key]) {
+        console.log({frame});
+        console.log('frame in list', rec[key]);
         exists = true;
       }
     }
+    console.log('frame exists', exists);
     return exists;
   }
 
@@ -130,6 +138,7 @@ export default class StoryService {
         this.storyData.push(this.createStoryDataObject(story, index));
       });
     }
+    // console.log('storyData INIT',this.storyData);
   }
 
   private createStoryDataObject(story: Story, index: number) {

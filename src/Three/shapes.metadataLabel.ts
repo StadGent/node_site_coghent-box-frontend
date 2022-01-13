@@ -10,13 +10,14 @@ import schemaCube, { CubeParams, CubeSchema } from './schema.cube';
 import { FontParams } from './schema.text';
 
 const MetadataLabel = (_position: Vector3): {
-  create: (text: string) => Group;
+  create: (text: string, _color: number) => Group;
 } => {
 
   const label = (text: string) => {
-    const labelText = TextHelper().CreateText(text, new Vector3(_position.x, _position.y, _position.z + Layers.fraction), { width: 0, height: 0 } as CubeParams, { color: Colors().white } as FontParams, 1) as Mesh<BoxGeometry, any>;
-    labelText.position.setY(_position.y - (Measurements().text.size / 2));
-    labelText.position.setX(_position.x - ((text.replace(/\s/g, '').length / 2) * Measurements().text.size));
+    const labelText = TextHelper().CreateText(text, new Vector3(_position.x, _position.y, _position.z + Layers.fraction), { width: 0, height: 0 } as CubeParams, { color: Colors().white, size: Measurements().text.size.smaller} as FontParams, 1) as Mesh<BoxGeometry, any>;
+    const lengthOfText = ((text.length * Measurements().text.size.smaller))
+    labelText.position.setY(_position.y - (Measurements().text.size.smaller / 2));
+    labelText.position.setX(_position.x - lengthOfText/3 - Measurements().text.paddingAround);
     return labelText;
   }
 
@@ -53,12 +54,12 @@ const MetadataLabel = (_position: Vector3): {
   }
 
 
-  const create = (text: string) => {
-    const labelText = label(text);
-    const textWidth = text.replace(/\s/g, '').length * Measurements().text.size;
-    const textHeight = Measurements().text.size + Measurements().text.paddingAround;
-    const box = labelBox(textWidth, textHeight, Colors().green);
-    return GroupHelper().CreateGroup([box, labelText, circles(box, Colors().green).left, circles(box, Colors().green).right]);
+  const create = (_text: string, _color: number) => {
+    const labelText = label(_text);
+    const textWidth = _text.length * Measurements().text.size.smaller;
+    const textHeight = Measurements().text.size.smaller;
+    const box = labelBox(textWidth, textHeight + Measurements().text.paddingAround, _color);
+    return GroupHelper().CreateGroup([box, labelText, circles(box, _color).left, circles(box, _color).right]);
   };
 
   return { create };

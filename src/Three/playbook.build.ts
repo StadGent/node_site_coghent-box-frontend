@@ -21,6 +21,7 @@ import TaggingService, { Tags } from '@/services/TaggingService';
 import CustomAnimation from '@/composables/animation';
 import AnimationDefaults from './defaults.animation';
 import Common from '@/composables/common';
+import { GarabageHelperForWall } from './helper.wall.garbage';
 
 const PlayBookBuild = (
   threeService: ThreeService,
@@ -40,6 +41,7 @@ const PlayBookBuild = (
   frameOverview: (
     currentFrameIndex: number,
     storyColor: number,
+    garbageHelper: GarabageHelperForWall,
   ) => void;
   progressOfFrame: (frameIndex: number, color: number, currentTime: number, audioDuration: number, progressbar: Array<Group>) => Array<Group>;
   initialSpotLight: () => Mesh;
@@ -90,6 +92,7 @@ const PlayBookBuild = (
   const frameOverview = (
     currentFrameIndex: number,
     storyColor: number,
+    garbageHelper: GarabageHelperForWall,
   ) => {
     useFrameAssetOverview(
       threeService,
@@ -97,6 +100,7 @@ const PlayBookBuild = (
       activeStoryData,
       playBook,
       spotlight,
+      garbageHelper,
     ).create(
       currentFrameIndex,
       storyColor,

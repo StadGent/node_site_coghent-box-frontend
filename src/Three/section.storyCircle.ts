@@ -7,7 +7,6 @@ import { FontParams } from '@/Three/schema.text';
 import { Group, Mesh, Vector3 } from 'three';
 import CubeHelper from './helper.cube';
 import Layers from './defaults.layers';
-import customText from './defaults.text';
 import CircularprogressBar from '@/Three/shapes.circularProgressbar';
 import Colors from '@/Three/defaults.color';
 import Measurements from './defaults.measurements';
@@ -60,7 +59,7 @@ const StoryCircle = (): {
         color: color,
         width: 0,
       } as CubeParams,
-      { size: customText.size.smaller } as FontParams,
+      { size: Measurements().text.size.smaller } as FontParams,
     );
     return progress;
   };
@@ -73,7 +72,7 @@ const StoryCircle = (): {
         color: color,
         width: 0,
       } as CubeParams,
-      { size: customText.size.small } as FontParams,
+      { size: Measurements().text.size.small } as FontParams,
     );
     return storyTitle;
   };

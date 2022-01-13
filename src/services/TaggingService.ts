@@ -27,6 +27,8 @@ export enum Tags {
   ActiveStoryCircle,
   startSessionText,
   startOfSessionCountdown,
+  HighlightedMetadata,
+  HighlightBorder,
 }
 
 export default class TaggingService {

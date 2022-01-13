@@ -17,6 +17,7 @@ import ZoneService from '@/services/ZoneService';
 import { Tags } from '@/services/TaggingService';
 import AnimationDefaults from './defaults.animation';
 import CustomAnimation from '@/composables/animation';
+import { GarabageHelperForWall } from '@/Three/helper.wall.garbage';
 
 const useFrameAssetOverview = (
   threeService: ThreeService,
@@ -24,6 +25,7 @@ const useFrameAssetOverview = (
   activeStoryData: Story,
   playBook: PlayBookFunctions,
   spotlight: Mesh,
+  garbageHelper: GarabageHelperForWall,
 ): {
   create: (
     currentFrame: number,
@@ -73,7 +75,7 @@ const useFrameAssetOverview = (
     imageCube: Group,
     currentAsset: number,
   ) => {
-    threeService.RemoveFromScene(imageCube);
+    garbageHelper.highlightedAsset();
     asset.position.set(positions[currentAsset].x, positions[currentAsset].y, positions[currentAsset].z);
     asset.scale.set(scale,scale,scale);
     
@@ -135,10 +137,10 @@ const useFrameAssetOverview = (
     );
     highlightWithMetaInfo = GroupHelper().CreateGroup([
       LineHelper().drawLineArroundCube(asset, storyColor, Layers.scene + Layers.fraction),
-      metadataInfo,
     ]);
 
-    threeService.AddToScene(highlightWithMetaInfo, Tags.Highlight, 'Highlight with metadata info.');
+    threeService.AddGroupsToScene([metadataInfo], Tags.HighlightedMetadata, 'Metadata for image.', `${title}, Me (${collections[0].value})`);
+    threeService.AddToScene(highlightWithMetaInfo, Tags.HighlightBorder, 'Highlight with metadata info.');
   };
 
   const create = (

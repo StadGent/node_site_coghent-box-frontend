@@ -4,7 +4,6 @@ import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 import ChapeHelper from './helper.chape';
 import { CubeParams } from './schema.cube';
 import DefaultColors from './defaults.color';
-import Layers from './defaults.layers';
 
 export type FontParams = {
   path: string;

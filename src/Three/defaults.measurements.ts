@@ -6,8 +6,16 @@ type GenericCircleObject ={
   radius: number;
 };
 
+type Textsize = {
+  smaller: number;
+  small: number;
+  medium: number;
+  big: number;
+  veryBig: number;
+};
+
 type TextParams ={
-  size: number;
+  size: Textsize;
   paddingAround: number;
 };
 
@@ -47,8 +55,14 @@ const Measurements = (): {
   };
 
   const text = {
-    size: 0.3,
-    paddingAround: 0.3,
+    size: {
+      smaller: 0.2,
+      small: 0.3,
+      medium: 0.4,
+      big: 0.5,
+      veryBig: 1.2,
+    },
+    paddingAround: 0.4,
   };
 
   return {

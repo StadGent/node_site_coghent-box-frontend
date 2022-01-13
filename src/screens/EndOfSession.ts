@@ -1,7 +1,6 @@
 import { CubeParams } from '@/Three/schema.cube';
 import Colors from '@/Three/defaults.color';
 import HelperText from '@/Three/defaults.helperText';
-import customText from '@/Three/defaults.text';
 import GroupHelper from '@/Three/helper.group';
 import Spot from '@/Three/shapes.spotlight';
 import TextHelper from '@/Three/helper.text';
@@ -9,6 +8,7 @@ import { FontParams } from '@/Three/schema.text';
 import { Group, Vector3 } from 'three';
 import Images from '@/Three/defaults.images';
 import ZoneService from '@/services/ZoneService';
+import Measurements from '@/Three/defaults.measurements';
 
 const EndOfSession = (
   zoneService: ZoneService,
@@ -79,7 +79,7 @@ const EndOfSession = (
       'OF',
       position,
       {} as CubeParams,
-      { size: customText.size.veryBig, color: Colors().white } as FontParams,
+      { size: Measurements().text.size.veryBig, color: Colors().white } as FontParams,
       0.4,
     );
     return text;

@@ -5,11 +5,11 @@ import TextHelper from './helper.text';
 import Positions from './defaults.positions';
 import { CubeParams } from './schema.cube';
 import { FontParams } from './schema.text';
-import customText from './defaults.text';
 import Colors from './defaults.color';
 import Common from '@/composables/common';
 import ZoneService from '@/services/ZoneService';
 import { Tags } from '@/services/TaggingService';
+import Measurements from './defaults.measurements';
 
 const useEndOfSession = (
   threeService: ThreeService,
@@ -26,7 +26,7 @@ const useEndOfSession = (
         `0${minutes} :${seconds}`,
         Positions().timerCountdown(),
         {} as CubeParams,
-        { size: customText.size.veryBig, color: Colors().white } as FontParams,
+        { size: Measurements().text.size.veryBig, color: Colors().white } as FontParams,
       );
       threeService.AddToScene(text, Tags.Countdown, 'EndOfSession countdown timer');
       await Common().awaitTimeout(1000);
