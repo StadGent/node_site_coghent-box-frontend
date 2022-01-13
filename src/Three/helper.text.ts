@@ -4,6 +4,7 @@ import SchemaCube, { CubeParams } from './schema.cube';
 import DefaultColors from './defaults.color';
 import GroupHelper from './helper.group';
 import SchemaText, { FontParams } from './schema.text';
+import Measurements from './defaults.measurements';
 
 const TextHelper = (): {
   CreateTextFromRecord: (words: Record<string, Vector3>, color?: number) => Array<Mesh>;
@@ -35,7 +36,7 @@ const TextHelper = (): {
       position: position as Vector3,
       fontParams: {
         color: params?.color || DefaultColors().white,
-        size: params?.size || 0.3,
+        size: params?.size || Measurements().text.size,
         path: '/Fonts/myFont.json',
       },
       textBoxParams: {

@@ -1,4 +1,4 @@
-import { BufferGeometry, Group, Material, Mesh, Vector3 } from 'three';
+import { BoxGeometry, BufferGeometry, Group, Material, Mesh, Vector3 } from 'three';
 import Colors from './defaults.color';
 import Defaults from './defaults.config';
 import HelperText from './defaults.helperText';
@@ -8,6 +8,7 @@ import TextHelper from './helper.text';
 import { CircleSchema } from './schema.circle';
 import CircularProgressBar from './shapes.circularProgressbar';
 import HorizontalProgressBar from './shapes.horizontalProgressBar';
+import MetadataLabel from './shapes.metadataLabel';
 
 const TestSingleComponent = (): {
   horizontalProgressbar: Array<Group>;
@@ -17,6 +18,7 @@ const TestSingleComponent = (): {
     dotSchemas: CircleSchema[];
   };
   endOfStoryText: (position: Vector3) => Group;
+  metadataLabel: (position: Vector3, text: string) => Group;
 } => {
   const horizontalProgressbar = HorizontalProgressBar().create(new Vector3(0, -7, 1), [0, 3, 6], 8, 0.1, Colors().yellow);
 
@@ -32,11 +34,16 @@ const TestSingleComponent = (): {
     return GroupHelper().CreateGroup(text);
   };
 
+  const metadataLabel = (position: Vector3, text: string) => {
+    return MetadataLabel(position).create(text);
+  };
+
   return {
     horizontalProgressbar,
     circularProgressbar,
     circularProgressbarActiveSegments,
     endOfStoryText,
+    metadataLabel,
   }
 }
 
