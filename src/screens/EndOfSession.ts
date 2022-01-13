@@ -27,10 +27,10 @@ const EndOfSession = (
     );
     GroupHelper().AddObjectsTogroups(
       TextHelper().displayTextFromRecordWithIcon(
-        HelperText().scanYourTicketAgain(new Vector3(zoneService.zoneCenters[0].x - 2.5,zoneService.zoneCenters[0].y,zoneService.zoneCenters[0].z)),
+        HelperText().scanYourTicketAgain(new Vector3(zoneService.zoneCenters[0].x - 1.5,zoneService.zoneCenters[0].y,zoneService.zoneCenters[0].z)),
         Colors().white,
         Images.endOfSession['scanQrCode'],
-        new Vector3(zoneService.zoneCenters[0].x - 1 , zoneService.zoneCenters[0].y - 1.5, zoneService.zoneCenters[0].z),
+        new Vector3(zoneService.zoneCenters[0].x - 1.5 , zoneService.zoneCenters[0].y - 1.5, zoneService.zoneCenters[0].z),
         new Vector3(2, 3, 0),
       ),
       groups,
@@ -45,10 +45,10 @@ const EndOfSession = (
     );
     GroupHelper().AddObjectsTogroups(
       TextHelper().displayTextFromRecordWithIcon(
-        HelperText().WalkToTouchtable(new Vector3(0,0,0)),
+        HelperText().WalkToTouchtable(new Vector3(-1.5,0,0)),
         Colors().white,
         Images.endOfSession['touchtable'],
-        new Vector3(zoneService.middleZoneCenter.x, zoneService.middleZoneCenter.y - 2.5, zoneService.middleZoneCenter.z),
+        new Vector3(zoneService.middleZoneCenter.x - 1, zoneService.middleZoneCenter.y - 2.5, zoneService.middleZoneCenter.z),
         new Vector3(5, 4, 0),
       ),
       groups,
@@ -63,7 +63,7 @@ const EndOfSession = (
     );
     GroupHelper().AddObjectsTogroups(
       TextHelper().displayTextFromRecordWithIcon(
-        HelperText().goToWebPortal(new Vector3(zoneService.zoneCenters[zoneService.zoneCenters.length - 1].x + 2.5, zoneService.zoneCenters[zoneService.zoneCenters.length - 1].y, zoneService.zoneCenters[zoneService.zoneCenters.length - 1].z)),
+        HelperText().goToWebPortal(new Vector3(zoneService.zoneCenters[zoneService.zoneCenters.length - 1].x - 2, zoneService.zoneCenters[zoneService.zoneCenters.length - 1].y, zoneService.zoneCenters[zoneService.zoneCenters.length - 1].z)),
         Colors().white,
         Images.endOfSession['webPortal'],
         new Vector3(zoneService.zoneCenters[zoneService.zoneCenters.length - 1].x - 1, zoneService.zoneCenters[zoneService.zoneCenters.length - 1].y - 2.5, zoneService.zoneCenters[zoneService.zoneCenters.length - 1].z),

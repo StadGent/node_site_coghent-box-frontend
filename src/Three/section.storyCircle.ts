@@ -94,8 +94,8 @@ const StoryCircle = (): {
         title(
           storyTitle,
           new Vector3(
-            circleSchema.position.x,
-            circleSchema.position.y - 1,
+            circleSchema.position.x - 1.5,
+            circleSchema.position.y ,
             circleSchema.position.z,
           ),
           circleSchema.params.color || DefaultColors().green,
@@ -103,8 +103,8 @@ const StoryCircle = (): {
         progressText(
           progressState,
           new Vector3(
-            circleSchema.position.x,
-            circleSchema.position.y - 0.5,
+            circleSchema.position.x - 1.5,
+            circleSchema.position.y + 0.5,
             circleSchema.position.z,
           ),
           circleSchema.params.color || DefaultColors().green,

@@ -78,7 +78,6 @@ const useStoryCircle = (
     timestamp: number,
     canAddToSCene: boolean,
   ) => {
-    // threeService.state.scene.background = new Color(Colors().black);
     if (canAddToSCene) {
       const progressBar = CircularProgressBar().createActiveSegment(
         new Vector3(0, 0, position.z),
