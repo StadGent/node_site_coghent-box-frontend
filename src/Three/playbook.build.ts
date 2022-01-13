@@ -5,7 +5,6 @@ import ThreeService from '@/services/ThreeService';
 import { Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
 import AudioHelper from './helper.audio';
 import Layers from './defaults.layers';
-import Timing from './defaults.timing';
 import Spot from './shapes.spotlight';
 import useFrameAssetOverview from './playbook.frameAssetOverview';
 import useStoryCircle from './playbook.storyCircle';
@@ -137,18 +136,17 @@ const PlayBookBuild = (
   };
 
   const storyPaused = async (storyData: Array<Story>, taggingService: TaggingService) => {
-    // alert('storyPaused in Build')
-    //FIXME:
-    // const activeStoryposition = storyService.getStoryDataOfStory(storyService.activeStory.id).pausedPosition
-    // await MoveObject().startMoving(spotlight, new Vector3(activeStoryposition.x, activeStoryposition.y, Layers.scene));
-    await MoveObject().startMoving(spotlight, new Vector3(0, 0, Layers.scene));
-    // CustomAnimation().fadeOut(spotlight as Mesh<any, MeshBasicMaterial>,-1 , AnimationDefaults.values.fadeStep)
+    const assetsOnScreen = taggingService.getByTag(Tags.GroupOfAssets)[0].object as Group;
+    assetsOnScreen.position.setZ(Layers.background);
+    await CustomAnimation().grow(spotlight as Mesh<any, MeshBasicMaterial>,Measurements().pauseScreen.spotLightRadius , AnimationDefaults.values.scaleStep)
+    await MoveObject().startMoving(spotlight, new Vector3(0, -(zoneService.sceneZone().height/2) + Measurements().pauseScreen.bannerHeight, Layers.scene));
+    spotlight.position.setZ(Layers.background);
     const storiesWithTheirProgress = useStory().getStoriesWithTheirProgress(
       storyData,
       storyService.getStoryData(),
     );
     threeService.AddGroupsToScene(
-      StoryPaused(storyData, taggingService).Create(storiesWithTheirProgress), Tags.Stories, 'All stories when session is paused.'
+      StoryPaused(storyData, taggingService, zoneService).Create(storiesWithTheirProgress), Tags.Stories, 'All stories when session is paused.'
     );
   };
 

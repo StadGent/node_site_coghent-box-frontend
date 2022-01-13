@@ -10,7 +10,7 @@ const Layers: Layer = {
   display: 2,
   presentation: 1,
   scene: 0,
-  background: -1,
+  background: -0.2,
   fraction: 0.1,
 };
 

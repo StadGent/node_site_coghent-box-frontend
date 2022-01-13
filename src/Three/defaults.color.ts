@@ -12,7 +12,7 @@ const Colors = (): {
   const yellow = 0xfdc20b;
   const lightBlue = 0x9fcdd;
   const white = 0xffffff;
-  const black = 0x000000;
+  const black = 0x00f00;
   const grey = 0xdcdcdc;
 
   return {
