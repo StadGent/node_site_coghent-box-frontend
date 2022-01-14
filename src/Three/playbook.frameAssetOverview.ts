@@ -64,7 +64,7 @@ const useFrameAssetOverview = (
         CustomAnimation().grow(spotlight as Mesh<any, MeshBasicMaterial>, 6.5, AnimationDefaults.values.scaleStep)
         await MoveObject().startMoving(spotlight, Object.values(data)[0]);
       },
-      timestamp + 2,
+      timestamp,
       `Add all assets to scene.`,
     );
   };
@@ -182,8 +182,7 @@ const useFrameAssetOverview = (
                 AnimationDefaults.values.zoomOfAsset,
               );
             },
-            useAsset(threeService).setZoomTiming(relationMetadata) +
-            Timing.frameOverview.spotLightMoved,
+            useAsset(threeService).setZoomTiming(relationMetadata),
             `Zoom and highlight asset + set other assets inactive`,
           );
           playBook.addToPlayBook(
@@ -200,7 +199,7 @@ const useFrameAssetOverview = (
                 relationMetadata.scale,
               );
             },
-            relationMetadata.timestamp_end + Timing.frameOverview.spotLightMoved,
+            relationMetadata.timestamp_end,
             `Reset image position of asset: ${assets[index].id} and spotlight.`,
           );
         }

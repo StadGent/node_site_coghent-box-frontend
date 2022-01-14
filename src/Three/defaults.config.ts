@@ -30,7 +30,7 @@ const Defaults = (): {
   const showZonesInOverview = () => false;
   const showDevLogs = () => true;
   
-  const maxFrames = () => 1;
+  const maxFrames = () => 5;
   const countdown = () => 3; 
 
   const circlePoints = () => {
