@@ -1,8 +1,4 @@
 type FabricDefaults = {
-  images: {
-    scaleX: number;
-    scaleY: number;
-  };
   canvas: {
     dimensions: {
       width: number;
@@ -34,6 +30,9 @@ type FabricDefaults = {
       };
     };
     secondaryImage: {
+      positions: {
+        xAxis: Array<number>;
+      };
       scale: {
         scaleX: number;
         scaleY: number;
@@ -43,19 +42,15 @@ type FabricDefaults = {
 };
 
 const fabricdefaults: FabricDefaults = {
-  images: {
-    scaleX: 0.25,
-    scaleY: 0.25,
-  },
   canvas: {
     dimensions: {
-      width: window.innerWidth,
-      height: window.innerHeight,
+      width: 3840,
+      height: 2160,
     },
     selectedImage: {
       canvasPosition: {
-        left: window.innerWidth / 2,
-        top: window.innerHeight - 20,
+        left: 3840 / 2,
+        top: 2160 - 20,
       },
       scale: {
         scaleX: 0.3,
@@ -78,6 +73,16 @@ const fabricdefaults: FabricDefaults = {
       },
     },
     secondaryImage: {
+      positions: {
+        xAxis: [
+          3840 / 7,
+          (3840 / 7) * 2,
+          (3840 / 7) * 3,
+          (3840 / 7) * 4,
+          (3840 / 7) * 5,
+          (3840 / 7) * 6,
+        ],
+      },
       scale: {
         scaleX: 0.2,
         scaleY: 0.2,

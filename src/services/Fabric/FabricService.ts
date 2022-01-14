@@ -1,9 +1,16 @@
 import { fabric } from 'fabric';
 import { fabricdefaults } from './defaults.fabric';
+import { router } from '@/router';
+import { image } from 'd3';
 
 type State = {
   canvas: any;
   selectedImage: any;
+};
+
+type Scale = {
+  scaleX: number;
+  scaleY: number;
 };
 
 export default class FabricService {
@@ -15,16 +22,16 @@ export default class FabricService {
       selectedImage: undefined,
     };
     this.removeNewFrameOnCollision();
+    this.setMainImageOnClick();
   }
 
   setupFabric() {
     const canvas = new fabric.Canvas('canvas');
     canvas.preserveObjectStacking = true; // keep z-index of selected objects
     canvas.selection = false; // no group selection
-    canvas.setDimensions({
-      width: fabricdefaults.canvas.dimensions.width,
-      height: fabricdefaults.canvas.dimensions.height,
-    });
+    canvas.setHeight(fabricdefaults.canvas.dimensions.height);
+    canvas.setWidth(fabricdefaults.canvas.dimensions.width);
+    canvas.setBackgroundColor('#F0EDE6');
     return canvas;
   }
 
@@ -36,7 +43,8 @@ export default class FabricService {
     object.setControlsVisibility(fabricdefaults.canvas.selectedImage.controls);
   }
 
-  generateMainImageFrame(image: string) {
+  generateMainImageFrame(entity: any) {
+    const image = this.generateImageUrls(entity)[0];
     const frame = new fabric.Image.fromURL(image, (image: any) => {
       image.top = fabricdefaults.canvas.selectedImage.canvasPosition.top;
       image.left = fabricdefaults.canvas.selectedImage.canvasPosition.left;
@@ -45,6 +53,10 @@ export default class FabricService {
       image.originX = fabricdefaults.canvas.selectedImage.origin.originX;
       image.originY = fabricdefaults.canvas.selectedImage.origin.originY;
       this.lockObjectMovement(image);
+      image.hoverCursor = 'pointer';
+      image.setCoords();
+      image.id = entity.id;
+      image.entity = entity;
       this.state.canvas.add(image);
       this.state.selectedImage = image;
     });
@@ -52,21 +64,36 @@ export default class FabricService {
     return frame;
   }
 
-  async generateSecondaryImageFrames(images: Array<string>) {
+  async generateSecondaryImageFrames(entities: Array<any>) {
+    console.log({ entities });
+    const images: Array<string> = this.generateImageUrls(entities);
     const frames: Array<any> = [];
-    images.forEach((image) => {
+    images.forEach((image, index) => {
       const frame = new fabric.Image.fromURL(image, (image: any) => {
         image.scaleX = fabricdefaults.canvas.secondaryImage.scale.scaleX;
         image.scaleY = fabricdefaults.canvas.secondaryImage.scale.scaleY;
-        image.top = Math.floor(Math.random() * fabricdefaults.canvas.dimensions.height);
-        image.left = Math.floor(Math.random() * fabricdefaults.canvas.dimensions.width);
+        image.top = this.getRandomNumberInRange(
+          20,
+          fabricdefaults.canvas.dimensions.height - 200,
+        );
+        image.left =
+          fabricdefaults.canvas.secondaryImage.positions.xAxis[
+            this.getRandomNumberInRange(
+              0,
+              fabricdefaults.canvas.secondaryImage.positions.xAxis.length - 1,
+            )
+          ];
         image.type = 'image';
+        image.hoverCursor = 'pointer';
+        image.id = entities[index].id;
+        image.entity = entities[index];
+        image.setCoords();
         this.lockObjectMovement(image);
         this.state.canvas.add(image);
       });
       frames.push(frame);
     });
-    await this.generateRelationBetweenFrames();
+    // await this.generateRelationBetweenFrames();
     return frames;
   }
 
@@ -90,9 +117,26 @@ export default class FabricService {
     });
   }
 
+  changeFrameScale(frame: any, scale: Scale) {
+    frame.scaleX = scale.scaleX;
+    frame.scaleY = scale.scaleY;
+  }
+
+  setMainImageOnClick() {
+    this.state.canvas.on('mouse:down', (selectedObject: any) => {
+      if (selectedObject.target) {
+        selectedObject = selectedObject.target;
+        router.push('/touchtable/' + selectedObject.id);
+        this.state.selectedImage = selectedObject;
+        window.localStorage.setItem(
+          'selectedObject',
+          JSON.stringify(selectedObject.entity),
+        );
+      }
+    });
+  }
+
   private getClosestCorner(frame1: any, frame2: any) {
-    const boundingBox1 = frame1.getBoundingRect;
-    const boundingBox2 = frame2.getBoundingRect;
     const centerPoint1 = {
       top: frame1.top + frame1.height / 2,
       left: frame1.left + frame1.width / 2,
@@ -108,11 +152,41 @@ export default class FabricService {
     }
   }
 
-  generateRelationBetweenFrames() {
+  private generateImageUrls(entities: Array<any> | any) {
+    const imageUrls: Array<any> = [];
+    if (entities instanceof Array) {
+      entities.forEach((entity: any) => {
+        if (entity.primary_mediafile) {
+          imageUrls.push(
+            `https://api-uat.collectie.gent/iiif/image/iiif/3/${entity.primary_mediafile}/full/1000,/0/default.jpg`,
+          );
+        }
+      });
+    } else {
+      imageUrls.push(
+        `https://api-uat.collectie.gent/iiif/image/iiif/3/${entities.primary_mediafile}/full/1000,/0/default.jpg`,
+      );
+    }
+    return imageUrls;
+  }
+
+  private getRandomNumberInRange(min: number, max: number) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  }
+
+  getFrameByEntityId(frameId: string) {
+    const foundFrame: any = this.state.canvas
+      .getObjects()
+      .find((object: any) => object.id == frameId);
+    return foundFrame;
+  }
+
+  generateRelationBetweenFrames(frameId1: string, frameId2: string) {
     setTimeout(() => {
-      console.log(this.state.canvas.getObjects());
-      const frame1 = this.state.selectedImage;
-      const frame2 = this.state.canvas.getObjects()[3];
+      const frame1 = this.getFrameByEntityId(frameId1);
+      const frame2 = this.getFrameByEntityId(frameId2);
       const closestCornerIndex = this.getClosestCorner(frame1, frame2);
       const line = [
         frame1.getCoords()[0].x,

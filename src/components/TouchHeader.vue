@@ -1,59 +1,21 @@
 <template>
-  <div class="bg-background-medium text-center py-3">
-    <BaseTitle :text="msg" />
-    <div>
-      <BaseFormInputText :value="keyword" :on-change="onChange" placeholder="keyword" />
-      <BaseButton :on-click="getData" text="Get data!" />
-    </div>
-    <p class="mt-2">Currently in basket:</p>
-    <p>
-      <span v-for="square in basket" :key="square.id">{{ square.title.text }}, </span>
-    </p>
-  </div>
+  <div class="p-10 flex justify-center align-center">
+      <h1 class="font-bold text-7xl">Mijn verhalenbox</h1>
+      <base-icon icon="downwardArrows" class="w-10 h-10 text-text-black"/>
+  </div>    
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
-import { Square } from '../models/SquareModel';
-import BaseTitle from './BaseTitle.vue';
-import BaseButton from './BaseButton.vue';
-import BaseFormInputText from './BaseFormInputText.vue';
+import { defineComponent, onMounted, ref } from 'vue';
+import { baseIcon} from 'coghent-vue-3-component-library'
 
 export default defineComponent({
   name: 'TouchHeader',
   components: {
-    BaseTitle,
-    BaseButton,
-    BaseFormInputText,
+      baseIcon
   },
-  props: {
-    basket: {
-      type: Array as PropType<Square[]>,
-      required: true,
-    },
-    keyword: {
-      type: String,
-      required: true,
-    },
-    msg: {
-      type: String,
-      required: true,
-    },
-    getData: {
-      type: Function,
-      required: true,
-    },
-  },
-  emits: ['update:keyword'],
-  setup: (props, { emit }) => {
-    const onChange = (e: any) => {
-      emit('update:keyword', e.currentTarget.value);
-    };
-
-    return {
-      onChange,
-    };
-  },
+  setup: (props) => {
+  }
 });
 </script>
 

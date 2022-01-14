@@ -1,12 +1,12 @@
 <template>
-  <canvas id="canvas" class="w-screen h-screen" />
+  <canvas id="canvas" class="touchcanvas" />
 </template>
 
 <script lang="ts">
 import { defineComponent, onMounted, ref } from 'vue';
 import { useMutation, useQuery, useResult } from '@vue/apollo-composable';
 import FabricService from '../services/Fabric/FabricService';
-import { GetEntitiesDocument} from 'coghent-vue-3-component-library'
+import { GetTouchTableEntityDocument} from 'coghent-vue-3-component-library'
 
 export default defineComponent({
   name: 'TouchTable',
@@ -14,11 +14,12 @@ export default defineComponent({
   },
   setup: (props) => {
 
-    const { result, loading, fetchMore, onResult, refetch } = useQuery(
-      GetEntitiesDocument,
+     const { result, loading, fetchMore, onResult, refetch } = useQuery(
+      GetTouchTableEntityDocument,
+
 
       () => ({
-        limit: 10,
+        limit: 1,
         skip: 0,
         searchValue: {
           value: '',
@@ -35,21 +36,26 @@ export default defineComponent({
       })
     )
 
-    onResult((queryResult) => {
-      console.log(queryResult)
-    })
-
-    onMounted(() => {
+    const initializeCanvas= (entities: Array<any>) => {
       const fabricService: FabricService = new FabricService();
-      fabricService.generateMainImageFrame('/images/testImage.jpg')
-      fabricService.generateSecondaryImageFrames(['/images/testImage.jpg', '/images/testImage.jpg', '/images/testImage.jpg', '/images/testImage.jpg', '/images/testImage.jpg', '/images/testImage.jpg', '/images/testImage.jpg'])
-      
+      fabricService.generateSecondaryImageFrames(entities)
 
-  })
+    }
+
+    onResult((queryResult) => {
+      if (queryResult.data){
+        console.log(queryResult.data)
+        initializeCanvas(queryResult.data.Entities.results)
+      }
+    })
     return {}
   },
 });
 </script>
 
 <style scoped>
+.touchcanvas {
+  width: 3840px;
+  height: 2160px;
+}
 </style>
