@@ -52,7 +52,7 @@ const StoryPaused = (storyData: Array<Story>, taggingService: TaggingService, zo
   const storyEndText = () => {
     const groups: Array<Group> = [];
     const text = TextHelper().CreateTextFromRecord(
-      HelperText().EndOfStory(new Vector3(0, bannerCenterPosition, 0)),
+      HelperText().EndOfStory(new Vector3(-1.4, bannerCenterPosition, 0)),
       Colors().white,
     );
     const manSchema = CubeHelper().CreateSchema(new Vector3(0, bannerTopPosition + 2, 0), Images.pauseScreen.man, new Vector3(5, 2.5, 0));
