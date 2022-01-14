@@ -5,7 +5,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, PropType, reactive, Ref, ref, watch } from 'vue';
-import { Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
+import { Group, Mesh, Vector3 } from 'three';
 import { Entity as _Entity, Story } from '@/models/GraphqlModel';
 
 import ThreeService from '@/services/ThreeService';
@@ -22,24 +22,18 @@ import WallGarbageHelper, { GarabageHelperForWall } from '@/Three/helper.wall.ga
 import TestSingleComponent from '@/Three/test.components';
 
 import Defaults from '@/Three/defaults.config';
-import Timing from '@/Three/defaults.timing';
-import Layers from '@/Three/defaults.layers';
-import AnimationDefaults from '@/Three/defaults.animation';
 
 import PlayBookBuild from '@/Three/playbook.build';
 
 import PlayBook from '@/composables/playbook';
-import Common from '@/composables/common';
 import useStory from '@/composables/useStory';
-import CustomAnimation from '@/composables/animation';
 
 import Measurements from '@/Three/defaults.measurements';
-import SchemaCube, { CubeParams, CubeSchema } from '@/Three/schema.cube';
+import { CubeSchema } from '@/Three/schema.cube';
 import Colors from '@/Three/defaults.color';
 import { threeDefaultsWall } from '@/Three/defaults.three';
-import GroupHelper from '@/Three/helper.group';
-import MoveObject from '@/composables/moveObject';
-import TextHelper from '@/Three/helper.text';
+
+import schemaCube from '@/Three/schema.cube';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -80,8 +74,7 @@ export default defineComponent({
     };
     let garbageHelper: GarabageHelperForWall;
     let audioDuration = 120;
-    let currentFrame = 0;
-    let startSession = false;
+    let currentFrame = 1;
     let showProgressOfFrame = false;
     let interval: ReturnType<typeof setTimeout>;
     let storyData: Array<Story> = [];
@@ -91,7 +84,6 @@ export default defineComponent({
     watch(
       () => props.storySelected,
       async (value) => {
-        //TODO: Move stories out of the scene and bring selected to the middle
         console.log('You want to select story', props.storySelected);
         console.log('Can you choose a story?', chooseStory.value);
         storyData = stories.value;
@@ -106,7 +98,7 @@ export default defineComponent({
           currentStory.value = value - 1;
           currentFrame = _storyData.totalOfFramesSeen;
           console.log('Selected story => ', currentStory.value);
-          garbageHelper.newStorySelected();
+          await garbageHelper.newStorySelected();
           threeSvc.ClearScene();
           spotlight = PlayBookBuild(
             threeSvc,
@@ -145,6 +137,7 @@ export default defineComponent({
       (value) => {
         storyService = value;
         storyService.setActiveStory(storyService.stories[0].id);
+        //TODO:
         setup();
       },
     );
@@ -160,37 +153,38 @@ export default defineComponent({
         spotlight,
         activeStoryData,
       ).initialSpotLight();
+      setData();
 
-      startSession = await PlayBookBuild(
-        threeSvc,
-        storyService,
-        zoneService,
-        taggingService,
-        playBook,
-        spotlight,
-        activeStoryData,
-      )
-        .startOfSession()
-        .finally(async () => {
-          garbageHelper.startOfSession();
-          //TEMP: Creating a new spotlight that is used for the rest of the session
-          spotlight = PlayBookBuild(
-            threeSvc,
-            storyService,
-            zoneService,
-            taggingService,
-            playBook,
-            spotlight,
-            activeStoryData,
-          ).initialSpotLight();
-          setData();
-        });
+      // await PlayBookBuild(
+      //   threeSvc,
+      //   storyService,
+      //   zoneService,
+      //   taggingService,
+      //   playBook,
+      //   spotlight,
+      //   activeStoryData,
+      // )
+      //   .startOfSession()
+      //   .finally(async () => {
+      //     garbageHelper.startOfSession();
+      //     //TEMP: Creating a new spotlight that is used for the rest of the session
+      //     spotlight = PlayBookBuild(
+      //       threeSvc,
+      //       storyService,
+      //       zoneService,
+      //       taggingService,
+      //       playBook,
+      //       spotlight,
+      //       activeStoryData,
+      //     ).initialSpotLight();
+      //     setData();
+      //   });
     };
 
     const setData = async () => {
       //DEMO:
       // alert('got stories and can start');
-      audioHelper = AudioHelper();
+      audioHelper = AudioHelper(threeSvc);
       storyData = storyService.stories;
       storyService.setStoryPausedPositions(zoneService.zonesInnerToOuter);
       console.log('StoryData', storyService.getStoryData());
@@ -200,7 +194,6 @@ export default defineComponent({
     const timing = () => {
       let currentFunction = 0;
       interval = setInterval(async () => {
-        //DEMO: Show progress of the frame removed for demo
         showProgressOfFrame = true;
         if (
           audioHelper.DoEvent(
@@ -229,7 +222,11 @@ export default defineComponent({
     const buildStory = (currentStory: number, audioFile: string) => {
       activeStoryData = useStory().setActiveStory(storyData, currentStory);
 
-      audio = AudioHelper().setAudioTrack(activeStoryData, currentFrame, audioFile);
+      audio = AudioHelper(threeSvc).setAudioTrack(
+        activeStoryData,
+        currentFrame,
+        audioFile,
+      );
       let progress: Array<Group> = [];
       audio.ontimeupdate = () => {
         if (showProgressOfFrame) {
@@ -266,12 +263,7 @@ export default defineComponent({
         framePlaybook,
         spotlight,
         activeStoryData,
-      ).storyCircle(
-        currentFrame,
-        storyService.getStoryColor(activeStoryData.id),
-        // !taggingService.tagAlreadyInList(Tags.ActiveStoryCircle),
-        true,
-      );
+      ).storyCircle(currentFrame, storyService.getStoryColor(activeStoryData.id), true);
 
       PlayBookBuild(
         threeSvc,
@@ -281,11 +273,15 @@ export default defineComponent({
         framePlaybook,
         spotlight,
         activeStoryData,
-      ).frameOverview(currentFrame, storyService.getStoryColor(activeStoryData.id));
+      ).frameOverview(
+        currentFrame,
+        storyService.getStoryColor(activeStoryData.id),
+        garbageHelper,
+      );
       playBook.mergeActionsWithPlaybook(framePlaybook.getSortedPlayBookActions());
 
       playBook.addToPlayBook(
-        async () => {
+        () => {
           showProgressOfFrame = false;
           PlayBookBuild(
             threeSvc,
@@ -298,7 +294,6 @@ export default defineComponent({
           ).storyData(storyService, activeStoryData, currentFrame);
           if (storyService.isEndOfSession()) {
             audio.pause();
-            //TODO: Restart the entire session flow
             garbageHelper.endOfSessionScreen();
             PlayBookBuild(
               threeSvc,
@@ -315,13 +310,9 @@ export default defineComponent({
                 // setup();
               });
           } else {
-            //DEMO:
-            // alert('storyPaused')
             chooseStory.value = true;
             audio.pause();
             garbageHelper.pauseScreen();
-            // await MoveObject().startMoving(spotlight, zoneService.middleZoneCenter);
-            // threeSvc.AddToScene(spotlight, Tags.Spotlight, 'Spotlight of story paused');
             spotlight.scale.set(
               Measurements().storyCircle.outerCircle,
               Measurements().storyCircle.outerCircle,
@@ -340,9 +331,7 @@ export default defineComponent({
 
           console.log('tag', taggingService.taggedObjects);
         },
-        playBook.lastAction().time +
-          Timing.frameOverview.spotLightMoved +
-          Timing.delayNextCycle,
+        playBook.lastAction().time,
         `Update storyData & show endOfSessions screen or the storyOverview`,
       );
     };
@@ -377,15 +366,6 @@ export default defineComponent({
       );
       garbageHelper = WallGarbageHelper(threeSvc, taggingService);
       threeSvc.ClearScene();
-
-      const innerBoundary = BoundaryHelper(
-        zoneService.sceneZone(),
-        Defaults().screenZonePadding(),
-      ).createInnerBoundary();
-      const outerBoundary = BoundaryHelper(
-        zoneService.sceneZone(),
-        Defaults().screenZonePadding(),
-      ).createOuterBoundary();
 
       threeSvc.Animate();
     });

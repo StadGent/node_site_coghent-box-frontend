@@ -1,20 +1,14 @@
 import { Metadata } from '@/models/CollectionModel';
-import { Asset, ComponentMetadata, Story } from '@/models/GraphqlModel';
+import { Asset, ComponentMetadata, Frame, Story } from '@/models/GraphqlModel';
 import ThreeService from '@/services/ThreeService';
-import { CubeParams } from '@/Three/schema.cube';
 import Layers from '@/Three/defaults.layers';
 import Measurements from '@/Three/defaults.measurements';
-import TextHelper from '@/Three/helper.text';
-import { FontParams } from '@/Three/schema.text';
 import { BoxBufferGeometry, Mesh, Vector3, Group, BoxGeometry, MeshBasicMaterial } from 'three';
 import MoveObject from './moveObject';
-import Positions from '@/Three/defaults.positions';
 import CustomAnimation from './animation';
 import AnimationDefaults from '@/Three/defaults.animation';
-import Tools from '@/Three/helper.tools';
-import Colors from '@/Three/defaults.color';
-import { Tags } from '@/services/TaggingService';
 import MetadataLabel from '@/Three/shapes.metadataLabel';
+import Common from './common';
 
 const useAsset = (
   threeService: ThreeService,
@@ -42,7 +36,10 @@ const useAsset = (
     text: string,
   ) => Group;
   getAssetsFromFrame: (activeStory: Story, frame: number) => Array<Asset>;
-  setZoomTiming: (relationMetadata: ComponentMetadata) => number;
+  connectRelationMetadata: (
+    parent: Frame | Story,
+    child: Asset | Frame,
+  ) => ComponentMetadata;
 } => {
   const getTitle = (asset: Asset) => {
     return asset.title[0]?.value;
@@ -133,16 +130,11 @@ const useAsset = (
     return activeStory.frames[frame].assets;
   };
 
-  const setZoomTiming = (relationMetadata: ComponentMetadata) => {
-    let timeToZoom = relationMetadata.timestamp_zoom;
-    if (
-      relationMetadata.timestamp_zoom == undefined ||
-      relationMetadata.timestamp_start > relationMetadata.timestamp_zoom ||
-      relationMetadata.timestamp_zoom > relationMetadata.timestamp_end
-    ) {
-      timeToZoom = relationMetadata.timestamp_start;
-    }
-    return timeToZoom;
+  const connectRelationMetadata = (parent: Frame | Story, child: Asset | Frame) => {
+    const metadataForAsset = parent.relationMetadata.filter(
+      (metadata) => Common().FilterOutIdAfterSlash(metadata.key) == child.id,
+    )[0];
+    return metadataForAsset;
   };
 
   return {
@@ -155,7 +147,7 @@ const useAsset = (
     setInactive,
     setActive,
     getAssetsFromFrame,
-    setZoomTiming,
+    connectRelationMetadata,
   };
 };
 

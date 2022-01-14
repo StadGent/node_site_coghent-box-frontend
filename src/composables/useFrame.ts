@@ -4,10 +4,12 @@ import {
   Story,
   Frame
 } from '@/models/GraphqlModel';
+import ThreeService from '@/services/ThreeService';
 import Common from './common';
+import useAsset from './useAsset';
 import useStory from './useStory';
 
-const useFrame = (): {
+const useFrame = (threeService: ThreeService): {
   GetFrameTitles: (frames: Array<Entity>) => Array<string>;
   GetFrameMainImage: (frame: Entity) => string;
   GetFramesMainImages: (frames: Array<Entity>) => Array<string>;
@@ -53,12 +55,12 @@ const useFrame = (): {
   };
 
   const getLastAssetRelationMetadata = (activeStoryData: Story, currentFrameIndex: number) => {
-    let relationMetadata = Common().connectRelationMetadata(
+    let relationMetadata = useAsset(threeService).connectRelationMetadata(
       activeStoryData.frames[currentFrameIndex],
       activeStoryData.frames[currentFrameIndex].assets[0],
     );
     activeStoryData.frames[currentFrameIndex].assets.forEach((asset) => {
-      const data = Common().connectRelationMetadata(
+      const data = useAsset(threeService).connectRelationMetadata(
         activeStoryData.frames[currentFrameIndex],
         asset,
       );

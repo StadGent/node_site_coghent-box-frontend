@@ -43,7 +43,7 @@ const useFrameAssetOverview = (
     threeService.RemoveFromScene(group);
     const data: Record<number, Vector3> = {};
     for (const asset of assets) {
-      const relationMetadata = Common().connectRelationMetadata(frame, asset);
+      const relationMetadata = useAsset(threeService).connectRelationMetadata(frame, asset);
       const position = new Vector3(0, 0, Layers.scene);
       if (relationMetadata?.position != null || undefined) {
         position.x = relationMetadata.position.x;
@@ -72,13 +72,12 @@ const useFrameAssetOverview = (
   const resetImage = async (
     asset: Object3D<Event>,
     scale: number,
-    imageCube: Group,
     currentAsset: number,
   ) => {
     garbageHelper.highlightedAsset();
     asset.position.set(positions[currentAsset].x, positions[currentAsset].y, positions[currentAsset].z);
-    asset.scale.set(scale,scale,scale);
-    
+    asset.scale.set(scale, scale, scale);
+
     await CustomAnimation().shrink(asset as unknown as Mesh<any, MeshBasicMaterial>, scale, AnimationDefaults.values.scaleStep);
     //TEMP: no animation
     await MoveObject().startMoving(asset, positions[currentAsset]);
@@ -153,7 +152,7 @@ const useFrameAssetOverview = (
     if (assets.length > 0) {
       displayAllAssets(activeStoryData.frames[currentFrame], timestamp);
       group.children.forEach((asset, index) => {
-        const relationMetadata = Common().connectRelationMetadata(
+        const relationMetadata = useAsset(threeService).connectRelationMetadata(
           activeStoryData.frames[currentFrame],
           assets[index],
         );
@@ -173,24 +172,27 @@ const useFrameAssetOverview = (
             relationMetadata.timestamp_start,
             `Move spotlight to asset ${assets[index].id}.`,
           );
+        }
+        if (relationMetadata.timestamp_zoom) {
           playBook.addToPlayBook(
             async () => {
-              await CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>, 0.001,AnimationDefaults.values.scaleStep)
+              await CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>, 0.001, AnimationDefaults.values.scaleStep)
               await zoomAndHighlightAsset(
                 asset as Mesh<BoxBufferGeometry, any>,
                 index,
                 AnimationDefaults.values.zoomOfAsset,
               );
             },
-            useAsset(threeService).setZoomTiming(relationMetadata),
+            relationMetadata.timestamp_zoom,
             `Zoom and highlight asset + set other assets inactive`,
           );
+        }
+        if (relationMetadata.timestamp_end) {
           playBook.addToPlayBook(
             async () => {
               await resetImage(
                 asset as Object3D<Event>,
                 relationMetadata.scale,
-                highlightWithMetaInfo,
                 index,
               );
               await useAsset(threeService).moveSpotlightToAsset(

@@ -65,14 +65,14 @@ const PlayBookBuild = (
   ) => {
     playBook.addToPlayBook(
       () => {
-        audio = AudioHelper().setAudioTrack(
+        audio = AudioHelper(threeService).setAudioTrack(
           activeStoryData,
           activeFrameIndex,
           backupAudioFile,
         );
         audio.play();
       },
-      useFrame().getLastAssetRelationMetadata(activeStoryData, activeFrameIndex)
+      useFrame(threeService).getLastAssetRelationMetadata(activeStoryData, activeFrameIndex)
         .timestamp_end,
       'Set audio track',
     );
@@ -109,7 +109,7 @@ const PlayBookBuild = (
   };
 
   const progressOfFrame = (frameIndex: number, color: number, currentTime: number, audioDuration: number, progressbar: Array<Group>) => {
-    const assetsWithTimestampStart = useFrame().getStartTimestampsWithTheirAsset(
+    const assetsWithTimestampStart = useFrame(threeService).getStartTimestampsWithTheirAsset(
       activeStoryData.frames[frameIndex],
     );
     taggingService.removeAllTagsFrom(Tags.FrameProgressbar);
@@ -155,7 +155,6 @@ const PlayBookBuild = (
   };
 
   const storyData = (
-
     storyService: StoryService,
     activeStoryData: Story,
     frameIndex: number,

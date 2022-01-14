@@ -1,8 +1,9 @@
 import useFrame from '@/composables/useFrame';
 import { Story } from '@/models/GraphqlModel';
+import ThreeService from '@/services/ThreeService';
 import Defaults from './defaults.config';
 
-const AudioHelper = (): {
+const AudioHelper = (threeService: ThreeService): {
   DoEvent: (currentTime: number, eventTime: number) => boolean;
   setAudioTrack: (activeStoryData: Story, currentFrameIndex: number, backupAudioFile: string) => HTMLAudioElement;
 } => {
@@ -16,7 +17,7 @@ const AudioHelper = (): {
   const setAudioTrack = (activeStoryData: Story, currentFrameIndex: number, backupAudioFile: string) => {
     let audio = new Audio(backupAudioFile);
 
-    const audioForFrame = useFrame().getAudioForFrame(activeStoryData.frames[currentFrameIndex]);
+    const audioForFrame = useFrame(threeService).getAudioForFrame(activeStoryData.frames[currentFrameIndex]);
     if (audioForFrame.includes('download')) {
       audio = new Audio(audioForFrame);
     }

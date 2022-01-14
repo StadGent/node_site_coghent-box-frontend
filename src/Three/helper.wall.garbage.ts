@@ -20,7 +20,13 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
       threeService.RemoveGroupsFromScene(_groups[0].object);
       _groups = taggingService.getByTag(_tag);
     }
-  }
+  };
+
+  const removeByTag = (_tag: Tags) => {
+    const taggedObject = taggingService.getByTag(_tag);
+    if(taggedObject.length > 0)
+      threeService.RemoveFromScene(taggedObject[0].object);
+  };
 
   const pauseScreen = () => {
     removeGroupsByTag(Tags.ActiveStoryCircle);
@@ -43,8 +49,7 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     removeGroupsByTag(Tags.ActiveStoryCircle);
     removeGroupsByTag(Tags.Stories);
     removeGroupsByTag(Tags.CircularProgressBar);
-    const groupOfAssetsTags = taggingService.getByTag(Tags.GroupOfAssets);
-    threeService.RemoveFromScene(groupOfAssetsTags[0].object);
+    removeByTag(Tags.GroupOfAssets);
   };
 
   const startOfSession = () => {
@@ -53,10 +58,8 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
 
   const highlightedAsset = () => {
     removeGroupsByTag(Tags.HighlightedMetadata);
-    const border = taggingService.getByTag(Tags.HighlightBorder);    
-    threeService.RemoveFromScene(border[0].object);
-    const metadata = taggingService.getByTag(Tags.HighlightedMetadata);    
-    threeService.RemoveFromScene(metadata[0].object);
+    removeByTag(Tags.HighlightBorder);
+    removeByTag(Tags.HighlightedMetadata);
   }
 
   return {
