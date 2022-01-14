@@ -1,4 +1,5 @@
 import Defaults from '@/Three/defaults.config';
+import { Mesh } from 'three';
 
 const Common = (): {
   FilterOutIdAfterSlash: (str: string) => string;
@@ -6,6 +7,7 @@ const Common = (): {
   pixelsToMeters: (pixels: number) => number;
   firstIsBiggest: (first:number, second: number) => boolean;
   awaitTimeout: (time: number) => Promise<unknown>;
+  setScale: (_object: Mesh, scale: number) => void;
 } => {
   const FilterOutIdAfterSlash = (str: string) => {
     const index = (str.indexOf('/') as number) + 1;
@@ -30,6 +32,9 @@ const Common = (): {
       setTimeout(resolve, time),
     );
   }
+  const setScale = (_object: Mesh, scale: number) => {
+    _object.scale.set(scale,scale,scale);
+  }
 
   return {
     FilterOutIdAfterSlash,
@@ -37,6 +42,7 @@ const Common = (): {
     pixelsToMeters,
     firstIsBiggest,
     awaitTimeout,
+    setScale,
   };
 };
 
