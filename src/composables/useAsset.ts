@@ -26,6 +26,7 @@ const useAsset = (
     assetImageCube: Mesh<BoxBufferGeometry, any>,
     position: Vector3,
     scale: number,
+    spotlight: Mesh,
   ) => Promise<void>;
   setInactive: (assetImageCube: Mesh<BoxBufferGeometry, any>) => Promise<void>;
   setActive: (assetImageCube: Mesh<BoxBufferGeometry, any>) => Promise<void>;
@@ -79,7 +80,7 @@ const useAsset = (
         CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>,scaleForSpotlight, AnimationDefaults.values.scaleStep);
       }
       await MoveObject().startMoving(spotlight, asset.position);
-    } else {
+    } else if (!widest){
       const scaleForSpotlight = getAssetSpotlightScale(asset,scale);
       if(scaleForSpotlight > scale){
         CustomAnimation().grow(spotlight as Mesh<any, MeshBasicMaterial>,scaleForSpotlight, AnimationDefaults.values.scaleStep);
@@ -88,20 +89,17 @@ const useAsset = (
       }
       await MoveObject().startMoving(spotlight, asset.position);
     }
-    
-    //TEMP: no animation
-    // spotlight.position.set(asset.position.x,asset.position.y, asset.position.z);
   };
 
   const zoom = async (
     assetImageCube: Mesh<BoxBufferGeometry, any>,
     position: Vector3,
     scale: number,
+    spotlight: Mesh,
   ) => {
     assetImageCube.material.opacity = 1;
     assetImageCube.position.set(position.x, position.y, position.z);
-    //TEMP: no animation this breaks the zoom asset in some frames
-    // await MoveObject().startMoving(assetImageCube, new Vector3(position.x, position.y, position.z));
+    spotlight.position.set(position.x, position.y, position.z);
     assetImageCube.position.z = Layers.scene + Layers.fraction;
     await CustomAnimation().grow(assetImageCube, scale, AnimationDefaults.values.scaleStep);
   };

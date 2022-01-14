@@ -2,12 +2,11 @@ import useAsset from '@/composables/useAsset';
 import { Asset, Story } from '@/models/GraphqlModel';
 import FrameOverview from '@/screens/FrameOverview';
 import ThreeService from '@/services/ThreeService';
-import { BoxBufferGeometry, Group, Mesh, MeshBasicMaterial, Object3D, Vector3 } from 'three';
+import { BoxBufferGeometry, BoxGeometry, Group, Mesh, MeshBasicMaterial, Object3D, Vector3 } from 'three';
 import Layers from './defaults.layers';
 import { PlayBookFunctions } from '@/composables/playbook';
 import { Frame as modelFrame } from '@/models/GraphqlModel';
 import Common from '@/composables/common';
-import MoveObject from '@/composables/moveObject';
 import Defaults from './defaults.config';
 import Tools from './helper.tools';
 import ZoneService from '@/services/ZoneService';
@@ -66,13 +65,21 @@ const useFrameAssetOverview = (
     asset: Object3D<Event>,
     scale: number,
     currentAsset: number,
+    spotlight: Mesh,
   ) => {
     garbageHelper.highlightedAsset();
     asset.position.set(positions[currentAsset].x, positions[currentAsset].y, positions[currentAsset].z);
-    asset.scale.set(scale, scale, scale);
+    spotlight.position.set(positions[currentAsset].x, positions[currentAsset].y, positions[currentAsset].z);
 
-    await CustomAnimation().shrink(asset as unknown as Mesh<any, MeshBasicMaterial>, scale, AnimationDefaults.values.scaleStep);
-    await MoveObject().startMoving(asset, positions[currentAsset]);
+    await Promise.all([
+      await useAsset(threeService).moveSpotlightToAsset(
+        spotlight,
+        asset as unknown as Mesh<BoxBufferGeometry, any>,
+        scale,
+      ),
+      CustomAnimation().shrink(asset as unknown as Mesh<any, MeshBasicMaterial>, scale, AnimationDefaults.values.scaleStep),
+    ]
+    );
   };
 
   const setAssetsInactive = async (displayedAsset: Mesh<BoxBufferGeometry, any>) => {
@@ -115,6 +122,7 @@ const useFrameAssetOverview = (
       asset as Mesh<BoxBufferGeometry, any>,
       zoomSettings.zoomPosition,
       zoomSettings.scale,
+      spotlight
     );
     const collections = useAsset(threeService).getCollections(assets[currentAsset]);
     const title = useAsset(threeService).getTitle(assets[currentAsset]);
@@ -147,7 +155,7 @@ const useFrameAssetOverview = (
                 Tools().displayZones(threeService, zoneService.zones);
               }
               await setAssetsInactive(asset as Mesh<BoxBufferGeometry, any>);
-              CustomAnimation()
+              await CustomAnimation()
                 .grow(
                   spotlight as Mesh<any,
                     MeshBasicMaterial>,
@@ -155,7 +163,6 @@ const useFrameAssetOverview = (
                     asset as Mesh<BoxBufferGeometry, any>,
                     relationMetadata.scale),
                   AnimationDefaults.values.scaleStep);
-              await MoveObject().startMoving(spotlight, relationMetadata.position as Vector3);
               await useAsset(threeService).moveSpotlightToAsset(
                 spotlight,
                 asset as Mesh<BoxBufferGeometry, any>,
@@ -186,11 +193,7 @@ const useFrameAssetOverview = (
                 asset as Object3D<Event>,
                 relationMetadata.scale,
                 index,
-              );
-              await useAsset(threeService).moveSpotlightToAsset(
                 spotlight,
-                asset as Mesh<BoxBufferGeometry, any>,
-                relationMetadata.scale,
               );
             },
             relationMetadata.timestamp_end,

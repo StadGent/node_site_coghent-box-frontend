@@ -5,6 +5,7 @@ type Timings = {
   endOfSession: {
     countdown: number,
   },
+  delayToPauseScreen: number,
   moveObject: {
     refreshStep: number;
     steps: number;
@@ -21,6 +22,7 @@ const Timing: Timings = {
   endOfSession:{
     countdown: 30000,
   },
+  delayToPauseScreen: 2,
   moveObject: {
     refreshStep: 12,
     steps: 60,

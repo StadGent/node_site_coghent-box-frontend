@@ -34,6 +34,7 @@ import Colors from '@/Three/defaults.color';
 import { threeDefaultsWall } from '@/Three/defaults.three';
 
 import schemaCube from '@/Three/schema.cube';
+import Timing from '@/Three/defaults.timing';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -310,6 +311,7 @@ export default defineComponent({
                 // setup();
               });
           } else {
+            alert('LOAD PAUSE SCREEN')
             chooseStory.value = true;
             audio.pause();
             garbageHelper.pauseScreen();
@@ -331,7 +333,7 @@ export default defineComponent({
 
           console.log('tag', taggingService.taggedObjects);
         },
-        playBook.lastAction().time + 2,
+        playBook.lastAction().time + Timing.delayToPauseScreen,
         `Update storyData & show endOfSessions screen or the storyOverview`,
       );
     };
