@@ -49,7 +49,7 @@ const Measurements = (): {
 
   const pauseScreen = {
     bannerHeight: 5.5,
-    bannerOpacity: 0.9,
+    bannerOpacity: 1,
     bannerColor: Colors().black,
     spotLightRadius: 5.5,
   };

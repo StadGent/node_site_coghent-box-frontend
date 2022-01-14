@@ -144,7 +144,6 @@ const PlayBookBuild = (
     assetsOnScreen.position.setZ(Layers.background);
     await CustomAnimation().grow(spotlight as Mesh<any, MeshBasicMaterial>,Measurements().pauseScreen.spotLightRadius , AnimationDefaults.values.scaleStep)
     await MoveObject().startMoving(spotlight, new Vector3(0, -(zoneService.sceneZone().height/2) + Measurements().pauseScreen.bannerHeight, Layers.scene));
-    spotlight.position.setZ(Layers.background);
     const storiesWithTheirProgress = useStory().getStoriesWithTheirProgress(
       storyData,
       storyService.getStoryData(),

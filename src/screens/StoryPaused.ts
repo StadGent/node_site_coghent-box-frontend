@@ -82,14 +82,12 @@ const StoryPaused = (storyData: Array<Story>, taggingService: TaggingService, zo
         storyCircle(
           useStory().getStory(storyData, storiesWithTheirProgress[key].storyId),
           storiesWithTheirProgress[key].totalOfFramesSeen,
-          //DEMO: Changed from storiesWithTheirProgress[key].pausedPosition
           new Vector3(storiesWithTheirProgress[key].pausedPosition.x, bannerTopPosition, Layers.scene + Layers.fraction),
           storiesWithTheirProgress[key].storyColor,
         ),
         groups,
       );
     }
-    //DEMO: Couldn't get it to disappear
     GroupHelper().AddObjectsTogroups(storyEndText(), groups);
     GroupHelper().AddObjectsTogroups([blackBanner()], groups);
     return groups
