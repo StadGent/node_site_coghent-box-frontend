@@ -30,10 +30,8 @@ const useAsset = (
   setInactive: (assetImageCube: Mesh<BoxBufferGeometry, any>) => Promise<void>;
   setActive: (assetImageCube: Mesh<BoxBufferGeometry, any>) => Promise<void>;
   addMetadata: (
-    zoomPosition: Vector3,
     object: Mesh<BoxBufferGeometry, any>,
     color: number,
-    scale: number,
     text: string,
   ) => Group;
   getAssetsFromFrame: (activeStory: Story, frame: number) => Array<Asset>;
@@ -109,10 +107,8 @@ const useAsset = (
   };
 
   const addMetadata = (
-    zoomPosition: Vector3,
     object: Mesh<BoxBufferGeometry, any>,
     color: number,
-    scale: number,
     text: string,
   ) => {
     const metadataInfo = MetadataLabel(

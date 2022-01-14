@@ -142,8 +142,9 @@ const PlayBookBuild = (
   const storyPaused = async (storyData: Array<Story>, taggingService: TaggingService) => {
     const assetsOnScreen = taggingService.getByTag(Tags.GroupOfAssets)[0].object as Group;
     assetsOnScreen.position.setZ(Layers.background);
-    await CustomAnimation().grow(spotlight as Mesh<any, MeshBasicMaterial>,Measurements().pauseScreen.spotLightRadius , AnimationDefaults.values.scaleStep)
-    await MoveObject().startMoving(spotlight, new Vector3(0, -(zoneService.sceneZone().height/2) + Measurements().pauseScreen.bannerHeight, Layers.scene));
+    spotlight.scale.set(Measurements().pauseScreen.spotLightRadius,Measurements().pauseScreen.spotLightRadius,Measurements().pauseScreen.spotLightRadius);
+    // await CustomAnimation().grow(spotlight as Mesh<any, MeshBasicMaterial>,Measurements().pauseScreen.spotLightRadius , AnimationDefaults.values.scaleStep)
+    MoveObject().startMoving(spotlight, new Vector3(0, -(zoneService.sceneZone().height/2) + Measurements().pauseScreen.bannerHeight, Layers.scene));
     const storiesWithTheirProgress = useStory().getStoriesWithTheirProgress(
       storyData,
       storyService.getStoryData(),

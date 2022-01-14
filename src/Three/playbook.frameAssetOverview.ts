@@ -5,13 +5,10 @@ import ThreeService from '@/services/ThreeService';
 import { BoxBufferGeometry, Group, Mesh, MeshBasicMaterial, Object3D, Vector3 } from 'three';
 import Layers from './defaults.layers';
 import { PlayBookFunctions } from '@/composables/playbook';
-import Timing from './defaults.timing';
 import { Frame as modelFrame } from '@/models/GraphqlModel';
 import Common from '@/composables/common';
 import MoveObject from '@/composables/moveObject';
 import Defaults from './defaults.config';
-import LineHelper from './helper.line';
-import GroupHelper from './helper.group';
 import Tools from './helper.tools';
 import ZoneService from '@/services/ZoneService';
 import { Tags } from '@/services/TaggingService';
@@ -37,7 +34,6 @@ const useFrameAssetOverview = (
   const positions: Array<Vector3> = [];
   let assets: Array<Asset> = [];
   let storyColor: number;
-  let highlightWithMetaInfo: Group;
 
   const displayAllAssets = (frame: modelFrame, timestamp: number) => {
     threeService.RemoveFromScene(group);
@@ -76,7 +72,6 @@ const useFrameAssetOverview = (
     asset.scale.set(scale, scale, scale);
 
     await CustomAnimation().shrink(asset as unknown as Mesh<any, MeshBasicMaterial>, scale, AnimationDefaults.values.scaleStep);
-    //TEMP: no animation
     await MoveObject().startMoving(asset, positions[currentAsset]);
   };
 
@@ -114,7 +109,6 @@ const useFrameAssetOverview = (
   const zoomAndHighlightAsset = async (
     asset: Mesh<BoxBufferGeometry, any>,
     currentAsset: number,
-    scale: number,
   ) => {
     const zoomSettings = calculateZoomSettingsOfAsset(asset);
     await useAsset(threeService).zoom(
@@ -125,18 +119,11 @@ const useFrameAssetOverview = (
     const collections = useAsset(threeService).getCollections(assets[currentAsset]);
     const title = useAsset(threeService).getTitle(assets[currentAsset]);
     const metadataInfo = useAsset(threeService).addMetadata(
-      zoomSettings.zoomPosition,
       asset,
       storyColor,
-      scale,
       `${title}, Me (${collections[0].value})`,
     );
-    highlightWithMetaInfo = GroupHelper().CreateGroup([
-      LineHelper().drawLineArroundCube(asset, storyColor, Layers.scene + Layers.fraction),
-    ]);
-
     threeService.AddGroupsToScene([metadataInfo], Tags.HighlightedMetadata, 'Metadata for image.', `${title}, Me (${collections[0].value})`);
-    threeService.AddToScene(highlightWithMetaInfo, Tags.HighlightBorder, 'Highlight with metadata info.');
   };
 
   const create = (
@@ -186,7 +173,6 @@ const useFrameAssetOverview = (
               await zoomAndHighlightAsset(
                 asset as Mesh<BoxBufferGeometry, any>,
                 index,
-                AnimationDefaults.values.zoomOfAsset,
               );
             },
             relationMetadata.timestamp_zoom,

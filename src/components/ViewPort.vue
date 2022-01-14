@@ -331,7 +331,7 @@ export default defineComponent({
 
           console.log('tag', taggingService.taggedObjects);
         },
-        playBook.lastAction().time,
+        playBook.lastAction().time + 2,
         `Update storyData & show endOfSessions screen or the storyOverview`,
       );
     };
