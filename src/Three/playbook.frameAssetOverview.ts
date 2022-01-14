@@ -67,7 +67,7 @@ const useFrameAssetOverview = (
     currentAsset: number,
     spotlight: Mesh,
   ) => {
-    garbageHelper.highlightedAsset();
+    await garbageHelper.highlightedAsset();
     asset.position.set(positions[currentAsset].x, positions[currentAsset].y, positions[currentAsset].z);
     spotlight.position.set(positions[currentAsset].x, positions[currentAsset].y, positions[currentAsset].z);
 

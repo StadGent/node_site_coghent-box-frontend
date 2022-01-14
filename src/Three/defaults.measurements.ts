@@ -45,6 +45,7 @@ const Measurements = (): {
   const spotLight ={
     radius: 5.5,
     spaceAroundObject: 1.8,
+    opacity: 0.5,
   };
 
   const pauseScreen = {

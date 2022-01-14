@@ -311,7 +311,6 @@ export default defineComponent({
                 // setup();
               });
           } else {
-            alert('LOAD PAUSE SCREEN')
             chooseStory.value = true;
             audio.pause();
             garbageHelper.pauseScreen();

@@ -28,7 +28,7 @@ export enum Tags {
   startSessionText,
   startOfSessionCountdown,
   HighlightedMetadata,
-  HighlightBorder,
+  ZoomSpotlight,
 }
 
 export default class TaggingService {

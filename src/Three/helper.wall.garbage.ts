@@ -1,6 +1,7 @@
 import CustomAnimation from '@/composables/animation';
 import TaggingService, { Tags } from '@/services/TaggingService';
 import ThreeService from '@/services/ThreeService';
+import { Mesh, MeshBasicMaterial } from 'three';
 import AnimationDefaults from './defaults.animation';
 
 export type GarabageHelperForWall = {
@@ -9,7 +10,7 @@ export type GarabageHelperForWall = {
   newStorySelected: () => Promise<void>;
   endOfSessionScreen: () => void;
   startOfSession: () => void;
-  highlightedAsset: () => void;
+  highlightedAsset: () => Promise<void>;
 };
 
 const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingService): GarabageHelperForWall => {
@@ -24,7 +25,7 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
 
   const removeByTag = (_tag: Tags) => {
     const taggedObject = taggingService.getByTag(_tag);
-    if(taggedObject.length > 0)
+    if (taggedObject.length > 0)
       threeService.RemoveFromScene(taggedObject[0].object);
   };
 
@@ -56,10 +57,12 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     removeGroupsByTag(Tags.startSessionText);
   };
 
-  const highlightedAsset = () => {
+  const highlightedAsset = async () => {
     removeGroupsByTag(Tags.HighlightedMetadata);
-    removeByTag(Tags.HighlightBorder);
-    removeByTag(Tags.HighlightedMetadata);
+
+    const zoomSpotlight = taggingService.getByTag(Tags.ZoomSpotlight);
+    await CustomAnimation().shrink(zoomSpotlight[0].object as Mesh<any, MeshBasicMaterial>, 0, AnimationDefaults.values.scaleStep);
+    removeByTag(Tags.ZoomSpotlight);
   }
 
   return {

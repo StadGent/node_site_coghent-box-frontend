@@ -9,6 +9,8 @@ import CustomAnimation from './animation';
 import AnimationDefaults from '@/Three/defaults.animation';
 import MetadataLabel from '@/Three/shapes.metadataLabel';
 import Common from './common';
+import Spot from '@/Three/shapes.spotlight';
+import { Tags } from '@/services/TaggingService';
 
 const useAsset = (
   threeService: ThreeService,
@@ -58,7 +60,7 @@ const useAsset = (
   const getAssetSpotlightScale = (_asset: Mesh<BoxBufferGeometry, any>, _scale: number) => {
     let scale = 1;
     if(_asset.geometry.parameters.height > _asset.geometry.parameters.width){
-      scale = (_asset.geometry.parameters.height / 2) * _scale  + (Measurements().spotLight.spaceAroundObject/2);
+      scale = (_asset.geometry.parameters.height / 2) * _scale  + Measurements().spotLight.spaceAroundObject;
     }else{
       scale = (_asset.geometry.parameters.width / 2) * _scale  + Measurements().spotLight.spaceAroundObject
     }
@@ -100,8 +102,11 @@ const useAsset = (
     assetImageCube.material.opacity = 1;
     assetImageCube.position.set(position.x, position.y, position.z);
     spotlight.position.set(position.x, position.y, position.z);
+    const spotToZoom = Spot().create(position, 1);
+    threeService.AddToScene(spotToZoom, Tags.ZoomSpotlight);
     assetImageCube.position.z = Layers.scene + Layers.fraction;
     await CustomAnimation().grow(assetImageCube, scale, AnimationDefaults.values.scaleStep);
+    await useAsset(threeService).moveSpotlightToAsset(spotToZoom,assetImageCube,scale);
   };
 
   const addMetadata = (

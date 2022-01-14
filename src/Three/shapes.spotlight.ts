@@ -3,10 +3,12 @@ import CircleHelper from './helper.circle';
 import SchemaCircle from './schema.circle';
 import Colors from './defaults.color';
 import Layers from './defaults.layers';
+import Measurements from './defaults.measurements';
 
 export type SpotLightParams ={
   radius: number;
   spaceAroundObject: number;
+  opacity: number;
 }
 
 export type SpotlightFunctions = {
@@ -25,7 +27,7 @@ const Spot = (): SpotlightFunctions => {
         new Vector3(startPosition.x, startPosition.y, startPosition.z),
         1,
         color || Colors().white,
-        0.2,
+        Measurements().spotLight.opacity,
       ),
       true,
     );
