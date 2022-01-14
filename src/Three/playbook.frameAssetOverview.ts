@@ -60,9 +60,6 @@ const useFrameAssetOverview = (
       async () => {
         threeService.AddToScene(group, Tags.GroupOfAssets, ' Group of all the assets from the frame');
         await CustomAnimation().fadeInGroups([group], AnimationDefaults.values.opacityActive, AnimationDefaults.values.fadeStep);
-        //TODO: Scale needs to set depending of the size of the asset
-        CustomAnimation().grow(spotlight as Mesh<any, MeshBasicMaterial>, 6.5, AnimationDefaults.values.scaleStep)
-        await MoveObject().startMoving(spotlight, Object.values(data)[0]);
       },
       timestamp,
       `Add all assets to scene.`,
@@ -163,6 +160,15 @@ const useFrameAssetOverview = (
                 Tools().displayZones(threeService, zoneService.zones);
               }
               await setAssetsInactive(asset as Mesh<BoxBufferGeometry, any>);
+              CustomAnimation()
+                .grow(
+                  spotlight as Mesh<any,
+                    MeshBasicMaterial>,
+                  useAsset(threeService).getAssetSpotlightScale(
+                    asset as Mesh<BoxBufferGeometry, any>,
+                    relationMetadata.scale),
+                  AnimationDefaults.values.scaleStep);
+              await MoveObject().startMoving(spotlight, relationMetadata.position as Vector3);
               await useAsset(threeService).moveSpotlightToAsset(
                 spotlight,
                 asset as Mesh<BoxBufferGeometry, any>,

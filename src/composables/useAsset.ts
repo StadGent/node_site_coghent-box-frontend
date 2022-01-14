@@ -16,6 +16,7 @@ const useAsset = (
   getTitle: (asset: Asset) => string;
   getCollections: (asset: Asset) => Array<Metadata>;
   getImage: (asset: Asset) => string;
+  getAssetSpotlightScale: (asset: Mesh<BoxBufferGeometry, any>, scale: number) => number;
   moveSpotlightToAsset: (
     spotlight: Mesh,
     asset: Mesh<BoxBufferGeometry, any>,
@@ -55,6 +56,16 @@ const useAsset = (
       : 'http://localhost:8001/download/4226243bcfd8986cc128e5f5241589b9-2015-0070.JPG';
   };
 
+  const getAssetSpotlightScale = (_asset: Mesh<BoxBufferGeometry, any>, _scale: number) => {
+    let scale = 1;
+    if(_asset.geometry.parameters.height > _asset.geometry.parameters.width){
+      scale = (_asset.geometry.parameters.height / 2) * _scale  + (Measurements().spotLight.spaceAroundObject/2);
+    }else{
+      scale = (_asset.geometry.parameters.width / 2) * _scale  + Measurements().spotLight.spaceAroundObject
+    }
+    return scale;
+  }
+
   const moveSpotlightToAsset = async (
     spotlight: Mesh,
     asset: Mesh<BoxBufferGeometry, any>,
@@ -63,9 +74,7 @@ const useAsset = (
     const widest = asset.geometry.parameters.width > asset.geometry.parameters.height;
     setActive(asset);
     if (widest) {
-      const scaleForSpotlight = (asset.geometry.parameters.width / 2) * scale  + Measurements().spotLight.spaceAroundObject;
-      // spotlight.scale.set(scaleForSpotlight,scaleForSpotlight,scaleForSpotlight);
-      //TEMP: no animation
+      const scaleForSpotlight = getAssetSpotlightScale(asset,scale);
       if(scaleForSpotlight > scale){
         CustomAnimation().grow(spotlight as Mesh<any, MeshBasicMaterial>,scaleForSpotlight, AnimationDefaults.values.scaleStep);
       }else{
@@ -73,9 +82,7 @@ const useAsset = (
       }
       await MoveObject().startMoving(spotlight, asset.position);
     } else {
-      const scaleForSpotlight = (asset.geometry.parameters.height / 2) * scale  + Measurements().spotLight.spaceAroundObject;
-      // spotlight.scale.set(scaleForSpotlight,scaleForSpotlight,scaleForSpotlight);
-      //TEMP: no animation
+      const scaleForSpotlight = getAssetSpotlightScale(asset,scale);
       if(scaleForSpotlight > scale){
         CustomAnimation().grow(spotlight as Mesh<any, MeshBasicMaterial>,scaleForSpotlight, AnimationDefaults.values.scaleStep);
       }else{
@@ -141,6 +148,7 @@ const useAsset = (
     getTitle,
     getCollections,
     getImage,
+    getAssetSpotlightScale,
     moveSpotlightToAsset,
     zoom,
     addMetadata,
