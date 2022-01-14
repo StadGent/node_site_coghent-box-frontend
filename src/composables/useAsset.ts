@@ -117,7 +117,7 @@ const useAsset = (
         object.position.y + ((object.geometry.parameters.height/2) * object.scale.x) + 0.6,
         Layers.scene + Layers.fraction
       )
-    ).create(text, color);
+    ).create(text, color).metadata;
     return metadataInfo;
   };
 

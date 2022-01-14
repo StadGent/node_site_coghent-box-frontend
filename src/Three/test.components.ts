@@ -19,6 +19,7 @@ const TestSingleComponent = (): {
   };
   endOfStoryText: (position: Vector3) => Group;
   metadataLabel: (position: Vector3, text: string) => Group;
+  metadataLabelWithConnection: (position: Vector3, text: string) => Array<Group>;
 } => {
   const horizontalProgressbar = HorizontalProgressBar().create(new Vector3(0, -7, 1), [0, 3, 6], 8, 0.1, Colors().yellow);
 
@@ -35,7 +36,13 @@ const TestSingleComponent = (): {
   };
 
   const metadataLabel = (position: Vector3, text: string) => {
-    return MetadataLabel(position).create(text, Colors().green);
+    return MetadataLabel(position).create(text, Colors().green).metadata;
+  };
+
+  const metadataLabelWithConnection = (position: Vector3, text: string) => {
+    const groups: Array<Group> = [];
+    GroupHelper().AddObjectsTogroups([MetadataLabel(position).create(text, Colors().green).metadata, MetadataLabel(position).create(text, Colors().green).connection], groups)
+    return groups;
   };
 
   return {
@@ -44,6 +51,7 @@ const TestSingleComponent = (): {
     circularProgressbarActiveSegments,
     endOfStoryText,
     metadataLabel,
+    metadataLabelWithConnection,
   }
 }
 
