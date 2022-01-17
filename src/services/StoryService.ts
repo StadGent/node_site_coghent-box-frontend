@@ -90,11 +90,14 @@ export default class StoryService {
     })
   }
 
+  getDataOfInactiveStories(){
+    return this.storyData.filter(_data => _data.storyId != this.activeStory.id);
+  }
+
   private itemIsInRecord(storyId: string, frame: Frame) {
     const rec = this.getStoryDataOfStory(storyId).seenFrames;
     let exists = false;
     for (const key in rec) {
-      // console.log('key', key);
       if (frame == rec[key]) {
         console.log({frame});
         console.log('frame in list', rec[key]);

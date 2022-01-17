@@ -30,13 +30,9 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
   };
 
   const pauseScreen = () => {
-    removeGroupsByTag(Tags.ActiveStoryCircle);
-    removeGroupsByTag(Tags.ActiveStoryCircle);
-    removeGroupsByTag(Tags.CircularProgressBar);
     removeGroupsByTag(Tags.FrameProgressbar);
     removeGroupsByTag(Tags.HighlightedMetadata);
     removeByTag(Tags.HighlightedMetadata);
-
   };
 
   const newStorySelected = async () => {
@@ -45,6 +41,7 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     removeGroupsByTag(Tags.ActiveStoryCircle);
     removeGroupsByTag(Tags.Stories);
     threeService.RemoveFromScene(groupOfAssetsTags[0].object);
+    removeByTag(Tags.Spotlight);
   };
 
   const endOfSessionScreen = () => {

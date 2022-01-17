@@ -7,9 +7,9 @@ import {
 import ThreeService from '@/services/ThreeService';
 import Common from './common';
 import useAsset from './useAsset';
-import useStory from './useStory';
 
-const useFrame = (threeService: ThreeService): {
+const useFrame = (_threeService: ThreeService): {
+  title: (_frame: Entity) => string;
   GetFrameTitles: (frames: Array<Entity>) => Array<string>;
   GetFrameMainImage: (frame: Entity) => string;
   GetFramesMainImages: (frames: Array<Entity>) => Array<string>;
@@ -19,10 +19,17 @@ const useFrame = (threeService: ThreeService): {
   getRelationMetadata: (frame: Frame) => Array<ComponentMetadata>; 
   getStartTimestampsWithTheirAsset: (frame: Frame) => Record<string,number>; 
 } => {
+  const title = (_frame: Entity) => {
+    let _title = '';
+    if( _frame.title.length > 0)
+      _title = _frame.title[0].value
+    return _title;
+  };
+
   const GetFrameTitles = (frames: Array<Entity>) => {
     const centerWords: Array<string> = [];
     for (const frame of frames) {
-      centerWords.push(useStory().Title(frame));
+      centerWords.push(title(frame));
     }
     return centerWords;
   };
@@ -45,22 +52,22 @@ const useFrame = (threeService: ThreeService): {
   const CreateFrameRecord = (frames: Array<Entity>) => {
     const record: Record<string, string> = {};
     for (const frame of frames) {
-      const title = useStory().Title(frame);
+      const _title = title(frame);
       const imageLink = frame.mediafiles?.[0]?.original_file_location
         ? frame.mediafiles?.[0]?.original_file_location
         : 'http://localhost:8001/download/4226243bcfd8986cc128e5f5241589b9-2015-0070.JPG';
-      record[title] = imageLink as string;
+      record[_title] = imageLink as string;
     }
     return record;
   };
 
   const getLastAssetRelationMetadata = (activeStoryData: Story, currentFrameIndex: number) => {
-    let relationMetadata = useAsset(threeService).connectRelationMetadata(
+    let relationMetadata = useAsset(_threeService).connectRelationMetadata(
       activeStoryData.frames[currentFrameIndex],
       activeStoryData.frames[currentFrameIndex].assets[0],
     );
     activeStoryData.frames[currentFrameIndex].assets.forEach((asset) => {
-      const data = useAsset(threeService).connectRelationMetadata(
+      const data = useAsset(_threeService).connectRelationMetadata(
         activeStoryData.frames[currentFrameIndex],
         asset,
       );
@@ -98,6 +105,7 @@ const useFrame = (threeService: ThreeService): {
   }
 
   return {
+    title,
     GetFrameTitles,
     GetFrameMainImage,
     GetFramesMainImages,

@@ -79,7 +79,7 @@ const PlayBookBuild = (
   };
 
   const storyCircle = (currentFrameIndex: number, storyColor: number, canAddToSCene: boolean) => {
-    useStoryCircle(threeService, activeStoryData, playBook).create(
+    useStoryCircle(threeService, storyService, activeStoryData, playBook).create(
       zoneService.middleZoneCenter,
       storyColor,
       currentFrameIndex,
@@ -143,14 +143,11 @@ const PlayBookBuild = (
     const assetsOnScreen = taggingService.getByTag(Tags.GroupOfAssets)[0].object as Group;
     assetsOnScreen.position.setZ(Layers.background);
     Common().setScale(spotlight, Measurements().pauseScreen.spotLightRadius);
-    // await CustomAnimation().grow(spotlight as Mesh<any, MeshBasicMaterial>,Measurements().pauseScreen.spotLightRadius , AnimationDefaults.values.scaleStep)
     MoveObject().startMoving(spotlight, new Vector3(0, -(zoneService.sceneZone().height/2) + Measurements().pauseScreen.bannerHeight, Layers.scene));
-    const storiesWithTheirProgress = useStory().getStoriesWithTheirProgress(
-      storyData,
-      storyService.getStoryData(),
-    );
+    const inactiveStories = storyService.getDataOfInactiveStories();
+
     threeService.AddGroupsToScene(
-      StoryPaused(storyData, taggingService, zoneService).Create(storiesWithTheirProgress), Tags.Stories, 'All stories when session is paused.'
+      StoryPaused(taggingService, zoneService, storyService).Create(inactiveStories), Tags.Stories, 'All incative stories when session is paused.'
     );
   };
 
@@ -175,22 +172,7 @@ const PlayBookBuild = (
 
   const setSelectedStory = (currentStory: number) => {
     const storyCircles = taggingService.getByTag(Tags.StoryCircle);
-    const selectedStoryCircle = storyCircles.filter(_object => _object.name == storyService.stories[currentStory].id)[0];
-    const storyCircleToMove = storyCircles.filter(_object => _object.name != storyService.stories[currentStory].id);
-    // FIXME: const endTexts = taggingService.getByTag(Tags.StoryEndText);
-    // console.log({endTexts});
-    // CustomAnimation().fadeOutGroups(endTexts[0].object, 0, AnimationDefaults.values.fadeStep)
-    for (const _storyCircle of storyCircles) {
-      MoveObject().moveGroups(_storyCircle.object, new Vector3(0.01, 12, 1));
-    }
-    //DON'T?
-    // const storyDataOfSelectedStory = storyService.getStoryDataOfStory(storyService.stories[currentStory].id);
-    // console.log({storyDataOfSelectedStory});
-    // if(storyDataOfSelectedStory.pausedPosition.x > 0){
-    //   MoveObject().moveGroups(selectedStoryCircle.object, new Vector3(-storyDataOfSelectedStory.pausedPosition.x, -storyDataOfSelectedStory.pausedPosition.y, storyDataOfSelectedStory.pausedPosition.z));
-    // }else{
-    //   MoveObject().moveGroups(selectedStoryCircle.object, new Vector3(storyDataOfSelectedStory.pausedPosition.x, storyDataOfSelectedStory.pausedPosition.y, storyDataOfSelectedStory.pausedPosition.z));
-    // }
+    
   };
 
   return {

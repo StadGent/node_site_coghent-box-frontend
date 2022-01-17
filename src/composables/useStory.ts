@@ -3,14 +3,14 @@ import { Vector, Vector3 } from 'three';
 import Common from '@/composables/common';
 import { Asset, ComponentMetadata, Story } from '@/models/GraphqlModel';
 import Positions from '@/Three/defaults.positions';
-import { StoryData } from '@/services/StoryService';
+import StoryService, { StoryData } from '@/services/StoryService';
 
-const useStory = (): {
+const useStory = (_storyService: StoryService): {
   setActiveStory: (stories: Array<Story>, story: number) => Story;
   title: (activeStory: Story) => string;
   setFrameTitles: (activeStory: Story) => Array<string>;
   setFrameAssets: (activeStory: Story, frame: number) => Record<string, string>;
-  getStory: (storyData: Array<Story>, storyId: string) => Story;
+  getStory: (storyId: string) => Story;
   getStoriesWithTheirProgress: (stories: Array<Story>, storyData: Array<StoryData>) => Record<string, StoryData>;
   GetStoryTitles: (stories: Array<Story>) => Array<string>;
   getRelationMetadataOfFrames: (activeStoryData: Story) => Array<ComponentMetadata>;
@@ -45,8 +45,13 @@ const useStory = (): {
     return frameAssets;
   };
 
-  const getStory = (storyData: Array<Story>, storyId: string) => {
-    return storyData.filter(data => data.id == storyId)[0]
+  const getStory = (storyId: string) => {
+    const stories = _storyService.stories.filter(_story => _story.id == storyId);
+    let story: Story = {} as Story;
+    if(stories.length > 0){
+      story = stories[0];
+    }
+    return story;
   }
 
   const getStoriesWithTheirProgress = (stories: Array<Story>, storyData: Array<StoryData>) => {

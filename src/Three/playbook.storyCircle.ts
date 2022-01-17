@@ -15,9 +15,11 @@ import StoryCircle from './section.storyCircle';
 import StoryCircleItems from './section.storyCircleItems';
 import { Tags } from '@/services/TaggingService';
 import Images from './defaults.images';
+import StoryService from '@/services/StoryService';
 
 const useStoryCircle = (
   threeService: ThreeService,
+  _storyService: StoryService,
   activeStoryData: Story,
   playBook: PlayBookFunctions,
 ): {
@@ -32,7 +34,7 @@ const useStoryCircle = (
 } => {
   const titleCircle = (position: Vector3, storyColor: number, currentFrame: number) => {
     return StoryCircle().Create(
-      useStory().title(activeStoryData),
+      useStory(_storyService).title(activeStoryData),
       CircleHelper().CreateSchema(
         position,
         Measurements().storyCircle.radius,
@@ -54,7 +56,7 @@ const useStoryCircle = (
   ) => {
     const activeFrameLine = StoryCircleItems().CreateDashedLineWithWord(
       DefaultLines().line3(progressBar.dotSchemas[currentFrame].position),
-      useStory().setFrameTitles(activeStoryData)[currentFrame],
+      useStory(_storyService).setFrameTitles(activeStoryData)[currentFrame],
     );
 
     const progressOfFrame = StoryCircle().progressText(

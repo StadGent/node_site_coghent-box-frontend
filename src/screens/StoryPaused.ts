@@ -11,7 +11,7 @@ import TextHelper from '@/Three/helper.text';
 import SchemaCube, { CubeSchema } from '@/Three/schema.cube';
 import CubeHelper from '@/Three/helper.cube';
 import HelperText from '@/Three/defaults.helperText';
-import { StoryData } from '@/services/StoryService';
+import StoryService, { StoryData } from '@/services/StoryService';
 import TaggingService, { Tags } from '@/services/TaggingService';
 import Images from '@/Three/defaults.images';
 import Layers from '@/Three/defaults.layers';
@@ -20,15 +20,15 @@ import schemaCube from '@/Three/schema.cube';
 import Measurements from '@/Three/defaults.measurements';
 import Defaults from '@/Three/defaults.config';
 
-const StoryPaused = (storyData: Array<Story>, taggingService: TaggingService, zoneService: ZoneService): {
-  Create: (storiesWithTheirProgress: Record<string, StoryData>) => Array<Group>;
+const StoryPaused = (taggingService: TaggingService, zoneService: ZoneService, _storyService: StoryService): {
+  Create: (_storyData: Array<StoryData>) => Array<Group>;
 } => {
   const bannerTopPosition = -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight;
   const bannerCenterPosition = -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight / 2;
   const storyCircle = (story: Story, currentFrame: number, position: Vector3, storyColor: number) => {
     const groups: Array<Group> = [];
     const titleCircle = StoryCircle().Create(
-      useStory().title(story),
+      useStory(_storyService).title(story),
       CircleHelper().CreateSchema(position, 2, storyColor),
       [currentFrame, story.frames.length],
       Images.story.defaultIcon,
@@ -75,19 +75,22 @@ const StoryPaused = (storyData: Array<Story>, taggingService: TaggingService, zo
     } as CubeSchema);
   };
 
-  const Create = (storiesWithTheirProgress: Record<string, StoryData>) => {
+  const Create = (_storyData: Array<StoryData>) => {
     const groups: Array<Group> = [];
-    for (const key in storiesWithTheirProgress) {
+
+    _storyData.forEach(_data => {
       GroupHelper().AddObjectsTogroups(
         storyCircle(
-          useStory().getStory(storyData, storiesWithTheirProgress[key].storyId),
-          storiesWithTheirProgress[key].totalOfFramesSeen,
-          new Vector3(storiesWithTheirProgress[key].pausedPosition.x, bannerTopPosition, Layers.scene + Layers.fraction),
-          storiesWithTheirProgress[key].storyColor,
+          useStory(_storyService).getStory(_data.storyId),
+          _data.totalOfFramesSeen,
+          new Vector3(_data.pausedPosition.x, bannerTopPosition, Layers.scene + Layers.fraction),
+          _data.storyColor,
         ),
         groups,
       );
-    }
+    })
+    
+
     GroupHelper().AddObjectsTogroups(storyEndText(), groups);
     GroupHelper().AddObjectsTogroups([blackBanner()], groups);
     return groups
