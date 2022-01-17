@@ -33,7 +33,10 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     removeGroupsByTag(Tags.ActiveStoryCircle);
     removeGroupsByTag(Tags.ActiveStoryCircle);
     removeGroupsByTag(Tags.CircularProgressBar);
-    removeGroupsByTag(Tags.FrameProgressbar)
+    removeGroupsByTag(Tags.FrameProgressbar);
+    removeGroupsByTag(Tags.HighlightedMetadata);
+    removeByTag(Tags.HighlightedMetadata);
+
   };
 
   const newStorySelected = async () => {
@@ -59,6 +62,7 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
 
   const highlightedAsset = async () => {
     removeGroupsByTag(Tags.HighlightedMetadata);
+    removeByTag(Tags.HighlightedMetadata);
 
     const zoomSpotlight = taggingService.getByTag(Tags.ZoomSpotlight);
     await CustomAnimation().shrink(zoomSpotlight[0].object as Mesh<any, MeshBasicMaterial>, 0, AnimationDefaults.values.scaleStep);
