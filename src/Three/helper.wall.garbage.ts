@@ -38,7 +38,7 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
   const newStorySelected = async () => {
     const groupOfAssetsTags = taggingService.getByTag(Tags.GroupOfAssets);
     await CustomAnimation().fadeOutGroups([groupOfAssetsTags[0].object], 0, AnimationDefaults.values.fadeStep);
-    removeGroupsByTag(Tags.ActiveStoryCircle);
+    activeStoryCircle();
     removeGroupsByTag(Tags.Stories);
     threeService.RemoveFromScene(groupOfAssetsTags[0].object);
     removeByTag(Tags.Spotlight);
@@ -47,10 +47,9 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
   const endOfSessionScreen = () => {
     removeGroupsByTag(Tags.FrameProgressbar);
     removeGroupsByTag(Tags.StoryCircle);
-    removeGroupsByTag(Tags.ActiveStoryCircle);
     removeGroupsByTag(Tags.Stories);
-    removeGroupsByTag(Tags.CircularProgressBar);
     removeByTag(Tags.GroupOfAssets);
+    activeStoryCircle();
   };
 
   const startOfSession = () => {
@@ -64,7 +63,15 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     const zoomSpotlight = taggingService.getByTag(Tags.ZoomSpotlight);
     await CustomAnimation().shrink(zoomSpotlight[0].object as Mesh<any, MeshBasicMaterial>, 0, AnimationDefaults.values.scaleStep);
     removeByTag(Tags.ZoomSpotlight);
-  }
+  };
+
+  const activeStoryCircle = () => {
+    removeByTag(Tags.ActiveStoryCircleText);
+    removeByTag(Tags.ActiveStoryCircleProgress);
+    removeByTag(Tags.ActiveStoryCircleBasic);
+    removeByTag(Tags.ActiveStoryCircleShade);
+    removeGroupsByTag(Tags.CircularProgressBarDots);
+  };
 
   return {
     pauseScreen,

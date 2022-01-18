@@ -100,7 +100,6 @@ export default defineComponent({
           currentFrame = _storyData.totalOfFramesSeen;
           console.log('Selected story => ', currentStory.value);
           await garbageHelper.newStorySelected();
-          threeSvc.ClearScene();
           spotlight = PlayBookBuild(
             threeSvc,
             storyService,
@@ -221,7 +220,7 @@ export default defineComponent({
     };
 
     const buildStory = (currentStory: number, audioFile: string) => {
-      activeStoryData = useStory().setActiveStory(storyData, currentStory);
+      activeStoryData = useStory(storyService).setActiveStory(storyData, currentStory);
 
       audio = AudioHelper(threeSvc).setAudioTrack(
         activeStoryData,

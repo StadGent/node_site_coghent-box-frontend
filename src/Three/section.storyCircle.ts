@@ -1,20 +1,28 @@
-import SchemaCircle, { CircleSchema } from '@/Three/schema.circle';
+import SchemaCircle, { CircleParams, CircleSchema } from '@/Three/schema.circle';
 import SchemaCube, { CubeParams } from '@/Three/schema.cube';
 import DefaultColors from '@/Three/defaults.color';
 import GroupHelper from '@/Three/helper.group';
 import TextHelper from '@/Three/helper.text';
 import { FontParams } from '@/Three/schema.text';
-import { Group, Mesh, Vector3 } from 'three';
+import { BufferGeometry, CircleGeometry, Group, Material, Mesh, MeshBasicMaterial, Vector3 } from 'three';
 import CubeHelper from './helper.cube';
 import Layers from './defaults.layers';
 import CircularprogressBar from '@/Three/shapes.circularProgressbar';
 import Colors from '@/Three/defaults.color';
 import Measurements from './defaults.measurements';
 
-export type StoryCircleParams ={
+export type StoryCircleParams = {
   radius: number;
   outerCircle: number;
-}
+};
+
+export type StoryCircleObjects = {
+  full?: Array<Group>;
+  basic: Mesh<CircleGeometry, MeshBasicMaterial>,
+  shade: Mesh<CircleGeometry, MeshBasicMaterial>,
+  progress: Mesh<BufferGeometry, any>,
+  text: Group,
+};
 
 const StoryCircle = (): {
   progressText: (
@@ -27,12 +35,18 @@ const StoryCircle = (): {
     circleSchema: CircleSchema,
     progressState: [number, number],
     iconUrl: string,
-    showProgress: true | false,
-    showShadedCircle: true | false,
-  ) => Array<Group>;
+  ) => StoryCircleObjects;
 } => {
   const main = (schema: CircleSchema) => {
-    return SchemaCircle().CreateCircle(schema);
+    return SchemaCircle().CreateCircle(
+      {
+        position: schema.position,
+        params: {
+          color: schema.params.color,
+          opacity: 1,
+          radius: Measurements().storyCircle.radius
+        } as CircleParams
+      } as CircleSchema, false);
   };
   const shadedCircle = (schema: CircleSchema) => {
     schema.params.radius = Measurements().storyCircle.outerCircle;
@@ -54,7 +68,7 @@ const StoryCircle = (): {
   ) => {
     const progress = TextHelper().CreateText(
       `Deel ${progressState[0]} van ${progressState[1]}`,
-      new Vector3(position.x,position.y, position.z + Layers.fraction - 0.05),
+      new Vector3(position.x, position.y, position.z + Layers.fraction - 0.05),
       {
         color: color,
         width: 0,
@@ -67,7 +81,7 @@ const StoryCircle = (): {
   const title = (title: string, position: Vector3, color: number) => {
     const storyTitle = TextHelper().CreateText(
       title,
-      new Vector3(position.x,position.y, position.z + Layers.fraction - 0.05),
+      new Vector3(position.x, position.y, position.z + Layers.fraction - 0.05),
       {
         color: color,
         width: 0,
@@ -82,20 +96,23 @@ const StoryCircle = (): {
     circleSchema: CircleSchema,
     progressState: [number, number],
     iconUrl: string,
-    showProgress: true | false,
-    showShadedCircle: true | false,
   ) => {
-
-    const groups: Array<Group> = [];
-    GroupHelper().AddObjectsTogroups([main(circleSchema)], groups);
-    GroupHelper().AddObjectsTogroups(
+    const fullObject: Array<Group> = [];
+    const fadedCircle = shadedCircle(circleSchema);
+    const progressOfStory = CircularprogressBar().create(
+      circleSchema.position,
+      Measurements().progressBar.radius,
+      1,
+      1
+    );
+    const basicCircle = main(circleSchema);
+    const storyText = GroupHelper().CreateGroup(
       [
-        main(circleSchema),
         title(
           storyTitle,
           new Vector3(
             circleSchema.position.x - 1.5,
-            circleSchema.position.y ,
+            circleSchema.position.y,
             circleSchema.position.z,
           ),
           circleSchema.params.color || DefaultColors().green,
@@ -118,19 +135,22 @@ const StoryCircle = (): {
         //   ),
         //   iconUrl,
         // ),
-      ],
-      groups,
-    );
-    if (showShadedCircle) {
-      GroupHelper().AddObjectsTogroups([shadedCircle(circleSchema)], groups);
-    }
-    if (showProgress) {
-      GroupHelper().AddObjectsTogroups(
-        [CircularprogressBar().create(circleSchema.position, Measurements().progressBar.radius, 1, 1)],
-        groups,
-      );
-    }
-    return groups;
+      ]);
+    GroupHelper().AddObjectsTogroups(
+      [
+        basicCircle.clone(),
+        fadedCircle.clone(),
+        progressOfStory.clone(),
+      ], fullObject);
+
+
+    return {
+      full: fullObject,
+      basic: basicCircle,
+      shade: fadedCircle,
+      progress: progressOfStory,
+      text: storyText,
+    };
   };
 
   return { progressText, Create };

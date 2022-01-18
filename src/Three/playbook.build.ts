@@ -22,6 +22,7 @@ import CustomAnimation from '@/composables/animation';
 import AnimationDefaults from './defaults.animation';
 import Common from '@/composables/common';
 import { GarabageHelperForWall } from './helper.wall.garbage';
+import TaggingHelper from './helper.tagging';
 
 const PlayBookBuild = (
   threeService: ThreeService,
@@ -143,8 +144,17 @@ const PlayBookBuild = (
     const assetsOnScreen = taggingService.getByTag(Tags.GroupOfAssets)[0].object as Group;
     assetsOnScreen.position.setZ(Layers.background);
     Common().setScale(spotlight, Measurements().pauseScreen.spotLightRadius);
-    MoveObject().startMoving(spotlight, new Vector3(0, -(zoneService.sceneZone().height/2) + Measurements().pauseScreen.bannerHeight, Layers.scene));
+    MoveObject().startMoving(spotlight, new Vector3(0, -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight, Layers.scene));
     const inactiveStories = storyService.getDataOfInactiveStories();
+    // console.log('storycircle groups',TaggingHelper(taggingService).activeStoryCircle());
+    
+    // const activeStoryCircle = taggingService.getByTag(Tags.ActiveStoryCircle)[0].object as Array<Group>;
+    // const activeStoryCircleProgressbar = taggingService.getByTag(Tags.CircularProgressBar)[0].object as Array<Group>;
+    // console.log({activeStoryCircle});
+    MoveObject().moveGroups(taggingService.getByTag(Tags.ActiveStoryCircleFull)[0].object, new Vector3(storyService.activeStoryData.pausedPosition.x, -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight, Layers.scene + Layers.fraction));
+    MoveObject().startMoving(taggingService.getByTag(Tags.ActiveStoryCircleText)[0].object, new Vector3(storyService.activeStoryData.pausedPosition.x, -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight, Layers.scene + Layers.fraction));
+    // MoveObject().moveGroups(TaggingHelper(taggingService).activeStoryCircle(), new Vector3(storyService.activeStoryData.pausedPosition.x, -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight, Layers.scene + Layers.fraction));
+    // MoveObject().moveGroups(activeStoryCircleProgressbar, new Vector3(storyService.activeStoryData.pausedPosition.x, -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight,Layers.scene + Layers.fraction));
 
     threeService.AddGroupsToScene(
       StoryPaused(taggingService, zoneService, storyService).Create(inactiveStories), Tags.Stories, 'All incative stories when session is paused.'
@@ -172,7 +182,7 @@ const PlayBookBuild = (
 
   const setSelectedStory = (currentStory: number) => {
     const storyCircles = taggingService.getByTag(Tags.StoryCircle);
-    
+
   };
 
   return {
