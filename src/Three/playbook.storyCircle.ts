@@ -2,17 +2,10 @@ import { PlayBookFunctions } from '@/composables/playbook';
 import useStory from '@/composables/useStory';
 import { Story } from '@/models/GraphqlModel';
 import ThreeService from '@/services/ThreeService';
-import { Group, Vector3 } from 'three';
+import { Vector3 } from 'three';
 import CircleHelper from './helper.circle';
-import { CircleSchema } from './schema.circle';
-import CircularProgressBar from './shapes.circularProgressbar';
-import Colors from './defaults.color';
-import Layers from './defaults.layers';
 import Measurements from './defaults.measurements';
-import GroupHelper from './helper.group';
-import DefaultLines from './defaults.lines';
 import StoryCircle from './section.storyCircle';
-import StoryCircleItems from './section.storyCircleItems';
 import { Tags } from '@/services/TaggingService';
 import Images from './defaults.images';
 import StoryService from '@/services/StoryService';
@@ -40,34 +33,8 @@ const useStoryCircle = (
         Measurements().storyCircle.radius,
         storyColor,
       ),
-      [currentFrame, activeStoryData.frames.length],
       Images.story.defaultIcon,
     );
-  };
-
-  const frameLineWithTitle = (
-    currentFrame: number,
-    progressBar: {
-      object: Group[];
-      dotSchemas: CircleSchema[];
-    },
-  ) => {
-    const activeFrameLine = StoryCircleItems().CreateDashedLineWithWord(
-      DefaultLines().line3(progressBar.dotSchemas[currentFrame].position),
-      useStory(_storyService).setFrameTitles(activeStoryData)[currentFrame],
-    );
-
-    const progressOfFrame = StoryCircle(_storyService).progressText(
-      [currentFrame + 1, activeStoryData.frames.length],
-      new Vector3(
-        activeFrameLine.endOfLine.x,
-        activeFrameLine.endOfLine.y + 0.8,
-        Layers.scene,
-      ),
-      Colors().white,
-    );
-
-    return GroupHelper().CreateGroup([activeFrameLine.object, progressOfFrame]);
   };
 
   const create = (

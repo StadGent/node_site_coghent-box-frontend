@@ -4,7 +4,7 @@ import DefaultColors from '@/Three/defaults.color';
 import GroupHelper from '@/Three/helper.group';
 import TextHelper from '@/Three/helper.text';
 import { FontParams } from '@/Three/schema.text';
-import { BufferGeometry, CircleGeometry, Group, Material, Mesh, MeshBasicMaterial, Vector3 } from 'three';
+import { BufferGeometry, CircleGeometry, Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
 import CubeHelper from './helper.cube';
 import Layers from './defaults.layers';
 import CircularprogressBar from '@/Three/shapes.circularProgressbar';
@@ -28,15 +28,9 @@ export type StoryCircleObjects = {
 };
 
 const StoryCircle = (_storyService: StoryService): {
-  progressText: (
-    progressState: [number, number],
-    position: Vector3,
-    color: number,
-  ) => Mesh;
   Create: (
     title: string,
     circleSchema: CircleSchema,
-    progressState: [number, number],
     iconUrl: string,
   ) => StoryCircleObjects;
 } => {
@@ -62,23 +56,6 @@ const StoryCircle = (_storyService: StoryService): {
   const icon = (position: Vector3, url: string) => {
     const schema = CubeHelper().CreateSchema(position, url, new Vector3(1, 1, 0));
     return SchemaCube().CreateImageCube(schema);
-  };
-
-  const progressText = (
-    progressState: [number, number],
-    position: Vector3,
-    color: number,
-  ) => {
-    const progress = TextHelper().CreateText(
-      `Deel ${progressState[0]} van ${progressState[1]}`,
-      new Vector3(position.x, position.y, position.z + Layers.fraction - 0.05),
-      {
-        color: color,
-        width: 0,
-      } as CubeParams,
-      { size: Measurements().text.size.smaller } as FontParams,
-    );
-    return progress;
   };
 
   const title = (title: string, position: Vector3, color: number) => {
@@ -107,7 +84,6 @@ const StoryCircle = (_storyService: StoryService): {
   const Create = (
     storyTitle: string,
     circleSchema: CircleSchema,
-    progressState: [number, number],
     iconUrl: string,
   ) => {
     const dots = progressDots(
@@ -135,15 +111,6 @@ const StoryCircle = (_storyService: StoryService): {
           ),
           circleSchema.params.color || DefaultColors().green,
         ),
-        progressText(
-          progressState,
-          new Vector3(
-            circleSchema.position.x - 1.5,
-            circleSchema.position.y + 0.5,
-            circleSchema.position.z,
-          ),
-          circleSchema.params.color || DefaultColors().green,
-        ),
         //DEMO: Removed for demo
         // icon(
         //   new Vector3(
@@ -164,7 +131,7 @@ const StoryCircle = (_storyService: StoryService): {
     };
   };
 
-  return { progressText, Create };
+  return { Create };
 };
 
 export default StoryCircle;

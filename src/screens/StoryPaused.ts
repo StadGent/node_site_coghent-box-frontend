@@ -30,7 +30,6 @@ const StoryPaused = (taggingService: TaggingService, zoneService: ZoneService, _
     const titleCircle = StoryCircle(_storyService).Create(
       useStory(_storyService).title(story),
       CircleHelper().CreateSchema(position, 2, storyColor),
-      [currentFrame, story.frames.length],
       Images.story.defaultIcon,
     );
 
