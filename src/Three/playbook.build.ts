@@ -154,7 +154,7 @@ const PlayBookBuild = (
         Layers.scene + Layers.fraction)
     );
     await CustomAnimation().fadeOut(taggingService.getByTag(Tags.ActiveStoryCircleShade)[0].object, -1, AnimationDefaults.values.fadeStep);
-    threeService.RemoveFromScene(taggingService.getByTag(Tags.ActiveStoryCircleShade)[0].object);
+    taggingService.removeAllTagsFrom(Tags.ActiveStoryCircleShade);
 
     threeService.AddGroupsToScene(
       StoryPaused(taggingService, zoneService, storyService).Create(inactiveStories), Tags.Stories, 'All incative stories when session is paused.'

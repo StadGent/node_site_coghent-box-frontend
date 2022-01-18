@@ -79,14 +79,6 @@ const useStoryCircle = (
     canAddToSCene: boolean,
   ) => {
     if (canAddToSCene) {
-      //TODO:
-      // const progressBar = CircularProgressBar().createActiveSegment(
-      //   new Vector3(0, 0, position.z),
-      //   Measurements().progressBar.radius,
-      //   frames,
-      //   currentFrame + 1,
-      //   storyColor,
-      // );
       const storyCircle = titleCircle(position, storyColor, currentFrame + 1);
 
       playBook.addToPlayBook(

@@ -13,7 +13,7 @@ const MoveHelper = (_taggingService: TaggingService): {
     MoveObject().startMoving(objects.basic, _position);
     MoveObject().startMoving(objects.progress, _position);
     MoveObject().startMoving(objects.shade, _position);
-    MoveObject().moveGroups(objects.frameDots, _position);
+    objects.frameDots.forEach(_group => MoveObject().moveGroups([_group], _position));
   };
 
   return { activeStoryCircle }

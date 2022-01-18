@@ -34,15 +34,8 @@ const StoryPaused = (taggingService: TaggingService, zoneService: ZoneService, _
       Images.story.defaultIcon,
     );
 
-    const progressBar = CircularProgressBar().createActiveSegment(
-      position,
-      Measurements().storyCircle.outerCircle,
-      story.frames.length,
-      currentFrame,
-      storyColor,
-    );
     GroupHelper().AddObjectsTogroups([titleCircle.basic,titleCircle.progress, titleCircle.text], groups);
-    GroupHelper().AddObjectsTogroups(progressBar.object, groups);
+    GroupHelper().AddObjectsTogroups(titleCircle.frameDots, groups);
     taggingService.tag(Tags.StoryCircle, groups, `StoryCircle with progress for story ${story.id}`, story.id)
     return groups;
   };

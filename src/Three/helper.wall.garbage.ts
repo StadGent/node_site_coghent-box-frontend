@@ -3,6 +3,7 @@ import TaggingService, { Tags } from '@/services/TaggingService';
 import ThreeService from '@/services/ThreeService';
 import { Mesh, MeshBasicMaterial } from 'three';
 import AnimationDefaults from './defaults.animation';
+import Defaults from '@/Three/defaults.config'
 
 export type GarabageHelperForWall = {
   removeGroupsByTag: (_tag: Tags) => void;
@@ -33,6 +34,7 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     removeGroupsByTag(Tags.FrameProgressbar);
     removeGroupsByTag(Tags.HighlightedMetadata);
     removeByTag(Tags.HighlightedMetadata);
+    logRemoved('pauseScreen');
   };
 
   const newStorySelected = async () => {
@@ -42,6 +44,8 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     removeGroupsByTag(Tags.Stories);
     threeService.RemoveFromScene(groupOfAssetsTags[0].object);
     removeByTag(Tags.Spotlight);
+    removeGroupsByTag(Tags.ActiveStoryCircleFrameDots);
+    logRemoved('newStorySelected')
   };
 
   const endOfSessionScreen = () => {
@@ -50,10 +54,12 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     removeGroupsByTag(Tags.Stories);
     removeByTag(Tags.GroupOfAssets);
     activeStoryCircle();
+    logRemoved('endOfSessionScreen');
   };
 
   const startOfSession = () => {
     removeGroupsByTag(Tags.startSessionText);
+    logRemoved('startOfSession');
   };
 
   const highlightedAsset = async () => {
@@ -63,6 +69,7 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     const zoomSpotlight = taggingService.getByTag(Tags.ZoomSpotlight);
     await CustomAnimation().shrink(zoomSpotlight[0].object as Mesh<any, MeshBasicMaterial>, 0, AnimationDefaults.values.scaleStep);
     removeByTag(Tags.ZoomSpotlight);
+    logRemoved(`highlightedAsset`);
   };
 
   const activeStoryCircle = () => {
@@ -71,7 +78,16 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     removeByTag(Tags.ActiveStoryCircleBasic);
     removeByTag(Tags.ActiveStoryCircleShade);
     removeGroupsByTag(Tags.ActiveStoryCircleFrameDots);
+    logRemoved('activeStoryCircle');
   };
+
+  const logRemoved = (_context: string) => {
+    if(Defaults().showDevLogs()){
+      console.log(`-------------`);
+      console.log(`garbageHelper removed =>`, _context);
+      console.log(`-------------`);
+    }
+  }
 
   return {
     pauseScreen,
