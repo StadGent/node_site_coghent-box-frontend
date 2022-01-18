@@ -10,6 +10,8 @@ import Layers from './defaults.layers';
 import CircularprogressBar from '@/Three/shapes.circularProgressbar';
 import Colors from '@/Three/defaults.color';
 import Measurements from './defaults.measurements';
+import CircularProgressBar from '@/Three/shapes.circularProgressbar';
+import StoryService from '@/services/StoryService';
 
 export type StoryCircleParams = {
   radius: number;
@@ -21,10 +23,11 @@ export type StoryCircleObjects = {
   basic: Mesh<CircleGeometry, MeshBasicMaterial>,
   shade: Mesh<CircleGeometry, MeshBasicMaterial>,
   progress: Mesh<BufferGeometry, any>,
+  frameDots: Array<Group>,
   text: Group,
 };
 
-const StoryCircle = (): {
+const StoryCircle = (_storyService: StoryService): {
   progressText: (
     progressState: [number, number],
     position: Vector3,
@@ -91,13 +94,28 @@ const StoryCircle = (): {
     return storyTitle;
   };
 
+  const progressDots = (_position: Vector3, _color: number, _segments: number, _currentFrame: number) => {
+    return  CircularProgressBar().createActiveSegment(
+      new Vector3(_position.x, _position.y, _position.z),
+      Measurements().progressBar.radius,
+      _segments,
+      _currentFrame + 1,
+      _color,
+    ).object;
+  };
+
   const Create = (
     storyTitle: string,
     circleSchema: CircleSchema,
     progressState: [number, number],
     iconUrl: string,
   ) => {
-    const fullObject: Array<Group> = [];
+    const dots = progressDots(
+      circleSchema.position,
+      circleSchema.params.color as number,
+      _storyService.activeStory.frames.length,
+      _storyService.activeStoryData.totalOfFramesSeen,
+      );
     const fadedCircle = shadedCircle(circleSchema);
     const progressOfStory = CircularprogressBar().create(
       circleSchema.position,
@@ -136,19 +154,12 @@ const StoryCircle = (): {
         //   iconUrl,
         // ),
       ]);
-    GroupHelper().AddObjectsTogroups(
-      [
-        basicCircle.clone(),
-        fadedCircle.clone(),
-        progressOfStory.clone(),
-      ], fullObject);
-
 
     return {
-      full: fullObject,
       basic: basicCircle,
       shade: fadedCircle,
       progress: progressOfStory,
+      frameDots: dots,
       text: storyText,
     };
   };

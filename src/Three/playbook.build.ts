@@ -146,13 +146,11 @@ const PlayBookBuild = (
     Common().setScale(spotlight, Measurements().pauseScreen.spotLightRadius);
     MoveObject().startMoving(spotlight, new Vector3(0, -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight, Layers.scene));
     const inactiveStories = storyService.getDataOfInactiveStories();
-    // console.log('storycircle groups',TaggingHelper(taggingService).activeStoryCircle());
+    console.log('storycircle groups',TaggingHelper(taggingService).activeStoryCircle());
     
     // const activeStoryCircle = taggingService.getByTag(Tags.ActiveStoryCircle)[0].object as Array<Group>;
     // const activeStoryCircleProgressbar = taggingService.getByTag(Tags.CircularProgressBar)[0].object as Array<Group>;
     // console.log({activeStoryCircle});
-    MoveObject().moveGroups(taggingService.getByTag(Tags.ActiveStoryCircleFull)[0].object, new Vector3(storyService.activeStoryData.pausedPosition.x, -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight, Layers.scene + Layers.fraction));
-    MoveObject().startMoving(taggingService.getByTag(Tags.ActiveStoryCircleText)[0].object, new Vector3(storyService.activeStoryData.pausedPosition.x, -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight, Layers.scene + Layers.fraction));
     // MoveObject().moveGroups(TaggingHelper(taggingService).activeStoryCircle(), new Vector3(storyService.activeStoryData.pausedPosition.x, -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight, Layers.scene + Layers.fraction));
     // MoveObject().moveGroups(activeStoryCircleProgressbar, new Vector3(storyService.activeStoryData.pausedPosition.x, -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight,Layers.scene + Layers.fraction));
 

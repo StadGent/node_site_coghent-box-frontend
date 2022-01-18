@@ -27,7 +27,7 @@ const StoryPaused = (taggingService: TaggingService, zoneService: ZoneService, _
   const bannerCenterPosition = -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight / 2;
   const storyCircle = (story: Story, currentFrame: number, position: Vector3, storyColor: number) => {
     const groups: Array<Group> = [];
-    const titleCircle = StoryCircle().Create(
+    const titleCircle = StoryCircle(_storyService).Create(
       useStory(_storyService).title(story),
       CircleHelper().CreateSchema(position, 2, storyColor),
       [currentFrame, story.frames.length],

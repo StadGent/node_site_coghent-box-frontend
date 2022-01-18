@@ -70,7 +70,7 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     removeByTag(Tags.ActiveStoryCircleProgress);
     removeByTag(Tags.ActiveStoryCircleBasic);
     removeByTag(Tags.ActiveStoryCircleShade);
-    removeGroupsByTag(Tags.CircularProgressBarDots);
+    removeGroupsByTag(Tags.ActiveStoryCircleFrameDots);
   };
 
   return {

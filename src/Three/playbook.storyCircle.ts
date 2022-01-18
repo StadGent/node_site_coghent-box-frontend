@@ -33,7 +33,7 @@ const useStoryCircle = (
   ) => void;
 } => {
   const titleCircle = (position: Vector3, storyColor: number, currentFrame: number) => {
-    return StoryCircle().Create(
+    return StoryCircle(_storyService).Create(
       useStory(_storyService).title(activeStoryData),
       CircleHelper().CreateSchema(
         position,
@@ -57,7 +57,7 @@ const useStoryCircle = (
       useStory(_storyService).setFrameTitles(activeStoryData)[currentFrame],
     );
 
-    const progressOfFrame = StoryCircle().progressText(
+    const progressOfFrame = StoryCircle(_storyService).progressText(
       [currentFrame + 1, activeStoryData.frames.length],
       new Vector3(
         activeFrameLine.endOfLine.x,
@@ -79,47 +79,43 @@ const useStoryCircle = (
     canAddToSCene: boolean,
   ) => {
     if (canAddToSCene) {
-      const progressBar = CircularProgressBar().createActiveSegment(
-        new Vector3(0, 0, position.z),
-        Measurements().progressBar.radius,
-        frames,
-        currentFrame + 1,
-        storyColor,
-      );
+      //TODO:
+      // const progressBar = CircularProgressBar().createActiveSegment(
+      //   new Vector3(0, 0, position.z),
+      //   Measurements().progressBar.radius,
+      //   frames,
+      //   currentFrame + 1,
+      //   storyColor,
+      // );
       const storyCircle = titleCircle(position, storyColor, currentFrame + 1);
 
       playBook.addToPlayBook(
         () => {
-          threeService.AddGroupsToScene(
-            storyCircle.full as Array<Group>,
-            Tags.ActiveStoryCircleFull,
-            'The title circle of a storycircle.',
-          );
           threeService.AddToScene(
             storyCircle.text,
             Tags.ActiveStoryCircleText,
-            'The title circle of a storycircle.',
+            'The text of a storycircle.',
           );
-          // threeService.AddToScene(
-          //   storyCircle.progress,
-          //   Tags.ActiveStoryCircleProgress,
-          //   'The title circle of a storycircle.',
-          // );
-          // threeService.AddToScene(
-          //   storyCircle.shade,
-          //   Tags.ActiveStoryCircleShade,
-          //   'The title circle of a storycircle.',
-          // );
-          // threeService.AddToScene(
-          //   storyCircle.basic,
-          //   Tags.ActiveStoryCircleBasic,
-          //   'The middle circle of the storycircle.',
-          // );
-          // threeService.AddGroupsToScene(
-          //   progressBar.object,
-          //   Tags.CircularProgressBarDots,
-          //   'Circular progressbar dots for current frame.',
-          // );
+          threeService.AddGroupsToScene(
+            storyCircle.frameDots,
+            Tags.ActiveStoryCircleFrameDots,
+            'The progress of the frames dots of a storycircle.',
+          );
+          threeService.AddToScene(
+            storyCircle.progress,
+            Tags.ActiveStoryCircleProgress,
+            'The progress of a storycircle.',
+          );
+          threeService.AddToScene(
+            storyCircle.shade,
+            Tags.ActiveStoryCircleShade,
+            'The shaded circle of a storycircle.',
+          );
+          threeService.AddToScene(
+            storyCircle.basic,
+            Tags.ActiveStoryCircleBasic,
+            'The middle circle of the storycircle.',
+          );
         },
         timestamp,
         `Add title cirle with progressbar to the scene.`,

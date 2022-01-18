@@ -12,12 +12,13 @@ const TaggingHelper = (_taggingService: TaggingService): {
     const shade = _taggingService.getByTag(Tags.ActiveStoryCircleShade)[0].object as Mesh<CircleGeometry, MeshBasicMaterial>;
     const text = _taggingService.getByTag(Tags.ActiveStoryCircleText)[0].object as Group;
     const progress = _taggingService.getByTag(Tags.ActiveStoryCircleProgress)[0].object as Mesh<BufferGeometry, any>;
-    const progressBarDots = _taggingService.getByTag(Tags.CircularProgressBarDots)[0].object as Array<Group>;
+    const frameDots = _taggingService.getByTag(Tags.ActiveStoryCircleFrameDots)[0].object as Array<Group>;
     return {
       basic: basic,
       shade:shade,
       text: text,
-      progress: progress
+      progress: progress,
+      frameDots: frameDots,
     };
   };
 
