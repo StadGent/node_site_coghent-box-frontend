@@ -23,6 +23,7 @@ export enum Tags {
   Countdown,
   PauseScreenStoryCircle,
   PauseScreenCenterText,
+  PauseScreenBanner,
   FrameTitle,
   XAxis,
   YAxis,
@@ -75,7 +76,7 @@ export default class TaggingService {
   getByTag(tag: Tags) {
     return this.taggedObjects.filter(_object => _object.tag == Tags[tag]);
   }
-  getByTagId(id: string){
+  getByTagsId(id: string){
     return this.taggedObjects.filter(_tag => _tag.id == id);
   }
 
@@ -88,14 +89,9 @@ export default class TaggingService {
   }
 
   retag(oldTag: Tags, tag: Tags){
-    const objects = this.getByTag(oldTag);
     const oldItems = this.taggedObjects.filter(_objects => _objects.tag == Tags[oldTag]);
     oldItems.forEach(_item => {
       _item.tag = Tags[tag];
     })
-
-    // this.tag(tag,objects[0].object, objects[0].context ,objects[0].id);
-    console.log('retagged object',this.getByTag(tag));
-    console.log('taggedObjects after retag', this.taggedObjects);
   }
 }

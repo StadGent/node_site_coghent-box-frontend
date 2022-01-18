@@ -100,6 +100,7 @@ export default defineComponent({
           currentFrame = _storyData.totalOfFramesSeen;
           console.log('Selected story => ', currentStory.value);
           await garbageHelper.newStorySelected();
+          threeSvc.ClearScene();
           spotlight = PlayBookBuild(
             threeSvc,
             storyService,
@@ -118,7 +119,7 @@ export default defineComponent({
             playBook,
             spotlight,
             activeStoryData,
-          ).setSelectedStory(currentStory.value);
+          ).setSelectedStory();
           resetStory();
           console.log('tagged => ', taggingService.taggedObjects);
         }

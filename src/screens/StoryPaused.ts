@@ -1,7 +1,7 @@
 import CircleHelper from '@/Three/helper.circle';
 import GroupHelper from '@/Three/helper.group';
-import { Group, Vector3 } from 'three';
-import StoryCircle from '../Three/section.storyCircle';
+import { BoxGeometry, Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
+import StoryCircle, { StoryCircleObjects } from '../Three/section.storyCircle';
 
 import useStory from '@/composables/useStory';
 import { Story } from '@/models/GraphqlModel';
@@ -20,23 +20,25 @@ import schemaCube from '@/Three/schema.cube';
 import Measurements from '@/Three/defaults.measurements';
 import Defaults from '@/Three/defaults.config';
 
+export type PauseScreenObjects = {
+  text: Array<Group>,
+  banner: Mesh<BoxGeometry, MeshBasicMaterial>,
+  storyCircles: Record<string, StoryCircleObjects>,
+}
+
+
 const StoryPaused = (taggingService: TaggingService, zoneService: ZoneService, _storyService: StoryService): {
-  Create: (_storyData: Array<StoryData>) => Array<Group>;
+  Create: (_storyData: Array<StoryData>) => PauseScreenObjects;
 } => {
   const bannerTopPosition = -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight;
   const bannerCenterPosition = -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight / 2;
   const storyCircle = (story: Story, currentFrame: number, position: Vector3, storyColor: number) => {
-    const groups: Array<Group> = [];
     const titleCircle = StoryCircle(_storyService).Create(
       useStory(_storyService).title(story),
       CircleHelper().CreateSchema(position, 2, storyColor),
       Images.story.defaultIcon,
     );
-
-    GroupHelper().AddObjectsTogroups([titleCircle.basic,titleCircle.progress, titleCircle.text], groups);
-    GroupHelper().AddObjectsTogroups(titleCircle.frameDots, groups);
-    taggingService.tag(Tags.PauseScreenStoryCircle, groups, `Storycircle on pause screen ${story.id}`, story.id)
-    return groups;
+    return titleCircle;
   };
 
   const storyEndText = () => {
@@ -66,23 +68,22 @@ const StoryPaused = (taggingService: TaggingService, zoneService: ZoneService, _
   };
 
   const Create = (_storyData: Array<StoryData>) => {
-    const groups: Array<Group> = [];
+    const storyCircles: Record<string, StoryCircleObjects> = {};
 
     _storyData.forEach(_data => {
-      GroupHelper().AddObjectsTogroups(
-        storyCircle(
-          useStory(_storyService).getStory(_data.storyId),
-          _data.totalOfFramesSeen,
-          new Vector3(_data.pausedPosition.x, bannerTopPosition, Layers.scene + Layers.fraction),
-          _data.storyColor,
-        ),
-        groups,
-      );
-    })
+      storyCircles[_data.storyId] = storyCircle(
+        useStory(_storyService).getStory(_data.storyId),
+        _data.totalOfFramesSeen,
+        new Vector3(_data.pausedPosition.x, bannerTopPosition, Layers.scene + Layers.fraction),
+        _data.storyColor,
+      )
+    });
 
-    GroupHelper().AddObjectsTogroups(storyEndText(), groups);
-    GroupHelper().AddObjectsTogroups([blackBanner()], groups);
-    return groups
+    return {
+      text: storyEndText(),
+      banner: blackBanner(),
+      storyCircles: storyCircles,
+    };
   };
   return { Create };
 };

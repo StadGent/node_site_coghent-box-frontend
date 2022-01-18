@@ -24,6 +24,7 @@ import Common from '@/composables/common';
 import { GarabageHelperForWall } from './helper.wall.garbage';
 import TaggingHelper from './helper.tagging';
 import MoveHelper from './helper.move';
+import SceneHelper from './helper.scene';
 
 const PlayBookBuild = (
   threeService: ThreeService,
@@ -58,7 +59,7 @@ const PlayBookBuild = (
     endOfSession: true | false;
   };
   startOfSession: () => Promise<true | false>;
-  setSelectedStory: (currentStory: number) => void;
+  setSelectedStory: () => void;
 } => {
   const updateAudio = (
     audio: HTMLAudioElement,
@@ -81,7 +82,7 @@ const PlayBookBuild = (
   };
 
   const storyCircle = (currentFrameIndex: number, storyColor: number, canAddToSCene: boolean) => {
-    useStoryCircle(threeService, storyService, activeStoryData, playBook).create(
+    useStoryCircle(threeService, taggingService, storyService, activeStoryData, playBook).create(
       zoneService.middleZoneCenter,
       storyColor,
       currentFrameIndex,
@@ -155,10 +156,8 @@ const PlayBookBuild = (
     );
     await CustomAnimation().fadeOut(taggingService.getByTag(Tags.ActiveStoryCircleShade)[0].object, -1, AnimationDefaults.values.fadeStep);
     taggingService.removeAllTagsFrom(Tags.ActiveStoryCircleShade);
+    SceneHelper(threeService).addPauseScreenObjectsToScene(StoryPaused(taggingService, zoneService, storyService).Create(inactiveStories));
     TaggingHelper(taggingService).tagActiveStorycircleAsStoryCircle();
-    threeService.AddGroupsToScene(
-      StoryPaused(taggingService, zoneService, storyService).Create(inactiveStories), Tags.Stories, 'All incative stories when session is paused.'
-    );
   };
 
   const storyData = (
@@ -180,9 +179,8 @@ const PlayBookBuild = (
     return await useStartOfSession(threeService, zoneService, spotlight).create();
   };
 
-  const setSelectedStory = (currentStory: number) => {
-    const storyCircles = taggingService.getByTag(Tags.PauseScreenStoryCircle);
-
+  const setSelectedStory = () => {
+    TaggingHelper(taggingService).tagStorycircleAsActiveStoryCircle(storyService.activeStoryData.storyId);
   };
 
   return {

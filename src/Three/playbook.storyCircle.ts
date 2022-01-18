@@ -6,13 +6,15 @@ import { Vector3 } from 'three';
 import CircleHelper from './helper.circle';
 import Measurements from './defaults.measurements';
 import StoryCircle from './section.storyCircle';
-import { Tags } from '@/services/TaggingService';
+import TaggingService, { Tags } from '@/services/TaggingService';
 import Images from './defaults.images';
 import StoryService from '@/services/StoryService';
 import SceneHelper from './helper.scene';
+import TaggingHelper from './helper.tagging';
 
 const useStoryCircle = (
   threeService: ThreeService,
+  _taggingService: TaggingService,
   _storyService: StoryService,
   activeStoryData: Story,
   playBook: PlayBookFunctions,
@@ -52,6 +54,7 @@ const useStoryCircle = (
       playBook.addToPlayBook(
         () => {
           SceneHelper(threeService).addStoryCircleToScene(_storyService.activeStoryData.storyId, storyCircle, true);
+          TaggingHelper(_taggingService).tagStorycircleAsActiveStoryCircle(_storyService.activeStoryData.storyId);
         },
         timestamp,
         `Add full storyCircle to the scene.`,
