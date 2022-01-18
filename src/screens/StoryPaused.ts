@@ -35,7 +35,7 @@ const StoryPaused = (taggingService: TaggingService, zoneService: ZoneService, _
 
     GroupHelper().AddObjectsTogroups([titleCircle.basic,titleCircle.progress, titleCircle.text], groups);
     GroupHelper().AddObjectsTogroups(titleCircle.frameDots, groups);
-    taggingService.tag(Tags.StoryCircle, groups, `StoryCircle with progress for story ${story.id}`, story.id)
+    taggingService.tag(Tags.PauseScreenStoryCircle, groups, `Storycircle on pause screen ${story.id}`, story.id)
     return groups;
   };
 
@@ -49,7 +49,7 @@ const StoryPaused = (taggingService: TaggingService, zoneService: ZoneService, _
     const man = SchemaCube().CreateImageCube(manSchema);
     GroupHelper().AddObjectsTogroups(text, groups);
     GroupHelper().AddObjectsTogroups([man], groups);
-    taggingService.tag(Tags.StoryEndText, groups, `Text displayed on the pause screen where all the stories are shown.`)
+    taggingService.tag(Tags.PauseScreenCenterText, groups, `Text displayed on the pause screen where all the stories are shown.`)
     return groups;
   };
 
@@ -79,7 +79,6 @@ const StoryPaused = (taggingService: TaggingService, zoneService: ZoneService, _
         groups,
       );
     })
-    
 
     GroupHelper().AddObjectsTogroups(storyEndText(), groups);
     GroupHelper().AddObjectsTogroups([blackBanner()], groups);

@@ -93,13 +93,13 @@ export default class ThreeService {
     this.state.camera.position.z = this.defaultvalues.camera.distance;
   }
 
-  AddToScene(item: any, tag: Tags, context?: string, name?: string) {
-    this.taggingService.tag(tag, item, context, name);
+  AddToScene(item: any, tag: Tags, context?: string, id?: string) {
+    this.taggingService.tag(tag, item, context, id);
     this.state.scene.add(item);
   }
 
-  AddGroupsToScene(groups: Array<Group>, tag: Tags, context?: string, name?: string) {
-    this.taggingService.tag(tag, groups, context, name);
+  AddGroupsToScene(groups: Array<Group>, tag: Tags, context?: string, id?: string) {
+    this.taggingService.tag(tag, groups, context, id);
     groups.map((group) => {
       this.state.scene.add(group);
       this.state.scene.updateMatrixWorld(true);

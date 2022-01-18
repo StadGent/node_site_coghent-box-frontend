@@ -155,7 +155,7 @@ const PlayBookBuild = (
     );
     await CustomAnimation().fadeOut(taggingService.getByTag(Tags.ActiveStoryCircleShade)[0].object, -1, AnimationDefaults.values.fadeStep);
     taggingService.removeAllTagsFrom(Tags.ActiveStoryCircleShade);
-
+    TaggingHelper(taggingService).tagActiveStorycircleAsStoryCircle();
     threeService.AddGroupsToScene(
       StoryPaused(taggingService, zoneService, storyService).Create(inactiveStories), Tags.Stories, 'All incative stories when session is paused.'
     );
@@ -181,7 +181,7 @@ const PlayBookBuild = (
   };
 
   const setSelectedStory = (currentStory: number) => {
-    const storyCircles = taggingService.getByTag(Tags.StoryCircle);
+    const storyCircles = taggingService.getByTag(Tags.PauseScreenStoryCircle);
 
   };
 

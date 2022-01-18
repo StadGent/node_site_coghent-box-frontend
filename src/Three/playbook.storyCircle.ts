@@ -9,6 +9,7 @@ import StoryCircle from './section.storyCircle';
 import { Tags } from '@/services/TaggingService';
 import Images from './defaults.images';
 import StoryService from '@/services/StoryService';
+import SceneHelper from './helper.scene';
 
 const useStoryCircle = (
   threeService: ThreeService,
@@ -50,34 +51,10 @@ const useStoryCircle = (
 
       playBook.addToPlayBook(
         () => {
-          threeService.AddToScene(
-            storyCircle.text,
-            Tags.ActiveStoryCircleText,
-            'The text of a storycircle.',
-          );
-          threeService.AddGroupsToScene(
-            storyCircle.frameDots,
-            Tags.ActiveStoryCircleFrameDots,
-            'The progress of the frames dots of a storycircle.',
-          );
-          threeService.AddToScene(
-            storyCircle.progress,
-            Tags.ActiveStoryCircleProgress,
-            'The progress of a storycircle.',
-          );
-          threeService.AddToScene(
-            storyCircle.shade,
-            Tags.ActiveStoryCircleShade,
-            'The shaded circle of a storycircle.',
-          );
-          threeService.AddToScene(
-            storyCircle.basic,
-            Tags.ActiveStoryCircleBasic,
-            'The middle circle of the storycircle.',
-          );
+          SceneHelper(threeService).addStoryCircleToScene(_storyService.activeStoryData.storyId, storyCircle, true);
         },
         timestamp,
-        `Add title cirle with progressbar to the scene.`,
+        `Add full storyCircle to the scene.`,
       );
       //DEMO: Removed frame title for demo
       // playBook.addToPlayBook(

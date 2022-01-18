@@ -8,7 +8,7 @@ const MoveHelper = (_taggingService: TaggingService): {
 } => {
 
   const activeStoryCircle = (_position: Vector3) => {
-    const objects = TaggingHelper(_taggingService).activeStoryCircle();
+    const objects = TaggingHelper(_taggingService).getActiveStoryCircle();
     MoveObject().startMoving(objects.text, _position);
     MoveObject().startMoving(objects.basic, _position);
     MoveObject().startMoving(objects.progress, _position);

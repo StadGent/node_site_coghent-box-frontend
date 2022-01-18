@@ -1,7 +1,7 @@
 export type Tag = {
   tag: string,
   object: any,
-  name?: string,
+  id?: string,
   context?: string,
 }
 export enum Tags {
@@ -10,13 +10,19 @@ export enum Tags {
   ActiveStoryCircleText,
   ActiveStoryCircleProgress,
   ActiveStoryCircleFrameDots,
+  StoryCircleBasic,
+  StoryCircleShade,
+  StoryCircleText,
+  StoryCircleProgress,
+  StoryCircleFrameDots,
   Highlight,
   Spotlight,
   Asset,
   GroupOfAssets,
   Video,
   Countdown,
-  StoryCircle,
+  PauseScreenStoryCircle,
+  PauseScreenCenterText,
   FrameTitle,
   XAxis,
   YAxis,
@@ -41,12 +47,12 @@ export default class TaggingService {
     this.taggedObjects = [];
   }
 
-  tag(tag: Tags, object: any, context?: string, name?: string) {
+  tag(tag: Tags, object: any, context?: string, id?: string) {
     this.taggedObjects.push({
       tag: Tags[tag],
       object: object,
       context: context || '',
-      name: name || '',
+      id: id || '',
     } as Tag);
   }
 
@@ -69,6 +75,9 @@ export default class TaggingService {
   getByTag(tag: Tags) {
     return this.taggedObjects.filter(_object => _object.tag == Tags[tag]);
   }
+  getByTagId(id: string){
+    return this.taggedObjects.filter(_tag => _tag.id == id);
+  }
 
   tagAlreadyInList(_searchTag: Tags){
     return this.taggedObjects.filter(_tag => _tag.tag == Tags[_searchTag]).length > 0;
@@ -76,5 +85,17 @@ export default class TaggingService {
 
   clearTaggedObjects() {
     this.taggedObjects = [];
+  }
+
+  retag(oldTag: Tags, tag: Tags){
+    const objects = this.getByTag(oldTag);
+    const oldItems = this.taggedObjects.filter(_objects => _objects.tag == Tags[oldTag]);
+    oldItems.forEach(_item => {
+      _item.tag = Tags[tag];
+    })
+
+    // this.tag(tag,objects[0].object, objects[0].context ,objects[0].id);
+    console.log('retagged object',this.getByTag(tag));
+    console.log('taggedObjects after retag', this.taggedObjects);
   }
 }

@@ -50,7 +50,6 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
 
   const endOfSessionScreen = () => {
     removeGroupsByTag(Tags.FrameProgressbar);
-    removeGroupsByTag(Tags.StoryCircle);
     removeGroupsByTag(Tags.Stories);
     removeByTag(Tags.GroupOfAssets);
     activeStoryCircle();

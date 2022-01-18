@@ -3,10 +3,11 @@ import { BufferGeometry, CircleGeometry, Group, Mesh, MeshBasicMaterial } from '
 import { StoryCircleObjects } from './section.storyCircle';
 
 const TaggingHelper = (_taggingService: TaggingService): {
-  activeStoryCircle: () => StoryCircleObjects;
+  getActiveStoryCircle: () => StoryCircleObjects;
+  tagActiveStorycircleAsStoryCircle: () => void;
+  tagStorycircleAsActiveStoryCircle: () => void;
 } => {
-
-  const activeStoryCircle = () => {
+  const getActiveStoryCircle = () => {
     const basic = _taggingService.getByTag(Tags.ActiveStoryCircleBasic)[0].object as Mesh<CircleGeometry, MeshBasicMaterial>;
     const shade = _taggingService.getByTag(Tags.ActiveStoryCircleShade)[0].object as Mesh<CircleGeometry, MeshBasicMaterial>;
     const text = _taggingService.getByTag(Tags.ActiveStoryCircleText)[0].object as Group;
@@ -21,8 +22,22 @@ const TaggingHelper = (_taggingService: TaggingService): {
     };
   };
 
+  const tagActiveStorycircleAsStoryCircle = () => {
+    _taggingService.retag(Tags.ActiveStoryCircleBasic,Tags.StoryCircleBasic);
+    _taggingService.retag(Tags.ActiveStoryCircleProgress,Tags.StoryCircleProgress);
+    _taggingService.retag(Tags.ActiveStoryCircleFrameDots,Tags.StoryCircleFrameDots);
+    _taggingService.retag(Tags.ActiveStoryCircleText,Tags.StoryCircleText);
+    _taggingService.retag(Tags.ActiveStoryCircleShade,Tags.StoryCircleShade);
+  };
+
+  const tagStorycircleAsActiveStoryCircle = () => {
+    
+  };
+
   return {
-    activeStoryCircle,
+    getActiveStoryCircle,
+    tagActiveStorycircleAsStoryCircle,
+    tagStorycircleAsActiveStoryCircle,
   }
 }
 
