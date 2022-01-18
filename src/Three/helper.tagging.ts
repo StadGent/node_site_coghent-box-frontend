@@ -1,6 +1,5 @@
 import TaggingService, { Tags } from '@/services/TaggingService';
 import { BufferGeometry, CircleGeometry, Group, Mesh, MeshBasicMaterial } from 'three';
-import GroupHelper from './helper.group';
 import { StoryCircleObjects } from './section.storyCircle';
 
 const TaggingHelper = (_taggingService: TaggingService): {

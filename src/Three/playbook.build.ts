@@ -23,6 +23,7 @@ import AnimationDefaults from './defaults.animation';
 import Common from '@/composables/common';
 import { GarabageHelperForWall } from './helper.wall.garbage';
 import TaggingHelper from './helper.tagging';
+import MoveHelper from './helper.move';
 
 const PlayBookBuild = (
   threeService: ThreeService,
@@ -146,13 +147,14 @@ const PlayBookBuild = (
     Common().setScale(spotlight, Measurements().pauseScreen.spotLightRadius);
     MoveObject().startMoving(spotlight, new Vector3(0, -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight, Layers.scene));
     const inactiveStories = storyService.getDataOfInactiveStories();
-    console.log('storycircle groups',TaggingHelper(taggingService).activeStoryCircle());
-    
-    // const activeStoryCircle = taggingService.getByTag(Tags.ActiveStoryCircle)[0].object as Array<Group>;
-    // const activeStoryCircleProgressbar = taggingService.getByTag(Tags.CircularProgressBar)[0].object as Array<Group>;
-    // console.log({activeStoryCircle});
-    // MoveObject().moveGroups(TaggingHelper(taggingService).activeStoryCircle(), new Vector3(storyService.activeStoryData.pausedPosition.x, -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight, Layers.scene + Layers.fraction));
-    // MoveObject().moveGroups(activeStoryCircleProgressbar, new Vector3(storyService.activeStoryData.pausedPosition.x, -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight,Layers.scene + Layers.fraction));
+    MoveHelper(taggingService).activeStoryCircle(
+      new Vector3(
+        storyService.activeStoryData.pausedPosition.x,
+        -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight,
+        Layers.scene + Layers.fraction)
+    );
+    await CustomAnimation().fadeOut(taggingService.getByTag(Tags.ActiveStoryCircleShade)[0].object, -1, AnimationDefaults.values.fadeStep);
+    threeService.RemoveFromScene(taggingService.getByTag(Tags.ActiveStoryCircleShade)[0].object);
 
     threeService.AddGroupsToScene(
       StoryPaused(taggingService, zoneService, storyService).Create(inactiveStories), Tags.Stories, 'All incative stories when session is paused.'
