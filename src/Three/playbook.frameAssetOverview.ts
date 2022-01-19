@@ -14,6 +14,7 @@ import { Tags } from '@/services/TaggingService';
 import AnimationDefaults from './defaults.animation';
 import CustomAnimation from '@/composables/animation';
 import { GarabageHelperForWall } from '@/Three/helper.wall.garbage';
+import Measurements from './defaults.measurements';
 
 const useFrameAssetOverview = (
   threeService: ThreeService,
@@ -71,15 +72,14 @@ const useFrameAssetOverview = (
     asset.position.set(positions[currentAsset].x, positions[currentAsset].y, positions[currentAsset].z);
     spotlight.position.set(positions[currentAsset].x, positions[currentAsset].y, positions[currentAsset].z);
 
-    await Promise.all([
-      useAsset(threeService).moveSpotlightToAsset(
-        spotlight,
-        asset as unknown as Mesh<BoxBufferGeometry, any>,
-        scale,
-      ),
-      CustomAnimation().shrink(asset as unknown as Mesh<any, MeshBasicMaterial>, scale, AnimationDefaults.values.scaleStep),
-    ]
-    );
+    await useAsset(threeService).moveSpotlightToAsset(
+      spotlight,
+      asset as unknown as Mesh<BoxBufferGeometry, any>,
+      scale,
+    ),
+    CustomAnimation().shrink(asset as unknown as Mesh<any, MeshBasicMaterial>, scale, AnimationDefaults.values.scaleStep);
+    await Common().awaitTimeout(200);
+    await CustomAnimation().shrink(spotlight as unknown as Mesh<any, MeshBasicMaterial>, scale + Measurements().spotLight.spaceAroundObject, AnimationDefaults.values.scaleStep);
   };
 
   const setAssetsInactive = async (displayedAsset: Mesh<BoxBufferGeometry, any>) => {
@@ -176,7 +176,6 @@ const useFrameAssetOverview = (
         if (relationMetadata.timestamp_zoom) {
           playBook.addToPlayBook(
             async () => {
-              // await CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>, 0.001, AnimationDefaults.values.scaleStep)
               await zoomAndHighlightAsset(
                 asset as Mesh<BoxBufferGeometry, any>,
                 index,
@@ -186,7 +185,7 @@ const useFrameAssetOverview = (
             `Zoom and highlight asset + set other assets inactive`,
           );
         }
-        if (relationMetadata.timestamp_end) {
+        if (relationMetadata.timestamp_end && relationMetadata.timestamp_zoom) {
           playBook.addToPlayBook(
             async () => {
               await resetImage(

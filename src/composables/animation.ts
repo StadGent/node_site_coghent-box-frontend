@@ -53,7 +53,7 @@ const CustomAnimation = (): {
   const shrink = async (object: Mesh<any, MeshBasicMaterial>, scaleTo: number, step: number) => {
     while (object.scale.x - step > scaleTo) {
       await Common().awaitTimeout(AnimationDefaults.timing.scaleUpdateTime);
-      object.scale.set(object.scale.x - step, object.scale.x - step, object.scale.x - step)
+      Common().setScale(object, object.scale.x - step);
     }
   };
 
