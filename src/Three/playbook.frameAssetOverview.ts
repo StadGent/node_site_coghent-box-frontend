@@ -69,8 +69,7 @@ const useFrameAssetOverview = (
     spotlight: Mesh,
   ) => {
     garbageHelper.highlightedAsset();
-    asset.position.set(positions[currentAsset].x, positions[currentAsset].y, positions[currentAsset].z);
-    spotlight.position.set(positions[currentAsset].x, positions[currentAsset].y, positions[currentAsset].z);
+    
 
     await useAsset(threeService).moveSpotlightToAsset(
       spotlight,
@@ -78,8 +77,11 @@ const useFrameAssetOverview = (
       scale,
     ),
     CustomAnimation().shrink(asset as unknown as Mesh<any, MeshBasicMaterial>, scale, AnimationDefaults.values.scaleStep);
-    await Common().awaitTimeout(200);
-    await CustomAnimation().shrink(spotlight as unknown as Mesh<any, MeshBasicMaterial>, scale + Measurements().spotLight.spaceAroundObject, AnimationDefaults.values.scaleStep);
+    await Common().awaitTimeout(250);
+    await CustomAnimation().shrink(spotlight as unknown as Mesh<any, MeshBasicMaterial>, scale + (Measurements().spotLight.spaceAroundObject*2), AnimationDefaults.values.scaleStep);
+    await Common().awaitTimeout(150);
+    asset.position.set(positions[currentAsset].x, positions[currentAsset].y, positions[currentAsset].z);
+    spotlight.position.set(positions[currentAsset].x, positions[currentAsset].y, positions[currentAsset].z);
   };
 
   const setAssetsInactive = async (displayedAsset: Mesh<BoxBufferGeometry, any>) => {

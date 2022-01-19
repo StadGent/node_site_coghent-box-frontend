@@ -4,6 +4,7 @@ import ThreeService from '@/services/ThreeService';
 import { Mesh, MeshBasicMaterial } from 'three';
 import AnimationDefaults from './defaults.animation';
 import Defaults from '@/Three/defaults.config'
+import StoryService from '@/services/StoryService';
 
 export type GarabageHelperForWall = {
   removeGroupsByTag: (_tag: Tags) => void;
@@ -15,6 +16,20 @@ export type GarabageHelperForWall = {
 };
 
 const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingService): GarabageHelperForWall => {
+
+  const removeAllInactiveStories = () => {
+    storyCircle();
+    storyCircle();
+    storyCircle();
+  };
+
+  const removeArrayOfGroupsByTag = (_tag: Tags) => {
+    const _groups = taggingService.getByTag(_tag);
+    for(const item of _groups){
+      threeService.RemoveGroupsFromScene(item.object);
+    }
+    taggingService.removeAllTagsFrom(_tag);
+  };
 
   const removeGroupsByTag = (_tag: Tags) => {
     let _groups = taggingService.getByTag(_tag);
@@ -31,25 +46,24 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
   };
 
   const pauseScreen = () => {
-    removeGroupsByTag(Tags.FrameProgressbar);
-    removeGroupsByTag(Tags.HighlightedMetadata);
-    removeByTag(Tags.HighlightedMetadata);
+    removeArrayOfGroupsByTag(Tags.FrameProgressbar);
+    removeArrayOfGroupsByTag(Tags.PauseScreenCenterText);
     logRemoved('pauseScreen');
   };
 
   const newStorySelected = async () => {
     const groupOfAssetsTags = taggingService.getByTag(Tags.GroupOfAssets);
     await CustomAnimation().fadeOutGroups([groupOfAssetsTags[0].object], 0, AnimationDefaults.values.fadeStep);
-    activeStoryCircle();
     removeGroupsByTag(Tags.Stories);
     threeService.RemoveFromScene(groupOfAssetsTags[0].object);
-    removeByTag(Tags.Spotlight);
-    removeGroupsByTag(Tags.ActiveStoryCircleFrameDots);
+    removeAllInactiveStories();
+    removeArrayOfGroupsByTag(Tags.PauseScreenCenterText)
+    removeByTag(Tags.PauseScreenBanner);    
     logRemoved('newStorySelected')
   };
 
   const endOfSessionScreen = () => {
-    removeGroupsByTag(Tags.FrameProgressbar);
+    removeArrayOfGroupsByTag(Tags.FrameProgressbar);
     removeGroupsByTag(Tags.Stories);
     removeByTag(Tags.GroupOfAssets);
     activeStoryCircle();
@@ -62,8 +76,7 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
   };
 
   const highlightedAsset = () => {
-    removeGroupsByTag(Tags.HighlightedMetadata);
-    removeByTag(Tags.HighlightedMetadata);
+    removeArrayOfGroupsByTag(Tags.HighlightedMetadata);
     logRemoved(`highlightedAsset`);
   };
 
@@ -74,6 +87,14 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     removeByTag(Tags.ActiveStoryCircleShade);
     removeGroupsByTag(Tags.ActiveStoryCircleFrameDots);
     logRemoved('activeStoryCircle');
+  };
+
+  const storyCircle = () => {
+    removeByTag(Tags.StoryCircleText);
+    removeByTag(Tags.StoryCircleProgress);
+    removeByTag(Tags.StoryCircleBasic);
+    removeArrayOfGroupsByTag(Tags.StoryCircleFrameDots);
+    logRemoved('storyCircle');
   };
 
   const logRemoved = (_context: string) => {

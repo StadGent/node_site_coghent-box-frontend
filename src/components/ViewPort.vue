@@ -84,7 +84,7 @@ export default defineComponent({
     };
     let garbageHelper: GarabageHelperForWall;
     let audioDuration = 120;
-    let currentFrame = 0;
+    let currentFrame = 1;
     let showProgressOfFrame = false;
     let interval: ReturnType<typeof setTimeout>;
     let storyData: Array<Story> = [];
@@ -110,16 +110,17 @@ export default defineComponent({
           currentFrame = _storyData.totalOfFramesSeen;
           console.log('Selected story => ', currentStory.value);
           await garbageHelper.newStorySelected();
-          threeSvc.ClearScene();
-          spotlight = PlayBookBuild(
-            threeSvc,
-            storyService,
-            zoneService,
-            taggingService,
-            playBook,
-            spotlight,
-            activeStoryData,
-          ).initialSpotLight();
+          //FIXME:
+          // threeSvc.ClearScene();
+          // spotlight = PlayBookBuild(
+          //   threeSvc,
+          //   storyService,
+          //   zoneService,
+          //   taggingService,
+          //   playBook,
+          //   spotlight,
+          //   activeStoryData,
+          // ).initialSpotLight();
 
           PlayBookBuild(
             threeSvc,
@@ -130,8 +131,8 @@ export default defineComponent({
             spotlight,
             activeStoryData,
           ).setSelectedStory();
+          console.log('items on screen', taggingService.taggedObjects);
           resetStory();
-          console.log('tagged => ', taggingService.taggedObjects);
         }
       },
     );
@@ -323,7 +324,6 @@ export default defineComponent({
           } else {
             currentStory = 0;
             emit('resetSelectedStory', 0);
-            console.log({ currentStory });
             chooseStory.value = true;
             audio.pause();
             garbageHelper.pauseScreen();

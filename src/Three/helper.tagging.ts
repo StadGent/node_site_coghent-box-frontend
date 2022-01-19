@@ -52,7 +52,6 @@ const TaggingHelper = (_taggingService: TaggingService): {
 
   const matchTags = (_tags: Array<Tag>) => {
     _tags.forEach(_tag => {
-      console.log(inactive[0]);
       switch (_tag.tag) {
         case inactive[0]:
           _taggingService.removeTaggedObject(_tag.object);

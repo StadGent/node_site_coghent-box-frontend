@@ -179,8 +179,10 @@ const PlayBookBuild = (
     return await useStartOfSession(threeService, zoneService, spotlight).create();
   };
 
-  const setSelectedStory = () => {
+  const setSelectedStory = async () => {
     TaggingHelper(taggingService).tagStorycircleAsActiveStoryCircle(storyService.activeStoryData.storyId);
+    Common().setScale(spotlight, Measurements().storyCircle.outerCircle);
+    await MoveObject().startMoving(spotlight, zoneService.middleZoneCenter);
   };
 
   return {
