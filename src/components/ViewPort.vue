@@ -4,7 +4,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, PropType, reactive, Ref, ref, watch } from 'vue';
+import {
+  computed,
+  defineComponent,
+  onMounted,
+  PropType,
+  reactive,
+  Ref,
+  ref,
+  watch,
+} from 'vue';
 import { Group, Mesh, Vector3 } from 'three';
 import { Entity as _Entity, Story } from '@/models/GraphqlModel';
 
@@ -53,7 +62,7 @@ export default defineComponent({
       required: true,
     },
   },
-  emits: ['restartSession'],
+  emits: ['restartSession', 'resetSelectedStory'],
   setup(props, { emit }) {
     const viewport = ref(null);
     const stories = ref(props.stories);
@@ -89,6 +98,7 @@ export default defineComponent({
         console.log('Can you choose a story?', chooseStory.value);
         storyData = stories.value;
         if (
+          value != 0 &&
           chooseStory.value &&
           value <= storyData.length &&
           !storyService.storyIsSeen(storyData[value - 1].id)
@@ -311,6 +321,9 @@ export default defineComponent({
                 // setup();
               });
           } else {
+            currentStory = 0;
+            emit('resetSelectedStory', 0);
+            console.log({ currentStory });
             chooseStory.value = true;
             audio.pause();
             garbageHelper.pauseScreen();

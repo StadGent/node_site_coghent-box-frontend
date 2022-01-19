@@ -4,6 +4,7 @@
     :storySelected="storySelected"
     :storyService="storyService"
     @restartSession="restartSession"
+    @resetSelectedStory="resetSelectedStory"
   />
   <!-- <mqtt @selectStory="setSelectStory"/> -->
 </template>
@@ -13,7 +14,7 @@ import ViewPort from '@/components/ViewPort.vue';
 import { useMutation, useQuery } from '@vue/apollo-composable';
 import {
   GetStoriesDocument,
-  GetBoxVisiterByCodeDocument,
+  GetBoxVisiterByIdDocument,
   AddFrameToVisiterDocument,
 } from 'coghent-vue-3-component-library';
 import mqtt from '@/components/mqtt.vue';
@@ -31,16 +32,17 @@ export default defineComponent({
     const storyService = ref<StoryService>();
 
     // const { onResult: BoxVisiter, fetchMore: GetVisiter } = useQuery(
-    //   GetBoxVisiterByCodeDocument,
+    //   GetBoxVisiterByIdDocument,
     //   {
-    //     code: '8bd94ccf-bd08-4f67-bd81-0b3fdbd9919e',
+    //     id: '743ca110-384a-43f7-a57b-796cbd89c8cb',
     //   },
     // );
     const { onResult: Stories } = useQuery(GetStoriesDocument);
     // const { mutate, onDone } = useMutation(AddFrameToVisiterDocument, {variables: {visiterId: "eaedf3ab-4de9-473f-9668-5e3e6d5b0510"}})
 
     // BoxVisiter((_visiter) => {
-    //   visiter = _visiter.data.BoxVisiterByCode as BoxVisiter;
+    //   console.log({_visiter});
+    //   visiter = _visiter.data.BoxVisiterById as BoxVisiter;
     //   console.log(visiter);
     // });
 
@@ -53,7 +55,7 @@ export default defineComponent({
       if (activeStories) {
         storyService.value = new StoryService(
           activeStories,
-          'eaedf3ab-4de9-473f-9668-5e3e6d5b0510',
+          '8c9836ce-3540-4d62-b16a-4112df237b76',
         );
         stories.value = [...activeStories];
         console.log(`=> Stories <=`, _stories);
@@ -72,7 +74,9 @@ export default defineComponent({
       // console.log({_visiter});
     };
 
-    window.onkeydown = (key: KeyboardEvent) => {
+    const resetSelectedStory = (resetTo: number) => storySelected.value = resetTo;
+
+    window.onkeydown = async (key: KeyboardEvent) => {
       switch (key.code) {
         case 'Digit1':
           console.log('pressed 1');
@@ -92,10 +96,10 @@ export default defineComponent({
           break;
         case 'Digit5':
           console.log('pressed 5');
-          storySelected.value = 5;
           break;
       }
     };
+
     const setSelectStory = (sensorValue: { id: number; msg: boolean }) => {
       console.log(`MQTT data => `, sensorValue);
       if (sensorValue.msg) {
@@ -103,17 +107,13 @@ export default defineComponent({
       }
     };
 
-    // onMounted(async () => {
-    //   const d = await mutate();
-    //   console.log(d);
-    // })
-
     return {
       stories,
       storySelected,
       setSelectStory,
       storyService,
       restartSession,
+      resetSelectedStory,
     };
   },
 });
