@@ -67,12 +67,12 @@ const useFrameAssetOverview = (
     currentAsset: number,
     spotlight: Mesh,
   ) => {
-    await garbageHelper.highlightedAsset();
+    garbageHelper.highlightedAsset();
     asset.position.set(positions[currentAsset].x, positions[currentAsset].y, positions[currentAsset].z);
     spotlight.position.set(positions[currentAsset].x, positions[currentAsset].y, positions[currentAsset].z);
 
     await Promise.all([
-      await useAsset(threeService).moveSpotlightToAsset(
+      useAsset(threeService).moveSpotlightToAsset(
         spotlight,
         asset as unknown as Mesh<BoxBufferGeometry, any>,
         scale,
@@ -176,7 +176,7 @@ const useFrameAssetOverview = (
         if (relationMetadata.timestamp_zoom) {
           playBook.addToPlayBook(
             async () => {
-              await CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>, 0.001, AnimationDefaults.values.scaleStep)
+              // await CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>, 0.001, AnimationDefaults.values.scaleStep)
               await zoomAndHighlightAsset(
                 asset as Mesh<BoxBufferGeometry, any>,
                 index,

@@ -102,11 +102,12 @@ const useAsset = (
     assetImageCube.material.opacity = 1;
     assetImageCube.position.set(position.x, position.y, position.z);
     spotlight.position.set(position.x, position.y, position.z);
-    const spotToZoom = Spot().create(position, 1);
-    threeService.AddToScene(spotToZoom, Tags.ZoomSpotlight);
+    // const spotToZoom = Spot().create(position, 1);
+    // threeService.AddToScene(spotToZoom, Tags.ZoomSpotlight);
     assetImageCube.position.z = Layers.scene + Layers.fraction;
+   
     await CustomAnimation().grow(assetImageCube, scale, AnimationDefaults.values.scaleStep);
-    await useAsset(threeService).moveSpotlightToAsset(spotToZoom,assetImageCube,scale);
+    // await useAsset(threeService).moveSpotlightToAsset(spotToZoom,assetImageCube,scale);
   };
 
   const addMetadata = (

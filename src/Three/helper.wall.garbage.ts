@@ -11,7 +11,7 @@ export type GarabageHelperForWall = {
   newStorySelected: () => Promise<void>;
   endOfSessionScreen: () => void;
   startOfSession: () => void;
-  highlightedAsset: () => Promise<void>;
+  highlightedAsset: () => void;
 };
 
 const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingService): GarabageHelperForWall => {
@@ -61,13 +61,9 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     logRemoved('startOfSession');
   };
 
-  const highlightedAsset = async () => {
+  const highlightedAsset = () => {
     removeGroupsByTag(Tags.HighlightedMetadata);
     removeByTag(Tags.HighlightedMetadata);
-
-    const zoomSpotlight = taggingService.getByTag(Tags.ZoomSpotlight);
-    await CustomAnimation().shrink(zoomSpotlight[0].object as Mesh<any, MeshBasicMaterial>, 0, AnimationDefaults.values.scaleStep);
-    removeByTag(Tags.ZoomSpotlight);
     logRemoved(`highlightedAsset`);
   };
 
