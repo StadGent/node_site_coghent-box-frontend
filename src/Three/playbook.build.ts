@@ -25,6 +25,9 @@ import { GarabageHelperForWall } from './helper.wall.garbage';
 import TaggingHelper from './helper.tagging';
 import MoveHelper from './helper.move';
 import SceneHelper from './helper.scene';
+import StoryCircle from './section.storyCircle';
+import { CircleParams, CircleSchema } from './schema.circle';
+import Colors from './defaults.color';
 
 const PlayBookBuild = (
   threeService: ThreeService,
@@ -179,10 +182,22 @@ const PlayBookBuild = (
     return await useStartOfSession(threeService, zoneService, spotlight).create();
   };
 
-  const setSelectedStory = async () => {
+  const setSelectedStory = () => {
     TaggingHelper(taggingService).tagStorycircleAsActiveStoryCircle(storyService.activeStoryData.storyId);
-    Common().setScale(spotlight, Measurements().storyCircle.outerCircle);
-    await MoveObject().startMoving(spotlight, zoneService.middleZoneCenter);
+    // DEMO:
+    // Common().setScale(spotlight, Measurements().storyCircle.outerCircle);
+    // MoveObject().startMoving(spotlight, zoneService.middleZoneCenter);
+    // threeService.AddToScene(StoryCircle(storyService).shadedCircle(
+    //   {
+    //     position: new Vector3(
+    //       storyService.activeStoryData.pausedPosition.x,
+    //       -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight,
+    //       Layers.scene + Layers.fraction), params: { color: storyService.activeStoryData.storyColor } as CircleParams
+    //   } as CircleSchema), Tags.ActiveStoryCircleShade);
+      // threeService.RemoveFromScene(taggingService.getByTag(Tags.ActiveStoryCircleText)[0].object);
+      // threeService.AddToScene(StoryCircle(storyService).progressBar({position: zoneService.middleZoneCenter} as CircleSchema), Tags.ActiveStoryCircleFrameDots);
+      // threeService.AddToScene(StoryCircle(storyService).title(storyService.activeStory.title[0].value,new Vector3(zoneService.middleZoneCenter.x - 1,zoneService.middleZoneCenter.y, Layers.scene+ Layers.fraction), Colors().white), Tags.ActiveStoryCircleFrameDots);
+    // MoveHelper(taggingService).activeStoryCircle(zoneService.middleZoneCenter);
   };
 
   return {

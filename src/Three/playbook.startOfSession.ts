@@ -40,11 +40,11 @@ const useStartOfSession = (
   const showScanImage = () => {
     setSpotlightOnPosition();
     const scanText = ScanQR(
-     new Vector3(
-      zoneService.zoneCenters[0].x,
-      zoneService.zoneCenters[0].y -1,
-      zoneService.zoneCenters[0].z,
-     ),
+      new Vector3(
+        zoneService.zoneCenters[0].x,
+        zoneService.zoneCenters[0].y - 1,
+        zoneService.zoneCenters[0].z,
+      ),
     ).create();
     threeService.AddGroupsToScene(scanText, Tags.startSessionText, 'Scan your ticket text.');
     return scanText;
@@ -53,7 +53,7 @@ const useStartOfSession = (
   const createCountDownNumber = (countdown: number) => {
     return TextHelper().CreateText(
       `${countdown}`,
-      new Vector3(1, 0, Layers.scene),
+      new Vector3(-.5, 0, Layers.scene),
       {} as CubeParams,
       { size: Measurements().text.size.veryBig, color: Colors().white } as FontParams,
     );
@@ -61,7 +61,7 @@ const useStartOfSession = (
 
   const countdown = async (maxCount: number) => {
     let currentCount = maxCount;
-    while(currentCount != 0){
+    while (currentCount != 0) {
       const text = createCountDownNumber(currentCount);
       threeService.AddToScene(text, Tags.startOfSessionCountdown, 'StartOfSession countdown timer text.');
       await Common().awaitTimeout(1000);

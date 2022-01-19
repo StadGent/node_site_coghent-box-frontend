@@ -44,6 +44,8 @@ import { threeDefaultsWall } from '@/Three/defaults.three';
 
 import schemaCube from '@/Three/schema.cube';
 import Timing from '@/Three/defaults.timing';
+import Spot from '@/Three/shapes.spotlight';
+import MoveObject from '@/composables/moveObject';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -109,18 +111,20 @@ export default defineComponent({
           currentStory.value = value - 1;
           currentFrame = _storyData.totalOfFramesSeen;
           console.log('Selected story => ', currentStory.value);
-          await garbageHelper.newStorySelected();
+          
+          // const spotL = taggingService.getByTag(Tags.Spotlight);
+          // console.log('* spotl', spotL);
           //FIXME:
-          // threeSvc.ClearScene();
-          // spotlight = PlayBookBuild(
-          //   threeSvc,
-          //   storyService,
-          //   zoneService,
-          //   taggingService,
-          //   playBook,
-          //   spotlight,
-          //   activeStoryData,
-          // ).initialSpotLight();
+          threeSvc.ClearScene();
+          spotlight = PlayBookBuild(
+            threeSvc,
+            storyService,
+            zoneService,
+            taggingService,
+            playBook,
+            spotlight,
+            activeStoryData,
+          ).initialSpotLight();
 
           PlayBookBuild(
             threeSvc,
@@ -131,6 +135,12 @@ export default defineComponent({
             spotlight,
             activeStoryData,
           ).setSelectedStory();
+          // DEMO:
+          // await garbageHelper.newStorySelected();
+          // threeSvc.RemoveFromScene(spotlight);
+          // spotlight = Spot().create(spotlight.position,Measurements().storyCircle.outerCircle);
+          // threeSvc.AddToScene(spotlight, Tags.Spotlight);
+          // await MoveObject().startMoving(spotlight, zoneService.middleZoneCenter);
           console.log('items on screen', taggingService.taggedObjects);
           resetStory();
         }
@@ -165,32 +175,32 @@ export default defineComponent({
         spotlight,
         activeStoryData,
       ).initialSpotLight();
-      setData();
+      // setData();
 
-      // await PlayBookBuild(
-      //   threeSvc,
-      //   storyService,
-      //   zoneService,
-      //   taggingService,
-      //   playBook,
-      //   spotlight,
-      //   activeStoryData,
-      // )
-      //   .startOfSession()
-      //   .finally(async () => {
-      //     garbageHelper.startOfSession();
-      //     //TEMP: Creating a new spotlight that is used for the rest of the session
-      //     spotlight = PlayBookBuild(
-      //       threeSvc,
-      //       storyService,
-      //       zoneService,
-      //       taggingService,
-      //       playBook,
-      //       spotlight,
-      //       activeStoryData,
-      //     ).initialSpotLight();
-      //     setData();
-      //   });
+      await PlayBookBuild(
+        threeSvc,
+        storyService,
+        zoneService,
+        taggingService,
+        playBook,
+        spotlight,
+        activeStoryData,
+      )
+        .startOfSession()
+        .finally(async () => {
+          garbageHelper.startOfSession();
+          //TEMP: Creating a new spotlight that is used for the rest of the session
+          spotlight = PlayBookBuild(
+            threeSvc,
+            storyService,
+            zoneService,
+            taggingService,
+            playBook,
+            spotlight,
+            activeStoryData,
+          ).initialSpotLight();
+          setData();
+        });
     };
 
     const setData = async () => {
@@ -276,6 +286,8 @@ export default defineComponent({
         spotlight,
         activeStoryData,
       ).storyCircle(currentFrame, storyService.getStoryColor(activeStoryData.id), true);
+      // DEMO:
+      // ).storyCircle(currentFrame, storyService.getStoryColor(activeStoryData.id), !taggingService.idAlreadyInList(activeStoryData.id));
 
       PlayBookBuild(
         threeSvc,

@@ -15,7 +15,6 @@ export enum Tags {
   StoryCircleText,
   StoryCircleProgress,
   StoryCircleFrameDots,
-  Highlight,
   Spotlight,
   Asset,
   GroupOfAssets,
@@ -28,17 +27,13 @@ export enum Tags {
   XAxis,
   YAxis,
   Dot,
-  Stories,
   HorizontalProgressBar,
   EndOfSession,
-  TitleCircle,
   Testing,
-  StoryEndText,
   FrameProgressbar,
   startSessionText,
   startOfSessionCountdown,
   HighlightedMetadata,
-  ZoomSpotlight,
 }
 
 export default class TaggingService {
@@ -82,6 +77,10 @@ export default class TaggingService {
 
   tagAlreadyInList(_searchTag: Tags){
     return this.taggedObjects.filter(_tag => _tag.tag == Tags[_searchTag]).length > 0;
+  }
+
+  idAlreadyInList(_id: string){
+    return this.taggedObjects.filter(_tag => _tag.id == _id).length > 0;
   }
 
   clearTaggedObjects() {
