@@ -84,7 +84,7 @@ export default defineComponent({
     };
     let garbageHelper: GarabageHelperForWall;
     let audioDuration = 120;
-    let currentFrame = 1;
+    let currentFrame = 0;
     let showProgressOfFrame = false;
     let interval: ReturnType<typeof setTimeout>;
     let storyData: Array<Story> = [];
