@@ -18,7 +18,7 @@ const DotWithinDot = (): {
       new Vector3(
         _position.x,
         _position.y,
-        _position.z + 0.01,
+        _position.z + 0.0001,
       ),
       _radius,
       _color,

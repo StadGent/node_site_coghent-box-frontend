@@ -2,13 +2,15 @@ import { PauseScreenObjects } from '@/screens/StoryPaused';
 import { Tags } from '@/services/TaggingService';
 import ThreeService from '@/services/ThreeService';
 import { StoryCircleObjects } from './section.storyCircle';
-import { DotWithinDotObjects } from './shapes.dotWithinDot';
 import { PauseProgressbarObjects } from '@/Three/shapes.pauseProgressbar'
+import CustomAnimation from '@/composables/animation';
+import AnimationDefaults from './defaults.animation';
+import Common from '@/composables/common';
 
 const SceneHelper = (_threeService: ThreeService): {
   addStoryCircleToScene: (storyId: string, storyCircle: StoryCircleObjects, _displayShadedCircle: boolean) => void;
   addPauseScreenObjectsToScene: (_objects: PauseScreenObjects) => void;
-  addFrameProgressDotsToScene: (_frameProgressbar: PauseProgressbarObjects,  _storyId: string) => void;
+  addFrameProgressDotsToScene: (_frameProgressbar: PauseProgressbarObjects, _storyId: string, _progress: number, _animation: boolean) => void;
 } => {
 
   const addStoryCircleToScene = (storyId: string, storyCircle: StoryCircleObjects, _displayShadedCircle: boolean) => {
@@ -49,23 +51,35 @@ const SceneHelper = (_threeService: ThreeService): {
   const addPauseScreenObjectsToScene = (_objects: PauseScreenObjects) => {
     _threeService.AddToScene(_objects.banner, Tags.PauseScreenBanner);
     _threeService.AddGroupsToScene(_objects.text, Tags.PauseScreenCenterText);
-    for (const _item in _objects.storyCircles){
+    for (const _item in _objects.storyCircles) {
       addStoryCircleToScene(_item, _objects.storyCircles[_item], false);
     }
   };
 
-  const addFrameProgressDotsToScene = (_frameProgressbar: PauseProgressbarObjects, _storyId: string) => {
-    for(const doubleDot of _frameProgressbar.dots){
-      _threeService.AddToScene(doubleDot.dot, Tags.StoryCircleFrameDots,'Dot to show the frames in the story.',_storyId);
-      _threeService.AddToScene(doubleDot.innerDot, Tags.StoryCircleFrameDots,'Dot to show the frames in the story.',_storyId);
+  const addFrameProgressDotsToScene = async (_frameProgressbar: PauseProgressbarObjects, _storyId: string, _progress: number, _animation: boolean) => {
+    const dots = _frameProgressbar.dots;
+    for (let index = 0;index < _frameProgressbar.dots.length;index++) {
+      _threeService.AddToScene(dots[index].dot, Tags.StoryCircleFrameDots, 'Dot to show the frames in the story.', _storyId);
+      if (_animation) {
+        dots[index].dot.material.opacity = 0;
+        CustomAnimation().fadeIn(dots[index].dot, 1, AnimationDefaults.values.fadeStep);
+      }
+      if (index < _progress || _progress > _frameProgressbar.dots.length) {
+        _threeService.AddToScene(dots[index].innerDot, Tags.StoryCircleFrameDots, 'Dot to show the frames in the story.', _storyId);
+        if (_animation) {
+          dots[index].innerDot.material.opacity = 0;
+          CustomAnimation().fadeIn(dots[index].innerDot, 1, AnimationDefaults.values.fadeStep);
+        }
+      }
+      await Common().awaitTimeout(AnimationDefaults.timing.fadeIn);
     }
-  }
-
-  return { 
+  };
+  
+  return {
     addStoryCircleToScene,
     addPauseScreenObjectsToScene,
     addFrameProgressDotsToScene,
-   }
+  }
 
 };
 

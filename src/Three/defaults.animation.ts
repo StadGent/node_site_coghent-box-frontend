@@ -1,6 +1,7 @@
 type AnimationTime = {
   fadeUpdateTime: number,
   scaleUpdateTime: number,
+  fadeIn: number,
 }
 type AnimationValues = {
   opacityInactive: number,
@@ -21,6 +22,7 @@ const AnimationDefaults: AnimationDefault = {
   timing: {
     fadeUpdateTime: 50,
     scaleUpdateTime: 15,
+    fadeIn: 100,
   },
   values: {
     opacityActive: 0.9,

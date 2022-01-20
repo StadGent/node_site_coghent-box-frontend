@@ -47,8 +47,6 @@ const PauseProgressbar = (): {
       );
       dotWithinDots.push(_dot);
     }
-    console.log('* points', pointsOnCircle);
-    console.log('* dotWithinDots', dotWithinDots);
     return dotWithinDots
   };
 
