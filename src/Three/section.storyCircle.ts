@@ -12,9 +12,11 @@ import Colors from '@/Three/defaults.color';
 import Measurements from './defaults.measurements';
 import CircularProgressBar from '@/Three/shapes.circularProgressbar';
 import StoryService from '@/services/StoryService';
+import PauseProgressbar, { PauseProgressbarObjects } from './shapes.pauseProgressbar';
 
 export type StoryCircleParams = {
   radius: number;
+  progressRadius: number;
   outerCircle: number;
   opacityShadedCircle: number;
 };
@@ -23,8 +25,7 @@ export type StoryCircleObjects = {
   full?: Array<Group>;
   basic: Mesh<CircleGeometry, MeshBasicMaterial>,
   shade?: Mesh<CircleGeometry, MeshBasicMaterial>,
-  progress: Mesh<BufferGeometry, any>,
-  frameDots: Array<Group>,
+  progress: PauseProgressbarObjects,
   text: Group,
 };
 
@@ -36,7 +37,7 @@ const StoryCircle = (_storyService: StoryService): {
   ) => StoryCircleObjects;
   shadedCircle: (schema: CircleSchema) => Mesh<CircleGeometry, MeshBasicMaterial>;
   title: (title: string, position: Vector3, color: number) => Mesh<BufferGeometry, any>;
-  progressBar: (circleSchema: CircleSchema) => Mesh<BufferGeometry, any>;
+  progressOfFrames: (_position: Vector3, _color: number, _progress: number) => PauseProgressbarObjects;
 } => {
   const main = (schema: CircleSchema) => {
     return SchemaCircle().CreateCircle(
@@ -75,23 +76,15 @@ const StoryCircle = (_storyService: StoryService): {
     return storyTitle;
   };
 
-  const progressDots = (_position: Vector3, _color: number, _segments: number, _currentFrame: number) => {
-    return  CircularProgressBar().createActiveSegment(
-      new Vector3(_position.x, _position.y, _position.z),
-      Measurements().progressBar.radius,
-      _segments,
-      _currentFrame + 1,
-      _color,
-    ).object;
-  };
-
-  const progressBar = (circleSchema: CircleSchema) => {
-    return CircularprogressBar().create(
-      circleSchema.position,
-      Measurements().progressBar.radius,
-      1,
-      1
-    );
+  const progressOfFrames = (_position: Vector3, _color: number, _progress: number) => {
+    return PauseProgressbar().create(
+      {
+        position: _position,
+        params: {
+          radius: Measurements().storyCircle.progressRadius,
+          color: _color,
+        } as CircleParams
+      } as CircleSchema, _progress);
   }
 
   const Create = (
@@ -99,15 +92,13 @@ const StoryCircle = (_storyService: StoryService): {
     circleSchema: CircleSchema,
     iconUrl: string,
   ) => {
-    const dots = progressDots(
-      circleSchema.position,
-      circleSchema.params.color as number,
-      _storyService.activeStory.frames.length,
-      _storyService.activeStoryData.totalOfFramesSeen,
-      );
     const fadedCircle = shadedCircle(circleSchema);
-    const progressOfStory = progressBar(circleSchema);
     const basicCircle = main(circleSchema);
+    const progress = progressOfFrames(
+      circleSchema.position,
+      circleSchema.params.color || Colors().white,
+      _storyService.activeStoryData.totalOfFrames,
+    );
     const storyText = GroupHelper().CreateGroup(
       [
         title(
@@ -133,13 +124,12 @@ const StoryCircle = (_storyService: StoryService): {
     return {
       basic: basicCircle,
       shade: fadedCircle,
-      progress: progressOfStory,
-      frameDots: dots,
+      progress: progress,
       text: storyText,
     };
   };
 
-  return { Create, shadedCircle, progressBar, title };
+  return { Create, shadedCircle, progressOfFrames, title };
 };
 
 export default StoryCircle;

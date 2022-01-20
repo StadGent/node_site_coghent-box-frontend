@@ -6,14 +6,15 @@ import { PauseProgressbarObjects } from '@/Three/shapes.pauseProgressbar'
 import CustomAnimation from '@/composables/animation';
 import AnimationDefaults from './defaults.animation';
 import Common from '@/composables/common';
+import StoryService from '@/services/StoryService';
 
-const SceneHelper = (_threeService: ThreeService): {
-  addStoryCircleToScene: (storyId: string, storyCircle: StoryCircleObjects, _displayShadedCircle: boolean) => void;
-  addPauseScreenObjectsToScene: (_objects: PauseScreenObjects) => void;
-  addFrameProgressDotsToScene: (_frameProgressbar: PauseProgressbarObjects, _storyId: string, _progress: number, _animation: boolean) => void;
+const SceneHelper = (_threeService: ThreeService, _storyService: StoryService): {
+  addStoryCircleToScene: (storyId: string, storyCircle: StoryCircleObjects, _displayShadedCircle: boolean) => Promise<void>;
+  addPauseScreenObjectsToScene: (_objects: PauseScreenObjects) => Promise<void>;
+  addFrameProgressDotsToScene: (_frameProgressbar: PauseProgressbarObjects, _storyId: string, _progress: number, _animation: boolean) => Promise<void>;
 } => {
 
-  const addStoryCircleToScene = (storyId: string, storyCircle: StoryCircleObjects, _displayShadedCircle: boolean) => {
+  const addStoryCircleToScene = async (storyId: string, storyCircle: StoryCircleObjects, _displayShadedCircle: boolean) => {
     if (_displayShadedCircle) {
       _threeService.AddToScene(
         storyCircle.shade,
@@ -29,43 +30,35 @@ const SceneHelper = (_threeService: ThreeService): {
       storyId,
     );
     _threeService.AddToScene(
-      storyCircle.progress,
-      Tags.StoryCircleProgress,
-      'The progress of a storycircle.',
-      storyId,
-    );
-    _threeService.AddToScene(
       storyCircle.basic,
       Tags.StoryCircleBasic,
       'The middle circle of the storycircle.',
       storyId,
     );
-    _threeService.AddGroupsToScene(
-      storyCircle.frameDots,
-      Tags.StoryCircleFrameDots,
-      'The progress of the frames dots of a storycircle.',
-      storyId,
-    );
+
+    //FIXME: all paused circles will get the progress of the active story
+    await addFrameProgressDotsToScene(storyCircle.progress, storyId, _storyService.activeStoryData.totalOfFramesSeen, true);
   };
 
-  const addPauseScreenObjectsToScene = (_objects: PauseScreenObjects) => {
+  const addPauseScreenObjectsToScene = async (_objects: PauseScreenObjects) => {
     _threeService.AddToScene(_objects.banner, Tags.PauseScreenBanner);
     _threeService.AddGroupsToScene(_objects.text, Tags.PauseScreenCenterText);
     for (const _item in _objects.storyCircles) {
-      addStoryCircleToScene(_item, _objects.storyCircles[_item], false);
+      await addStoryCircleToScene(_item, _objects.storyCircles[_item], false);
     }
   };
 
   const addFrameProgressDotsToScene = async (_frameProgressbar: PauseProgressbarObjects, _storyId: string, _progress: number, _animation: boolean) => {
     const dots = _frameProgressbar.dots;
+    _threeService.AddToScene(_frameProgressbar.ring, Tags.StoryCircleFrameDot, 'Ring to show the dots around.', _storyId);
     for (let index = 0;index < _frameProgressbar.dots.length;index++) {
-      _threeService.AddToScene(dots[index].dot, Tags.StoryCircleFrameDots, 'Dot to show the frames in the story.', _storyId);
+      _threeService.AddToScene(dots[index].dot, Tags.StoryCircleFrameDot, 'Dot to show the frames in the story.', _storyId);
       if (_animation) {
         dots[index].dot.material.opacity = 0;
         CustomAnimation().fadeIn(dots[index].dot, 1, AnimationDefaults.values.fadeStep);
       }
       if (index < _progress || _progress > _frameProgressbar.dots.length) {
-        _threeService.AddToScene(dots[index].innerDot, Tags.StoryCircleFrameDots, 'Dot to show the frames in the story.', _storyId);
+        _threeService.AddToScene(dots[index].innerDot, Tags.StoryCircleFrameDot, 'Innerdot to show the frames in the story.', _storyId);
         if (_animation) {
           dots[index].innerDot.material.opacity = 0;
           CustomAnimation().fadeIn(dots[index].innerDot, 1, AnimationDefaults.values.fadeStep);
@@ -74,7 +67,7 @@ const SceneHelper = (_threeService: ThreeService): {
       await Common().awaitTimeout(AnimationDefaults.timing.fadeIn);
     }
   };
-  
+
   return {
     addStoryCircleToScene,
     addPauseScreenObjectsToScene,

@@ -1,9 +1,15 @@
 import TaggingService, { Tag, Tags } from '@/services/TaggingService';
 import { BufferGeometry, CircleGeometry, Group, Mesh, MeshBasicMaterial } from 'three';
 import { StoryCircleObjects } from './section.storyCircle';
+import { PauseProgressbarObjects } from './shapes.pauseProgressbar';
 
 const TaggingHelper = (_taggingService: TaggingService): {
-  getActiveStoryCircle: () => StoryCircleObjects;
+  getActiveStoryCircle: () => {
+      basic: Mesh<CircleGeometry, MeshBasicMaterial>;
+      shade?: Mesh<CircleGeometry, MeshBasicMaterial> | undefined;
+      progress: Array<Mesh>;
+      text: Group;
+  };
   tagActiveStorycircleAsStoryCircle: () => void;
   tagStorycircleAsActiveStoryCircle: (_storyId: string) => void;
 } => {
@@ -12,21 +18,23 @@ const TaggingHelper = (_taggingService: TaggingService): {
     let shade;
     _taggingService.getByTag(Tags.ActiveStoryCircleShade).length > 0? shade = _taggingService.getByTag(Tags.ActiveStoryCircleShade)[0].object as Mesh<CircleGeometry, MeshBasicMaterial>: undefined;
     const text = _taggingService.getByTag(Tags.ActiveStoryCircleText)[0].object as Group;
-    const progress = _taggingService.getByTag(Tags.ActiveStoryCircleProgress)[0].object as Mesh<BufferGeometry, any>;
-    const frameDots = _taggingService.getByTag(Tags.ActiveStoryCircleFrameDots)[0].object as Array<Group>;
+    const frameDots = _taggingService.getByTag(Tags.ActiveStoryCircleFrameDot);
+    const items = [];
+    for (const _item of frameDots){
+      items.push(_item.object);
+    }
+    console.log('frame dots when getting active', frameDots);
     return {
       basic: basic,
       shade: shade,
       text: text,
-      progress: progress,
-      frameDots: frameDots,
+      progress: items,
     };
   };
 
   const tagActiveStorycircleAsStoryCircle = () => {
     _taggingService.retag(Tags.ActiveStoryCircleBasic, Tags.StoryCircleBasic);
-    _taggingService.retag(Tags.ActiveStoryCircleProgress, Tags.StoryCircleProgress);
-    _taggingService.retag(Tags.ActiveStoryCircleFrameDots, Tags.StoryCircleFrameDots);
+    _taggingService.retag(Tags.ActiveStoryCircleFrameDot, Tags.StoryCircleFrameDot);
     _taggingService.retag(Tags.ActiveStoryCircleText, Tags.StoryCircleText);
     _taggingService.retag(Tags.ActiveStoryCircleShade, Tags.StoryCircleShade);
   };
@@ -34,21 +42,13 @@ const TaggingHelper = (_taggingService: TaggingService): {
   const tagStorycircleAsActiveStoryCircle = (_storyId: string) => {
     const objects = _taggingService.getByTagsId(_storyId);
     matchTags(objects);
-
   };
-  enum active {
-    ActiveStoryCircleBasic,
-    ActiveStoryCircleShade,
-    ActiveStoryCircleText,
-    ActiveStoryCircleProgress,
-    ActiveStoryCircleFrameDots,
-  }
+
   enum inactive {
     StoryCircleBasic,
     StoryCircleShade,
     StoryCircleText,
-    StoryCircleProgress,
-    StoryCircleFrameDots,
+    StoryCircleFrameDot,
   }
 
   const matchTags = (_tags: Array<Tag>) => {
@@ -68,11 +68,7 @@ const TaggingHelper = (_taggingService: TaggingService): {
           break
         case inactive[3]:
           _taggingService.removeTaggedObject(_tag.object);
-          _taggingService.tag(Tags.ActiveStoryCircleProgress, _tag.object, _tag.context, _tag.id);
-          break
-        case inactive[4]:
-          _taggingService.removeTaggedObject(_tag.object);
-          _taggingService.tag(Tags.ActiveStoryCircleFrameDots, _tag.object, _tag.context, _tag.id);
+          _taggingService.tag(Tags.ActiveStoryCircleFrameDot, _tag.object, _tag.context, _tag.id);
           break
       }
     })

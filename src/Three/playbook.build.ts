@@ -134,7 +134,7 @@ const PlayBookBuild = (
   const initialSpotLight = () => {
     const spotlight = Spot().create(
       new Vector3(zoneService.middleZoneCenter.x, zoneService.middleZoneCenter.y, Layers.scene),
-      Measurements().storyCircle.outerCircle,
+      Measurements().storyCircle.radius,
     );
     threeService.AddToScene(spotlight, Tags.Spotlight, 'InitialSpotlight');
     return spotlight;
@@ -159,7 +159,7 @@ const PlayBookBuild = (
     );
     await CustomAnimation().fadeOut(taggingService.getByTag(Tags.ActiveStoryCircleShade)[0].object, -1, AnimationDefaults.values.fadeStep);
     taggingService.removeAllTagsFrom(Tags.ActiveStoryCircleShade);
-    SceneHelper(threeService).addPauseScreenObjectsToScene(StoryPaused(taggingService, zoneService, storyService).Create(inactiveStories));
+    await SceneHelper(threeService, storyService).addPauseScreenObjectsToScene(StoryPaused(taggingService, zoneService, storyService).Create(inactiveStories));
     TaggingHelper(taggingService).tagActiveStorycircleAsStoryCircle();
   };
 

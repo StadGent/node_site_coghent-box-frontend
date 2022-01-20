@@ -41,8 +41,10 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
 
   const removeByTag = (_tag: Tags) => {
     const taggedObject = taggingService.getByTag(_tag);
-    if (taggedObject.length > 0)
+    if (taggedObject.length > 0){
       threeService.RemoveFromScene(taggedObject[0].object);
+      removeByTag(_tag);
+    }
   };
 
   const pauseScreen = () => {
@@ -80,18 +82,16 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
 
   const activeStoryCircle = () => {
     removeByTag(Tags.ActiveStoryCircleText);
-    removeByTag(Tags.ActiveStoryCircleProgress);
     removeByTag(Tags.ActiveStoryCircleBasic);
     removeByTag(Tags.ActiveStoryCircleShade);
-    removeGroupsByTag(Tags.ActiveStoryCircleFrameDots);
+    removeByTag(Tags.ActiveStoryCircleFrameDot);
     logRemoved('activeStoryCircle');
   };
 
   const storyCircle = () => {
     removeByTag(Tags.StoryCircleText);
-    removeByTag(Tags.StoryCircleProgress);
     removeByTag(Tags.StoryCircleBasic);
-    removeArrayOfGroupsByTag(Tags.StoryCircleFrameDots);
+    removeByTag(Tags.StoryCircleFrameDot);
     logRemoved('storyCircle');
   };
 

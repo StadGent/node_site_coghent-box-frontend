@@ -52,8 +52,8 @@ const useStoryCircle = (
       const storyCircle = titleCircle(position, storyColor, currentFrame + 1);
 
       playBook.addToPlayBook(
-        () => {
-          SceneHelper(threeService).addStoryCircleToScene(_storyService.activeStoryData.storyId, storyCircle, true);
+        async () => {
+          await SceneHelper(threeService, _storyService).addStoryCircleToScene(_storyService.activeStoryData.storyId, storyCircle, true);
           TaggingHelper(_taggingService).tagStorycircleAsActiveStoryCircle(_storyService.activeStoryData.storyId);
         },
         timestamp,

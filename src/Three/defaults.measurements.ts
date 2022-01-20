@@ -42,6 +42,7 @@ const Measurements = (): {
 } => {
   const storyCircle = {
     radius: 2,
+    progressRadius: 3,
     outerCircle: 4,
     opacityShadedCircle: 0.4,
   };

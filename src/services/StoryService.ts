@@ -61,14 +61,13 @@ export default class StoryService {
       const storyToUpdate = this.storyData.filter(
         (story) => story.storyId === currentStoryId,
       )[0];
+      this.totalOfSeenFrames++;
       if (!this.itemIsInRecord(currentStoryId, seenFrame)) {
-        this.totalOfSeenFrames++;
         //TODO: useQuery for updateing the metadata on the user with the frameId
         this.addTimestampToSeenFrame(currentStoryId, seenFrame);
         storyToUpdate['totalOfFramesSeen'] = Object.keys(storyToUpdate.seenFrames).length;
       }
       storyToUpdate['storySeen'] = this.IHaveSeenTheStory(currentStoryId);
-      storyToUpdate['storyColor'] = this.setStoryColor(storyToUpdate);
     }
     return this.storyData;
   }
@@ -91,6 +90,12 @@ export default class StoryService {
     return this.storyData.filter(_data => _data.storyId != this.activeStory.id);
   }
 
+  setStoryColor() {
+    if (this.activeStoryData.storySeen) {
+      this.storyData.filter(_data => _data.storyId == this.activeStoryData.storyId)[0]['storyColor'] = Colors().grey;
+    }
+  }
+
   private itemIsInRecord(storyId: string, frame: Frame) {
     const rec = this.getStoryDataOfStory(storyId).seenFrames;
     let exists = false;
@@ -105,14 +110,6 @@ export default class StoryService {
   private addTimestampToSeenFrame(storyId: string, frame: Frame) {
     const timestamp = new Date().toLocaleString();
     this.getStoryDataOfStory(storyId).seenFrames[timestamp] = frame;
-  }
-
-  private setStoryColor(storyData: StoryData) {
-    let color = storyData.storyColor;
-    if (storyData.storySeen) {
-      color = Colors().grey;
-    }
-    return color;
   }
 
   private assignColorToStories() {

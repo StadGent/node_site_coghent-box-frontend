@@ -115,8 +115,6 @@ export default defineComponent({
           currentFrame = _storyData.totalOfFramesSeen;
           console.log('Selected story => ', currentStory.value);
 
-          // const spotL = taggingService.getByTag(Tags.Spotlight);
-          // console.log('* spotl', spotL);
           //FIXME:
           threeSvc.ClearScene();
           spotlight = PlayBookBuild(
@@ -247,6 +245,16 @@ export default defineComponent({
     const buildStory = (currentStory: number, audioFile: string) => {
       activeStoryData = useStory(storyService).setActiveStory(storyData, currentStory);
 
+      PlayBookBuild(
+        threeSvc,
+        storyService,
+        zoneService,
+        taggingService,
+        playBook,
+        spotlight,
+        activeStoryData,
+      ).storyData(storyService, activeStoryData, currentFrame);
+
       audio = AudioHelper(threeSvc).setAudioTrack(
         activeStoryData,
         currentFrame,
@@ -310,15 +318,7 @@ export default defineComponent({
       playBook.addToPlayBook(
         () => {
           showProgressOfFrame = false;
-          PlayBookBuild(
-            threeSvc,
-            storyService,
-            zoneService,
-            taggingService,
-            framePlaybook,
-            spotlight,
-            activeStoryData,
-          ).storyData(storyService, activeStoryData, currentFrame);
+          storyService.setStoryColor();
           if (storyService.isEndOfSession()) {
             audio.pause();
             garbageHelper.endOfSessionScreen();
@@ -395,10 +395,6 @@ export default defineComponent({
       );
       garbageHelper = WallGarbageHelper(threeSvc, taggingService);
       threeSvc.ClearScene();
-
-      const test_progress = TestSingleComponent().pauseStoryCircleProgress();
-      // threeSvc.AddToScene(test_progress.ring, Tags.Testing);
-      // SceneHelper(threeSvc).addFrameProgressDotsToScene(test_progress,'noid')
 
       threeSvc.Animate();
     });
