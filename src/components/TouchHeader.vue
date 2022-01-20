@@ -1,6 +1,6 @@
 <template>
   <div class="p-10 flex justify-center align-center">
-      <h1 class="font-bold text-7xl">Mijn verhalenbox</h1>
+      <h1 class="font-bold text-7xl">Mijn verhalenbox ({{basketAmount}})</h1>
       <base-icon icon="downwardArrows" class="w-10 h-10 text-text-black"/>
   </div>    
 </template>
@@ -13,6 +13,13 @@ export default defineComponent({
   name: 'TouchHeader',
   components: {
       baseIcon
+  },
+  props: {
+    basketAmount: {
+      type: Number,
+      default: 0,
+      required: false,
+    }
   },
   setup: (props) => {
   }

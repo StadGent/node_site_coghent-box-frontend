@@ -2,7 +2,7 @@
   <touch-header/>
   <canvas id="canvas" class="touchcanvas" />
   <CardComponent :sideStrip="true" :large="true" :reverseColors="true" class="infocard" v-if="entity">
-      <h2 class="font-bold text-4xl pb-4">{{entity.objectName[0].value}}</h2>
+      <h2 class="font-bold text-4xl pb-4">{{entity.title[0].value}}</h2>
       <p>{{entity.description[0].value}}</p>
       <div class="flex flex-wrap mt-4">
         <div v-for="(item, index) in relationsLabelArray" :key="index" class="bg-tag-neutral text-text-dark py-2 px-4 mr-2 my-2 text-center">
@@ -13,61 +13,109 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
+import { defineComponent, onMounted, ref, watch } from 'vue';
 import FabricService from '../services/Fabric/FabricService';
 import { useRoute, useRouter } from 'vue-router'
 import { useQuery } from '@vue/apollo-composable'
-import { GetEntityByIdDocument, CardComponent} from 'coghent-vue-3-component-library'
+import { GetTouchTableEntityByIdDocument, CardComponent, GetTouchTableEntityDocument} from 'coghent-vue-3-component-library'
 import { fabricdefaults } from '@/services/Fabric/defaults.fabric';
 import TouchHeader from '@/components/TouchHeader.vue';
-
 
 const asString = (x: string | string[]) => (Array.isArray(x) ? x[0] : x)
 
 export default defineComponent({
-  name: 'TouchTable',
+  name: 'TouchTableEntity',
   components: {
       CardComponent,
       TouchHeader,
   },
-  setup: (props) => {
-      const id = asString(useRoute().params['entityID'])
-      const { result, onResult } = useQuery(GetEntityByIdDocument, { id })
+  setup: () => {
+      const route = useRoute()
+      const id = asString(route.params['entityID'])
+      const { result, onResult, refetch } = useQuery(GetTouchTableEntityByIdDocument, { id })
       const relationStringArray = ref<string[]>([])
       const relationsLabelArray = ref<string[]>([])
       const entity = ref<any>()
+      const headEntityId = ref<string>()
+      let fabricService: FabricService | undefined = undefined
 
-      onMounted(() => {
-        let mainImage = window.localStorage.getItem('selectedObject')
-        if(mainImage){
-            mainImage = JSON.parse(mainImage)
-            console.log({mainImage})
-            const fabricService: FabricService = new FabricService();
-            console.log(fabricService.state.canvas)
-            fabricService.generateMainImageFrame(mainImage)
-        }
+      const {
+      result: relationResult,
+      onResult: onRelationResult,
+      loading: loadingRelations,
+      refetch: refetchRelations
+    } = useQuery(
+      GetTouchTableEntityDocument,
+        () => ({
+        limit: 0,
+        skip: entity.value,
+        searchValue: {
+          value: '',
+          isAsc: false,
+          relation_filter: relationStringArray.value,
+          randomize: false,
+          key: 'title',
+          has_mediafile: true,
+        },
+      }),
+      () => ({
+        prefetch: false,
+      })
+    )
+
+    watch(() => route.params.entityID, () => {
+        refetch({id :asString(route.params.entityID)})
+      })
+
+      watch(() => entity.value, () => {
+      if(entity.value){
+        refetchRelations({
+        limit: 0,
+        skip: entity.value,
+        searchValue: {
+          value: '',
+          isAsc: false,
+          relation_filter: relationStringArray.value,
+          randomize: false,
+          key: 'title',
+          has_mediafile: true,
+        },
+      })
+      }
       })
 
       onResult((queryResult: any)=> {
         if (queryResult.data){
-            console.log(queryResult.data)
+            entity.value = queryResult.data.Entity
+            console.log(entity.value)
 
-            queryResult.data.Entity?.relations
-            .filter((filter: any) => filter.label && filter.label !== '')
-            .forEach((relation: any) => {
-            relationStringArray.value.push(relation.key)
-            relation.label && relationsLabelArray.value.push(relation.label)
-          })
-
-          entity.value = queryResult.data.Entity
-          console.log(relationStringArray)
-          console.log(relationsLabelArray)
+            fabricService = new FabricService();
+            headEntityId.value = entity.value.id
+            fabricService.generateMainImageFrame(entity.value)
         }
       })
 
+      onRelationResult((relationResult) => {
+      if(relationResult.data && fabricService){
+        const relationEntities = relationResult.data.Entities?.results
+        console.log({relationResult})
+        fabricService.generateSecondaryImageFrames(relationEntities).then(() => {
+           relationEntities.forEach((entity: any) => {
+          if (headEntityId.value){
+            fabricService?.generateRelationBetweenFrames(headEntityId.value, entity.id)
+          }
+          
+        });
+        } 
+        )
+
+      }
+  })
+
     return {entity,
     relationStringArray,
-    relationsLabelArray}
+    relationsLabelArray,
+    route}
   },
 });
 </script>

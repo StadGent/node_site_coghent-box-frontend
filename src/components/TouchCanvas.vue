@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
+import { defineComponent, onMounted, ref, watch } from 'vue';
 import { useMutation, useQuery, useResult } from '@vue/apollo-composable';
 import FabricService from '../services/Fabric/FabricService';
 import { GetTouchTableEntityDocument} from 'coghent-vue-3-component-library'
@@ -13,12 +13,14 @@ export default defineComponent({
   components: {
   },
   setup: (props) => {
+     const relationStringArray = ref<string[]>([])
+    const relationsLabelArray = ref<string[]>([])
+    const headEntityId = ref<string>()
+    let fabricService: FabricService | undefined = undefined
 
-     const { result, loading, fetchMore, onResult, refetch } = useQuery(
+     const { result, loading, fetchMore, onResult, refetch } = useQuery<any>(
       GetTouchTableEntityDocument,
-
-
-      () => ({
+        () => ({
         limit: 1,
         skip: 0,
         searchValue: {
@@ -26,7 +28,50 @@ export default defineComponent({
           isAsc: false,
           relation_filter: [],
           randomize: true,
-          // seed: randomValue.value,
+          key: 'title',
+          has_mediafile: true,
+        },
+      }),
+      () => ({
+        prefetch: false,
+      })
+    )
+
+    watch(() => result.value, () => {
+      if(result.value){
+        console.log(result.value)
+        console.log(relationStringArray.value)
+        refetchRelations({
+        limit: 0,
+        skip: result.value,
+        searchValue: {
+          value: '',
+          isAsc: false,
+          relation_filter: relationStringArray.value,
+          randomize: false,
+          key: 'title',
+          has_mediafile: true,
+        },
+      })
+      }
+      })
+    
+
+    const {
+      result: relationResult,
+      onResult: onRelationResult,
+      loading: loadingRelations,
+      refetch: refetchRelations
+    } = useQuery(
+      GetTouchTableEntityDocument,
+        () => ({
+        limit: 0,
+        skip: result.value,
+        searchValue: {
+          value: '',
+          isAsc: false,
+          relation_filter: relationStringArray.value,
+          randomize: false,
           key: 'title',
           has_mediafile: true,
         },
@@ -37,18 +82,47 @@ export default defineComponent({
     )
 
     const initializeCanvas= (entities: Array<any>) => {
-      const fabricService: FabricService = new FabricService();
-      fabricService.generateSecondaryImageFrames(entities)
+      fabricService = new FabricService();
+      console.log({entities})
+      fabricService.generateMainImageFrame(entities[0])
 
     }
 
     onResult((queryResult) => {
       if (queryResult.data){
-        console.log(queryResult.data)
         initializeCanvas(queryResult.data.Entities.results)
+
+        headEntityId.value = queryResult.data.Entities?.results[0].id
+
+        queryResult.data.Entities?.results[0].relations
+            .filter((filter: any) => filter.label && filter.label !== '')
+            .forEach((relation: any) => {
+            relationStringArray.value.push(relation.key)
+            relation.label && relationsLabelArray.value.push(relation.label)
+          })
       }
     })
-    return {}
+
+    onRelationResult((relationResult) => {
+      if(relationResult.data && fabricService){
+        const relationEntities = relationResult.data.Entities?.results
+        console.log({relationResult})
+        fabricService.generateSecondaryImageFrames(relationEntities).then(() => {
+           relationEntities.forEach((entity: any) => {
+          if (headEntityId.value){
+            fabricService?.generateRelationBetweenFrames(headEntityId.value, entity.id)
+          }
+          
+        });
+        } 
+        )
+
+      }
+  })
+
+
+    return {relationStringArray,
+    relationsLabelArray}
   },
 });
 </script>

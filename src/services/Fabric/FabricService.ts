@@ -65,7 +65,6 @@ export default class FabricService {
   }
 
   async generateSecondaryImageFrames(entities: Array<any>) {
-    console.log({ entities });
     const images: Array<string> = this.generateImageUrls(entities);
     const frames: Array<any> = [];
     images.forEach((image, index) => {
@@ -93,7 +92,6 @@ export default class FabricService {
       });
       frames.push(frame);
     });
-    // await this.generateRelationBetweenFrames();
     return frames;
   }
 
@@ -184,9 +182,9 @@ export default class FabricService {
   }
 
   generateRelationBetweenFrames(frameId1: string, frameId2: string) {
-    setTimeout(() => {
-      const frame1 = this.getFrameByEntityId(frameId1);
-      const frame2 = this.getFrameByEntityId(frameId2);
+    const frame1 = this.getFrameByEntityId(frameId1);
+    const frame2 = this.getFrameByEntityId(frameId2);
+    if (frame1 && frame2) {
       const closestCornerIndex = this.getClosestCorner(frame1, frame2);
       const line = [
         frame1.getCoords()[0].x,
@@ -202,6 +200,6 @@ export default class FabricService {
         evented: false,
       });
       this.state.canvas.add(relation);
-    }, 500);
+    }
   }
 }
