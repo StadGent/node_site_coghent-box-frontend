@@ -59,45 +59,45 @@ const MetadataLabel = (_position: Vector3): {
     return { left: circle, right: circle2 };
   };
 
-  const connection = (box: Mesh<BoxGeometry, MeshBasicMaterial>, _color: number) => {
-    const innerRadius = box.geometry.parameters.height / 10;
-    const outerRadius = box.geometry.parameters.height / 6;
-    const topDot = DotWithinDot().create(
-      innerRadius,
-      outerRadius,
-      new Vector3(
-        box.position.x,
-        box.position.y - box.geometry.parameters.height / 2,
-        box.position.z,
-      ),
-      _color,
-      Colors().white
-    );
-    const cube = schemaCube().CreateCube({
-      position: new Vector3(
-        topDot.position.x,
-        topDot.position.y - outerRadius,
-        box.position.z,
-      ),
-      params: { width: outerRadius, height: outerRadius * 5, color: Colors().pink },
-    } as CubeSchema);
-    const bottomDot = DotWithinDot().create(
-      innerRadius,
-      outerRadius,
-      new Vector3(
-        box.position.x,
-        cube.position.y - outerRadius * 5 / 2,
-        box.position.z,
-      ),
-      _color,
-      Colors().white
-    );
-    return {
-      top: topDot,
-      bottom: bottomDot,
-      cube: cube
-    };
-  }
+  // const connection = (box: Mesh<BoxGeometry, MeshBasicMaterial>, _color: number) => {
+  //   const innerRadius = box.geometry.parameters.height / 10;
+  //   const outerRadius = box.geometry.parameters.height / 6;
+  //   const topDot = DotWithinDot().create(
+  //     innerRadius,
+  //     outerRadius,
+  //     new Vector3(
+  //       box.position.x,
+  //       box.position.y - box.geometry.parameters.height / 2,
+  //       box.position.z,
+  //     ),
+  //     _color,
+  //     Colors().white
+  //   );
+  //   const cube = schemaCube().CreateCube({
+  //     position: new Vector3(
+  //       topDot.position.x,
+  //       topDot.position.y - outerRadius,
+  //       box.position.z,
+  //     ),
+  //     params: { width: outerRadius, height: outerRadius * 5, color: Colors().pink },
+  //   } as CubeSchema);
+  //   const bottomDot = DotWithinDot().create(
+  //     innerRadius,
+  //     outerRadius,
+  //     new Vector3(
+  //       box.position.x,
+  //       cube.position.y - outerRadius * 5 / 2,
+  //       box.position.z,
+  //     ),
+  //     _color,
+  //     Colors().white
+  //   );
+  //   return {
+  //     top: topDot,
+  //     bottom: bottomDot,
+  //     cube: cube
+  //   };
+  // }
 
 
   const create = (_text: string, _color: number) => {
@@ -105,7 +105,7 @@ const MetadataLabel = (_position: Vector3): {
     const textWidth = _text.length * Measurements().text.size.smaller;
     const textHeight = Measurements().text.size.smaller;
     const box = labelBox(textWidth, textHeight + Measurements().text.paddingAround, _color);
-    const connect = connection(box, _color);
+    // const connect = connection(box, _color);
     const metadataLabel = GroupHelper().CreateGroup([
       box,
       labelText,

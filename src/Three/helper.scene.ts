@@ -2,10 +2,13 @@ import { PauseScreenObjects } from '@/screens/StoryPaused';
 import { Tags } from '@/services/TaggingService';
 import ThreeService from '@/services/ThreeService';
 import { StoryCircleObjects } from './section.storyCircle';
+import { DotWithinDotObjects } from './shapes.dotWithinDot';
+import { PauseProgressbarObjects } from '@/Three/shapes.pauseProgressbar'
 
 const SceneHelper = (_threeService: ThreeService): {
   addStoryCircleToScene: (storyId: string, storyCircle: StoryCircleObjects, _displayShadedCircle: boolean) => void;
   addPauseScreenObjectsToScene: (_objects: PauseScreenObjects) => void;
+  addFrameProgressDotsToScene: (_frameProgressbar: PauseProgressbarObjects,  _storyId: string) => void;
 } => {
 
   const addStoryCircleToScene = (storyId: string, storyCircle: StoryCircleObjects, _displayShadedCircle: boolean) => {
@@ -51,9 +54,17 @@ const SceneHelper = (_threeService: ThreeService): {
     }
   };
 
+  const addFrameProgressDotsToScene = (_frameProgressbar: PauseProgressbarObjects, _storyId: string) => {
+    for(const doubleDot of _frameProgressbar.dots){
+      _threeService.AddToScene(doubleDot.dot, Tags.StoryCircleFrameDots,'Dot to show the frames in the story.',_storyId);
+      _threeService.AddToScene(doubleDot.innerDot, Tags.StoryCircleFrameDots,'Dot to show the frames in the story.',_storyId);
+    }
+  }
+
   return { 
     addStoryCircleToScene,
     addPauseScreenObjectsToScene,
+    addFrameProgressDotsToScene,
    }
 
 };

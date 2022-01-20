@@ -6,6 +6,13 @@ type GenericCircleObject ={
   radius: number;
 };
 
+type ProgressbarParams = {
+  radius: number;
+  thickness: number;
+  dotRadius: number;
+  innerdotRadius: number;
+}
+
 type Textsize = {
   smaller: number;
   small: number;
@@ -28,7 +35,7 @@ type PauseScreenParams = {
 
 const Measurements = (): {
   storyCircle: StoryCircleParams;
-  progressBar: GenericCircleObject;
+  progressBar: ProgressbarParams;
   spotLight: SpotLightParams;
   pauseScreen: PauseScreenParams;
   text: TextParams;
@@ -41,6 +48,9 @@ const Measurements = (): {
 
   const progressBar = {
     radius: 2.5,
+    thickness: 0.16,
+    dotRadius: 0.3,
+    innerdotRadius: 0.12,
   };
 
   const spotLight ={

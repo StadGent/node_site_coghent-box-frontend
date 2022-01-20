@@ -46,6 +46,9 @@ import schemaCube from '@/Three/schema.cube';
 import Timing from '@/Three/defaults.timing';
 import Spot from '@/Three/shapes.spotlight';
 import MoveObject from '@/composables/moveObject';
+import CircularProgressBar from '@/Three/shapes.circularProgressbar';
+import { CircleParams, CircleSchema } from '@/Three/schema.circle';
+import SceneHelper from '@/Three/helper.scene';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -111,7 +114,7 @@ export default defineComponent({
           currentStory.value = value - 1;
           currentFrame = _storyData.totalOfFramesSeen;
           console.log('Selected story => ', currentStory.value);
-          
+
           // const spotL = taggingService.getByTag(Tags.Spotlight);
           // console.log('* spotl', spotL);
           //FIXME:
@@ -392,6 +395,10 @@ export default defineComponent({
       );
       garbageHelper = WallGarbageHelper(threeSvc, taggingService);
       threeSvc.ClearScene();
+
+      const test_progress = TestSingleComponent().pauseStoryCircleProgress();
+      // threeSvc.AddToScene(test_progress.ring, Tags.Testing);
+      // SceneHelper(threeSvc).addFrameProgressDotsToScene(test_progress,'noid')
 
       threeSvc.Animate();
     });

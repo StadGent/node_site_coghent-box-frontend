@@ -6,6 +6,7 @@ import Correction from './helper.correction';
 import Colors from './defaults.color';
 import Layers from './defaults.layers';
 import GroupHelper from './helper.group';
+import Measurements from './defaults.measurements';
 
 const CircularProgressBar = (): {
   create: (
@@ -32,7 +33,7 @@ const CircularProgressBar = (): {
   ) => {
     const geometry = new RingGeometry(
       radius,
-      radius + 0.2,
+      radius + Measurements().progressBar.thickness,
       360 / segments,
       45,
       6.3 / 360 - (6.3 / 360 / segments) * progress,

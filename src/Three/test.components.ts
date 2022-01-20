@@ -1,14 +1,15 @@
-import { BufferGeometry, Group, Material, Mesh, Vector3 } from 'three';
+import { BufferGeometry, Group, Material, Mesh, MeshBasicMaterial, RingGeometry, Vector3 } from 'three';
 import Colors from './defaults.color';
 import Defaults from './defaults.config';
 import HelperText from './defaults.helperText';
 import Measurements from './defaults.measurements';
 import GroupHelper from './helper.group';
 import TextHelper from './helper.text';
-import { CircleSchema } from './schema.circle';
+import { CircleParams, CircleSchema } from './schema.circle';
 import CircularProgressBar from './shapes.circularProgressbar';
 import HorizontalProgressBar from './shapes.horizontalProgressBar';
 import MetadataLabel from './shapes.metadataLabel';
+import PauseProgressbar, { PauseProgressbarObjects } from './shapes.pauseProgressbar';
 
 const TestSingleComponent = (): {
   horizontalProgressbar: Array<Group>;
@@ -20,6 +21,7 @@ const TestSingleComponent = (): {
   endOfStoryText: (position: Vector3) => Group;
   metadataLabel: (position: Vector3, text: string) => Group;
   metadataLabelWithConnection: (position: Vector3, text: string) => Array<Group>;
+  pauseStoryCircleProgress: () => PauseProgressbarObjects;
 } => {
   const horizontalProgressbar = HorizontalProgressBar().create(new Vector3(0, -7, 1), [0, 3, 6], 8, 0.1, Colors().yellow);
 
@@ -45,6 +47,15 @@ const TestSingleComponent = (): {
     return groups;
   };
 
+  const pauseStoryCircleProgress = () => {
+    const schema = {
+      position: new Vector3(-20, 0, 0),
+      params: { radius: Measurements().progressBar.radius, color: Colors().green } as CircleParams,
+    } as CircleSchema;
+    const segments = 6;
+    return PauseProgressbar().create(schema, segments);
+  }
+
   return {
     horizontalProgressbar,
     circularProgressbar,
@@ -52,6 +63,7 @@ const TestSingleComponent = (): {
     endOfStoryText,
     metadataLabel,
     metadataLabelWithConnection,
+    pauseStoryCircleProgress,
   }
 }
 

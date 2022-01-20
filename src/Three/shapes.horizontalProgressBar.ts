@@ -6,6 +6,7 @@ import SchemaCube from './schema.cube';
 import Colors from './defaults.color';
 import Layers from './defaults.layers';
 import GroupHelper from './helper.group';
+import Measurements from './defaults.measurements';
 
 const HorizontalProgressBar = (): {
   create: (
@@ -20,7 +21,7 @@ const HorizontalProgressBar = (): {
     const schema = CubeHelper().CreateSchema(
       new Vector3(startPosition.x + length / 2, startPosition.y, startPosition.z),
       '',
-      new Vector3(length, 0.16, startPosition.z)
+      new Vector3(length, Measurements().progressBar.thickness, startPosition.z)
     );
     schema.params.color = Colors().white;
     const cube = SchemaCube().CreateCube(schema);

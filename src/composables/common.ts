@@ -1,5 +1,5 @@
 import Defaults from '@/Three/defaults.config';
-import { Mesh } from 'three';
+import { Mesh, Vector3 } from 'three';
 
 const Common = (): {
   FilterOutIdAfterSlash: (str: string) => string;
@@ -8,6 +8,7 @@ const Common = (): {
   firstIsBiggest: (first:number, second: number) => boolean;
   awaitTimeout: (time: number) => Promise<unknown>;
   setScale: (_object: Mesh, scale: number) => void;
+  setPosition: (_object: Mesh, _position: Vector3) => void;
 } => {
   const FilterOutIdAfterSlash = (str: string) => {
     const index = (str.indexOf('/') as number) + 1;
@@ -36,6 +37,10 @@ const Common = (): {
     _object.scale.set(scale,scale,scale);
   }
 
+  const setPosition = (_object: Mesh, _position: Vector3) => {
+    _object.position.set(_position.x, _position.y, _position.z);
+  };
+
   return {
     FilterOutIdAfterSlash,
     RemoveEntersFromString,
@@ -43,6 +48,7 @@ const Common = (): {
     firstIsBiggest,
     awaitTimeout,
     setScale,
+    setPosition,
   };
 };
 
