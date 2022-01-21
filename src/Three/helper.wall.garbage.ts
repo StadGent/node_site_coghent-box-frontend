@@ -84,14 +84,18 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     removeByTag(Tags.ActiveStoryCircleText);
     removeByTag(Tags.ActiveStoryCircleBasic);
     removeByTag(Tags.ActiveStoryCircleShade);
+    removeByTag(Tags.ActiveStoryCircleFrameRing);
     removeByTag(Tags.ActiveStoryCircleFrameDot);
+    removeByTag(Tags.ActiveStoryCircleFrameInnerDot);
     logRemoved('activeStoryCircle');
   };
 
   const storyCircle = () => {
     removeByTag(Tags.StoryCircleText);
     removeByTag(Tags.StoryCircleBasic);
+    removeByTag(Tags.StoryCircleFrameRing);
     removeByTag(Tags.StoryCircleFrameDot);
+    removeByTag(Tags.StoryCircleFrameInnerDot);
     logRemoved('storyCircle');
   };
 

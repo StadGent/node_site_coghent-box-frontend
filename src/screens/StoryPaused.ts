@@ -35,7 +35,7 @@ const StoryPaused = (taggingService: TaggingService, zoneService: ZoneService, _
   const storyCircle = (story: Story, currentFrame: number, position: Vector3, storyColor: number) => {
     const titleCircle = StoryCircle(_storyService).Create(
       useStory(_storyService).title(story),
-      CircleHelper().CreateSchema(position, 2, storyColor),
+      CircleHelper().CreateSchema(position, Measurements().storyCircle.radius, storyColor),
       Images.story.defaultIcon,
     );
     return titleCircle;
@@ -71,6 +71,7 @@ const StoryPaused = (taggingService: TaggingService, zoneService: ZoneService, _
     const storyCircles: Record<string, StoryCircleObjects> = {};
 
     _storyData.forEach(_data => {
+      console.log('data of story', _data);
       storyCircles[_data.storyId] = storyCircle(
         useStory(_storyService).getStory(_data.storyId),
         _data.totalOfFramesSeen,

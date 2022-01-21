@@ -50,6 +50,8 @@ import CircularProgressBar from '@/Three/shapes.circularProgressbar';
 import { CircleParams, CircleSchema } from '@/Three/schema.circle';
 import SceneHelper from '@/Three/helper.scene';
 
+import ShapesTemplate from '@/Three/template.shapes'
+
 export default defineComponent({
   name: 'ViewPort',
   props: {
@@ -176,32 +178,32 @@ export default defineComponent({
         spotlight,
         activeStoryData,
       ).initialSpotLight();
-      // setData();
+      setData();
 
-      await PlayBookBuild(
-        threeSvc,
-        storyService,
-        zoneService,
-        taggingService,
-        playBook,
-        spotlight,
-        activeStoryData,
-      )
-        .startOfSession()
-        .finally(async () => {
-          garbageHelper.startOfSession();
-          //TEMP: Creating a new spotlight that is used for the rest of the session
-          spotlight = PlayBookBuild(
-            threeSvc,
-            storyService,
-            zoneService,
-            taggingService,
-            playBook,
-            spotlight,
-            activeStoryData,
-          ).initialSpotLight();
-          setData();
-        });
+      // await PlayBookBuild(
+      //   threeSvc,
+      //   storyService,
+      //   zoneService,
+      //   taggingService,
+      //   playBook,
+      //   spotlight,
+      //   activeStoryData,
+      // )
+      //   .startOfSession()
+      //   .finally(async () => {
+      //     garbageHelper.startOfSession();
+      //     //TEMP: Creating a new spotlight that is used for the rest of the session
+      //     spotlight = PlayBookBuild(
+      //       threeSvc,
+      //       storyService,
+      //       zoneService,
+      //       taggingService,
+      //       playBook,
+      //       spotlight,
+      //       activeStoryData,
+      //     ).initialSpotLight();
+      //     setData();
+      //   });
     };
 
     const setData = async () => {
@@ -395,6 +397,12 @@ export default defineComponent({
       );
       garbageHelper = WallGarbageHelper(threeSvc, taggingService);
       threeSvc.ClearScene();
+      const storyCirclePositions = ShapesTemplate().storyCircle(new Vector3(0,0,0),3);
+      // threeSvc.AddToScene(TestSingleComponent().testCube(storyCirclePositions.center), Tags.Testing);
+      // threeSvc.AddToScene(TestSingleComponent().testCube(storyCirclePositions.frameDots[0]), Tags.Testing);
+      // threeSvc.AddToScene(TestSingleComponent().testCube(storyCirclePositions.frameDots[1]), Tags.Testing);
+      // threeSvc.AddToScene(TestSingleComponent().testCube(storyCirclePositions.frameDots[2]), Tags.Testing);
+
 
       threeSvc.Animate();
     });

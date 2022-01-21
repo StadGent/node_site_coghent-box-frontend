@@ -97,6 +97,7 @@ const StoryCircle = (_storyService: StoryService): {
     const progress = progressOfFrames(
       circleSchema.position,
       circleSchema.params.color || Colors().white,
+      //FIXME: needs to be the storydata of the story that is drawn
       _storyService.activeStoryData.totalOfFrames,
     );
     const storyText = GroupHelper().CreateGroup(
