@@ -44,7 +44,7 @@ const SceneHelper = (_threeService: ThreeService, _storyService: StoryService): 
       storyId,
     );
 
-    await addFrameProgressDotsToScene(storyCircle.progress.dots, storyId, _storyService.getStoryDataOfStory(storyId).totalOfFrames, true);
+    await addFrameProgressDotsToScene(storyCircle.progress.dots, storyId, _storyService.getStoryDataOfStory(storyId).totalOfFramesSeen, true);
   };
 
   const addPauseScreenObjectsToScene = async (_objects: PauseScreenObjects) => {
