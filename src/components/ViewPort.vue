@@ -5,7 +5,6 @@
 
 <script lang="ts">
 import {
-  computed,
   defineComponent,
   onMounted,
   PropType,
@@ -14,7 +13,7 @@ import {
   ref,
   watch,
 } from 'vue';
-import { Group, Mesh, Vector3 } from 'three';
+import { Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
 import { Entity as _Entity, Story } from '@/models/GraphqlModel';
 
 import ThreeService from '@/services/ThreeService';
@@ -25,32 +24,22 @@ import TaggingService, { Tags } from '@/services/TaggingService';
 import Tools from '@/Three/helper.tools';
 import AudioHelper from '@/Three/helper.audio';
 import VideoHelper from '@/Three/helper.video';
-import BoundaryHelper from '@/Three/helper.boundary';
 import WallGarbageHelper, { GarabageHelperForWall } from '@/Three/helper.wall.garbage';
 
 import TestSingleComponent from '@/Three/test.components';
 
 import Defaults from '@/Three/defaults.config';
+import Measurements from '@/Three/defaults.measurements';
+import { threeDefaultsWall } from '@/Three/defaults.three';
+import AnimationDefaults from '@/Three/defaults.animation';
+import Timing from '@/Three/defaults.timing';
 
 import PlayBookBuild from '@/Three/playbook.build';
 
 import PlayBook from '@/composables/playbook';
 import useStory from '@/composables/useStory';
-
-import Measurements from '@/Three/defaults.measurements';
-import { CubeSchema } from '@/Three/schema.cube';
-import Colors from '@/Three/defaults.color';
-import { threeDefaultsWall } from '@/Three/defaults.three';
-
-import schemaCube from '@/Three/schema.cube';
-import Timing from '@/Three/defaults.timing';
-import Spot from '@/Three/shapes.spotlight';
-import MoveObject from '@/composables/moveObject';
-import CircularProgressBar from '@/Three/shapes.circularProgressbar';
-import { CircleParams, CircleSchema } from '@/Three/schema.circle';
-import SceneHelper from '@/Three/helper.scene';
-
-import ShapesTemplate from '@/Three/template.shapes'
+import MoveObject from '@/composables/moveObject'
+import CustomAnimation from '@/composables/animation';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -91,7 +80,7 @@ export default defineComponent({
     };
     let garbageHelper: GarabageHelperForWall;
     let audioDuration = 120;
-    let currentFrame = 1;
+    let currentFrame = 0;
     let showProgressOfFrame = false;
     let interval: ReturnType<typeof setTimeout>;
     let storyData: Array<Story> = [];
@@ -317,6 +306,11 @@ export default defineComponent({
       );
       playBook.mergeActionsWithPlaybook(framePlaybook.getSortedPlayBookActions());
 
+      playBook.addToPlayBook(() => {
+        MoveObject().startMoving(spotlight, zoneService.middleZoneCenter);
+        CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>,Measurements().storyCircle.radius, AnimationDefaults.values.scaleStep);3
+      }, playBook.lastAction().time + Timing.delayToPauseScreen, 'Move the spotlight to the center of the screen until the frame ends');
+
       playBook.addToPlayBook(
         () => {
           showProgressOfFrame = false;
@@ -362,7 +356,7 @@ export default defineComponent({
 
           console.log('tag', taggingService.taggedObjects);
         },
-        playBook.lastAction().time + Timing.delayToPauseScreen,
+        audioDuration,
         `Update storyData & show endOfSessions screen or the storyOverview`,
       );
     };
@@ -397,12 +391,6 @@ export default defineComponent({
       );
       garbageHelper = WallGarbageHelper(threeSvc, taggingService);
       threeSvc.ClearScene();
-      const storyCirclePositions = ShapesTemplate().storyCircle(new Vector3(0,0,0),3);
-      // threeSvc.AddToScene(TestSingleComponent().testCube(storyCirclePositions.center), Tags.Testing);
-      // threeSvc.AddToScene(TestSingleComponent().testCube(storyCirclePositions.frameDots[0]), Tags.Testing);
-      // threeSvc.AddToScene(TestSingleComponent().testCube(storyCirclePositions.frameDots[1]), Tags.Testing);
-      // threeSvc.AddToScene(TestSingleComponent().testCube(storyCirclePositions.frameDots[2]), Tags.Testing);
-
 
       threeSvc.Animate();
     });
