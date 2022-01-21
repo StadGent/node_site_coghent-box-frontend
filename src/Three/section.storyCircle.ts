@@ -11,7 +11,7 @@ import CircularprogressBar from '@/Three/shapes.circularProgressbar';
 import Colors from '@/Three/defaults.color';
 import Measurements from './defaults.measurements';
 import CircularProgressBar from '@/Three/shapes.circularProgressbar';
-import StoryService from '@/services/StoryService';
+import StoryService, { StoryData } from '@/services/StoryService';
 import PauseProgressbar, { PauseProgressbarObjects } from './shapes.pauseProgressbar';
 
 export type StoryCircleParams = {
@@ -31,6 +31,7 @@ export type StoryCircleObjects = {
 
 const StoryCircle = (_storyService: StoryService): {
   Create: (
+    storyData: StoryData,
     title: string,
     circleSchema: CircleSchema,
     iconUrl: string,
@@ -88,6 +89,7 @@ const StoryCircle = (_storyService: StoryService): {
   }
 
   const Create = (
+    storyData: StoryData,
     storyTitle: string,
     circleSchema: CircleSchema,
     iconUrl: string,
@@ -97,8 +99,7 @@ const StoryCircle = (_storyService: StoryService): {
     const progress = progressOfFrames(
       circleSchema.position,
       circleSchema.params.color || Colors().white,
-      //FIXME: needs to be the storydata of the story that is drawn
-      _storyService.activeStoryData.totalOfFrames,
+      storyData.totalOfFrames,
     );
     const storyText = GroupHelper().CreateGroup(
       [

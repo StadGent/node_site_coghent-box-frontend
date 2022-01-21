@@ -30,6 +30,7 @@ const useStoryCircle = (
 } => {
   const titleCircle = (position: Vector3, storyColor: number, currentFrame: number) => {
     return StoryCircle(_storyService).Create(
+      _storyService.activeStoryData,
       useStory(_storyService).title(activeStoryData),
       CircleHelper().CreateSchema(
         position,

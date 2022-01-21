@@ -32,8 +32,9 @@ const StoryPaused = (taggingService: TaggingService, zoneService: ZoneService, _
 } => {
   const bannerTopPosition = -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight;
   const bannerCenterPosition = -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight / 2;
-  const storyCircle = (story: Story, currentFrame: number, position: Vector3, storyColor: number) => {
+  const storyCircle = (_storyData:StoryData, story: Story, position: Vector3, storyColor: number) => {
     const titleCircle = StoryCircle(_storyService).Create(
+      _storyData,
       useStory(_storyService).title(story),
       CircleHelper().CreateSchema(position, Measurements().storyCircle.radius, storyColor),
       Images.story.defaultIcon,
@@ -71,10 +72,9 @@ const StoryPaused = (taggingService: TaggingService, zoneService: ZoneService, _
     const storyCircles: Record<string, StoryCircleObjects> = {};
 
     _storyData.forEach(_data => {
-      console.log('data of story', _data);
       storyCircles[_data.storyId] = storyCircle(
+        _data,
         useStory(_storyService).getStory(_data.storyId),
-        _data.totalOfFramesSeen,
         new Vector3(_data.pausedPosition.x, bannerTopPosition, Layers.scene + Layers.fraction),
         _data.storyColor,
       )
