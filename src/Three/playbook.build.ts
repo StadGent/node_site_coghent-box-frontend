@@ -67,14 +67,12 @@ const PlayBookBuild = (
   const updateAudio = (
     audio: HTMLAudioElement,
     activeFrameIndex: number,
-    backupAudioFile: string,
   ) => {
     playBook.addToPlayBook(
       () => {
         audio = AudioHelper(threeService).setAudioTrack(
           activeStoryData,
           activeFrameIndex,
-          backupAudioFile,
         );
         audio.play();
       },

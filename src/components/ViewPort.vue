@@ -202,7 +202,7 @@ export default defineComponent({
       storyData = storyService.stories;
       storyService.setStoryPausedPositions(zoneService.zonesInnerToOuter);
       console.log('StoryData', storyService.getStoryData());
-      buildStory(currentStory.value, '/Audio/example.mp3');
+      buildStory(currentStory.value);
     };
 
     const timing = () => {
@@ -233,7 +233,7 @@ export default defineComponent({
       interval;
     };
 
-    const buildStory = (currentStory: number, audioFile: string) => {
+    const buildStory = (currentStory: number) => {
       activeStoryData = useStory(storyService).setActiveStory(storyData, currentStory);
 
       PlayBookBuild(
@@ -249,7 +249,6 @@ export default defineComponent({
       audio = AudioHelper(threeSvc).setAudioTrack(
         activeStoryData,
         currentFrame,
-        audioFile,
       );
       let progress: Array<Group> = [];
       audio.ontimeupdate = () => {
@@ -364,7 +363,7 @@ export default defineComponent({
     const resetStory = () => {
       clearInterval(interval);
       playBook.clearPlaybook(true);
-      buildStory(currentStory.value, '/Audio/sample4.mp3');
+      buildStory(currentStory.value);
     };
 
     const playStartVideo = () => {
