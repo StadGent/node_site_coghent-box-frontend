@@ -82,7 +82,7 @@ const PlayBookBuild = (
 
   const storyCircle = (currentFrameIndex: number, storyColor: number, canAddToSCene: boolean) => {
     useStoryCircle(threeService, taggingService, storyService, activeStoryData, playBook).create(
-      zoneService.middleZoneCenter,
+     new Vector3( zoneService.middleZoneCenter.x, zoneService.middleZoneCenter.y, Layers.scene + Layers.fraction),
       storyColor,
       currentFrameIndex,
       activeStoryData.frames.length,
@@ -129,7 +129,7 @@ const PlayBookBuild = (
 
   const initialSpotLight = () => {
     const spotlight = Spot().create(
-      new Vector3(zoneService.middleZoneCenter.x, zoneService.middleZoneCenter.y, Layers.scene),
+      zoneService.middleZoneCenter,
       Measurements().storyCircle.radius,
     );
     threeService.AddToScene(spotlight, Tags.Spotlight, 'InitialSpotlight');
@@ -181,7 +181,7 @@ const PlayBookBuild = (
   const setSelectedStory = async () => {
     spotlight.position.set(spotlight.position.x - 0.01, spotlight.position.y, spotlight.position.z)
     TaggingHelper(taggingService).tagStorycircleAsActiveStoryCircle(storyService.activeStoryData.storyId);
-    CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>, Measurements().storyCircle.radius, AnimationDefaults.values.scaleStep);
+    await CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>, Measurements().storyCircle.radius, AnimationDefaults.values.scaleStep);
     await MoveObject().startMoving(spotlight, zoneService.middleZoneCenter);
     threeService.AddToScene(StoryCircle(storyService).shadedCircle(
       {

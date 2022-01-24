@@ -102,9 +102,8 @@ const useAsset = (
     if (scale > 1) {
       scale = 1;
     }
-    assetImageCube.material.opacity = 1;
+    assetImageCube.material.opacity = 1;    
     assetImageCube.position.set(position.x, position.y, position.z);
-    spotlight.position.set(position.x, position.y, position.z);
     assetImageCube.position.z = Layers.scene + Layers.fraction;
     await moveSpotlightToAsset(spotlight, assetImageCube, scale);
     await Common().awaitTimeout(200);

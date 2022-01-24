@@ -15,6 +15,7 @@ import CustomAnimation from '@/composables/animation';
 import { GarabageHelperForWall } from '@/Three/helper.wall.garbage';
 import Measurements from './defaults.measurements';
 import Development from './defaults.development';
+import MoveObject from '@/composables/moveObject';
 
 const useFrameAssetOverview = (
   threeService: ThreeService,
@@ -80,8 +81,11 @@ const useFrameAssetOverview = (
     await Common().awaitTimeout(250);
     await CustomAnimation().shrink(spotlight as unknown as Mesh<any, MeshBasicMaterial>, scale + (Measurements().spotLight.spaceAroundObject*2), AnimationDefaults.values.scaleStep);
     await Common().awaitTimeout(150);
-    asset.position.set(positions[currentAsset].x, positions[currentAsset].y, positions[currentAsset].z);
-    spotlight.position.set(positions[currentAsset].x, positions[currentAsset].y, positions[currentAsset].z);
+    await Promise.all([
+      MoveObject().startMoving(asset, positions[currentAsset]),
+      MoveObject().startMoving(spotlight, positions[currentAsset]),
+    // spotlight.position.set(positions[currentAsset].x, positions[currentAsset].y, positions[currentAsset].z),
+  ]);
   };
 
   const setAssetsInactive = async (displayedAsset: Mesh<BoxBufferGeometry, any>) => {

@@ -41,9 +41,9 @@ const Measurements = (): {
   text: TextParams;
 } => {
   const storyCircle = {
-    radius: 2,
+    radius: 2.5,
     progressRadius: 3,
-    outerCircle: 4,
+    outerCircle: 3.8,
     opacityShadedCircle: 0.4,
     correctionText: 1.5,
   };
@@ -51,11 +51,11 @@ const Measurements = (): {
   const progressBar = {
     radius: 2.5,
     thickness: 0.16,
-    dotRadius: 0.3,
-    innerdotRadius: 0.12,
+    dotRadius: 0.4,
+    innerdotRadius: 0.2,
   };
 
-  const spotLight ={
+  const spotLight = {
     radius: 5.5,
     spaceAroundObject: 1.8,
     opacity: 0.5,
