@@ -7,7 +7,7 @@ const Development = (): {
   const showZonesInOverview = () => false;
   const showDevTimeLogs = () => false;
   const showGarbageLogs = () => false;
-  const showMoveLogs = () => true;
+  const showMoveLogs = () => false;
 
   return {
     showZonesInOverview,

@@ -53,7 +53,6 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     storyCircle();
     removeArrayOfGroupsByTag(Tags.PauseScreenCenterText)
     removeByTag(Tags.PauseScreenBanner);    
-    removeByTag(Tags.Spotlight);
     logRemoved('newStorySelected')
   };
 

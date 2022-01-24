@@ -101,22 +101,7 @@ export default defineComponent({
           currentStory.value = value - 1;
           currentFrame = _storyData.totalOfFramesSeen;
           console.log('Selected story => ', currentStory.value);
-
-          //FIXME:
-          // threeSvc.ClearScene();
-          //TODO:
-
-          //
-          // spotlight = PlayBookBuild(
-          //   threeSvc,
-          //   storyService,
-          //   zoneService,
-          //   taggingService,
-          //   playBook,
-          //   spotlight,
-          //   activeStoryData,
-          // ).initialSpotLight();
-
+          
           await PlayBookBuild(
             threeSvc,
             storyService,
@@ -127,19 +112,6 @@ export default defineComponent({
             activeStoryData,
           ).setSelectedStory();
           await garbageHelper.newStorySelected();
-          spotlight = PlayBookBuild(
-            threeSvc,
-            storyService,
-            zoneService,
-            taggingService,
-            playBook,
-            spotlight,
-            activeStoryData,
-          ).initialSpotLight();
-
-          // DEMO:
-
-          console.log('items on screen', taggingService.taggedObjects);
           resetStory();
         }
       },
@@ -187,16 +159,6 @@ export default defineComponent({
         .startOfSession()
         .finally(async () => {
           garbageHelper.startOfSession();
-          //TEMP: Creating a new spotlight that is used for the rest of the session
-          spotlight = PlayBookBuild(
-            threeSvc,
-            storyService,
-            zoneService,
-            taggingService,
-            playBook,
-            spotlight,
-            activeStoryData,
-          ).initialSpotLight();
           setData();
         });
     };

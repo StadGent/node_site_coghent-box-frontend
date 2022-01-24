@@ -75,9 +75,7 @@ const useStartOfSession = (
     await Common().awaitTimeout(Timing.startOfSession.videoDelay);
     await MoveObject().startMoving(spotlight, new Vector3(0, 0, Layers.scene));
     await countdown(Defaults().countdown());
-    await CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>, Measurements().spotLight.radius, AnimationDefaults.values.scaleStep);
-    //TODO: Removed spotlight of scene because otherwise it made the spotlight for the frame crash => movement needs improvement
-    threeService.RemoveFromScene(spotlight);
+    await CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>, Measurements().storyCircle.radius, AnimationDefaults.values.scaleStep);
     return true;
   };
 
