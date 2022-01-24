@@ -1,14 +1,14 @@
 import useFrame from '@/composables/useFrame';
 import { Story } from '@/models/GraphqlModel';
 import ThreeService from '@/services/ThreeService';
-import Defaults from './defaults.config';
+import Development from './defaults.development';
 
 const AudioHelper = (threeService: ThreeService): {
   DoEvent: (currentTime: number, eventTime: number) => boolean;
   setAudioTrack: (activeStoryData: Story, currentFrameIndex: number) => HTMLAudioElement;
 } => {
   const DoEvent = (currentTime: number, eventTime: number) => {
-    if(Defaults().showDevLogs()){
+    if(Development().showDevTimeLogs()){
       console.log(`current: ${currentTime}; event: ${eventTime}`);
     }
     return currentTime < eventTime + 2 && currentTime > eventTime;

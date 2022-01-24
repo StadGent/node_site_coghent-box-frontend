@@ -1,10 +1,8 @@
 import CustomAnimation from '@/composables/animation';
 import TaggingService, { Tags } from '@/services/TaggingService';
 import ThreeService from '@/services/ThreeService';
-import { Mesh, MeshBasicMaterial } from 'three';
 import AnimationDefaults from './defaults.animation';
-import Defaults from '@/Three/defaults.config'
-import StoryService from '@/services/StoryService';
+import Development from './defaults.development';
 
 export type GarabageHelperForWall = {
   removeGroupsByTag: (_tag: Tags) => void;
@@ -13,15 +11,10 @@ export type GarabageHelperForWall = {
   endOfSessionScreen: () => void;
   startOfSession: () => void;
   highlightedAsset: () => void;
+  activeStoryCircle: () => void;
 };
 
 const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingService): GarabageHelperForWall => {
-
-  const removeAllInactiveStories = () => {
-    storyCircle();
-    storyCircle();
-    storyCircle();
-  };
 
   const removeArrayOfGroupsByTag = (_tag: Tags) => {
     const _groups = taggingService.getByTag(_tag);
@@ -57,9 +50,10 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     const groupOfAssetsTags = taggingService.getByTag(Tags.GroupOfAssets);
     await CustomAnimation().fadeOutGroups([groupOfAssetsTags[0].object], 0, AnimationDefaults.values.fadeStep);
     threeService.RemoveFromScene(groupOfAssetsTags[0].object);
-    removeAllInactiveStories();
+    storyCircle();
     removeArrayOfGroupsByTag(Tags.PauseScreenCenterText)
     removeByTag(Tags.PauseScreenBanner);    
+    removeByTag(Tags.Spotlight);
     logRemoved('newStorySelected')
   };
 
@@ -100,7 +94,7 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
   };
 
   const logRemoved = (_context: string) => {
-    if(Defaults().showDevLogs()){
+    if(Development().showGarbageLogs()){
       console.log(`-------------`);
       console.log(`garbageHelper removed =>`, _context);
       console.log(`-------------`);
@@ -114,6 +108,7 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     removeGroupsByTag,
     startOfSession,
     highlightedAsset,
+    activeStoryCircle,
   }
 };
 

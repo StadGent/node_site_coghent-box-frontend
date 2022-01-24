@@ -2,12 +2,11 @@ import useAsset from '@/composables/useAsset';
 import { Asset, Story } from '@/models/GraphqlModel';
 import FrameOverview from '@/screens/FrameOverview';
 import ThreeService from '@/services/ThreeService';
-import { BoxBufferGeometry, BoxGeometry, Group, Mesh, MeshBasicMaterial, Object3D, Vector3 } from 'three';
+import { BoxBufferGeometry, Group, Mesh, MeshBasicMaterial, Object3D, Vector3 } from 'three';
 import Layers from './defaults.layers';
 import { PlayBookFunctions } from '@/composables/playbook';
 import { Frame as modelFrame } from '@/models/GraphqlModel';
 import Common from '@/composables/common';
-import Defaults from './defaults.config';
 import Tools from './helper.tools';
 import ZoneService from '@/services/ZoneService';
 import { Tags } from '@/services/TaggingService';
@@ -15,6 +14,7 @@ import AnimationDefaults from './defaults.animation';
 import CustomAnimation from '@/composables/animation';
 import { GarabageHelperForWall } from '@/Three/helper.wall.garbage';
 import Measurements from './defaults.measurements';
+import Development from './defaults.development';
 
 const useFrameAssetOverview = (
   threeService: ThreeService,
@@ -153,7 +153,7 @@ const useFrameAssetOverview = (
         if (relationMetadata.timestamp_start) {
           playBook.addToPlayBook(
             async () => {
-              if (Defaults().showZonesInOverview()) {
+              if (Development().showZonesInOverview()) {
                 Tools().displayZones(threeService, zoneService.zones);
               }
               await setAssetsInactive(asset as Mesh<BoxBufferGeometry, any>);

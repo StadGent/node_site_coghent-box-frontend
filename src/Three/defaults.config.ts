@@ -11,8 +11,6 @@ const Defaults = (): {
   zonePadding: () => number;
   screenZonePadding: () => number;
   boundaryPadding: () => number;
-  showZonesInOverview: () => true | false;
-  showDevLogs: () => true | false;
   maxFrames: () => number;
   countdown: () => number;
   circlePoints: () => Array<CirclePoint>;
@@ -27,8 +25,6 @@ const Defaults = (): {
   const zonePadding = () => 2;
   const screenZonePadding = () => 2;
   const boundaryPadding = () => 1;
-  const showZonesInOverview = () => false;
-  const showDevLogs = () => true;
   
   const maxFrames = () => 4;
   const countdown = () => 3; 
@@ -97,8 +93,6 @@ const Defaults = (): {
     zonePadding,
     screenZonePadding,
     boundaryPadding,
-    showZonesInOverview,
-    showDevLogs,
     maxFrames,
     countdown,
     circlePoints,
