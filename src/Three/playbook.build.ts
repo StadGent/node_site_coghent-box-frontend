@@ -62,7 +62,7 @@ const PlayBookBuild = (
     endOfSession: true | false;
   };
   startOfSession: () => Promise<true | false>;
-  setSelectedStory: () => void;
+  setSelectedStory: () => Promise<void>;
 } => {
   const updateAudio = (
     audio: HTMLAudioElement,
@@ -138,8 +138,8 @@ const PlayBookBuild = (
     return spotlight;
   };
 
-  const endOfSession = (spotRadius: number) => {
-    MoveObject().startMoving(spotlight, new Vector3(0, 0, Layers.scene));
+  const endOfSession = async (spotRadius: number) => {
+    await MoveObject().startMoving(spotlight, new Vector3(0, 0, Layers.scene));
     return useEndOfSession(threeService, zoneService).create(spotRadius);
   };
 
@@ -147,7 +147,7 @@ const PlayBookBuild = (
     const assetsOnScreen = taggingService.getByTag(Tags.GroupOfAssets)[0].object as Group;
     assetsOnScreen.position.setZ(Layers.background);
     Common().setScale(spotlight, Measurements().pauseScreen.spotLightRadius);
-    MoveObject().startMoving(spotlight, new Vector3(0.01, -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight, Layers.scene));
+    await MoveObject().startMoving(spotlight, new Vector3(0.01, -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight, Layers.scene));
     const inactiveStories = storyService.getDataOfInactiveStories();
     MoveHelper(taggingService).activeStoryCircle(
       new Vector3(
@@ -180,13 +180,13 @@ const PlayBookBuild = (
     return await useStartOfSession(threeService, zoneService, spotlight).create();
   };
 
-  const setSelectedStory = () => {
+  const setSelectedStory = async () => {
     console.log('! Set selected story !');
     spotlight.position.set(spotlight.position.x - 0.01, spotlight.position.y, spotlight.position.z)
     TaggingHelper(taggingService).tagStorycircleAsActiveStoryCircle(storyService.activeStoryData.storyId);
     // DEMO:
     // Common().setScale(spotlight, Measurements().storyCircle.radius);
-    MoveObject().startMoving(spotlight, zoneService.middleZoneCenter);
+    await MoveObject().startMoving(spotlight, zoneService.middleZoneCenter);
 
     threeService.AddToScene(StoryCircle(storyService).shadedCircle(
       {

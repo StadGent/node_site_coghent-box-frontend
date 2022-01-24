@@ -105,7 +105,7 @@ export default defineComponent({
           //FIXME:
           // threeSvc.ClearScene();
           //TODO:
-          
+
           //
           // spotlight = PlayBookBuild(
           //   threeSvc,
@@ -117,7 +117,7 @@ export default defineComponent({
           //   activeStoryData,
           // ).initialSpotLight();
 
-          PlayBookBuild(
+          await PlayBookBuild(
             threeSvc,
             storyService,
             zoneService,
@@ -136,7 +136,7 @@ export default defineComponent({
             spotlight,
             activeStoryData,
           ).initialSpotLight();
-          
+
           // DEMO:
 
           console.log('items on screen', taggingService.taggedObjects);
@@ -173,32 +173,32 @@ export default defineComponent({
         spotlight,
         activeStoryData,
       ).initialSpotLight();
-      setData();
+      // setData();
 
-      // await PlayBookBuild(
-      //   threeSvc,
-      //   storyService,
-      //   zoneService,
-      //   taggingService,
-      //   playBook,
-      //   spotlight,
-      //   activeStoryData,
-      // )
-      //   .startOfSession()
-      //   .finally(async () => {
-      //     garbageHelper.startOfSession();
-      //     //TEMP: Creating a new spotlight that is used for the rest of the session
-      //     spotlight = PlayBookBuild(
-      //       threeSvc,
-      //       storyService,
-      //       zoneService,
-      //       taggingService,
-      //       playBook,
-      //       spotlight,
-      //       activeStoryData,
-      //     ).initialSpotLight();
-      //     setData();
-      //   });
+      await PlayBookBuild(
+        threeSvc,
+        storyService,
+        zoneService,
+        taggingService,
+        playBook,
+        spotlight,
+        activeStoryData,
+      )
+        .startOfSession()
+        .finally(async () => {
+          garbageHelper.startOfSession();
+          //TEMP: Creating a new spotlight that is used for the rest of the session
+          spotlight = PlayBookBuild(
+            threeSvc,
+            storyService,
+            zoneService,
+            taggingService,
+            playBook,
+            spotlight,
+            activeStoryData,
+          ).initialSpotLight();
+          setData();
+        });
     };
 
     const setData = async () => {
@@ -282,7 +282,6 @@ export default defineComponent({
 
       const framePlaybook = PlayBook();
 
-
       PlayBookBuild(
         threeSvc,
         storyService,
@@ -291,12 +290,12 @@ export default defineComponent({
         framePlaybook,
         spotlight,
         activeStoryData,
-      // ).storyCircle(currentFrame, storyService.getStoryColor(activeStoryData.id), true);
-      // await Common().awaitTimeout(100);
-      // taggingService.re
-      //TODO:
-      
-      // DEMO:
+        // ).storyCircle(currentFrame, storyService.getStoryColor(activeStoryData.id), true);
+        // await Common().awaitTimeout(100);
+        // taggingService.re
+        //TODO:
+
+        // DEMO:
       ).storyCircle(
         currentFrame,
         storyService.getStoryColor(activeStoryData.id),
@@ -413,6 +412,12 @@ export default defineComponent({
       );
       garbageHelper = WallGarbageHelper(threeSvc, taggingService);
       threeSvc.ClearScene();
+
+      // const cube = TestSingleComponent().testCube(new Vector3(-10, 0, 0));
+      // threeSvc.AddToScene(cube, Tags.Testing);
+      // await MoveObject().startMoving(cube, new Vector3(10, 0, 0)),
+      // // await MoveObject().startMoving(cube, new Vector3(-10, 0, 0)),
+      // console.log('cube moved <=');
 
       threeSvc.Animate();
     });

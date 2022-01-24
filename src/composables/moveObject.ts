@@ -1,4 +1,6 @@
+import Development from '@/Three/defaults.development';
 import Timing from '@/Three/defaults.timing';
+import PositionHelper from '@/Three/helper.position';
 import { Group, Mesh, Vector3 } from 'three';
 import Common from './common';
 
@@ -45,29 +47,31 @@ const MoveObject = (): {
   const move = (object: Mesh, toPosition: Vector3, stepX: number, stepY: number) => {
     let reached = false;
     if (
-      object.position.x > toPosition.x - stepX &&
-      object.position.x < toPosition.x + stepX &&
-      object.position.x != toPosition.x &&
-      object.position.y > toPosition.y - stepY &&
-      object.position.y < toPosition.y + stepY &&
-      object.position.y != toPosition.y
+      PositionHelper().objectIsOnX(object.position, toPosition, stepX) &&
+      PositionHelper().objectIsOnY(object.position, toPosition, stepY)
     ) {
-      object.position.x = toPosition.x;
       object.position.set(toPosition.x, toPosition.y, toPosition.z);
       reached = true;
+      if (Development().showMoveLogs()) {
+        console.log(`==> Position reached X:${object.position.x} Y:${object.position.y}, Z::${object.position.z} <==`);
+        console.log('------------------------');
+      }
     } else {
       setXPosition(object, toPosition, stepX);
       setYPosition(object, toPosition, stepY);
     }
     return reached
-
   };
 
   const startMoving = async (object: Mesh, toPosition: Vector3) => {
     const stepY = Math.abs(object.position.y - toPosition.y) / Timing.moveObject.steps;
     const stepX = Math.abs(object.position.x - toPosition.x) / Timing.moveObject.steps;
     let reached = false;
-    while (object.position.x != toPosition.x || reached) {
+    if (Development().showMoveLogs()) {
+      console.log('------------------------');
+      console.log(`==> From position X:${object.position.x} Y:${object.position.y}, Z::${object.position.z} <==`);
+    }
+    while (!reached) {
       reached = await sleep(object, toPosition, stepX, stepY);
     }
     return Promise.resolve();
