@@ -1,5 +1,6 @@
 type FabricDefaults = {
   canvas: {
+    amountOfFrames: number;
     dimensions: {
       width: number;
       height: number;
@@ -32,6 +33,7 @@ type FabricDefaults = {
     secondaryImage: {
       positions: {
         xAxis: Array<number>;
+        yAxis: Array<number>;
       };
       scale: {
         scaleX: number;
@@ -43,6 +45,7 @@ type FabricDefaults = {
 
 const fabricdefaults: FabricDefaults = {
   canvas: {
+    amountOfFrames: 25,
     dimensions: {
       width: 3840,
       height: 2160,
@@ -82,6 +85,7 @@ const fabricdefaults: FabricDefaults = {
           (3840 / 7) * 5,
           (3840 / 7) * 6,
         ],
+        yAxis: [2160 / 7, (2160 / 7) * 2, (2160 / 7) * 3, (2160 / 7) * 4, (2160 / 7) * 5],
       },
       scale: {
         scaleX: 0.2,

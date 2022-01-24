@@ -3,7 +3,8 @@
   <canvas id="canvas" class="touchcanvas" />
   <CardComponent :sideStrip="true" :large="true" :reverseColors="true" class="infocard" v-if="entity">
       <h2 class="font-bold text-4xl pb-4">{{entity.title[0].value}}</h2>
-      <p>{{entity.description[0].value}}</p>
+      <p v-if="entity.description[0].value">{{entity.description[0].value}}</p>
+      <p v-else>This item does not have a description</p>
       <div class="flex flex-wrap mt-4">
         <div v-for="(item, index) in relationsLabelArray" :key="index" class="bg-tag-neutral text-text-dark py-2 px-4 mr-2 my-2 text-center">
           <p>{{item}}</p>
@@ -64,10 +65,12 @@ export default defineComponent({
     )
 
     watch(() => route.params.entityID, () => {
+      console.log('Refetch entity')
         refetch({id :asString(route.params.entityID)})
       })
 
       watch(() => entity.value, () => {
+        console.log('refetch relations')
       if(entity.value){
         refetchRelations({
         limit: 0,
@@ -84,11 +87,27 @@ export default defineComponent({
       }
       })
 
+      const getRelationStrings = (entity: any) => {
+        const tempStringArray: Array<string> = []
+        const tempLabelArray: Array<string> = []
+        entity.relations
+          .forEach((relation: any) => {
+            tempStringArray.push(relation.key)
+            tempLabelArray.push(relation.value)
+          })
+          console.log({tempStringArray})
+          tempStringArray.filter((string: string) => {'entities/' + headEntityId.value != string})
+          relationStringArray.value = tempStringArray
+          relationsLabelArray.value = tempLabelArray
+      }
+
       onResult((queryResult: any)=> {
         if (queryResult.data){
             entity.value = queryResult.data.Entity
             console.log(entity.value)
-
+            
+            getRelationStrings(entity.value)
+            console.log('new canvas')
             fabricService = new FabricService();
             headEntityId.value = entity.value.id
             fabricService.generateMainImageFrame(entity.value)

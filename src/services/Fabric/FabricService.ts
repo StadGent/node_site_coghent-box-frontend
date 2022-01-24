@@ -1,16 +1,23 @@
 import { fabric } from 'fabric';
-import { fabricdefaults } from './defaults.fabric';
+import { FabricDefaults, fabricdefaults } from './defaults.fabric';
 import { router } from '@/router';
 import { image } from 'd3';
+import Positions from '@/Three/defaults.positions';
 
 type State = {
   canvas: any;
   selectedImage: any;
+  positions: Array<Position>;
 };
 
 type Scale = {
   scaleX: number;
   scaleY: number;
+};
+
+type Position = {
+  left: number;
+  top: number;
 };
 
 export default class FabricService {
@@ -20,8 +27,8 @@ export default class FabricService {
     this.state = {
       canvas: this.setupFabric(),
       selectedImage: undefined,
+      positions: this.getAvailablePositions(),
     };
-    this.removeNewFrameOnCollision();
     this.setMainImageOnClick();
   }
 
@@ -65,23 +72,16 @@ export default class FabricService {
   }
 
   async generateSecondaryImageFrames(entities: Array<any>) {
+    let positions: Array<Position> = this.state.positions;
     const images: Array<string> = this.generateImageUrls(entities);
-    const frames: Array<any> = [];
     images.forEach((image, index) => {
       const frame = new fabric.Image.fromURL(image, (image: any) => {
+        const randomNumber = this.getRandomNumberInRange(0, positions.length - 1);
         image.scaleX = fabricdefaults.canvas.secondaryImage.scale.scaleX;
         image.scaleY = fabricdefaults.canvas.secondaryImage.scale.scaleY;
-        image.top = this.getRandomNumberInRange(
-          20,
-          fabricdefaults.canvas.dimensions.height - 200,
-        );
-        image.left =
-          fabricdefaults.canvas.secondaryImage.positions.xAxis[
-            this.getRandomNumberInRange(
-              0,
-              fabricdefaults.canvas.secondaryImage.positions.xAxis.length - 1,
-            )
-          ];
+        image.top = positions[randomNumber].top;
+        image.left = positions[randomNumber].left;
+
         image.type = 'image';
         image.hoverCursor = 'pointer';
         image.id = entities[index].id;
@@ -89,29 +89,8 @@ export default class FabricService {
         image.setCoords();
         this.lockObjectMovement(image);
         this.state.canvas.add(image);
+        positions = positions.filter((pos: any) => pos != positions[randomNumber]);
       });
-      frames.push(frame);
-    });
-    return frames;
-  }
-
-  removeNewFrameOnCollision() {
-    this.state.canvas.on('object:added', (newObject: any) => {
-      newObject = newObject.target;
-      if (newObject.type == 'image') {
-        const objectsOnCanvas: Array<any> = this.state.canvas
-          .getObjects()
-          .filter((object: any) => object != newObject);
-        if (objectsOnCanvas.length >= 1) {
-          objectsOnCanvas.forEach((object) => {
-            const collision = newObject.intersectsWithObject(object);
-            if (collision) {
-              this.state.canvas.remove(newObject);
-              this.generateSecondaryImageFrames([newObject.getSrc()]);
-            }
-          });
-        }
-      }
     });
   }
 
@@ -124,14 +103,21 @@ export default class FabricService {
     this.state.canvas.on('mouse:down', (selectedObject: any) => {
       if (selectedObject.target) {
         selectedObject = selectedObject.target;
+        console.log({ selectedObject });
         router.push('/touchtable/' + selectedObject.id);
         this.state.selectedImage = selectedObject;
-        window.localStorage.setItem(
-          'selectedObject',
-          JSON.stringify(selectedObject.entity),
-        );
       }
     });
+  }
+
+  private getAvailablePositions() {
+    const availablePositionArray: Array<Position> = [];
+    fabricdefaults.canvas.secondaryImage.positions.xAxis.forEach((xPosition) => {
+      fabricdefaults.canvas.secondaryImage.positions.yAxis.forEach((yPosition) => {
+        availablePositionArray.push({ top: yPosition, left: xPosition });
+      });
+    });
+    return availablePositionArray;
   }
 
   private getClosestCorner(frame1: any, frame2: any) {
@@ -161,9 +147,11 @@ export default class FabricService {
         }
       });
     } else {
-      imageUrls.push(
-        `https://api-uat.collectie.gent/iiif/image/iiif/3/${entities.primary_mediafile}/full/1000,/0/default.jpg`,
-      );
+      if (entities.primary_mediafile) {
+        imageUrls.push(
+          `https://api-uat.collectie.gent/iiif/image/iiif/3/${entities.primary_mediafile}/full/1000,/0/default.jpg`,
+        );
+      }
     }
     return imageUrls;
   }
