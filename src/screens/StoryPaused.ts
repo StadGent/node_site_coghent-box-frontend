@@ -60,7 +60,7 @@ const StoryPaused = (taggingService: TaggingService, zoneService: ZoneService, _
     return schemaCube().CreateCube({
       position: new Vector3(0, bannerCenterPosition, Layers.background),
       params: {
-        width: zoneService.sceneZone().width + Defaults().boundaryPadding(),
+        width: zoneService.sceneZone().width + 3,
         height: Measurements().pauseScreen.bannerHeight,
         color: Measurements().pauseScreen.bannerColor,
         opacity: Measurements().pauseScreen.bannerOpacity
