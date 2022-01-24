@@ -147,7 +147,7 @@ const PlayBookBuild = (
     const assetsOnScreen = taggingService.getByTag(Tags.GroupOfAssets)[0].object as Group;
     assetsOnScreen.position.setZ(Layers.background);
     Common().setScale(spotlight, Measurements().pauseScreen.spotLightRadius);
-    MoveObject().startMoving(spotlight, new Vector3(0, -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight, Layers.scene));
+    MoveObject().startMoving(spotlight, new Vector3(0.01, -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight, Layers.scene));
     const inactiveStories = storyService.getDataOfInactiveStories();
     MoveHelper(taggingService).activeStoryCircle(
       new Vector3(
@@ -181,21 +181,21 @@ const PlayBookBuild = (
   };
 
   const setSelectedStory = () => {
+    console.log('! Set selected story !');
+    spotlight.position.set(spotlight.position.x - 0.01, spotlight.position.y, spotlight.position.z)
     TaggingHelper(taggingService).tagStorycircleAsActiveStoryCircle(storyService.activeStoryData.storyId);
     // DEMO:
-    // Common().setScale(spotlight, Measurements().storyCircle.outerCircle);
-    // MoveObject().startMoving(spotlight, zoneService.middleZoneCenter);
-    // threeService.AddToScene(StoryCircle(storyService).shadedCircle(
-    //   {
-    //     position: new Vector3(
-    //       storyService.activeStoryData.pausedPosition.x,
-    //       -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight,
-    //       Layers.scene + Layers.fraction), params: { color: storyService.activeStoryData.storyColor } as CircleParams
-    //   } as CircleSchema), Tags.ActiveStoryCircleShade);
-      // threeService.RemoveFromScene(taggingService.getByTag(Tags.ActiveStoryCircleText)[0].object);
-      // threeService.AddToScene(StoryCircle(storyService).progressBar({position: zoneService.middleZoneCenter} as CircleSchema), Tags.ActiveStoryCircleFrameDots);
-      // threeService.AddToScene(StoryCircle(storyService).title(storyService.activeStory.title[0].value,new Vector3(zoneService.middleZoneCenter.x - 1,zoneService.middleZoneCenter.y, Layers.scene+ Layers.fraction), Colors().white), Tags.ActiveStoryCircleFrameDots);
-    // MoveHelper(taggingService).activeStoryCircle(zoneService.middleZoneCenter);
+    // Common().setScale(spotlight, Measurements().storyCircle.radius);
+    MoveObject().startMoving(spotlight, zoneService.middleZoneCenter);
+
+    threeService.AddToScene(StoryCircle(storyService).shadedCircle(
+      {
+        position: new Vector3(
+          storyService.activeStoryData.pausedPosition.x,
+          -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight,
+          Layers.scene + Layers.fraction), params: { color: storyService.activeStoryData.storyColor } as CircleParams
+      } as CircleSchema), Tags.ActiveStoryCircleShade);
+    MoveHelper(taggingService).activeStoryCircle(zoneService.middleZoneCenter);
   };
 
   return {

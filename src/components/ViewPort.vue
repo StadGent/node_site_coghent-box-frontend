@@ -4,15 +4,7 @@
 </template>
 
 <script lang="ts">
-import {
-  defineComponent,
-  onMounted,
-  PropType,
-  reactive,
-  Ref,
-  ref,
-  watch,
-} from 'vue';
+import { defineComponent, onMounted, PropType, reactive, Ref, ref, watch } from 'vue';
 import { Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
 import { Entity as _Entity, Story } from '@/models/GraphqlModel';
 
@@ -38,8 +30,12 @@ import PlayBookBuild from '@/Three/playbook.build';
 
 import PlayBook from '@/composables/playbook';
 import useStory from '@/composables/useStory';
-import MoveObject from '@/composables/moveObject'
+import MoveObject from '@/composables/moveObject';
 import CustomAnimation from '@/composables/animation';
+import Spot from '@/Three/shapes.spotlight';
+import Common from '@/composables/common';
+import Development from '@/Three/defaults.development';
+import TaggingHelper from '@/Three/helper.tagging';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -79,8 +75,8 @@ export default defineComponent({
       DoEvent: (currentTime: number, eventTime: number) => boolean;
     };
     let garbageHelper: GarabageHelperForWall;
-    let audioDuration = 120;
-    let currentFrame = 0;
+    let audioDuration = 90;
+    let currentFrame = 1;
     let showProgressOfFrame = false;
     let interval: ReturnType<typeof setTimeout>;
     let storyData: Array<Story> = [];
@@ -107,16 +103,19 @@ export default defineComponent({
           console.log('Selected story => ', currentStory.value);
 
           //FIXME:
-          threeSvc.ClearScene();
-          spotlight = PlayBookBuild(
-            threeSvc,
-            storyService,
-            zoneService,
-            taggingService,
-            playBook,
-            spotlight,
-            activeStoryData,
-          ).initialSpotLight();
+          // threeSvc.ClearScene();
+          //TODO:
+          
+          //
+          // spotlight = PlayBookBuild(
+          //   threeSvc,
+          //   storyService,
+          //   zoneService,
+          //   taggingService,
+          //   playBook,
+          //   spotlight,
+          //   activeStoryData,
+          // ).initialSpotLight();
 
           PlayBookBuild(
             threeSvc,
@@ -127,12 +126,19 @@ export default defineComponent({
             spotlight,
             activeStoryData,
           ).setSelectedStory();
+          await garbageHelper.newStorySelected();
+          spotlight = PlayBookBuild(
+            threeSvc,
+            storyService,
+            zoneService,
+            taggingService,
+            playBook,
+            spotlight,
+            activeStoryData,
+          ).initialSpotLight();
+          
           // DEMO:
-          // await garbageHelper.newStorySelected();
-          // threeSvc.RemoveFromScene(spotlight);
-          // spotlight = Spot().create(spotlight.position,Measurements().storyCircle.outerCircle);
-          // threeSvc.AddToScene(spotlight, Tags.Spotlight);
-          // await MoveObject().startMoving(spotlight, zoneService.middleZoneCenter);
+
           console.log('items on screen', taggingService.taggedObjects);
           resetStory();
         }
@@ -215,7 +221,7 @@ export default defineComponent({
             playBook.getPlayBookActions()[currentFunction].time,
           )
         ) {
-          if (Defaults().showDevLogs()) {
+          if (Development().showDevTimeLogs()) {
             console.log(
               `| Time: ${
                 playBook.getPlayBookActions()[currentFunction].time
@@ -233,7 +239,7 @@ export default defineComponent({
       interval;
     };
 
-    const buildStory = (currentStory: number) => {
+    const buildStory = async (currentStory: number) => {
       activeStoryData = useStory(storyService).setActiveStory(storyData, currentStory);
 
       PlayBookBuild(
@@ -246,10 +252,7 @@ export default defineComponent({
         activeStoryData,
       ).storyData(storyService, activeStoryData, currentFrame);
 
-      audio = AudioHelper(threeSvc).setAudioTrack(
-        activeStoryData,
-        currentFrame,
-      );
+      audio = AudioHelper(threeSvc).setAudioTrack(activeStoryData, currentFrame);
       let progress: Array<Group> = [];
       audio.ontimeupdate = () => {
         if (showProgressOfFrame) {
@@ -278,6 +281,8 @@ export default defineComponent({
       };
 
       const framePlaybook = PlayBook();
+
+
       PlayBookBuild(
         threeSvc,
         storyService,
@@ -286,9 +291,17 @@ export default defineComponent({
         framePlaybook,
         spotlight,
         activeStoryData,
-      ).storyCircle(currentFrame, storyService.getStoryColor(activeStoryData.id), true);
+      // ).storyCircle(currentFrame, storyService.getStoryColor(activeStoryData.id), true);
+      // await Common().awaitTimeout(100);
+      // taggingService.re
+      //TODO:
+      
       // DEMO:
-      // ).storyCircle(currentFrame, storyService.getStoryColor(activeStoryData.id), !taggingService.idAlreadyInList(activeStoryData.id));
+      ).storyCircle(
+        currentFrame,
+        storyService.getStoryColor(activeStoryData.id),
+        !taggingService.idAlreadyInList(activeStoryData.id),
+      );
 
       PlayBookBuild(
         threeSvc,
@@ -305,10 +318,19 @@ export default defineComponent({
       );
       playBook.mergeActionsWithPlaybook(framePlaybook.getSortedPlayBookActions());
 
-      playBook.addToPlayBook(() => {
-        MoveObject().startMoving(spotlight, zoneService.middleZoneCenter);
-        CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>,Measurements().storyCircle.radius, AnimationDefaults.values.scaleStep);3
-      }, playBook.lastAction().time + Timing.delayToPauseScreen, 'Move the spotlight to the center of the screen until the frame ends');
+      playBook.addToPlayBook(
+        () => {
+          MoveObject().startMoving(spotlight, zoneService.middleZoneCenter);
+          CustomAnimation().shrink(
+            spotlight as Mesh<any, MeshBasicMaterial>,
+            Measurements().storyCircle.radius,
+            AnimationDefaults.values.scaleStep,
+          );
+          3;
+        },
+        playBook.lastAction().time + Timing.delayToPauseScreen,
+        'Move the spotlight to the center of the screen until the frame ends',
+      );
 
       playBook.addToPlayBook(
         () => {
@@ -355,7 +377,8 @@ export default defineComponent({
 
           console.log('tag', taggingService.taggedObjects);
         },
-        audioDuration,
+        playBook.lastAction().time + 2,
+        // audioDuration,
         `Update storyData & show endOfSessions screen or the storyOverview`,
       );
     };
