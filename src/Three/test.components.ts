@@ -2,11 +2,13 @@ import { BoxGeometry, BufferGeometry, Group, Material, Mesh, MeshBasicMaterial, 
 import Colors from './defaults.color';
 import Defaults from './defaults.config';
 import HelperText from './defaults.helperText';
+import Layers from './defaults.layers';
 import Measurements from './defaults.measurements';
 import GroupHelper from './helper.group';
 import TextHelper from './helper.text';
 import { CircleParams, CircleSchema } from './schema.circle';
 import SchemaCube, { CubeParams, CubeSchema } from './schema.cube';
+import { FontParams } from './schema.text';
 import CircularProgressBar from './shapes.circularProgressbar';
 import HorizontalProgressBar from './shapes.horizontalProgressBar';
 import MetadataLabel from './shapes.metadataLabel';
@@ -14,6 +16,7 @@ import PauseProgressbar, { PauseProgressbarObjects } from './shapes.pauseProgres
 
 const TestSingleComponent = (): {
   testCube: (_position: Vector3) => Mesh<BoxGeometry, MeshBasicMaterial>;
+  testText: (_position: Vector3) => Mesh<BufferGeometry, any>;
   horizontalProgressbar: Array<Group>;
   circularProgressbar: Mesh<BufferGeometry, Material | Material[]>;
   circularProgressbarActiveSegments: (position: Vector3) => {
@@ -28,6 +31,18 @@ const TestSingleComponent = (): {
 
   const testCube = (_position: Vector3) => {
     return SchemaCube().CreateCube({position: _position, params: {color: Colors().green, width: 1, height: 1, opacity: 0.6} as CubeParams} as CubeSchema);
+  };
+
+  const testText = (_position: Vector3) => {
+    return TextHelper().CreateText(
+      'Test text \n here',
+      _position,
+      {
+        color: Colors().white,
+        width: 0,
+      } as CubeParams,
+      { size: Measurements().text.size.small } as FontParams,
+    );
   };
 
   const horizontalProgressbar = HorizontalProgressBar().create(new Vector3(0, -7, 1), [0, 3, 6], 8, 0.1, Colors().yellow);
@@ -65,6 +80,7 @@ const TestSingleComponent = (): {
 
   return {
     testCube,
+    testText,
     horizontalProgressbar,
     circularProgressbar,
     circularProgressbarActiveSegments,

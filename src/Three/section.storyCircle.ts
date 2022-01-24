@@ -19,6 +19,7 @@ export type StoryCircleParams = {
   progressRadius: number;
   outerCircle: number;
   opacityShadedCircle: number;
+  correctionText: number;
 };
 
 export type StoryCircleObjects = {
@@ -26,7 +27,7 @@ export type StoryCircleObjects = {
   basic: Mesh<CircleGeometry, MeshBasicMaterial>,
   shade?: Mesh<CircleGeometry, MeshBasicMaterial>,
   progress: PauseProgressbarObjects,
-  text: Group,
+  text: Mesh<BufferGeometry, any>,
 };
 
 const StoryCircle = (_storyService: StoryService): {
@@ -101,27 +102,16 @@ const StoryCircle = (_storyService: StoryService): {
       circleSchema.params.color || Colors().white,
       storyData.totalOfFrames,
     );
-    const storyText = GroupHelper().CreateGroup(
-      [
-        title(
-          storyTitle,
-          new Vector3(
-            circleSchema.position.x - 1.5,
-            circleSchema.position.y,
-            circleSchema.position.z,
-          ),
-          circleSchema.params.color || DefaultColors().green,
+    const storyText =
+      title(
+        storyTitle,
+        new Vector3(
+          circleSchema.position.x - Measurements().storyCircle.correctionText,
+          circleSchema.position.y,
+          circleSchema.position.z,
         ),
-        //DEMO: Removed for demo
-        // icon(
-        //   new Vector3(
-        //     circleSchema.position.x,
-        //     circleSchema.position.y + 1.2,
-        //     circleSchema.position.z,
-        //   ),
-        //   iconUrl,
-        // ),
-      ]);
+        circleSchema.params.color || DefaultColors().green,
+      );
 
     return {
       basic: basicCircle,

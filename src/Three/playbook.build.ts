@@ -52,7 +52,7 @@ const PlayBookBuild = (
   progressOfFrame: (frameIndex: number, color: number, currentTime: number, audioDuration: number, progressbar: Array<Group>) => Array<Group>;
   initialSpotLight: () => Mesh;
   endOfSession: (spotRadius: number) => Promise<boolean>;
-  storyPaused: (storyData: Array<Story>, taggingService: TaggingService) => Promise<void>;
+  storyPaused: (taggingService: TaggingService) => Promise<void>;
   storyData: (
     storyService: StoryService,
     activeStoryData: Story,
@@ -143,7 +143,7 @@ const PlayBookBuild = (
     return useEndOfSession(threeService, zoneService).create(spotRadius);
   };
 
-  const storyPaused = async (storyData: Array<Story>, taggingService: TaggingService) => {
+  const storyPaused = async (taggingService: TaggingService) => {
     const assetsOnScreen = taggingService.getByTag(Tags.GroupOfAssets)[0].object as Group;
     assetsOnScreen.position.setZ(Layers.background);
     Common().setScale(spotlight, Measurements().pauseScreen.spotLightRadius);

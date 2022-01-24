@@ -3,6 +3,7 @@ import MoveObject from '@/composables/moveObject';
 import TaggingService from '@/services/TaggingService';
 import { Vector3 } from 'three';
 import Layers from './defaults.layers';
+import Measurements from './defaults.measurements';
 import TaggingHelper from './helper.tagging';
 import ShapesTemplate from './template.shapes';
 
@@ -13,7 +14,7 @@ const MoveHelper = (_taggingService: TaggingService): {
 
   const activeStoryCircle = (_position: Vector3) => {
     const objects = TaggingHelper(_taggingService).getActiveStoryCircle();
-    MoveObject().startMoving(objects.text,  new Vector3(_position.x,_position.y,objects.text.position.z));
+    MoveObject().startMoving(objects.text,  new Vector3(_position.x - Measurements().storyCircle.correctionText,_position.y,objects.text.position.z));
     MoveObject().startMoving(objects.basic,  new Vector3(_position.x,_position.y,objects.basic.position.z));
     MoveObject().startMoving(objects.progress.ring, new Vector3(_position.x,_position.y,objects.progress.ring.position.z));
     MoveObject().startMoving(objects.shade, new Vector3(_position.x,_position.y,objects.shade?.position.z));
@@ -24,12 +25,11 @@ const MoveHelper = (_taggingService: TaggingService): {
       if (_dot.innerDot) {
         MoveObject().startMoving(_dot.innerDot, storyCirclePositions.frameDots[index])
       }
-
     });
   };
   const activeStoryCircleWithoutShade = (_position: Vector3) => {
     const objects = TaggingHelper(_taggingService).getActiveStoryCircle();
-    MoveObject().startMoving(objects.text, _position);
+    MoveObject().startMoving(objects.text,  new Vector3(_position.x - Measurements().storyCircle.correctionText,_position.y,objects.text.position.z));
     MoveObject().startMoving(objects.basic, _position);
     MoveObject().startMoving(objects.progress.ring, _position);
     //FIXME: The dots are a little off..

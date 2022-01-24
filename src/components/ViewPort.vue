@@ -202,8 +202,6 @@ export default defineComponent({
     };
 
     const setData = async () => {
-      //DEMO:
-      // alert('got stories and can start');
       audioHelper = AudioHelper(threeSvc);
       storyData = storyService.stories;
       storyService.setStoryPausedPositions(zoneService.zonesInnerToOuter);
@@ -290,12 +288,6 @@ export default defineComponent({
         framePlaybook,
         spotlight,
         activeStoryData,
-        // ).storyCircle(currentFrame, storyService.getStoryColor(activeStoryData.id), true);
-        // await Common().awaitTimeout(100);
-        // taggingService.re
-        //TODO:
-
-        // DEMO:
       ).storyCircle(
         currentFrame,
         storyService.getStoryColor(activeStoryData.id),
@@ -371,7 +363,7 @@ export default defineComponent({
               framePlaybook,
               spotlight,
               activeStoryData,
-            ).storyPaused(storyData, taggingService);
+            ).storyPaused(taggingService);
           }
 
           console.log('tag', taggingService.taggedObjects);
@@ -411,13 +403,7 @@ export default defineComponent({
         Defaults().screenZones(),
       );
       garbageHelper = WallGarbageHelper(threeSvc, taggingService);
-      threeSvc.ClearScene();
-
-      // const cube = TestSingleComponent().testCube(new Vector3(-10, 0, 0));
-      // threeSvc.AddToScene(cube, Tags.Testing);
-      // await MoveObject().startMoving(cube, new Vector3(10, 0, 0)),
-      // // await MoveObject().startMoving(cube, new Vector3(-10, 0, 0)),
-      // console.log('cube moved <=');
+      threeSvc.ClearScene();      
 
       threeSvc.Animate();
     });

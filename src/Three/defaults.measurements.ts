@@ -45,6 +45,7 @@ const Measurements = (): {
     progressRadius: 3,
     outerCircle: 4,
     opacityShadedCircle: 0.4,
+    correctionText: 1.5,
   };
 
   const progressBar = {

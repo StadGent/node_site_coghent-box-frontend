@@ -9,7 +9,7 @@ const TaggingHelper = (_taggingService: TaggingService): {
       basic: Mesh<CircleGeometry, MeshBasicMaterial>;
       shade?: Mesh<CircleGeometry, MeshBasicMaterial> | undefined;
       progress: PauseProgressbarObjects;
-      text: Group;
+      text: Mesh<BufferGeometry, any>;
   };
   tagActiveStorycircleAsStoryCircle: () => void;
   tagStorycircleAsActiveStoryCircle: (_storyId: string) => void;
@@ -18,7 +18,7 @@ const TaggingHelper = (_taggingService: TaggingService): {
     const basic = _taggingService.getByTag(Tags.ActiveStoryCircleBasic)[0].object as Mesh<CircleGeometry, MeshBasicMaterial>;
     let shade;
     _taggingService.getByTag(Tags.ActiveStoryCircleShade).length > 0? shade = _taggingService.getByTag(Tags.ActiveStoryCircleShade)[0].object as Mesh<CircleGeometry, MeshBasicMaterial>: undefined;
-    const text = _taggingService.getByTag(Tags.ActiveStoryCircleText)[0].object as Group;
+    const text = _taggingService.getByTag(Tags.ActiveStoryCircleText)[0].object as Mesh<BufferGeometry, any>;
     const frameDots = _taggingService.getByTag(Tags.ActiveStoryCircleFrameDot);
     const frameInnerDots = _taggingService.getByTag(Tags.ActiveStoryCircleFrameInnerDot);
     const frameRing = _taggingService.getByTag(Tags.ActiveStoryCircleFrameRing)[0].object as Mesh<RingGeometry, MeshBasicMaterial>;
