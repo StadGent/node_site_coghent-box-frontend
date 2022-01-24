@@ -36,6 +36,8 @@ import Spot from '@/Three/shapes.spotlight';
 import Common from '@/composables/common';
 import Development from '@/Three/defaults.development';
 import TaggingHelper from '@/Three/helper.tagging';
+import PauseProgressbar from '@/Three/shapes.pauseProgressbar';
+import SceneHelper from '@/Three/helper.scene';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -101,7 +103,7 @@ export default defineComponent({
           currentStory.value = value - 1;
           currentFrame = _storyData.totalOfFramesSeen;
           console.log('Selected story => ', currentStory.value);
-          
+
           await PlayBookBuild(
             threeSvc,
             storyService,
@@ -112,6 +114,10 @@ export default defineComponent({
             activeStoryData,
           ).setSelectedStory();
           await garbageHelper.newStorySelected();
+          const progressDots = PauseProgressbar().dots(zoneService.middleZoneCenter, Measurements().storyCircle.progressRadius, storyService.activeStoryData.totalOfFrames, storyService.activeStoryData.storyColor);
+          SceneHelper(threeSvc,storyService).addFrameProgressDotsToScene(progressDots,storyService.activeStoryData.storyId,storyService.activeStoryData.totalOfFramesSeen + 1,true);
+           taggingService.retag(Tags.StoryCircleFrameDot,Tags.ActiveStoryCircleFrameDot);
+          taggingService.retag(Tags.StoryCircleFrameInnerDot,Tags.ActiveStoryCircleFrameInnerDot);
           resetStory();
         }
       },
@@ -145,22 +151,22 @@ export default defineComponent({
         spotlight,
         activeStoryData,
       ).initialSpotLight();
-      // setData();
+      setData();
 
-      await PlayBookBuild(
-        threeSvc,
-        storyService,
-        zoneService,
-        taggingService,
-        playBook,
-        spotlight,
-        activeStoryData,
-      )
-        .startOfSession()
-        .finally(async () => {
-          garbageHelper.startOfSession();
-          setData();
-        });
+      // await PlayBookBuild(
+      //   threeSvc,
+      //   storyService,
+      //   zoneService,
+      //   taggingService,
+      //   playBook,
+      //   spotlight,
+      //   activeStoryData,
+      // )
+      //   .startOfSession()
+      //   .finally(async () => {
+      //     garbageHelper.startOfSession();
+      //     setData();
+      //   });
     };
 
     const setData = async () => {
@@ -327,8 +333,6 @@ export default defineComponent({
               activeStoryData,
             ).storyPaused(taggingService);
           }
-
-          console.log('tag', taggingService.taggedObjects);
         },
         playBook.lastAction().time + 2,
         // audioDuration,

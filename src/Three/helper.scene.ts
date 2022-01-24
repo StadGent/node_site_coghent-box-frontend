@@ -2,13 +2,11 @@ import { PauseScreenObjects } from '@/screens/StoryPaused';
 import { Tags } from '@/services/TaggingService';
 import ThreeService from '@/services/ThreeService';
 import { StoryCircleObjects } from './section.storyCircle';
-import { PauseProgressbarObjects } from '@/Three/shapes.pauseProgressbar'
 import CustomAnimation from '@/composables/animation';
 import AnimationDefaults from './defaults.animation';
 import Common from '@/composables/common';
 import StoryService from '@/services/StoryService';
 import { DotWithinDotObjects } from './shapes.dotWithinDot';
-import Layers from './defaults.layers';
 
 const SceneHelper = (_threeService: ThreeService, _storyService: StoryService): {
   addStoryCircleToScene: (storyId: string, storyCircle: StoryCircleObjects, _displayShadedCircle: boolean) => Promise<void>;
@@ -56,18 +54,17 @@ const SceneHelper = (_threeService: ThreeService, _storyService: StoryService): 
   };
 
   const addFrameProgressDotsToScene = async (_dots: Array<DotWithinDotObjects>, _storyId: string, _progress: number, _animation: boolean) => {
-    const dots = _dots;
     for (let index = 0;index < _dots.length;index++) {
-      _threeService.AddToScene(dots[index].dot, Tags.StoryCircleFrameDot, 'Dot to show the frames in the story.', _storyId);
+      _threeService.AddToScene(_dots[index].dot, Tags.StoryCircleFrameDot, 'Dot to show the frames in the story.', _storyId);
       if (_animation) {
-        dots[index].dot.material.opacity = 0;
-        CustomAnimation().fadeIn(dots[index].dot, 1, AnimationDefaults.values.fadeStep);
+        _dots[index].dot.material.opacity = 0;
+        CustomAnimation().fadeIn(_dots[index].dot, 1, AnimationDefaults.values.fadeStep);
       }
       if (index < _progress) {
-        _threeService.AddToScene(dots[index].innerDot, Tags.StoryCircleFrameInnerDot, 'Innerdot to show the frames in the story.', _storyId);
+        _threeService.AddToScene(_dots[index].innerDot, Tags.StoryCircleFrameInnerDot, 'Innerdot to show the frames in the story.', _storyId);
         if (_animation) {
-          dots[index].innerDot.material.opacity = 0;
-          CustomAnimation().fadeIn(dots[index].innerDot, 1, AnimationDefaults.values.fadeStep);
+          _dots[index].innerDot.material.opacity = 0;
+          CustomAnimation().fadeIn(_dots[index].innerDot, 1, AnimationDefaults.values.fadeStep);
         }
       }
       await Common().awaitTimeout(AnimationDefaults.timing.fadeIn);

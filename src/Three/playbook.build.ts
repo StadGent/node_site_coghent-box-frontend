@@ -11,7 +11,6 @@ import useStoryCircle from './playbook.storyCircle';
 import Measurements from './defaults.measurements';
 import StoryService, { StoryData } from '@/services/StoryService';
 import MoveObject from '@/composables/moveObject';
-import useStory from '@/composables/useStory';
 import StoryPaused from '@/screens/StoryPaused';
 import useStartOfSession from './playbook.startOfSession';
 import useEndOfSession from './playbook.endOfSession';
@@ -21,13 +20,12 @@ import TaggingService, { Tags } from '@/services/TaggingService';
 import CustomAnimation from '@/composables/animation';
 import AnimationDefaults from './defaults.animation';
 import Common from '@/composables/common';
-import { GarabageHelperForWall } from './helper.wall.garbage';
+import WallGarbageHelper, { GarabageHelperForWall } from './helper.wall.garbage';
 import TaggingHelper from './helper.tagging';
 import MoveHelper from './helper.move';
 import SceneHelper from './helper.scene';
 import StoryCircle from './section.storyCircle';
 import { CircleParams, CircleSchema } from './schema.circle';
-import Colors from './defaults.color';
 
 const PlayBookBuild = (
   threeService: ThreeService,
@@ -183,7 +181,7 @@ const PlayBookBuild = (
   const setSelectedStory = async () => {
     spotlight.position.set(spotlight.position.x - 0.01, spotlight.position.y, spotlight.position.z)
     TaggingHelper(taggingService).tagStorycircleAsActiveStoryCircle(storyService.activeStoryData.storyId);
-    CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>, Measurements().storyCircle.radius,AnimationDefaults.values.scaleStep);
+    CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>, Measurements().storyCircle.radius, AnimationDefaults.values.scaleStep);
     await MoveObject().startMoving(spotlight, zoneService.middleZoneCenter);
     threeService.AddToScene(StoryCircle(storyService).shadedCircle(
       {
@@ -193,6 +191,7 @@ const PlayBookBuild = (
           Layers.scene + Layers.fraction), params: { color: storyService.activeStoryData.storyColor } as CircleParams
       } as CircleSchema), Tags.ActiveStoryCircleShade);
     MoveHelper(taggingService).activeStoryCircle(zoneService.middleZoneCenter);
+    WallGarbageHelper(threeService, taggingService).removeActiveFrameDots();
   };
 
   return {

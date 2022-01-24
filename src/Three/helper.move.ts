@@ -14,10 +14,10 @@ const MoveHelper = (_taggingService: TaggingService): {
 
   const activeStoryCircle = (_position: Vector3) => {
     const objects = TaggingHelper(_taggingService).getActiveStoryCircle();
-    MoveObject().startMoving(objects.text,  new Vector3(_position.x - Measurements().storyCircle.correctionText,_position.y,objects.text.position.z));
-    MoveObject().startMoving(objects.basic,  new Vector3(_position.x,_position.y,objects.basic.position.z));
-    MoveObject().startMoving(objects.progress.ring, new Vector3(_position.x,_position.y,objects.progress.ring.position.z));
-    MoveObject().startMoving(objects.shade, new Vector3(_position.x,_position.y,objects.shade?.position.z));
+    MoveObject().startMoving(objects.text, new Vector3(_position.x - Measurements().storyCircle.correctionText, _position.y, Layers.scene + Layers.fraction - 0.05));
+    MoveObject().startMoving(objects.basic, new Vector3(_position.x, _position.y, objects.basic.position.z));
+    MoveObject().startMoving(objects.progress.ring, new Vector3(_position.x, _position.y, objects.progress.ring.position.z));
+    MoveObject().startMoving(objects.shade, new Vector3(_position.x, _position.y, Layers.scene - Layers.fraction));
     //FIXME: The dots are a little off..
     const storyCirclePositions = ShapesTemplate().storyCircle(_position, objects.progress.dots.length);
     objects.progress.dots.forEach((_dot, index) => {
@@ -29,7 +29,7 @@ const MoveHelper = (_taggingService: TaggingService): {
   };
   const activeStoryCircleWithoutShade = (_position: Vector3) => {
     const objects = TaggingHelper(_taggingService).getActiveStoryCircle();
-    MoveObject().startMoving(objects.text,  new Vector3(_position.x - Measurements().storyCircle.correctionText,_position.y,objects.text.position.z));
+    MoveObject().startMoving(objects.text, new Vector3(_position.x - Measurements().storyCircle.correctionText, _position.y, Layers.scene + Layers.fraction - 0.05));
     MoveObject().startMoving(objects.basic, _position);
     MoveObject().startMoving(objects.progress.ring, _position);
     //FIXME: The dots are a little off..

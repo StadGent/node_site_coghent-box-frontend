@@ -13,6 +13,7 @@ export type PauseProgressbarObjects = {
 
 const PauseProgressbar = (): {
   create: (_schema: CircleSchema, _segments: number) => PauseProgressbarObjects;
+  dots: (_position: Vector3, _radius: number, _segments: number, _color: number) => Array<DotWithinDotObjects>;
 } => {
 
   const ring = (_schema: CircleSchema) => {
@@ -28,21 +29,21 @@ const PauseProgressbar = (): {
     });
     material.color.convertSRGBToLinear();
     const _ring = new Mesh(geometry, material);
-    _ring.rotateZ(MathUtils.degToRad(90));    
+    _ring.rotateZ(MathUtils.degToRad(90));
     Common().setPosition(_ring, _schema.position);
     return _ring;
   };
 
   const dots = (_position: Vector3, _radius: number, _segments: number, _color: number) => {
-    const pointsOnCircle = CircleHelper().SplitCircleInSegments(_position, _radius, _segments);
-    const schemas = CircleHelper().CreateSchemas(pointsOnCircle, _radius, _color);
+    const pointsOnCircle = CircleHelper().SplitCircleInSegments(_position, _radius + (Measurements().progressBar.thickness / 2), _segments);
+    const schemas = CircleHelper().CreateSchemas(pointsOnCircle, _radius + (Measurements().progressBar.thickness / 2), _color);
     const dotWithinDots: Array<DotWithinDotObjects> = [];
-    for (const _schema of schemas){
+    for (const _schema of schemas) {
       const _dot = DotWithinDot().create(
         Measurements().progressBar.innerdotRadius,
         Measurements().progressBar.dotRadius,
         _schema.position,
-        _schema.params.color || Colors().white, 
+        _schema.params.color || Colors().white,
         Colors().white
       );
       dotWithinDots.push(_dot);
@@ -54,7 +55,7 @@ const PauseProgressbar = (): {
     const _ring = ring(_schema);
     const _dots = dots(
       _schema.position,
-      _schema.params.radius + (Measurements().progressBar.thickness / 2),
+      _schema.params.radius,
       _segments,
       _schema.params.color || Colors().white
     );
@@ -64,7 +65,7 @@ const PauseProgressbar = (): {
     };
   }
 
-  return { create }
+  return { create, dots }
 };
 
 export default PauseProgressbar;

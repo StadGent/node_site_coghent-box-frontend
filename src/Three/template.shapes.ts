@@ -1,4 +1,5 @@
 import { Vector3 } from 'three';
+import Layers from './defaults.layers';
 import Measurements from './defaults.measurements';
 import CircleHelper from './helper.circle';
 
@@ -9,7 +10,7 @@ const ShapesTemplate = (): {
   };
 } => {
   const storyCircle = (_center: Vector3, _segments: number) => {
-    const pointsOfDots = CircleHelper().SplitCircleInSegments(_center, Measurements().storyCircle.progressRadius, _segments);
+    const pointsOfDots = CircleHelper().SplitCircleInSegments(new Vector3(_center.x,_center.y,_center.z + Layers.fraction - 0.05), Measurements().storyCircle.progressRadius, _segments);
     return {
       center: _center,
       frameDots: pointsOfDots

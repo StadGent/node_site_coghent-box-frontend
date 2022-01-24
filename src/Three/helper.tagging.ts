@@ -52,7 +52,7 @@ const TaggingHelper = (_taggingService: TaggingService): {
     _taggingService.retag(Tags.ActiveStoryCircleShade, Tags.StoryCircleShade);
   };
 
-  const tagStorycircleAsActiveStoryCircle = (_storyId: string) => {
+  const tagStorycircleAsActiveStoryCircle = (_storyId: string) => {  
     const objects = _taggingService.getByTagsId(_storyId);
     matchTags(objects);
   };

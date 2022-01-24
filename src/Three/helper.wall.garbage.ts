@@ -11,6 +11,7 @@ export type GarabageHelperForWall = {
   endOfSessionScreen: () => void;
   startOfSession: () => void;
   highlightedAsset: () => void;
+  removeActiveFrameDots: () => void;
   activeStoryCircle: () => void;
 };
 
@@ -73,6 +74,11 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     logRemoved(`highlightedAsset`);
   };
 
+  const removeActiveFrameDots = () => {
+    removeByTag(Tags.ActiveStoryCircleFrameDot);
+    removeByTag(Tags.ActiveStoryCircleFrameInnerDot);
+  };
+
   const activeStoryCircle = () => {
     removeByTag(Tags.ActiveStoryCircleText);
     removeByTag(Tags.ActiveStoryCircleBasic);
@@ -107,6 +113,7 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     removeGroupsByTag,
     startOfSession,
     highlightedAsset,
+    removeActiveFrameDots,
     activeStoryCircle,
   }
 };
