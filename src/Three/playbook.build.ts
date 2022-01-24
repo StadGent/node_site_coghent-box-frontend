@@ -82,7 +82,7 @@ const PlayBookBuild = (
 
   const storyCircle = (currentFrameIndex: number, storyColor: number, canAddToSCene: boolean) => {
     useStoryCircle(threeService, taggingService, storyService, activeStoryData, playBook).create(
-     new Vector3( zoneService.middleZoneCenter.x, zoneService.middleZoneCenter.y, Layers.scene + Layers.fraction),
+      new Vector3(zoneService.middleZoneCenter.x, zoneService.middleZoneCenter.y, Layers.scene + Layers.fraction),
       storyColor,
       currentFrameIndex,
       activeStoryData.frames.length,
@@ -144,8 +144,8 @@ const PlayBookBuild = (
   const storyPaused = async (taggingService: TaggingService) => {
     const assetsOnScreen = taggingService.getByTag(Tags.GroupOfAssets)[0].object as Group;
     assetsOnScreen.position.setZ(Layers.background);
-    Common().setScale(spotlight, Measurements().pauseScreen.spotLightRadius);
-    await MoveObject().startMoving(spotlight, new Vector3(0.01, -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight, Layers.scene));
+    // Common().setScale(spotlight, Measurements().pauseScreen.spotLightRadius);
+    CustomAnimation().grow(spotlight as Mesh<any, MeshBasicMaterial>, Measurements().pauseScreen.spotLightRadius, AnimationDefaults.values.scaleStep);
     const inactiveStories = storyService.getDataOfInactiveStories();
     MoveHelper(taggingService).activeStoryCircle(
       new Vector3(
@@ -153,9 +153,11 @@ const PlayBookBuild = (
         -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight,
         Layers.scene + Layers.fraction)
     );
+    await SceneHelper(threeService, storyService).addPauseScreenObjectsToScene(StoryPaused(taggingService, zoneService, storyService).Create(inactiveStories), zoneService.sceneZone());
+    await MoveObject().startMoving(spotlight, new Vector3(0.01, -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight, Layers.scene));
+
     await CustomAnimation().fadeOut(taggingService.getByTag(Tags.ActiveStoryCircleShade)[0].object, -1, AnimationDefaults.values.fadeStep);
     taggingService.removeAllTagsFrom(Tags.ActiveStoryCircleShade);
-    await SceneHelper(threeService, storyService).addPauseScreenObjectsToScene(StoryPaused(taggingService, zoneService, storyService).Create(inactiveStories));
     TaggingHelper(taggingService).tagActiveStorycircleAsStoryCircle();
   };
 

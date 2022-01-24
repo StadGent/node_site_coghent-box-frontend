@@ -7,10 +7,15 @@ import AnimationDefaults from './defaults.animation';
 import Common from '@/composables/common';
 import StoryService from '@/services/StoryService';
 import { DotWithinDotObjects } from './shapes.dotWithinDot';
+import MoveObject from '@/composables/moveObject';
+import { Vector3 } from 'three';
+import Layers from './defaults.layers';
+import ZoneService, { Zone } from '@/services/ZoneService';
+import Measurements from './defaults.measurements';
 
 const SceneHelper = (_threeService: ThreeService, _storyService: StoryService): {
   addStoryCircleToScene: (storyId: string, storyCircle: StoryCircleObjects, _displayShadedCircle: boolean) => Promise<void>;
-  addPauseScreenObjectsToScene: (_objects: PauseScreenObjects) => Promise<void>;
+  addPauseScreenObjectsToScene: (_objects: PauseScreenObjects, _sceneZone: Zone) => Promise<void>;
   addFrameProgressDotsToScene: (_dots: Array<DotWithinDotObjects>, _storyId: string, _progress: number, _animation: boolean) => Promise<void>;
 } => {
 
@@ -45,8 +50,9 @@ const SceneHelper = (_threeService: ThreeService, _storyService: StoryService): 
     await addFrameProgressDotsToScene(storyCircle.progress.dots, storyId, _storyService.getStoryDataOfStory(storyId).totalOfFramesSeen, true);
   };
 
-  const addPauseScreenObjectsToScene = async (_objects: PauseScreenObjects) => {
+  const addPauseScreenObjectsToScene = async (_objects: PauseScreenObjects, _sceneZone: Zone) => {
     _threeService.AddToScene(_objects.banner, Tags.PauseScreenBanner);
+    await MoveObject().startMoving(_objects.banner, new Vector3(0,-(_sceneZone.height / 2) + Measurements().pauseScreen.bannerHeight / 2,Layers.background));
     _threeService.AddGroupsToScene(_objects.text, Tags.PauseScreenCenterText);
     for (const _item in _objects.storyCircles) {
       await addStoryCircleToScene(_item, _objects.storyCircles[_item], false);
