@@ -96,6 +96,10 @@ export default class StoryService {
     }
   }
 
+  storyIsActive(_storyId: string){
+    return this.activeStoryData.storyId == _storyId;
+  }
+
   private itemIsInRecord(storyId: string, frame: Frame) {
     const rec = this.getStoryDataOfStory(storyId).seenFrames;
     let exists = false;

@@ -10,7 +10,8 @@ type ProgressbarParams = {
   radius: number;
   thickness: number;
   dotRadius: number;
-  innerdotRadius: number;
+  activeDotRadius: number,
+  seenDotRadius: number,
   opacity: number;
 }
 
@@ -53,7 +54,8 @@ const Measurements = (): {
     radius: 2.5,
     thickness: 0.16,
     dotRadius: 0.4,
-    innerdotRadius: 0.2,
+    activeDotRadius: 0.15,
+    seenDotRadius: 0.25,
     opacity: 0.95,
   };
 

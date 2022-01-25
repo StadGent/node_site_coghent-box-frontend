@@ -115,8 +115,8 @@ export default defineComponent({
           ).setSelectedStory();
           await garbageHelper.newStorySelected();
           const progressDots = PauseProgressbar().dots(zoneService.middleZoneCenter, Measurements().storyCircle.progressRadius, storyService.activeStoryData.totalOfFrames, storyService.activeStoryData.storyColor);
-          SceneHelper(threeSvc,storyService).addFrameProgressDotsToScene(progressDots,storyService.activeStoryData.storyId,storyService.activeStoryData.totalOfFramesSeen + 1,true);
-           taggingService.retag(Tags.StoryCircleFrameDot,Tags.ActiveStoryCircleFrameDot);
+          SceneHelper(threeSvc,storyService).addFrameProgressDotsToScene(progressDots,storyService.activeStoryData.storyId,storyService.activeStoryData.totalOfFramesSeen,true);
+          taggingService.retag(Tags.StoryCircleFrameDot,Tags.ActiveStoryCircleFrameDot);
           taggingService.retag(Tags.StoryCircleFrameInnerDot,Tags.ActiveStoryCircleFrameInnerDot);
           resetStory();
         }
@@ -151,6 +151,8 @@ export default defineComponent({
         spotlight,
         activeStoryData,
       ).initialSpotLight();
+      storyService.setStoryPausedPositions(zoneService.zonesInnerToOuter);
+
       setData();
 
       // await PlayBookBuild(
@@ -172,7 +174,6 @@ export default defineComponent({
     const setData = async () => {
       audioHelper = AudioHelper(threeSvc);
       storyData = storyService.stories;
-      storyService.setStoryPausedPositions(zoneService.zonesInnerToOuter);
       console.log('StoryData', storyService.getStoryData());
       buildStory(currentStory.value);
     };

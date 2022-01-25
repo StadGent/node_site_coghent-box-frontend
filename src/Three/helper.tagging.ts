@@ -21,7 +21,7 @@ const TaggingHelper = (_taggingService: TaggingService): {
     const text = _taggingService.getByTag(Tags.ActiveStoryCircleText)[0].object as Mesh<BufferGeometry, any>;
     const frameDots = _taggingService.getByTag(Tags.ActiveStoryCircleFrameDot);
     const frameInnerDots = _taggingService.getByTag(Tags.ActiveStoryCircleFrameInnerDot);
-    const frameRing = _taggingService.getByTag(Tags.ActiveStoryCircleFrameRing)[0].object[0] as Group;
+    const frameRing = _taggingService.getByTag(Tags.ActiveStoryCircleFrameRing)[0].object as Array<Group>;
     const dots: Array<DotWithinDotObjects> = [];
     for (let index = 0; index < frameDots.length; index++) {
      const _object = {
@@ -55,6 +55,7 @@ const TaggingHelper = (_taggingService: TaggingService): {
   const tagStorycircleAsActiveStoryCircle = (_storyId: string) => {  
     const objects = _taggingService.getByTagsId(_storyId);
     matchTags(objects);
+    console.log('retagged to active',_taggingService.taggedObjects);
   };
 
   enum inactive {
@@ -86,7 +87,7 @@ const TaggingHelper = (_taggingService: TaggingService): {
           _taggingService.tag(Tags.ActiveStoryCircleFrameDot, _tag.object, _tag.context, _tag.id);
           break
         case inactive[4]:
-          _taggingService.removeTaggedObject(_tag.object);
+          _taggingService.removeTaggedObject(_tag.object[0]);
           _taggingService.tag(Tags.ActiveStoryCircleFrameInnerDot, _tag.object, _tag.context, _tag.id);
           break
         case inactive[5]:

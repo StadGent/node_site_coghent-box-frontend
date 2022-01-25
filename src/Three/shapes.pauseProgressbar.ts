@@ -8,8 +8,7 @@ import SchemaCircle, { CircleSchema } from './schema.circle';
 import DotWithinDot, { DotWithinDotObjects } from './shapes.dotWithinDot';
 
 export type PauseProgressbarObjects = {
-  ring: Group,
-  // ring: Mesh<RingGeometry, MeshBasicMaterial>,
+  ring: Array<Group>,
   dots: Array<DotWithinDotObjects>,
 }
 
@@ -38,19 +37,19 @@ const PauseProgressbar = (): {
     const ringGroup = new Group();
     SchemaCircle().CreateCircles(schemas).map(_dot => ringGroup.add(_dot));
     ringGroup.add(_ring);
-    return ringGroup;
+    return [ringGroup];
   };
 
   const dots = (_position: Vector3, _radius: number, _segments: number, _color: number) => {
-    const pointsOnCircle = CircleHelper().SplitCircleInSegments(_position, _radius + (Measurements().progressBar.thickness / 2), _segments);
+    const pointsOnCircle = CircleHelper().SplitCircleInSegments(new Vector3(_position.x,_position.y,_position.z + 0.01), _radius + (Measurements().progressBar.thickness / 2), _segments);
     const schemas = CircleHelper().CreateSchemas(pointsOnCircle, _radius + (Measurements().progressBar.thickness / 2), _color);
     const dotWithinDots: Array<DotWithinDotObjects> = [];
     for (const _schema of schemas) {
       const _dot = DotWithinDot().create(
-        Measurements().progressBar.innerdotRadius,
-        Measurements().progressBar.dotRadius,
+        Measurements().progressBar.activeDotRadius,
+        Measurements().progressBar.seenDotRadius,
         _schema.position,
-        Colors().white,
+        _color,
         Colors().white
       );
       dotWithinDots.push(_dot);

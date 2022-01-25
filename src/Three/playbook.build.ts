@@ -183,6 +183,7 @@ const PlayBookBuild = (
   const setSelectedStory = async () => {
     spotlight.position.set(spotlight.position.x - 0.01, spotlight.position.y, spotlight.position.z)
     TaggingHelper(taggingService).tagStorycircleAsActiveStoryCircle(storyService.activeStoryData.storyId);
+    console.log('taggedobjects after selected new active story', taggingService.taggedObjects);
     await CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>, Measurements().storyCircle.radius, AnimationDefaults.values.scaleStep);
     await MoveObject().startMoving(spotlight, zoneService.middleZoneCenter);
     threeService.AddToScene(StoryCircle(storyService).shadedCircle(

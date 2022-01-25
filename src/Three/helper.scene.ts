@@ -10,7 +10,7 @@ import { DotWithinDotObjects } from './shapes.dotWithinDot';
 import MoveObject from '@/composables/moveObject';
 import { Vector3 } from 'three';
 import Layers from './defaults.layers';
-import ZoneService, { Zone } from '@/services/ZoneService';
+import { Zone } from '@/services/ZoneService';
 import Measurements from './defaults.measurements';
 
 const SceneHelper = (_threeService: ThreeService, _storyService: StoryService): {
@@ -41,13 +41,13 @@ const SceneHelper = (_threeService: ThreeService, _storyService: StoryService): 
       storyId,
     );
     _threeService.AddGroupsToScene(
-      [storyCircle.progress.ring],
+      storyCircle.progress.ring,
       Tags.StoryCircleFrameRing,
       'The progress ring of the storycircle.',
       storyId,
     );
 
-  // await addFrameProgressDotsToScene(storyCircle.progress.dots, storyId, _storyService.getStoryDataOfStory(storyId).totalOfFramesSeen, true);
+  await addFrameProgressDotsToScene(storyCircle.progress.dots, storyId, _storyService.getStoryDataOfStory(storyId).totalOfFramesSeen, true);
   };
 
   const addPauseScreenObjectsToScene = async (_objects: PauseScreenObjects, _sceneZone: Zone) => {
@@ -60,13 +60,17 @@ const SceneHelper = (_threeService: ThreeService, _storyService: StoryService): 
   };
 
   const addFrameProgressDotsToScene = async (_dots: Array<DotWithinDotObjects>, _storyId: string, _progress: number, _animation: boolean) => {
-    for (let index = 0;index < _dots.length;index++) {
+    let framesSeen = _progress;
+    if(_storyService.storyIsActive(_storyId)){
+      framesSeen++;
+    }
+    for (let index = 0;index < framesSeen;index++) {
       _threeService.AddToScene(_dots[index].dot, Tags.StoryCircleFrameDot, 'Dot to show the frames in the story.', _storyId);
       if (_animation) {
         _dots[index].dot.material.opacity = 0;
         CustomAnimation().fadeIn(_dots[index].dot, 1, AnimationDefaults.values.fadeStep);
       }
-      if (index < _progress) {
+      if (index == _progress && _storyService.storyIsActive(_storyId)) {
         _threeService.AddToScene(_dots[index].innerDot, Tags.StoryCircleFrameInnerDot, 'Innerdot to show the frames in the story.', _storyId);
         if (_animation) {
           _dots[index].innerDot.material.opacity = 0;
