@@ -35,12 +35,18 @@ type PauseScreenParams = {
   spotLightRadius: number;
 };
 
+type StartOfSessionScreenParams = {
+  countdownCircleRadius: number;
+  countdownCircleThickness: number;
+};
+
 const Measurements = (): {
   storyCircle: StoryCircleParams;
   progressBar: ProgressbarParams;
   spotLight: SpotLightParams;
   pauseScreen: PauseScreenParams;
   text: TextParams;
+  startOfSession: StartOfSessionScreenParams;
 } => {
   const storyCircle = {
     radius: 2.5,
@@ -83,12 +89,18 @@ const Measurements = (): {
     paddingAround: 0.4,
   };
 
+  const startOfSession = {
+    countdownCircleRadius: 3,
+    countdownCircleThickness: 0.5,
+  };
+
   return {
     storyCircle,
     progressBar,
     spotLight,
     pauseScreen,
     text,
+    startOfSession,
   }
 };
 

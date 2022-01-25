@@ -38,6 +38,7 @@ import Development from '@/Three/defaults.development';
 import TaggingHelper from '@/Three/helper.tagging';
 import PauseProgressbar from '@/Three/shapes.pauseProgressbar';
 import SceneHelper from '@/Three/helper.scene';
+import Colors from '@/Three/defaults.color';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -114,10 +115,23 @@ export default defineComponent({
             activeStoryData,
           ).setSelectedStory();
           await garbageHelper.newStorySelected();
-          const progressDots = PauseProgressbar().dots(zoneService.middleZoneCenter, Measurements().storyCircle.progressRadius, storyService.activeStoryData.totalOfFrames, storyService.activeStoryData.storyColor);
-          SceneHelper(threeSvc,storyService).addFrameProgressDotsToScene(progressDots,storyService.activeStoryData.storyId,storyService.activeStoryData.totalOfFramesSeen,true);
-          taggingService.retag(Tags.StoryCircleFrameDot,Tags.ActiveStoryCircleFrameDot);
-          taggingService.retag(Tags.StoryCircleFrameInnerDot,Tags.ActiveStoryCircleFrameInnerDot);
+          const progressDots = PauseProgressbar().dots(
+            zoneService.middleZoneCenter,
+            Measurements().storyCircle.progressRadius,
+            storyService.activeStoryData.totalOfFrames,
+            storyService.activeStoryData.storyColor,
+          );
+          SceneHelper(threeSvc, storyService).addFrameProgressDotsToScene(
+            progressDots,
+            storyService.activeStoryData.storyId,
+            storyService.activeStoryData.totalOfFramesSeen,
+            true,
+          );
+          taggingService.retag(Tags.StoryCircleFrameDot, Tags.ActiveStoryCircleFrameDot);
+          taggingService.retag(
+            Tags.StoryCircleFrameInnerDot,
+            Tags.ActiveStoryCircleFrameInnerDot,
+          );
           resetStory();
         }
       },
@@ -136,7 +150,7 @@ export default defineComponent({
         storyService = value;
         storyService.setActiveStory(storyService.stories[0].id);
         //TODO:
-        setup();
+        // setup();
       },
     );
 
@@ -370,7 +384,32 @@ export default defineComponent({
         Defaults().screenZones(),
       );
       garbageHelper = WallGarbageHelper(threeSvc, taggingService);
-      threeSvc.ClearScene();      
+      threeSvc.ClearScene();
+
+      const ring = TestSingleComponent().countdownCircle(new Vector3(0, 0, 0), 2);
+      const text = TestSingleComponent().testText(new Vector3(0, 0, 0));
+      threeSvc.AddToScene(ring, Tags.Testing);
+      threeSvc.AddToScene(text, Tags.Testing);
+      const count = [1, 2, 3];
+      for (const _count in count) {
+        let progress = 0;
+        while (progress <= 1.2) {
+          const ring_progress = TestSingleComponent().countdownCircle(
+            new Vector3(0, 0, 0),
+            progress,
+
+            Colors().green,
+          );
+          threeSvc.AddToScene(ring_progress, Tags.Testing);
+          await Common().awaitTimeout(2.77);
+
+          progress += 0.02;
+          threeSvc.RemoveFromScene(ring_progress);
+          console.log('progress', progress);
+        }        
+      }
+
+      threeSvc.AddToScene(ring, Tags.Testing);
 
       threeSvc.Animate();
     });

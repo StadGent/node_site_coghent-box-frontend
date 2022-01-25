@@ -1,4 +1,5 @@
-import { BoxGeometry, BufferGeometry, Group, Material, Mesh, MeshBasicMaterial, RingGeometry, Vector3 } from 'three';
+import Common from '@/composables/common';
+import { BoxGeometry, BufferGeometry, Group, Material, MathUtils, Mesh, MeshBasicMaterial, RingGeometry, Vector3 } from 'three';
 import Colors from './defaults.color';
 import Defaults from './defaults.config';
 import HelperText from './defaults.helperText';
@@ -27,6 +28,7 @@ const TestSingleComponent = (): {
   metadataLabel: (position: Vector3, text: string) => Group;
   metadataLabelWithConnection: (position: Vector3, text: string) => Array<Group>;
   pauseStoryCircleProgress: () => PauseProgressbarObjects;
+  countdownCircle: (_position: Vector3, _progress: number, _color?: number) => Mesh<RingGeometry, MeshBasicMaterial>;
 } => {
 
   const testCube = (_position: Vector3) => {
@@ -35,7 +37,7 @@ const TestSingleComponent = (): {
 
   const testText = (_position: Vector3) => {
     return TextHelper().CreateText(
-      'Test text \n here',
+      '3',
       _position,
       {
         color: Colors().white,
@@ -78,6 +80,25 @@ const TestSingleComponent = (): {
     return PauseProgressbar().create(schema, segments);
   };
 
+  const countdownCircle = (_position: Vector3, _progress: number, _color?: number) => {
+    const radius = Measurements().startOfSession.countdownCircleRadius
+    const geometry = new RingGeometry(
+      radius,
+      radius + Measurements().progressBar.thickness,
+      360 / 1, 45, 6.3 / 360 - (6.3 / 360 / 1) * _progress,
+      (6.3 / 360 / 1) * _progress * 360);
+    const material = new MeshBasicMaterial({
+      color: _color || Colors().progressGrey,
+      opacity: Measurements().progressBar.opacity,
+      transparent: true,
+    });
+    material.color.convertSRGBToLinear();
+    const _ring = new Mesh(geometry, material);
+    _ring.rotateZ(MathUtils.degToRad(90));
+    Common().setPosition(_ring, _position);
+    return _ring;
+  };
+
   return {
     testCube,
     testText,
@@ -88,6 +109,7 @@ const TestSingleComponent = (): {
     metadataLabel,
     metadataLabelWithConnection,
     pauseStoryCircleProgress,
+    countdownCircle,
   }
 }
 
