@@ -43,6 +43,7 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
 
   const pauseScreen = () => {
     removeArrayOfGroupsByTag(Tags.FrameProgressbar);
+    removeByTag(Tags.ActiveStoryCircleFrameInnerDot);
     removeArrayOfGroupsByTag(Tags.PauseScreenCenterText);
     logRemoved('pauseScreen');
   };
@@ -60,6 +61,8 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
   const endOfSessionScreen = () => {
     removeArrayOfGroupsByTag(Tags.FrameProgressbar);
     removeByTag(Tags.GroupOfAssets);
+    removeByTag(Tags.ActiveStoryCircleFrameInnerDot);
+    removeByTag(Tags.ActiveStoryCircleFrameDot);
     activeStoryCircle();
     logRemoved('endOfSessionScreen');
   };

@@ -144,7 +144,6 @@ const PlayBookBuild = (
   const storyPaused = async (taggingService: TaggingService) => {
     const assetsOnScreen = taggingService.getByTag(Tags.GroupOfAssets)[0].object as Group;
     assetsOnScreen.position.setZ(Layers.background);
-    // Common().setScale(spotlight, Measurements().pauseScreen.spotLightRadius);
     CustomAnimation().grow(spotlight as Mesh<any, MeshBasicMaterial>, Measurements().pauseScreen.spotLightRadius, AnimationDefaults.values.scaleStep);
     const inactiveStories = storyService.getDataOfInactiveStories();
     MoveHelper(taggingService).activeStoryCircle(

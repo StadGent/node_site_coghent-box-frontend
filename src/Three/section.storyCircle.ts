@@ -13,6 +13,7 @@ import Measurements from './defaults.measurements';
 import CircularProgressBar from '@/Three/shapes.circularProgressbar';
 import StoryService, { StoryData } from '@/services/StoryService';
 import PauseProgressbar, { PauseProgressbarObjects } from './shapes.pauseProgressbar';
+import Template from './template.shapes';
 
 export type StoryCircleParams = {
   radius: number;
@@ -30,6 +31,14 @@ export type StoryCircleObjects = {
   text: Mesh<BufferGeometry, any>,
 };
 
+export type LayersStoryCircle = {
+  title: Vector3;
+  centerCircle: Vector3;
+  shadedCircle: Vector3;
+  progressCircle: Vector3;
+  progressDots: Vector3;
+};
+
 const StoryCircle = (_storyService: StoryService): {
   Create: (
     storyData: StoryData,
@@ -44,7 +53,7 @@ const StoryCircle = (_storyService: StoryService): {
   const main = (schema: CircleSchema) => {
     return SchemaCircle().CreateCircle(
       {
-        position: schema.position,
+        position: Template().storyCircleLayers(schema.position).centerCircle,
         params: {
           color: schema.params.color,
           opacity: 1,
@@ -56,7 +65,7 @@ const StoryCircle = (_storyService: StoryService): {
     schema.params.radius = Measurements().storyCircle.outerCircle;
     schema.params.color = schema.params.color || Colors().green;
     schema.params.opacity = Measurements().storyCircle.opacityShadedCircle;
-    schema.position.z = schema.position.z - Layers.fraction;
+    schema.position =  Template().storyCircleLayers(schema.position).shadedCircle;
     return SchemaCircle().CreateCircle(schema, true);
   };
 
@@ -68,7 +77,7 @@ const StoryCircle = (_storyService: StoryService): {
   const title = (title: string, position: Vector3, color: number) => {
     const storyTitle = TextHelper().CreateText(
       title,
-      new Vector3(position.x, position.y, position.z + Layers.fraction - 0.05),
+      position,
       {
         color: color,
         width: 0,
@@ -95,10 +104,11 @@ const StoryCircle = (_storyService: StoryService): {
     circleSchema: CircleSchema,
     iconUrl: string,
   ) => {
+    const templateLayers = Template().storyCircleLayers(circleSchema.position);
     const fadedCircle = shadedCircle(circleSchema);
     const basicCircle = main(circleSchema);
     const progress = progressOfFrames(
-      circleSchema.position,
+      templateLayers.progressCircle,
       circleSchema.params.color || Colors().white,
       storyData.totalOfFrames,
     );
@@ -106,9 +116,9 @@ const StoryCircle = (_storyService: StoryService): {
       title(
         storyTitle,
         new Vector3(
-          circleSchema.position.x - Measurements().storyCircle.correctionText,
-          circleSchema.position.y,
-          circleSchema.position.z,
+          templateLayers.title.x - Measurements().storyCircle.correctionText,
+          templateLayers.title.y,
+          templateLayers.title.z,
         ),
         circleSchema.params.color || DefaultColors().green,
       );
