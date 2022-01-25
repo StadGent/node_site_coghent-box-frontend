@@ -1,5 +1,9 @@
+import { Tags } from '@/services/TaggingService';
+import ThreeService from '@/services/ThreeService';
 import AnimationDefaults from '@/Three/defaults.animation';
-import { Group, Mesh, MeshBasicMaterial } from 'three';
+import Colors from '@/Three/defaults.color';
+import TestSingleComponent from '@/Three/test.components';
+import { Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
 import Common from './common';
 
 const CustomAnimation = (): {
@@ -9,6 +13,7 @@ const CustomAnimation = (): {
   fadeIn: (object: Mesh<any, MeshBasicMaterial>, fadeTo: number, step: number) => Promise<void>;
   grow: (object: Mesh<any, MeshBasicMaterial>, scaleTo: number, step: number) => Promise<void>;
   shrink: (object: Mesh<any, MeshBasicMaterial>, scaleTo: number, step: number) => Promise<void>;
+  circularCountdown: (_threeService: ThreeService, _position: Vector3) => Promise<void>
 } => {
 
   const fadeOut = async (object: Mesh<any, MeshBasicMaterial>, fadeTo: number, step: number) => {
@@ -63,6 +68,28 @@ const CustomAnimation = (): {
     Promise.resolve();
   };
 
+  const circularCountdown = async (_threeService: ThreeService, _position: Vector3) => {
+    const ring = TestSingleComponent().countdownCircle(new Vector3(0, 0, 0), 2);
+    _threeService.AddToScene(ring, Tags.Testing);
+    const count = [1, 2, 3];
+    for (const _count in count) {
+      let progress = 0;
+      while (progress <= 1.2) {
+        const ring_progress = TestSingleComponent().countdownCircle(
+          _position,
+          progress,
+          Colors().white,
+        );
+        _threeService.AddToScene(ring_progress, Tags.Testing);
+        await Common().awaitTimeout(2.77);
+        progress += 0.02;
+        _threeService.RemoveFromScene(ring_progress);
+      }
+    }
+    _threeService.RemoveFromScene(ring);
+    Promise.resolve();
+  }
+
   return {
     fadeOut,
     fadeOutGroups,
@@ -70,6 +97,7 @@ const CustomAnimation = (): {
     fadeInGroups,
     grow,
     shrink,
+    circularCountdown,
   }
 };
 

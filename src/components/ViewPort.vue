@@ -150,7 +150,7 @@ export default defineComponent({
         storyService = value;
         storyService.setActiveStory(storyService.stories[0].id);
         //TODO:
-        // setup();
+        setup();
       },
     );
 
@@ -167,22 +167,22 @@ export default defineComponent({
       ).initialSpotLight();
       storyService.setStoryPausedPositions(zoneService.zonesInnerToOuter);
 
-      setData();
+      // setData();
 
-      // await PlayBookBuild(
-      //   threeSvc,
-      //   storyService,
-      //   zoneService,
-      //   taggingService,
-      //   playBook,
-      //   spotlight,
-      //   activeStoryData,
-      // )
-      //   .startOfSession()
-      //   .finally(async () => {
-      //     garbageHelper.startOfSession();
-      //     setData();
-      //   });
+      await PlayBookBuild(
+        threeSvc,
+        storyService,
+        zoneService,
+        taggingService,
+        playBook,
+        spotlight,
+        activeStoryData,
+      )
+        .startOfSession()
+        .finally(async () => {
+          garbageHelper.startOfSession();
+          setData();
+        });
     };
 
     const setData = async () => {
@@ -385,31 +385,6 @@ export default defineComponent({
       );
       garbageHelper = WallGarbageHelper(threeSvc, taggingService);
       threeSvc.ClearScene();
-
-      const ring = TestSingleComponent().countdownCircle(new Vector3(0, 0, 0), 2);
-      const text = TestSingleComponent().testText(new Vector3(0, 0, 0));
-      threeSvc.AddToScene(ring, Tags.Testing);
-      threeSvc.AddToScene(text, Tags.Testing);
-      const count = [1, 2, 3];
-      for (const _count in count) {
-        let progress = 0;
-        while (progress <= 1.2) {
-          const ring_progress = TestSingleComponent().countdownCircle(
-            new Vector3(0, 0, 0),
-            progress,
-
-            Colors().green,
-          );
-          threeSvc.AddToScene(ring_progress, Tags.Testing);
-          await Common().awaitTimeout(2.77);
-
-          progress += 0.02;
-          threeSvc.RemoveFromScene(ring_progress);
-          console.log('progress', progress);
-        }        
-      }
-
-      threeSvc.AddToScene(ring, Tags.Testing);
 
       threeSvc.Animate();
     });

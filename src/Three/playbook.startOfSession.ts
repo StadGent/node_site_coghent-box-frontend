@@ -53,7 +53,7 @@ const useStartOfSession = (
   const createCountDownNumber = (countdown: number) => {
     return TextHelper().CreateText(
       `${countdown}`,
-      new Vector3(-.5, 0, Layers.scene),
+      new Vector3(-.5, -0.5, Layers.scene),
       {} as CubeParams,
       { size: Measurements().text.size.veryBig, color: Colors().white } as FontParams,
     );
@@ -64,7 +64,7 @@ const useStartOfSession = (
     while (currentCount != 0) {
       const text = createCountDownNumber(currentCount);
       threeService.AddToScene(text, Tags.startOfSessionCountdown, 'StartOfSession countdown timer text.');
-      await Common().awaitTimeout(1000);
+      await Common().awaitTimeout(999);
       currentCount--;
       threeService.RemoveFromScene(text);
     }
@@ -74,6 +74,7 @@ const useStartOfSession = (
     showScanImage();
     await Common().awaitTimeout(Timing.startOfSession.videoDelay);
     await MoveObject().startMoving(spotlight, new Vector3(0, 0, Layers.scene));
+    CustomAnimation().circularCountdown(threeService,new Vector3(0, 0, Layers.scene));
     await countdown(Defaults().countdown());
     await CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>, Measurements().storyCircle.radius, AnimationDefaults.values.scaleStep);
     return true;
