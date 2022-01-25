@@ -1,13 +1,15 @@
 import Common from '@/composables/common';
-import { MathUtils, Mesh, MeshBasicMaterial, RingGeometry, Vector3 } from 'three';
+import { Group, MathUtils, Mesh, MeshBasicMaterial, RingGeometry, Vector3 } from 'three';
 import Colors from './defaults.color';
 import Measurements from './defaults.measurements';
 import CircleHelper from './helper.circle';
-import { CircleSchema } from './schema.circle';
+import GroupHelper from './helper.group';
+import SchemaCircle, { CircleSchema } from './schema.circle';
 import DotWithinDot, { DotWithinDotObjects } from './shapes.dotWithinDot';
 
 export type PauseProgressbarObjects = {
-  ring: Mesh<RingGeometry, MeshBasicMaterial>,
+  ring: Group,
+  // ring: Mesh<RingGeometry, MeshBasicMaterial>,
   dots: Array<DotWithinDotObjects>,
 }
 
@@ -16,22 +18,27 @@ const PauseProgressbar = (): {
   dots: (_position: Vector3, _radius: number, _segments: number, _color: number) => Array<DotWithinDotObjects>;
 } => {
 
-  const ring = (_schema: CircleSchema) => {
+  const ring = (_schema: CircleSchema, _segments: number) => {
     const geometry = new RingGeometry(
       _schema.params.radius,
       _schema.params.radius + Measurements().progressBar.thickness,
       360 / 1, 45, 6.3 / 360 - (6.3 / 360 / 1) * 1,
       (6.3 / 360 / 1) * 1 * 360);
     const material = new MeshBasicMaterial({
-      color: Colors().white,
-      opacity: 0.4,
+      color: Colors().progressGrey,
+      opacity: Measurements().progressBar.opacity,
       transparent: true,
     });
     material.color.convertSRGBToLinear();
     const _ring = new Mesh(geometry, material);
     _ring.rotateZ(MathUtils.degToRad(90));
-    Common().setPosition(_ring, _schema.position);
-    return _ring;
+    Common().setPosition(_ring, _schema.position)
+    const pointsOnCircle = CircleHelper().SplitCircleInSegments(_schema.position, _schema.params.radius + (Measurements().progressBar.thickness / 2), _segments);
+    const schemas = CircleHelper().CreateSchemas(pointsOnCircle, Measurements().progressBar.dotRadius, Colors().progressGrey,Measurements().progressBar.opacity);
+    const ringGroup = new Group();
+    SchemaCircle().CreateCircles(schemas).map(_dot => ringGroup.add(_dot));
+    ringGroup.add(_ring);
+    return ringGroup;
   };
 
   const dots = (_position: Vector3, _radius: number, _segments: number, _color: number) => {
@@ -43,7 +50,7 @@ const PauseProgressbar = (): {
         Measurements().progressBar.innerdotRadius,
         Measurements().progressBar.dotRadius,
         _schema.position,
-        _schema.params.color || Colors().white,
+        Colors().white,
         Colors().white
       );
       dotWithinDots.push(_dot);
@@ -52,7 +59,7 @@ const PauseProgressbar = (): {
   };
 
   const create = (_schema: CircleSchema, _segments: number) => {
-    const _ring = ring(_schema);
+    const _ring = ring(_schema, _segments);
     const _dots = dots(
       _schema.position,
       _schema.params.radius,

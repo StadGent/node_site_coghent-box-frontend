@@ -11,6 +11,7 @@ type ProgressbarParams = {
   thickness: number;
   dotRadius: number;
   innerdotRadius: number;
+  opacity: number;
 }
 
 type Textsize = {
@@ -53,6 +54,7 @@ const Measurements = (): {
     thickness: 0.16,
     dotRadius: 0.4,
     innerdotRadius: 0.2,
+    opacity: 0.95,
   };
 
   const spotLight = {

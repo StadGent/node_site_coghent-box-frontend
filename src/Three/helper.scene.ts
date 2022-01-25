@@ -40,14 +40,14 @@ const SceneHelper = (_threeService: ThreeService, _storyService: StoryService): 
       'The middle circle of the storycircle.',
       storyId,
     );
-    _threeService.AddToScene(
-      storyCircle.progress.ring,
+    _threeService.AddGroupsToScene(
+      [storyCircle.progress.ring],
       Tags.StoryCircleFrameRing,
       'The progress ring of the storycircle.',
       storyId,
     );
 
-    await addFrameProgressDotsToScene(storyCircle.progress.dots, storyId, _storyService.getStoryDataOfStory(storyId).totalOfFramesSeen, true);
+  // await addFrameProgressDotsToScene(storyCircle.progress.dots, storyId, _storyService.getStoryDataOfStory(storyId).totalOfFramesSeen, true);
   };
 
   const addPauseScreenObjectsToScene = async (_objects: PauseScreenObjects, _sceneZone: Zone) => {
