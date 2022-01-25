@@ -30,6 +30,7 @@ export type Entity = {
   title: Array<Metadata>;
   relations?: Array<Relation[]>;
   mediafiles?: Array<MediaFile>;
+  primary_mediafile_location: string;
 };
 
 export type Story = {
@@ -90,6 +91,7 @@ export type Asset = {
   timestamps: Array<Metadata>;
   mediafiles: Array<Mediafiles>;
   relations: Array<Relation>
+  primary_mediafile_location: string;
 };
 
 export type BoxVisiter = {

@@ -37,7 +37,7 @@ const useFrame = (_threeService: ThreeService): {
   const GetFrameMainImage = (frame: Entity) => {
     const imageLink = frame.mediafiles?.[0]?.original_file_location
       ? frame.mediafiles?.[0]?.original_file_location
-      : 'http://localhost:8001/download/4226243bcfd8986cc128e5f5241589b9-2015-0070.JPG';
+      : '';
     return imageLink;
   };
 
@@ -55,7 +55,7 @@ const useFrame = (_threeService: ThreeService): {
       const _title = title(frame);
       const imageLink = frame.mediafiles?.[0]?.original_file_location
         ? frame.mediafiles?.[0]?.original_file_location
-        : 'http://localhost:8001/download/4226243bcfd8986cc128e5f5241589b9-2015-0070.JPG';
+        : '';
       record[_title] = imageLink as string;
     }
     return record;

@@ -52,9 +52,10 @@ const useAsset = (
   };
 
   const getImage = (asset: Asset) => {
-    return asset.mediafiles?.[0]?.original_file_location
-      ? asset.mediafiles?.[0]?.original_file_location
-      : 'http://localhost:8001/download/4226243bcfd8986cc128e5f5241589b9-2015-0070.JPG';
+    return asset.primary_mediafile_location;
+    // return asset.mediafiles?.[0]?.original_file_location
+    //   ? asset.mediafiles?.[0]?.original_file_location
+    //   : '';
   };
 
   const getAssetSpotlightScale = (_asset: Mesh<BoxBufferGeometry, any>, _scale: number) => {

@@ -50,7 +50,7 @@ const SchemaCube = (): {
       transparent: true,
       map: loader.load(
         schema.params.url ||
-          'http://localhost:8001/download/9ce891fe75a8e75d82019665d2585a83-2005-0025_1.JPG',
+          '',
       ),
     });
     const cube = new Mesh(geometry, material);

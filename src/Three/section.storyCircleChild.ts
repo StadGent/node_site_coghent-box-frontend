@@ -52,7 +52,7 @@ const StoryCircleChild = (): {
     for (let i = 0; i < positions.length; i++) {
       const schema = CubeHelper().CreateSchema(
         positions[i],
-        'http://localhost:8001/download/9ce891fe75a8e75d82019665d2585a83-2005-0025_1.JPG',
+        '',
       );
       const cube = SchemaCube().CreateImageCube(schema);
       Correction().CorrectTextBoxPosition(positions[i], cube, 1.1);
