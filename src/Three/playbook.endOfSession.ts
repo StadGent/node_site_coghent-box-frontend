@@ -10,6 +10,7 @@ import Common from '@/composables/common';
 import ZoneService from '@/services/ZoneService';
 import { Tags } from '@/services/TaggingService';
 import Measurements from './defaults.measurements';
+import TimerCountdown from './shapes.timer';
 
 const useEndOfSession = (
   threeService: ThreeService,
@@ -17,27 +18,9 @@ const useEndOfSession = (
 ): {
   create: (spotRadius: number) => Promise<boolean>;
 } => {
-  const timerCountdown = async (duration: number) => {
-    let currentTime = duration;
-    while (currentTime != 0) {
-      const seconds = Math.floor((currentTime / 1000) % 60);
-      const minutes = Math.floor((currentTime / (1000 * 60)) % 60);
-      const text = TextHelper().CreateText(
-        `0${minutes} :${seconds}`,
-        Positions().timerCountdown(),
-        {} as CubeParams,
-        { size: Measurements().text.size.veryBig, color: Colors().white } as FontParams,
-      );
-      threeService.AddToScene(text, Tags.Countdown, 'EndOfSession countdown timer');
-      await Common().awaitTimeout(1000);
-      threeService.RemoveFromScene(text);
-      currentTime -= 1000;
-    }
-  };
-
   const create = async (spotRadius: number) => {
     threeService.AddGroupsToScene(EndOfSession(zoneService,spotRadius).create(), Tags.EndOfSession, 'The endOfSession screen.');
-    await timerCountdown(Timing.endOfSession.countdown);
+    await TimerCountdown(threeService).start(Timing.endOfSession.countdown,Positions().timerCountdown())
     alert()
     return true;
   };

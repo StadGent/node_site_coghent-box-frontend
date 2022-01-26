@@ -1,9 +1,9 @@
+import CustomAnimation from '@/composables/animation';
 import Common from '@/composables/common';
+import ThreeService from '@/services/ThreeService';
 import { BoxGeometry, BufferGeometry, Group, Material, MathUtils, Mesh, MeshBasicMaterial, RingGeometry, Vector3 } from 'three';
 import Colors from './defaults.color';
-import Defaults from './defaults.config';
 import HelperText from './defaults.helperText';
-import Layers from './defaults.layers';
 import Measurements from './defaults.measurements';
 import GroupHelper from './helper.group';
 import TextHelper from './helper.text';
@@ -27,12 +27,12 @@ const TestSingleComponent = (): {
   endOfStoryText: (position: Vector3) => Group;
   metadataLabel: (position: Vector3, text: string) => Group;
   metadataLabelWithConnection: (position: Vector3, text: string) => Array<Group>;
-  pauseStoryCircleProgress: (_position: Vector3 ) => PauseProgressbarObjects;
+  pauseStoryCircleProgress: (_position: Vector3) => PauseProgressbarObjects;
   countdownCircle: (_position: Vector3, _progress: number, _color?: number) => Mesh<RingGeometry, MeshBasicMaterial>;
 } => {
 
   const testCube = (_position: Vector3) => {
-    return SchemaCube().CreateCube({position: _position, params: {color: Colors().green, width: 1, height: 1, opacity: 0.6} as CubeParams} as CubeSchema);
+    return SchemaCube().CreateCube({ position: _position, params: { color: Colors().green, width: 1, height: 1, opacity: 0.6 } as CubeParams } as CubeSchema);
   };
 
   const testText = (_position: Vector3) => {
@@ -50,11 +50,11 @@ const TestSingleComponent = (): {
   const horizontalProgressbar = HorizontalProgressBar().create(new Vector3(0, -7, 1), [0, 3, 6], 8, 0.1, Colors().yellow);
 
   const circularProgressbar = CircularProgressBar().create(new Vector3(0, 0, 0), Measurements().storyCircle.radius, 3, 1, Colors().yellow);
-  
+
   const circularProgressbarActiveSegments = (position: Vector3) => CircularProgressBar().createActiveSegment(position, Measurements().storyCircle.radius, 3, 3, Colors().yellow);
-  
+
   const endOfStoryText = (position: Vector3) => {
-    const text =  TextHelper().CreateTextFromRecord(
+    const text = TextHelper().CreateTextFromRecord(
       HelperText().EndOfStory(position),
       Colors().black,
     );
@@ -74,7 +74,7 @@ const TestSingleComponent = (): {
   const pauseStoryCircleProgress = (_position: Vector3) => {
     const schema = {
       position: _position,
-      params: { radius: Measurements().storyCircle.progressRadius - Measurements().progressBar.thickness/2, color: Colors().green } as CircleParams,
+      params: { radius: Measurements().storyCircle.progressRadius - Measurements().progressBar.thickness / 2, color: Colors().green } as CircleParams,
     } as CircleSchema;
     const segments = 6;
     return PauseProgressbar().create(schema, segments);
@@ -111,6 +111,6 @@ const TestSingleComponent = (): {
     pauseStoryCircleProgress,
     countdownCircle,
   }
-}
+};
 
 export default TestSingleComponent

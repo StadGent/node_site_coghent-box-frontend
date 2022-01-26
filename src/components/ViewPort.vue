@@ -17,6 +17,7 @@ import Tools from '@/Three/helper.tools';
 import AudioHelper from '@/Three/helper.audio';
 import VideoHelper from '@/Three/helper.video';
 import WallGarbageHelper, { GarabageHelperForWall } from '@/Three/helper.wall.garbage';
+import SceneHelper from '@/Three/helper.scene';
 
 import TestSingleComponent from '@/Three/test.components';
 
@@ -25,6 +26,7 @@ import Measurements from '@/Three/defaults.measurements';
 import { threeDefaultsWall } from '@/Three/defaults.three';
 import AnimationDefaults from '@/Three/defaults.animation';
 import Timing from '@/Three/defaults.timing';
+import Development from '@/Three/defaults.development';
 
 import PlayBookBuild from '@/Three/playbook.build';
 
@@ -32,10 +34,11 @@ import PlayBook from '@/composables/playbook';
 import useStory from '@/composables/useStory';
 import MoveObject from '@/composables/moveObject';
 import CustomAnimation from '@/composables/animation';
-import Development from '@/Three/defaults.development';
-import TaggingHelper from '@/Three/helper.tagging';
+
 import PauseProgressbar from '@/Three/shapes.pauseProgressbar';
-import SceneHelper from '@/Three/helper.scene';
+import TimerCountdown from '@/Three/shapes.timer';
+
+
 import Template from '@/Three/template.shapes';
 
 export default defineComponent({
@@ -384,6 +387,8 @@ export default defineComponent({
       );
       garbageHelper = WallGarbageHelper(threeSvc, taggingService);
       threeSvc.ClearScene();
+
+      // await TimerCountdown(threeSvc).start(15000,new Vector3(0,0,0));
 
       threeSvc.Animate();
     });
