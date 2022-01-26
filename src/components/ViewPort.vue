@@ -39,6 +39,8 @@ import TaggingHelper from '@/Three/helper.tagging';
 import PauseProgressbar from '@/Three/shapes.pauseProgressbar';
 import SceneHelper from '@/Three/helper.scene';
 import Colors from '@/Three/defaults.color';
+import Template from '@/Three/template.shapes';
+import { CircleParams, CircleSchema } from '@/Three/schema.circle';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -115,13 +117,14 @@ export default defineComponent({
             activeStoryData,
           ).setSelectedStory();
           await garbageHelper.newStorySelected();
+
           const progressDots = PauseProgressbar().dots(
-            zoneService.middleZoneCenter,
+            Template().storyCircleLayers(zoneService.middleZoneCenter).progressDots,
             Measurements().storyCircle.progressRadius,
             storyService.activeStoryData.totalOfFrames,
             storyService.activeStoryData.storyColor,
           );
-          SceneHelper(threeSvc, storyService).addFrameProgressDotsToScene(
+          await SceneHelper(threeSvc, storyService).addFrameProgressDotsToScene(
             progressDots,
             storyService.activeStoryData.storyId,
             storyService.activeStoryData.totalOfFramesSeen,
@@ -167,22 +170,22 @@ export default defineComponent({
       ).initialSpotLight();
       storyService.setStoryPausedPositions(zoneService.zonesInnerToOuter);
 
-      // setData();
+      setData();
 
-      await PlayBookBuild(
-        threeSvc,
-        storyService,
-        zoneService,
-        taggingService,
-        playBook,
-        spotlight,
-        activeStoryData,
-      )
-        .startOfSession()
-        .finally(async () => {
-          garbageHelper.startOfSession();
-          setData();
-        });
+      // await PlayBookBuild(
+      //   threeSvc,
+      //   storyService,
+      //   zoneService,
+      //   taggingService,
+      //   playBook,
+      //   spotlight,
+      //   activeStoryData,
+      // )
+      //   .startOfSession()
+      //   .finally(async () => {
+      //     garbageHelper.startOfSession();
+      //     setData();
+      //   });
     };
 
     const setData = async () => {
@@ -330,7 +333,6 @@ export default defineComponent({
           } else {
             currentStory = 0;
             emit('resetSelectedStory', 0);
-            chooseStory.value = true;
             audio.pause();
             garbageHelper.pauseScreen();
             spotlight.scale.set(
@@ -347,6 +349,7 @@ export default defineComponent({
               spotlight,
               activeStoryData,
             ).storyPaused(taggingService);
+            chooseStory.value = true;
           }
         },
         playBook.lastAction().time + 2,
@@ -386,6 +389,39 @@ export default defineComponent({
       garbageHelper = WallGarbageHelper(threeSvc, taggingService);
       threeSvc.ClearScene();
 
+      // const pauseProgressbar = TestSingleComponent().pauseStoryCircleProgress(
+      //   new Vector3(0, 0, 0),
+      // );
+      // threeSvc.AddGroupsToScene(pauseProgressbar.ring, Tags.Testing);
+      // for (const _dot of pauseProgressbar.dots) {
+      //   threeSvc.AddToScene(_dot.dot, Tags.Testing);
+      //   threeSvc.AddToScene(_dot.innerDot, Tags.Testing);
+      // }
+      // const templateLayers = Template().storyCircleLayers(new Vector3(-18, -3, 0));
+      // const templatePositons = Template().storyCirclePositions(
+      //   new Vector3(-18, -3, 0),
+      //   6,
+      // );
+      // pauseProgressbar.dots.forEach((_dot, index) => {
+      //   MoveObject().startMoving(_dot.dot, templatePositons.frameDots[index]);
+      //   if (_dot.innerDot) {
+      //     MoveObject().startMoving(_dot.innerDot, templatePositons.frameDots[index]);
+      //   }
+      // });
+
+      // await MoveObject().moveGroups(pauseProgressbar.ring, new Vector3(-18, -3, 0));
+
+      // await Common().awaitTimeout(1000);
+      // console.log('move again');
+      // const templatePositonss = Template().storyCirclePositions(new Vector3(0, 0, 0), 6);
+      // pauseProgressbar.dots.forEach((_dot, index) => {
+      //   MoveObject().startMoving(_dot.dot, templatePositonss.frameDots[index]);
+      //   if (_dot.innerDot) {
+      //     MoveObject().startMoving(_dot.innerDot, templatePositonss.frameDots[index]);
+      //   }
+      // });
+
+      // await MoveObject().moveGroups(pauseProgressbar.ring, new Vector3(0, 0, 0));
       threeSvc.Animate();
     });
 

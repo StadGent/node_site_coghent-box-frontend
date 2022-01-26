@@ -32,6 +32,9 @@ const CircleHelper = (): {
   };
 
   const SplitCircleInSegments = (position: Vector3, radius: number, segments: number) => {
+    if(segments <= 0){
+      segments = 1;
+    }
     const points : Array<Vector3> = []
     const angle = 360 /segments;
     for (let i = 0; i < segments; i++) {

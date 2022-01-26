@@ -74,7 +74,7 @@ const SceneHelper = (_threeService: ThreeService, _storyService: StoryService): 
         _threeService.AddToScene(_dots[index].innerDot, Tags.StoryCircleFrameInnerDot, 'Innerdot to show the frames in the story.', _storyId);
         if (_animation) {
           _dots[index].innerDot.material.opacity = 0;
-          CustomAnimation().fadeIn(_dots[index].innerDot, 1, AnimationDefaults.values.fadeStep);
+          await CustomAnimation().fadeIn(_dots[index].innerDot, 1, 0.1);
         }
       }
       await Common().awaitTimeout(AnimationDefaults.timing.fadeIn);

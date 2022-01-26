@@ -6,7 +6,7 @@ import Common from './common';
 
 const MoveObject = (): {
   startMoving: (object: any, toPosition: Vector3) => Promise<unknown>;
-  moveGroups: (_groups: Array<Group>, toPosition: Vector3) => void;
+  moveGroups: (_groups: Array<Group>, toPosition: Vector3) => Promise<void>;
 } => {
   const setXPosition = (object: Mesh, toPosition: Vector3, stepX: number) => {
     if (object.position.x <= toPosition.x && object.position.x + stepX <= toPosition.x) {
@@ -77,12 +77,9 @@ const MoveObject = (): {
     return Promise.resolve();
   };
 
-  const moveGroups = (_groups: Array<Group>, toPosition: Vector3) => {
-    const _stepsX = toPosition.x;
-    const _stepsY = toPosition.y;
-
+  const moveGroups = async (_groups: Array<Group>, toPosition: Vector3) => {
     for (const item of _groups) {
-      MoveObject().startMoving(item, new Vector3(item.position.x + _stepsX, item.position.y + _stepsY, item.position.z))
+      await MoveObject().startMoving(item, toPosition);
     }
   };
 

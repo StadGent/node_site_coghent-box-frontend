@@ -158,6 +158,7 @@ const PlayBookBuild = (
     await CustomAnimation().fadeOut(taggingService.getByTag(Tags.ActiveStoryCircleShade)[0].object, -1, AnimationDefaults.values.fadeStep);
     taggingService.removeAllTagsFrom(Tags.ActiveStoryCircleShade);
     TaggingHelper(taggingService).tagActiveStorycircleAsStoryCircle();
+    console.log('taggedObjects',taggingService.taggedObjects);
   };
 
   const storyData = (
@@ -192,7 +193,7 @@ const PlayBookBuild = (
           -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight,
           Layers.scene + Layers.fraction), params: { color: storyService.activeStoryData.storyColor } as CircleParams
       } as CircleSchema), Tags.ActiveStoryCircleShade);
-    MoveHelper(taggingService).activeStoryCircle(zoneService.middleZoneCenter);
+    await MoveHelper(taggingService).activeStoryCircle(zoneService.middleZoneCenter);
     WallGarbageHelper(threeService, taggingService).removeActiveFrameDots();
   };
 

@@ -35,14 +35,18 @@ const PauseProgressbar = (): {
     const pointsOnCircle = CircleHelper().SplitCircleInSegments(_schema.position, _schema.params.radius + (Measurements().progressBar.thickness / 2), _segments);
     const schemas = CircleHelper().CreateSchemas(pointsOnCircle, Measurements().progressBar.dotRadius, Colors().progressGrey,Measurements().progressBar.opacity);
     const ringGroup = new Group();
-    SchemaCircle().CreateCircles(schemas).map(_dot => ringGroup.add(_dot));
+    const dots = SchemaCircle().CreateCircles(schemas);
+    dots.forEach((_dot, index) => {
+      Common().setPosition(_dot,schemas[index].position)
+      ringGroup.add(_dot);
+    });
     ringGroup.add(_ring);
     return [ringGroup];
   };
 
   const dots = (_position: Vector3, _radius: number, _segments: number, _color: number) => {
     const pointsOnCircle = CircleHelper().SplitCircleInSegments(new Vector3(_position.x,_position.y,_position.z + 0.01), _radius + (Measurements().progressBar.thickness / 2), _segments);
-    const schemas = CircleHelper().CreateSchemas(pointsOnCircle, _radius + (Measurements().progressBar.thickness / 2), _color);
+    const schemas = CircleHelper().CreateSchemas(pointsOnCircle, _radius - (Measurements().progressBar.thickness / 2), _color);
     const dotWithinDots: Array<DotWithinDotObjects> = [];
     for (const _schema of schemas) {
       const _dot = DotWithinDot().create(
