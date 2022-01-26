@@ -19,7 +19,6 @@ import ZoneService from '@/services/ZoneService';
 import TaggingService, { Tags } from '@/services/TaggingService';
 import CustomAnimation from '@/composables/animation';
 import AnimationDefaults from './defaults.animation';
-import Common from '@/composables/common';
 import WallGarbageHelper, { GarabageHelperForWall } from './helper.wall.garbage';
 import TaggingHelper from './helper.tagging';
 import MoveHelper from './helper.move';
@@ -158,7 +157,6 @@ const PlayBookBuild = (
     await CustomAnimation().fadeOut(taggingService.getByTag(Tags.ActiveStoryCircleShade)[0].object, -1, AnimationDefaults.values.fadeStep);
     taggingService.removeAllTagsFrom(Tags.ActiveStoryCircleShade);
     TaggingHelper(taggingService).tagActiveStorycircleAsStoryCircle();
-    console.log('taggedObjects',taggingService.taggedObjects);
   };
 
   const storyData = (
@@ -183,7 +181,6 @@ const PlayBookBuild = (
   const setSelectedStory = async () => {
     spotlight.position.set(spotlight.position.x - 0.01, spotlight.position.y, spotlight.position.z)
     TaggingHelper(taggingService).tagStorycircleAsActiveStoryCircle(storyService.activeStoryData.storyId);
-    console.log('taggedobjects after selected new active story', taggingService.taggedObjects);
     await CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>, Measurements().storyCircle.radius, AnimationDefaults.values.scaleStep);
     await MoveObject().startMoving(spotlight, zoneService.middleZoneCenter);
     threeService.AddToScene(StoryCircle(storyService).shadedCircle(

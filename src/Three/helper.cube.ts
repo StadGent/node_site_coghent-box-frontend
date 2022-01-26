@@ -74,7 +74,6 @@ const CubeHelper = (): {
   };
 
   const ScaleBoxImage = (boxImage: Mesh, scale: Vector3) => {
-    console.log(boxImage);
     boxImage.scale.set(scale.x, scale.y, scale.z);
   };
 

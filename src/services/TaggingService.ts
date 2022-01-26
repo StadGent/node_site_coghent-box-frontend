@@ -92,7 +92,6 @@ export default class TaggingService {
   retag(oldTag: Tags, tag: Tags){
     const oldItems = this.taggedObjects.filter(_objects => _objects.tag == Tags[oldTag]);
     oldItems.forEach(_item => {
-      console.log(`* Changed TAG from ${_item.tag} tot ${Tags[tag]}`);
       _item.tag = Tags[tag];
     })
   }

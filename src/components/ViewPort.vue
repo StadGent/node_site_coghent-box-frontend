@@ -32,15 +32,11 @@ import PlayBook from '@/composables/playbook';
 import useStory from '@/composables/useStory';
 import MoveObject from '@/composables/moveObject';
 import CustomAnimation from '@/composables/animation';
-import Spot from '@/Three/shapes.spotlight';
-import Common from '@/composables/common';
 import Development from '@/Three/defaults.development';
 import TaggingHelper from '@/Three/helper.tagging';
 import PauseProgressbar from '@/Three/shapes.pauseProgressbar';
 import SceneHelper from '@/Three/helper.scene';
-import Colors from '@/Three/defaults.color';
 import Template from '@/Three/template.shapes';
-import { CircleParams, CircleSchema } from '@/Three/schema.circle';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -389,39 +385,6 @@ export default defineComponent({
       garbageHelper = WallGarbageHelper(threeSvc, taggingService);
       threeSvc.ClearScene();
 
-      // const pauseProgressbar = TestSingleComponent().pauseStoryCircleProgress(
-      //   new Vector3(0, 0, 0),
-      // );
-      // threeSvc.AddGroupsToScene(pauseProgressbar.ring, Tags.Testing);
-      // for (const _dot of pauseProgressbar.dots) {
-      //   threeSvc.AddToScene(_dot.dot, Tags.Testing);
-      //   threeSvc.AddToScene(_dot.innerDot, Tags.Testing);
-      // }
-      // const templateLayers = Template().storyCircleLayers(new Vector3(-18, -3, 0));
-      // const templatePositons = Template().storyCirclePositions(
-      //   new Vector3(-18, -3, 0),
-      //   6,
-      // );
-      // pauseProgressbar.dots.forEach((_dot, index) => {
-      //   MoveObject().startMoving(_dot.dot, templatePositons.frameDots[index]);
-      //   if (_dot.innerDot) {
-      //     MoveObject().startMoving(_dot.innerDot, templatePositons.frameDots[index]);
-      //   }
-      // });
-
-      // await MoveObject().moveGroups(pauseProgressbar.ring, new Vector3(-18, -3, 0));
-
-      // await Common().awaitTimeout(1000);
-      // console.log('move again');
-      // const templatePositonss = Template().storyCirclePositions(new Vector3(0, 0, 0), 6);
-      // pauseProgressbar.dots.forEach((_dot, index) => {
-      //   MoveObject().startMoving(_dot.dot, templatePositonss.frameDots[index]);
-      //   if (_dot.innerDot) {
-      //     MoveObject().startMoving(_dot.innerDot, templatePositonss.frameDots[index]);
-      //   }
-      // });
-
-      // await MoveObject().moveGroups(pauseProgressbar.ring, new Vector3(0, 0, 0));
       threeSvc.Animate();
     });
 
