@@ -2,6 +2,8 @@ import { Tags } from '@/services/TaggingService';
 import ThreeService from '@/services/ThreeService';
 import AnimationDefaults from '@/Three/defaults.animation';
 import Colors from '@/Three/defaults.color';
+import Layers from '@/Three/defaults.layers';
+import TimerCountdown from '@/Three/shapes.timer';
 import TestSingleComponent from '@/Three/test.components';
 import { Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
 import Common from './common';
@@ -71,9 +73,11 @@ const CustomAnimation = (): {
   const circularCountdown = async (_threeService: ThreeService, _position: Vector3) => {
     const ring = TestSingleComponent().countdownCircle(new Vector3(0, 0, 0), 2);
     _threeService.AddToScene(ring, Tags.Testing);
-    const count = [1, 2, 3];
-    for (const _count in count) {
+    const count = [3, 2, 1];
+    for (const _count of count) {
       let progress = 0;
+      const countdownNumber = TimerCountdown(_threeService).createNumber(_count.toString(), new Vector3(-.5, -0.5, Layers.scene));
+      _threeService.AddToScene(countdownNumber,Tags.startOfSessionCountdown)
       while (progress <= 1.2) {
         const ring_progress = TestSingleComponent().countdownCircle(
           _position,
@@ -82,9 +86,11 @@ const CustomAnimation = (): {
         );
         _threeService.AddToScene(ring_progress, Tags.Testing);
         await Common().awaitTimeout(2.77);
-        progress += 0.035;
+        progress += 0.027;
         _threeService.RemoveFromScene(ring_progress);
+        
       }
+      _threeService.RemoveFromScene(countdownNumber);
     }
     _threeService.RemoveFromScene(ring);
     Promise.resolve();

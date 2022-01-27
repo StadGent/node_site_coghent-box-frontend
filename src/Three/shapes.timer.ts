@@ -1,7 +1,7 @@
 import Common from '@/composables/common';
 import { Tags } from '@/services/TaggingService';
 import ThreeService from '@/services/ThreeService';
-import { Mesh, Vector3 } from 'three';
+import { BufferGeometry, Mesh, Vector3 } from 'three';
 import Colors from './defaults.color';
 import Measurements from './defaults.measurements';
 import TextHelper from './helper.text';
@@ -18,6 +18,7 @@ type TimeObjects = {
 
 const TimerCountdown = (_threeService: ThreeService): {
   start: (_timeInMiliseconds: number, _position: Vector3) => Promise<void>;
+  createNumber: (_time: string, _position: Vector3) => Mesh<BufferGeometry,any>
 } => {
 
   const addZeroIfTimeIsUnderTen = (_time: number) => {
@@ -72,8 +73,6 @@ const TimerCountdown = (_threeService: ThreeService): {
 
     const semiColon = createNumber(':', _position);
 
-    console.log('seconds[1]', parseInt(getSeconds(_currentTime)[1]));
-
     if ((Math.floor((_currentTime / 1000) % 60) + 1) % 10 == 0) {
       _threeService.AddToScene(secondsOne, Tags.Countdown, 'EndOfSession countdown timer');
     }
@@ -110,7 +109,6 @@ const TimerCountdown = (_threeService: ThreeService): {
       }
       updateTime(times, currentTime, initial);
       await Common().awaitTimeout(1000);
-      console.log({ currentTime });
       // if ((Math.floor((currentTime / 1000) % 60)) % 10 == 0) {
       //   console.log('REMOVED',Math.floor((currentTime / 1000) % 60))
 
@@ -124,7 +122,7 @@ const TimerCountdown = (_threeService: ThreeService): {
     } while (currentTime > -1)
   }
 
-  return { start };
+  return { start, createNumber };
 };
 
 export default TimerCountdown;
