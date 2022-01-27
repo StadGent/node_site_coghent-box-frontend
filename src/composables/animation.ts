@@ -82,7 +82,7 @@ const CustomAnimation = (): {
         );
         _threeService.AddToScene(ring_progress, Tags.Testing);
         await Common().awaitTimeout(2.77);
-        progress += 0.02;
+        progress += 0.035;
         _threeService.RemoveFromScene(ring_progress);
       }
     }

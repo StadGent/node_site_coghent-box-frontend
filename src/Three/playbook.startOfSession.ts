@@ -74,8 +74,8 @@ const useStartOfSession = (
     showScanImage();
     await Common().awaitTimeout(Timing.startOfSession.videoDelay);
     await MoveObject().startMoving(spotlight, new Vector3(0, 0, Layers.scene));
-    CustomAnimation().circularCountdown(threeService,new Vector3(0, 0, Layers.scene));
-    await countdown(Defaults().countdown());
+    countdown(Defaults().countdown());
+    await CustomAnimation().circularCountdown(threeService,new Vector3(0, 0, Layers.scene));
     await CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>, Measurements().storyCircle.radius, AnimationDefaults.values.scaleStep);
     return true;
   };
