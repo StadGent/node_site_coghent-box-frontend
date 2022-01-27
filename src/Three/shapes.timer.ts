@@ -92,10 +92,10 @@ const TimerCountdown = (_threeService: ThreeService): {
     _threeService.AddToScene(_objects.minutesOne, Tags.Countdown, 'EndOfSession countdown timer');
     _threeService.AddToScene(_objects.minutesTwo, Tags.Countdown, 'EndOfSession countdown timer');
     _threeService.AddToScene(_objects.semiColon, Tags.Countdown, 'EndOfSession countdown timer');
-    if ((Math.floor((_currentTime / 1000) % 60) + 1) % 10 == 0 || _initial) {
-      console.log('DRAWN');
+    // if ((Math.floor((_currentTime / 1000) % 60) + 1) % 10 == 0 || _initial) {
+    //   console.log('DRAWN');
       _threeService.AddToScene(_objects.secondsOne, Tags.Countdown, 'EndOfSession countdown timer');
-    }
+    // }
     _threeService.AddToScene(_objects.secondsTwo, Tags.Countdown, 'EndOfSession countdown timer');
   };
 
@@ -111,12 +111,13 @@ const TimerCountdown = (_threeService: ThreeService): {
       updateTime(times, currentTime, initial);
       await Common().awaitTimeout(1000);
       console.log({ currentTime });
-      if ((Math.floor((currentTime / 1000) % 60)) % 10 == 0) {
-        console.log('REMOVED',Math.floor((currentTime / 1000) % 60))
+      // if ((Math.floor((currentTime / 1000) % 60)) % 10 == 0) {
+      //   console.log('REMOVED',Math.floor((currentTime / 1000) % 60))
 
-        _threeService.RemoveFromScene(times.secondsOne);
-      }
+        // _threeService.RemoveFromScene(times.secondsOne);
+      // }
       if (currentTime != 0) {
+         _threeService.RemoveFromScene(times.secondsOne);
         _threeService.RemoveFromScene(times.secondsTwo);
       }
       currentTime -= 1000;
