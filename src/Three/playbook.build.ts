@@ -137,7 +137,7 @@ const PlayBookBuild = (
 
   const endOfSession = async () => {
     await CustomAnimation().grow(spotlight as Mesh<any, MeshBasicMaterial>, Measurements().spotLight.radius, AnimationDefaults.values.scaleStep);
-    await MoveObject().startMoving(spotlight, zoneService.middleZoneCenter);
+    await MoveObject().startMoving(spotlight, new Vector3(zoneService.middleZoneCenter.x,zoneService.middleZoneCenter.y - 1,zoneService.middleZoneCenter.z));
     return useEndOfSession(threeService, zoneService).create();
   };
 
@@ -150,7 +150,8 @@ const PlayBookBuild = (
       new Vector3(
         storyService.activeStoryData.pausedPosition.x,
         -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight,
-        Layers.scene + Layers.fraction)
+        Layers.scene + Layers.fraction),
+        storyService.activeStoryData,
     );
     await SceneHelper(threeService, storyService).addPauseScreenObjectsToScene(StoryPaused(taggingService, zoneService, storyService).Create(inactiveStories), zoneService.sceneZone());
     await MoveObject().startMoving(spotlight, new Vector3(0.01, -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight, Layers.scene));
@@ -191,7 +192,7 @@ const PlayBookBuild = (
           -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight,
           Layers.scene + Layers.fraction), params: { color: storyService.activeStoryData.storyColor } as CircleParams
       } as CircleSchema), Tags.ActiveStoryCircleShade);
-    await MoveHelper(taggingService).activeStoryCircle(zoneService.middleZoneCenter);
+    await MoveHelper(taggingService).activeStoryCircle(zoneService.middleZoneCenter, storyService.activeStoryData);
     WallGarbageHelper(threeService, taggingService).removeActiveFrameDots();
   };
 

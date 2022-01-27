@@ -78,7 +78,7 @@ const CustomAnimation = (): {
       let progress = 0;
       const countdownNumber = TimerCountdown(_threeService).createNumber(_count.toString(), new Vector3(-.5, -0.5, Layers.scene));
       _threeService.AddToScene(countdownNumber,Tags.startOfSessionCountdown)
-      while (progress <= 1.2) {
+      while (progress <= 1) {
         const ring_progress = TestSingleComponent().countdownCircle(
           _position,
           progress,

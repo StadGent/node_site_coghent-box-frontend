@@ -1,4 +1,5 @@
 import Common from '@/composables/common';
+import { StoryData } from '@/services/StoryService';
 import { BoxGeometry, BufferGeometry, Group, Material, MathUtils, Mesh, MeshBasicMaterial, RingGeometry, Vector3 } from 'three';
 import Colors from './defaults.color';
 import HelperText from './defaults.helperText';
@@ -25,7 +26,7 @@ const TestSingleComponent = (): {
   endOfStoryText: (position: Vector3) => Group;
   metadataLabel: (position: Vector3, text: string) => Group;
   metadataLabelWithConnection: (position: Vector3, text: string) => Array<Group>;
-  pauseStoryCircleProgress: (_position: Vector3) => PauseProgressbarObjects;
+  pauseStoryCircleProgress: (_position: Vector3, _storyData: StoryData) => PauseProgressbarObjects;
   countdownCircle: (_position: Vector3, _progress: number, _color?: number) => Mesh<RingGeometry, MeshBasicMaterial>;
 } => {
 
@@ -69,13 +70,12 @@ const TestSingleComponent = (): {
     return groups;
   };
 
-  const pauseStoryCircleProgress = (_position: Vector3) => {
+  const pauseStoryCircleProgress = (_position: Vector3, _storyData: StoryData) => {
     const schema = {
       position: _position,
       params: { radius: Measurements().storyCircle.progressRadius - Measurements().progressBar.thickness / 2, color: Colors().green } as CircleParams,
     } as CircleSchema;
-    const segments = 6;
-    return PauseProgressbar().create(schema, segments);
+    return PauseProgressbar(_storyData).create(schema);
   };
 
   const countdownCircle = (_position: Vector3, _progress: number, _color?: number) => {

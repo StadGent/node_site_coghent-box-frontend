@@ -1,9 +1,9 @@
 import Common from '@/composables/common';
+import { StoryData } from '@/services/StoryService';
 import { Group, MathUtils, Mesh, MeshBasicMaterial, RingGeometry, Vector3 } from 'three';
 import Colors from './defaults.color';
 import Measurements from './defaults.measurements';
 import CircleHelper from './helper.circle';
-import GroupHelper from './helper.group';
 import SchemaCircle, { CircleSchema } from './schema.circle';
 import DotWithinDot, { DotWithinDotObjects } from './shapes.dotWithinDot';
 
@@ -12,8 +12,8 @@ export type PauseProgressbarObjects = {
   dots: Array<DotWithinDotObjects>,
 }
 
-const PauseProgressbar = (): {
-  create: (_schema: CircleSchema, _segments: number) => PauseProgressbarObjects;
+const PauseProgressbar = (_storyData: StoryData): {
+  create: (_schema: CircleSchema) => PauseProgressbarObjects;
   dots: (_position: Vector3, _radius: number, _segments: number, _color: number) => Array<DotWithinDotObjects>;
 } => {
 
@@ -61,12 +61,12 @@ const PauseProgressbar = (): {
     return dotWithinDots
   };
 
-  const create = (_schema: CircleSchema, _segments: number) => {
-    const _ring = ring(_schema, _segments);
+  const create = (_schema: CircleSchema) => {
+    const _ring = ring(_schema, _storyData.totalOfFrames);
     const _dots = dots(
       _schema.position,
       _schema.params.radius,
-      _segments,
+      _storyData.totalOfFrames,
       _schema.params.color || Colors().white
     );
     return {

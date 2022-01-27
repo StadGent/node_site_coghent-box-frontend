@@ -1,16 +1,12 @@
 import SchemaCircle, { CircleParams, CircleSchema } from '@/Three/schema.circle';
 import SchemaCube, { CubeParams } from '@/Three/schema.cube';
 import DefaultColors from '@/Three/defaults.color';
-import GroupHelper from '@/Three/helper.group';
 import TextHelper from '@/Three/helper.text';
 import { FontParams } from '@/Three/schema.text';
 import { BufferGeometry, CircleGeometry, Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
 import CubeHelper from './helper.cube';
-import Layers from './defaults.layers';
-import CircularprogressBar from '@/Three/shapes.circularProgressbar';
 import Colors from '@/Three/defaults.color';
 import Measurements from './defaults.measurements';
-import CircularProgressBar from '@/Three/shapes.circularProgressbar';
 import StoryService, { StoryData } from '@/services/StoryService';
 import PauseProgressbar, { PauseProgressbarObjects } from './shapes.pauseProgressbar';
 import Template from './template.shapes';
@@ -48,7 +44,7 @@ const StoryCircle = (_storyService: StoryService): {
   ) => StoryCircleObjects;
   shadedCircle: (schema: CircleSchema) => Mesh<CircleGeometry, MeshBasicMaterial>;
   title: (title: string, position: Vector3, color: number) => Mesh<BufferGeometry, any>;
-  progressOfFrames: (_position: Vector3, _color: number, _progress: number) => PauseProgressbarObjects;
+  progressOfFrames: (_position: Vector3, _color: number, _storyData: StoryData) => PauseProgressbarObjects;
 } => {
   const main = (schema: CircleSchema) => {
     return SchemaCircle().CreateCircle(
@@ -87,15 +83,15 @@ const StoryCircle = (_storyService: StoryService): {
     return storyTitle;
   };
 
-  const progressOfFrames = (_position: Vector3, _color: number, _progress: number) => {
-    return PauseProgressbar().create(
+  const progressOfFrames = (_position: Vector3, _color: number, _storyData: StoryData) => {
+    return PauseProgressbar(_storyData).create(
       {
         position: _position,
         params: {
           radius: Measurements().storyCircle.progressRadius,
           color: _color,
         } as CircleParams
-      } as CircleSchema, _progress);
+      } as CircleSchema);
   }
 
   const Create = (
@@ -110,7 +106,7 @@ const StoryCircle = (_storyService: StoryService): {
     const progress = progressOfFrames(
       templateLayers.progressCircle,
       circleSchema.params.color || Colors().white,
-      storyData.totalOfFrames,
+      storyData,
     );
     const storyText =
       title(

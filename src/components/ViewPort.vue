@@ -114,7 +114,7 @@ export default defineComponent({
           ).setSelectedStory();
           await garbageHelper.newStorySelected();
 
-          const progressDots = PauseProgressbar().dots(
+          const progressDots = PauseProgressbar(storyService.activeStoryData).dots(
             Template().storyCircleLayers(zoneService.middleZoneCenter).progressDots,
             Measurements().storyCircle.progressRadius,
             storyService.activeStoryData.totalOfFrames,
@@ -123,7 +123,7 @@ export default defineComponent({
           await SceneHelper(threeSvc, storyService).addFrameProgressDotsToScene(
             progressDots,
             storyService.activeStoryData.storyId,
-            storyService.activeStoryData.totalOfFramesSeen,
+            storyService.activeStoryData.totalOfFramesSeen + 1,
             true,
           );
           taggingService.retag(Tags.StoryCircleFrameDot, Tags.ActiveStoryCircleFrameDot);
@@ -166,22 +166,22 @@ export default defineComponent({
       ).initialSpotLight();
       storyService.setStoryPausedPositions(zoneService.zonesInnerToOuter);
 
-      setData();
+      // setData();
 
-      // await PlayBookBuild(
-      //   threeSvc,
-      //   storyService,
-      //   zoneService,
-      //   taggingService,
-      //   playBook,
-      //   spotlight,
-      //   activeStoryData,
-      // )
-      //   .startOfSession()
-      //   .finally(async () => {
-      //     garbageHelper.startOfSession();
-      //     setData();
-      //   });
+      await PlayBookBuild(
+        threeSvc,
+        storyService,
+        zoneService,
+        taggingService,
+        playBook,
+        spotlight,
+        activeStoryData,
+      )
+        .startOfSession()
+        .finally(async () => {
+          garbageHelper.startOfSession();
+          setData();
+        });
     };
 
     const setData = async () => {
@@ -325,7 +325,7 @@ export default defineComponent({
               spotlight,
               activeStoryData,
             )
-              .endOfSession(Measurements().spotLight.radius)
+              .endOfSession()
               .then((_start) => {
                 emit('restartSession', _start);
                 // setup();
@@ -351,7 +351,8 @@ export default defineComponent({
             chooseStory.value = true;
           }
         },
-        audioDuration + Timing.delayToPauseScreen,
+        playBook.lastAction().time +1,
+        // audioDuration,
         `Update storyData & show endOfSessions screen or the storyOverview`,
       );
     };
@@ -387,7 +388,6 @@ export default defineComponent({
       garbageHelper = WallGarbageHelper(threeSvc, taggingService);
       threeSvc.ClearScene();
 
-      // await TimerCountdown(threeSvc).start(15000,new Vector3(0,0,0));
       threeSvc.Animate();
     });
 

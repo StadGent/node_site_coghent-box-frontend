@@ -60,17 +60,13 @@ const SceneHelper = (_threeService: ThreeService, _storyService: StoryService): 
   };
 
   const addFrameProgressDotsToScene = async (_dots: Array<DotWithinDotObjects>, _storyId: string, _progress: number, _animation: boolean) => {
-    let framesSeen = _progress;
-    if(_storyService.storyIsActive(_storyId)){
-      framesSeen++;
-    }
-    for (let index = 0;index < framesSeen;index++) {
+    for (let index = 0;index < _progress;index++) {
       _threeService.AddToScene(_dots[index].dot, Tags.StoryCircleFrameDot, 'Dot to show the frames in the story.', _storyId);
       if (_animation) {
         _dots[index].dot.material.opacity = 0;
         await CustomAnimation().fadeIn(_dots[index].dot, 1, 0.1);
       }
-      if (index == _progress && _storyService.storyIsActive(_storyId)) {
+      if (index + 1 == _progress  && _storyService.storyIsActive(_storyId)) {
         _threeService.AddToScene(_dots[index].innerDot, Tags.StoryCircleFrameInnerDot, 'Innerdot to show the frames in the story.', _storyId);
         if (_animation) {
           _dots[index].innerDot.material.opacity = 0;

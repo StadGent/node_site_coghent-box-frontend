@@ -1,17 +1,18 @@
 import MoveObject from '@/composables/moveObject';
+import { StoryData } from '@/services/StoryService';
 import TaggingService from '@/services/TaggingService';
 import { Vector3 } from 'three';
 import TaggingHelper from './helper.tagging';
 import Template from './template.shapes';
 
 const MoveHelper = (_taggingService: TaggingService): {
-  activeStoryCircle: (_position: Vector3) => Promise<void>;
+  activeStoryCircle: (_position: Vector3, _storyData: StoryData) => Promise<void>;
 } => {
 
-  const activeStoryCircle = async (_position: Vector3) => {
+  const activeStoryCircle = async (_position: Vector3, _storyData: StoryData) => {
     const templateLayers = Template().storyCircleLayers(_position);
     const objects = TaggingHelper(_taggingService).getActiveStoryCircle();
-    const storyCirclePositions = Template().storyCirclePositions(_position, objects.progress.dots.length);
+    const storyCirclePositions = Template().storyCirclePositions(_position, _storyData.totalOfFrames);
 
     MoveObject().startMoving(objects.text, new Vector3(templateLayers.title.x - 1.5,templateLayers.title.y,templateLayers.title.z));
     MoveObject().startMoving(objects.basic, templateLayers.centerCircle);
