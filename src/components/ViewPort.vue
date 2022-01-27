@@ -149,7 +149,7 @@ export default defineComponent({
         storyService = value;
         storyService.setActiveStory(storyService.stories[0].id);
         //TODO:
-        setup();
+        // setup();
       },
     );
 
@@ -387,6 +387,10 @@ export default defineComponent({
       );
       garbageHelper = WallGarbageHelper(threeSvc, taggingService);
       threeSvc.ClearScene();
+
+      const progress = TestSingleComponent().pauseStoryCircleProgress(new Vector3(0,0,0));
+      threeSvc.AddGroupsToScene(progress.ring, Tags.Testing);
+      SceneHelper(threeSvc,storyService).addFrameProgressDotsToScene(progress.dots,'',3,true);
 
       threeSvc.Animate();
     });

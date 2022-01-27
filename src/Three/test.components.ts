@@ -26,7 +26,7 @@ const TestSingleComponent = (): {
   endOfStoryText: (position: Vector3) => Group;
   metadataLabel: (position: Vector3, text: string) => Group;
   metadataLabelWithConnection: (position: Vector3, text: string) => Array<Group>;
-  pauseStoryCircleProgress: (_position: Vector3, _storyData: StoryData) => PauseProgressbarObjects;
+  pauseStoryCircleProgress: (_position: Vector3) => PauseProgressbarObjects;
   countdownCircle: (_position: Vector3, _progress: number, _color?: number) => Mesh<RingGeometry, MeshBasicMaterial>;
 } => {
 
@@ -70,12 +70,21 @@ const TestSingleComponent = (): {
     return groups;
   };
 
-  const pauseStoryCircleProgress = (_position: Vector3, _storyData: StoryData) => {
+  const pauseStoryCircleProgress = (_position: Vector3) => {
+    const storyData = {
+      storyId: '',
+      totalOfFrames: 6,
+      seenFrames: {},
+      totalOfFramesSeen: 1,
+      storySeen: false,
+      storyColor: Colors().green,
+      pausedPosition: new Vector3(0,0,0),
+  }
     const schema = {
       position: _position,
       params: { radius: Measurements().storyCircle.progressRadius - Measurements().progressBar.thickness / 2, color: Colors().green } as CircleParams,
     } as CircleSchema;
-    return PauseProgressbar(_storyData).create(schema);
+    return PauseProgressbar(storyData).create(schema);
   };
 
   const countdownCircle = (_position: Vector3, _progress: number, _color?: number) => {
