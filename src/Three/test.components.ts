@@ -1,6 +1,4 @@
-import CustomAnimation from '@/composables/animation';
 import Common from '@/composables/common';
-import ThreeService from '@/services/ThreeService';
 import { BoxGeometry, BufferGeometry, Group, Material, MathUtils, Mesh, MeshBasicMaterial, RingGeometry, Vector3 } from 'three';
 import Colors from './defaults.color';
 import HelperText from './defaults.helperText';

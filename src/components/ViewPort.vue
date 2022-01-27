@@ -36,8 +36,8 @@ import MoveObject from '@/composables/moveObject';
 import CustomAnimation from '@/composables/animation';
 
 import PauseProgressbar from '@/Three/shapes.pauseProgressbar';
-import TimerCountdown from '@/Three/shapes.timer';
 
+import TimerCountdown from '@/Three/shapes.timer';
 import Template from '@/Three/template.shapes';
 
 export default defineComponent({
@@ -388,7 +388,6 @@ export default defineComponent({
       threeSvc.ClearScene();
 
       // await TimerCountdown(threeSvc).start(15000,new Vector3(0,0,0));
-
       threeSvc.Animate();
     });
 

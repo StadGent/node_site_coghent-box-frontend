@@ -1,6 +1,5 @@
 import TaggingService, { Tag, Tags } from '@/services/TaggingService';
-import { BufferGeometry, CircleGeometry, Group, Mesh, MeshBasicMaterial, RingGeometry } from 'three';
-import { StoryCircleObjects } from './section.storyCircle';
+import { BufferGeometry, CircleGeometry, Group, Mesh, MeshBasicMaterial } from 'three';
 import { DotWithinDotObjects } from './shapes.dotWithinDot';
 import { PauseProgressbarObjects } from './shapes.pauseProgressbar';
 
@@ -55,7 +54,6 @@ const TaggingHelper = (_taggingService: TaggingService): {
   const tagStorycircleAsActiveStoryCircle = (_storyId: string) => {  
     const objects = _taggingService.getByTagsId(_storyId);
     matchTags(objects);
-    console.log('retagged to active',_taggingService.taggedObjects);
   };
 
   enum inactive {

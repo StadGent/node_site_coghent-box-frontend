@@ -1,12 +1,20 @@
 import Common from '@/composables/common';
 import { Tags } from '@/services/TaggingService';
 import ThreeService from '@/services/ThreeService';
-import { Vector3 } from 'three';
+import { Mesh, Vector3 } from 'three';
 import Colors from './defaults.color';
 import Measurements from './defaults.measurements';
 import TextHelper from './helper.text';
 import { CubeParams } from './schema.cube';
 import { FontParams } from './schema.text';
+
+type TimeObjects = {
+  minutesOne: Mesh,
+  minutesTwo: Mesh,
+  secondsOne: Mesh,
+  secondsTwo: Mesh,
+  semiColon: Mesh,
+}
 
 const TimerCountdown = (_threeService: ThreeService): {
   start: (_timeInMiliseconds: number, _position: Vector3) => Promise<void>;
@@ -15,7 +23,10 @@ const TimerCountdown = (_threeService: ThreeService): {
   const addZeroIfTimeIsUnderTen = (_time: number) => {
     let timeInString = _time.toString();
     if (_time < 10) {
-      timeInString = '0' + _time.toString()
+      timeInString = '0' + _time.toString();
+    }
+    if (_time == 0) {
+      timeInString = '00';
     }
     return timeInString
   };
@@ -61,10 +72,11 @@ const TimerCountdown = (_threeService: ThreeService): {
 
     const semiColon = createNumber(':', _position);
 
-    _threeService.AddToScene(minutesOne, Tags.Countdown, 'EndOfSession countdown timer');
-    _threeService.AddToScene(minutesTwo, Tags.Countdown, 'EndOfSession countdown timer');
-    _threeService.AddToScene(semiColon, Tags.Countdown, 'EndOfSession countdown timer');
-    _threeService.AddToScene(secondsOne, Tags.Countdown, 'EndOfSession countdown timer');
+    console.log('seconds[1]', parseInt(getSeconds(_currentTime)[1]));
+
+    if ((Math.floor((_currentTime / 1000) % 60) + 1) % 10 == 0) {
+      _threeService.AddToScene(secondsOne, Tags.Countdown, 'EndOfSession countdown timer');
+    }
     _threeService.AddToScene(secondsTwo, Tags.Countdown, 'EndOfSession countdown timer');
 
     return {
@@ -72,21 +84,43 @@ const TimerCountdown = (_threeService: ThreeService): {
       minutesTwo: minutesTwo,
       secondsOne: secondsOne,
       secondsTwo: secondsTwo,
+      semiColon: semiColon,
+    } as TimeObjects;
+  };
+
+  const updateTime = (_objects: TimeObjects, _currentTime: number, _initial: boolean) => {
+    _threeService.AddToScene(_objects.minutesOne, Tags.Countdown, 'EndOfSession countdown timer');
+    _threeService.AddToScene(_objects.minutesTwo, Tags.Countdown, 'EndOfSession countdown timer');
+    _threeService.AddToScene(_objects.semiColon, Tags.Countdown, 'EndOfSession countdown timer');
+    if ((Math.floor((_currentTime / 1000) % 60) + 1) % 10 == 0 || _initial) {
+      console.log('DRAWN');
+      _threeService.AddToScene(_objects.secondsOne, Tags.Countdown, 'EndOfSession countdown timer');
     }
+    _threeService.AddToScene(_objects.secondsTwo, Tags.Countdown, 'EndOfSession countdown timer');
   };
 
   const start = async (_timeInMiliseconds: number, _position: Vector3) => {
     let currentTime = _timeInMiliseconds;
-
-    while (currentTime != 0) {
+    let initial = true;
+    do {
       const times = create(_position, currentTime);
+      if(initial){
+        updateTime(times, currentTime, initial);
+        initial = false;
+      }
+      updateTime(times, currentTime, initial);
       await Common().awaitTimeout(1000);
-      _threeService.RemoveFromScene(times.minutesOne);
-      _threeService.RemoveFromScene(times.minutesTwo);
-      _threeService.RemoveFromScene(times.secondsOne);
-      _threeService.RemoveFromScene(times.secondsTwo);
+      console.log({ currentTime });
+      if ((Math.floor((currentTime / 1000) % 60)) % 10 == 0) {
+        console.log('REMOVED',Math.floor((currentTime / 1000) % 60))
+
+        _threeService.RemoveFromScene(times.secondsOne);
+      }
+      if (currentTime != 0) {
+        _threeService.RemoveFromScene(times.secondsTwo);
+      }
       currentTime -= 1000;
-    }
+    } while (currentTime > -1)
   }
 
   return { start };

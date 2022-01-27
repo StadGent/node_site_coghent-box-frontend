@@ -13,10 +13,7 @@ const Template = (): {
 } => {
   const storyCirclePositions = (_center: Vector3, _segments: number) => {
     const layers = storyCircleLayers(_center);
-    console.log('Layers of progressdots',layers.progressDots);
-    console.log('_segments',_segments);
     const pointsOfDots = CircleHelper().SplitCircleInSegments(layers.progressDots, Measurements().storyCircle.progressRadius + (Measurements().progressBar.thickness / 2), _segments);
-    console.log({pointsOfDots});
     return {
       center: _center,
       frameDots: pointsOfDots
