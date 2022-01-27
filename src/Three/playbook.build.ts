@@ -48,7 +48,7 @@ const PlayBookBuild = (
   ) => void;
   progressOfFrame: (frameIndex: number, color: number, currentTime: number, audioDuration: number, progressbar: Array<Group>) => Array<Group>;
   initialSpotLight: () => Mesh;
-  endOfSession: (spotRadius: number) => Promise<boolean>;
+  endOfSession: () => Promise<void>;
   storyPaused: (taggingService: TaggingService) => Promise<void>;
   storyData: (
     storyService: StoryService,
@@ -135,9 +135,10 @@ const PlayBookBuild = (
     return spotlight;
   };
 
-  const endOfSession = async (spotRadius: number) => {
-    await MoveObject().startMoving(spotlight, new Vector3(0, 0, Layers.scene));
-    return useEndOfSession(threeService, zoneService).create(spotRadius);
+  const endOfSession = async () => {
+    await CustomAnimation().grow(spotlight as Mesh<any, MeshBasicMaterial>, Measurements().spotLight.radius, AnimationDefaults.values.scaleStep);
+    await MoveObject().startMoving(spotlight, zoneService.middleZoneCenter);
+    return useEndOfSession(threeService, zoneService).create();
   };
 
   const storyPaused = async (taggingService: TaggingService) => {

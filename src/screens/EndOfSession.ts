@@ -12,7 +12,6 @@ import Measurements from '@/Three/defaults.measurements';
 
 const EndOfSession = (
   zoneService: ZoneService,
-  spotRadius?: number,
 ): {
   scanTicket: () => Array<Group>;
   goToTouchtable: () => Array<Group>;
@@ -22,7 +21,7 @@ const EndOfSession = (
   const scanTicket = () => {
     const groups: Array<Group> = [];
     GroupHelper().AddObjectsTogroups(
-      [Spot().create(zoneService.zoneCenters[0], spotRadius || 6)],
+      [Spot().create(zoneService.zoneCenters[0], Measurements().spotLight.radius)],
       groups,
     );
     GroupHelper().AddObjectsTogroups(
@@ -40,10 +39,6 @@ const EndOfSession = (
   const goToTouchtable = () => {
     const groups: Array<Group> = [];
     GroupHelper().AddObjectsTogroups(
-      [Spot().create(zoneService.middleZoneCenter, spotRadius || 6)],
-      groups,
-    );
-    GroupHelper().AddObjectsTogroups(
       TextHelper().displayTextFromRecordWithIcon(
         HelperText().WalkToTouchtable(new Vector3(-1.5,0,0)),
         Colors().white,
@@ -58,7 +53,7 @@ const EndOfSession = (
   const goOnline = () => {
     const groups: Array<Group> = [];
     GroupHelper().AddObjectsTogroups(
-      [Spot().create(new Vector3(zoneService.zoneCenters[zoneService.zoneCenters.length - 1].x, zoneService.zoneCenters[zoneService.zoneCenters.length - 1].y, zoneService.zoneCenters[zoneService.zoneCenters.length - 1].z), spotRadius || 6)],
+      [Spot().create(new Vector3(zoneService.zoneCenters[zoneService.zoneCenters.length - 1].x, zoneService.zoneCenters[zoneService.zoneCenters.length - 1].y, zoneService.zoneCenters[zoneService.zoneCenters.length - 1].z), Measurements().spotLight.radius)],
       groups,
     );
     GroupHelper().AddObjectsTogroups(
