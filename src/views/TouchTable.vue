@@ -18,7 +18,7 @@ export default defineComponent({
   },
   setup: (props) => {
     const router = useRouter()
-    const startId: string = '197996d9-6613-42cb-81f9-1dbdfee2635f'
+    const startId: string = '83f2f012-1691-4e02-841f-0cdc85bd81d8'
 
     router.push('/touchtable/' + startId)
 

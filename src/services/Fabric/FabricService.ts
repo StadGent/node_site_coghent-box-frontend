@@ -1,8 +1,6 @@
 import { fabric } from 'fabric';
 import { FabricDefaults, fabricdefaults } from './defaults.fabric';
 import { router } from '@/router';
-import { image } from 'd3';
-import Positions from '@/Three/defaults.positions';
 
 type State = {
   canvas: any;
@@ -30,6 +28,7 @@ export default class FabricService {
       positions: this.getAvailablePositions(),
     };
     this.setMainImageOnClick();
+    this.generateRelationOnFrameAdd();
   }
 
   setupFabric() {
@@ -67,8 +66,6 @@ export default class FabricService {
       this.state.canvas.add(image);
       this.state.selectedImage = image;
     });
-
-    return frame;
   }
 
   async generateSecondaryImageFrames(entities: Array<any>) {
@@ -77,11 +74,11 @@ export default class FabricService {
     images.forEach((image, index) => {
       const frame = new fabric.Image.fromURL(image, (image: any) => {
         const randomNumber = this.getRandomNumberInRange(0, positions.length - 1);
+        image.positionNumber = randomNumber;
         image.scaleX = fabricdefaults.canvas.secondaryImage.scale.scaleX;
         image.scaleY = fabricdefaults.canvas.secondaryImage.scale.scaleY;
         image.top = positions[randomNumber].top;
         image.left = positions[randomNumber].left;
-
         image.type = 'image';
         image.hoverCursor = 'pointer';
         image.id = entities[index].id;
@@ -104,8 +101,8 @@ export default class FabricService {
       if (selectedObject.target) {
         selectedObject = selectedObject.target;
         console.log({ selectedObject });
+        this.state.selectedImage = selectedObject.entity;
         router.push('/touchtable/' + selectedObject.id);
-        this.state.selectedImage = selectedObject;
       }
     });
   }
@@ -136,20 +133,27 @@ export default class FabricService {
     }
   }
 
+  clearCanvas() {
+    this.state.canvas.clear();
+    this.state.selectedImage = undefined;
+  }
+
   private generateImageUrls(entities: Array<any> | any) {
     const imageUrls: Array<any> = [];
     if (entities instanceof Array) {
       entities.forEach((entity: any) => {
-        if (entity.primary_mediafile) {
+        if (entity.primary_mediafile || entity.mediafiles[0].filename) {
+          const image = entity.primary_mediafile || entity.mediafiles[0].filename;
           imageUrls.push(
-            `https://api-uat.collectie.gent/iiif/image/iiif/3/${entity.primary_mediafile}/full/1000,/0/default.jpg`,
+            `https://api-uat.collectie.gent/iiif/image/iiif/3/${image}/full/1000,/0/default.jpg`,
           );
         }
       });
     } else {
-      if (entities.primary_mediafile) {
+      if (entities.primary_mediafile || entities.mediafiles[0].filename) {
+        const image = entities.primary_mediafile || entities.mediafiles[0].filename;
         imageUrls.push(
-          `https://api-uat.collectie.gent/iiif/image/iiif/3/${entities.primary_mediafile}/full/1000,/0/default.jpg`,
+          `https://api-uat.collectie.gent/iiif/image/iiif/3/${image}/full/1000,/0/default.jpg`,
         );
       }
     }
@@ -169,7 +173,16 @@ export default class FabricService {
     return foundFrame;
   }
 
+  generateRelationOnFrameAdd() {
+    this.state.canvas.on('object:added', (newObject: any) => {
+      if (this.state.canvas.getObjects().length > 0) {
+        this.generateRelationBetweenFrames(this.state.selectedImage, newObject.target);
+      }
+    });
+  }
+
   generateRelationBetweenFrames(frameId1: string, frameId2: string) {
+    console.log('Generating relation');
     const frame1 = this.getFrameByEntityId(frameId1);
     const frame2 = this.getFrameByEntityId(frameId2);
     if (frame1 && frame2) {

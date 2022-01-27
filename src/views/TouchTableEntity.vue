@@ -1,4 +1,5 @@
 <template>
+<div class="touchtable">
   <touch-header/>
   <canvas id="canvas" class="touchcanvas" />
   <CardComponent :sideStrip="true" :large="true" :reverseColors="true" class="infocard" v-if="entity">
@@ -11,6 +12,7 @@
       </div>
       </div>
   </CardComponent>
+</div>
 </template>
 
 <script lang="ts">
@@ -33,7 +35,7 @@ export default defineComponent({
   setup: () => {
       const route = useRoute()
       const id = asString(route.params['entityID'])
-      const { result, onResult, refetch } = useQuery(GetTouchTableEntityByIdDocument, { id })
+      const { result, onResult:onEntityResult, refetch } = useQuery(GetTouchTableEntityByIdDocument, { id })
       const relationStringArray = ref<string[]>([])
       const relationsLabelArray = ref<string[]>([])
       const entity = ref<any>()
@@ -70,8 +72,9 @@ export default defineComponent({
       })
 
       watch(() => entity.value, () => {
-        console.log('refetch relations')
       if(entity.value){
+        console.log('refetch relations')
+        console.log(entity.value)
         refetchRelations({
         limit: 0,
         skip: entity.value,
@@ -95,38 +98,31 @@ export default defineComponent({
             tempStringArray.push(relation.key)
             tempLabelArray.push(relation.value)
           })
-          console.log({tempStringArray})
-          tempStringArray.filter((string: string) => {'entities/' + headEntityId.value != string})
           relationStringArray.value = tempStringArray
           relationsLabelArray.value = tempLabelArray
       }
 
-      onResult((queryResult: any)=> {
+      onEntityResult((queryResult: any)=> {
         if (queryResult.data){
-            entity.value = queryResult.data.Entity
-            console.log(entity.value)
-            
-            getRelationStrings(entity.value)
             console.log('new canvas')
+            fabricService = undefined
             fabricService = new FabricService();
+            fabricService.clearCanvas()
+            
+            fabricService.generateMainImageFrame(queryResult.data.Entity)
+            entity.value = queryResult.data.Entity
+            console.log({queryResult})
             headEntityId.value = entity.value.id
-            fabricService.generateMainImageFrame(entity.value)
+            getRelationStrings(entity.value)
         }
       })
 
       onRelationResult((relationResult) => {
+      console.log('Relation result')
       if(relationResult.data && fabricService){
         const relationEntities = relationResult.data.Entities?.results
-        console.log({relationResult})
-        fabricService.generateSecondaryImageFrames(relationEntities).then(() => {
-           relationEntities.forEach((entity: any) => {
-          if (headEntityId.value){
-            fabricService?.generateRelationBetweenFrames(headEntityId.value, entity.id)
-          }
-          
-        });
-        } 
-        )
+        const filteredRelationEntities = relationEntities.filter((ent: any) => ent.id != entity.value.id)
+        fabricService.generateSecondaryImageFrames(filteredRelationEntities)
 
       }
   })
@@ -141,6 +137,10 @@ export default defineComponent({
 
 <style scoped>
 .touchcanvas {
+  width: 100%;
+  height: 100%;
+}
+.touchtable {
   width: 3840px;
   height: 2160px;
 }
