@@ -44,7 +44,6 @@ const PlayBook = (): PlayBookFunctions=> {
 
   const mergeActionsWithPlaybook = (actions: Array<PlayBookObject>) => {
     playbookActions = playbookActions.concat(actions);
-    console.log(`NEW Master playbook actions`, playbookActions);
   }
 
   return {

@@ -14,7 +14,7 @@ import ZoneService from '@/services/ZoneService';
 import TaggingService, { Tags } from '@/services/TaggingService';
 
 import Tools from '@/Three/helper.tools';
-import AudioHelper from '@/Three/helper.audio';
+import AudioHelper, { AudioHelperFunctions } from '@/Three/helper.audio';
 import VideoHelper from '@/Three/helper.video';
 import WallGarbageHelper, { GarabageHelperForWall } from '@/Three/helper.wall.garbage';
 import SceneHelper from '@/Three/helper.scene';
@@ -37,7 +37,6 @@ import CustomAnimation from '@/composables/animation';
 
 import PauseProgressbar from '@/Three/shapes.pauseProgressbar';
 import TimerCountdown from '@/Three/shapes.timer';
-
 
 import Template from '@/Three/template.shapes';
 
@@ -75,12 +74,10 @@ export default defineComponent({
     let zoneService: ZoneService;
 
     let audio: HTMLAudioElement;
-    let audioHelper: {
-      DoEvent: (currentTime: number, eventTime: number) => boolean;
-    };
+    let audioHelper: AudioHelperFunctions;
     let garbageHelper: GarabageHelperForWall;
     let audioDuration = 90;
-    let currentFrame = 1;
+    let currentFrame = 0;
     let showProgressOfFrame = false;
     let interval: ReturnType<typeof setTimeout>;
     let storyData: Array<Story> = [];
@@ -259,6 +256,8 @@ export default defineComponent({
 
       audio.onloadedmetadata = () => {
         audioDuration = audio.duration;
+        setAfterFrameScreen();
+        console.log('| MASTER playbook: ', playBook.getPlayBookActions());
         audio.play();
         timing();
       };
@@ -307,20 +306,22 @@ export default defineComponent({
         playBook.lastAction().time + Timing.delayToPauseScreen,
         'Move the spotlight to the center of the screen until the frame ends',
       );
+    };
 
+    const setAfterFrameScreen = () => {
       playBook.addToPlayBook(
         () => {
+          audio.pause();
           showProgressOfFrame = false;
           storyService.setStoryColor();
           if (storyService.isEndOfSession()) {
-            audio.pause();
             garbageHelper.endOfSessionScreen();
             PlayBookBuild(
               threeSvc,
               storyService,
               zoneService,
               taggingService,
-              framePlaybook,
+              playBook,
               spotlight,
               activeStoryData,
             )
@@ -330,9 +331,8 @@ export default defineComponent({
                 // setup();
               });
           } else {
-            currentStory = 0;
+            currentStory.value = 0;
             emit('resetSelectedStory', 0);
-            audio.pause();
             garbageHelper.pauseScreen();
             spotlight.scale.set(
               Measurements().storyCircle.outerCircle,
@@ -344,15 +344,14 @@ export default defineComponent({
               storyService,
               zoneService,
               taggingService,
-              framePlaybook,
+              playBook,
               spotlight,
               activeStoryData,
             ).storyPaused(taggingService);
             chooseStory.value = true;
           }
         },
-        playBook.lastAction().time + 2,
-        // audioDuration,
+        audioDuration + Timing.delayToPauseScreen,
         `Update storyData & show endOfSessions screen or the storyOverview`,
       );
     };
