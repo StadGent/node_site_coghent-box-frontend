@@ -13,6 +13,7 @@ const Defaults = (): {
   boundaryPadding: () => number;
   maxFrames: () => number;
   countdown: () => number;
+  fontPath: () => string;
   circlePoints: () => Array<CirclePoint>;
   StoryColors: () => Array<number>;
   Circle: () => CircleSchema;
@@ -26,8 +27,10 @@ const Defaults = (): {
   const screenZonePadding = () => 2;
   const boundaryPadding = () => 1;
   
-  const maxFrames = () => 4;
+  const maxFrames = () => 2;
   const countdown = () => 3; 
+
+  const fontPath = () => '/Fonts/myFont.json';
 
   const circlePoints = () => {
     return [
@@ -95,6 +98,7 @@ const Defaults = (): {
     boundaryPadding,
     maxFrames,
     countdown,
+    fontPath,
     circlePoints,
     StoryColors,
     Circle,

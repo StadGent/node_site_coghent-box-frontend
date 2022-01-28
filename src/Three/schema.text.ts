@@ -4,6 +4,7 @@ import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 import ChapeHelper from './helper.chape';
 import { CubeParams } from './schema.cube';
 import DefaultColors from './defaults.color';
+import Colors from './defaults.color';
 
 export type FontParams = {
   path: string;
@@ -58,6 +59,7 @@ const SchemaText = (): {
       },
       schema.position,
     );
+    let txt_msh : unknown;
     loader.load(schema.fontParams.path, function (font: any) {
       const txtGeometry = CreateTextGeometry(schema.text, schema.fontParams.size, font);
       const txt_mat = new MeshBasicMaterial({
@@ -69,6 +71,7 @@ const SchemaText = (): {
       txt_mat.opacity = opacity;
       txt_mat.color.convertSRGBToLinear();
       const txt_mesh = new Mesh(txtGeometry, txt_mat);
+      txt_msh = txt_mesh;
       txtBox.add(txt_mesh);
     });
     return txtBox;

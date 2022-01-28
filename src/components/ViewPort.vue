@@ -11,6 +11,7 @@ import { Entity as _Entity, Story } from '@/models/GraphqlModel';
 import ThreeService from '@/services/ThreeService';
 import StoryService from '@/services/StoryService';
 import ZoneService from '@/services/ZoneService';
+import TextService from '@/services/TextService';
 import TaggingService, { Tags } from '@/services/TaggingService';
 
 import Tools from '@/Three/helper.tools';
@@ -37,7 +38,6 @@ import CustomAnimation from '@/composables/animation';
 
 import PauseProgressbar from '@/Three/shapes.pauseProgressbar';
 
-import TimerCountdown from '@/Three/shapes.timer';
 import Template from '@/Three/template.shapes';
 
 export default defineComponent({
@@ -68,7 +68,8 @@ export default defineComponent({
     const playBook = PlayBook();
 
     const taggingService = new TaggingService();
-
+    
+    let textService: TextService;
     let threeSvc: ThreeService;
     let storyService: StoryService;
     let zoneService: ZoneService;
@@ -166,22 +167,22 @@ export default defineComponent({
       ).initialSpotLight();
       storyService.setStoryPausedPositions(zoneService.zonesInnerToOuter);
 
-      // setData();
+      setData();
 
-      await PlayBookBuild(
-        threeSvc,
-        storyService,
-        zoneService,
-        taggingService,
-        playBook,
-        spotlight,
-        activeStoryData,
-      )
-        .startOfSession()
-        .finally(async () => {
-          garbageHelper.startOfSession();
-          setData();
-        });
+      // await PlayBookBuild(
+      //   threeSvc,
+      //   storyService,
+      //   zoneService,
+      //   taggingService,
+      //   playBook,
+      //   spotlight,
+      //   activeStoryData,
+      // )
+      //   .startOfSession()
+      //   .finally(async () => {
+      //     garbageHelper.startOfSession();
+      //     setData();
+      //   });
     };
 
     const setData = async () => {
@@ -351,7 +352,7 @@ export default defineComponent({
             chooseStory.value = true;
           }
         },
-        playBook.lastAction().time +1,
+        playBook.lastAction().time + 1,
         // audioDuration,
         `Update storyData & show endOfSessions screen or the storyOverview`,
       );
@@ -381,21 +382,19 @@ export default defineComponent({
 
     onMounted(async () => {
       threeSvc = new ThreeService(viewport, threeDefaultsWall, taggingService);
+      textService = new TextService(threeSvc);
       zoneService = new ZoneService(
         threeSvc.state.sceneDimensions,
         Defaults().screenZones(),
       );
       garbageHelper = WallGarbageHelper(threeSvc, taggingService);
       threeSvc.ClearScene();
-
-      const progress = TestSingleComponent().pauseStoryCircleProgress(new Vector3(0,0,0));
-      threeSvc.AddGroupsToScene(progress.ring, Tags.Testing);
-      SceneHelper(threeSvc,storyService).addFrameProgressDotsToScene(progress.dots,'',3,true);
+      threeSvc.AddToScene(Tools().Grid(), Tags.Testing);
 
       threeSvc.Animate();
     });
 
-    return { viewport, videoElement };
+      return { viewport, videoElement };
   },
 });
 </script>

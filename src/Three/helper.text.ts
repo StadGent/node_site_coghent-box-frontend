@@ -5,6 +5,7 @@ import DefaultColors from './defaults.color';
 import GroupHelper from './helper.group';
 import SchemaText, { FontParams } from './schema.text';
 import Measurements from './defaults.measurements';
+import Defaults from './defaults.config';
 
 const TextHelper = (): {
   CreateTextFromRecord: (words: Record<string, Vector3>, color?: number) => Array<Mesh>;
@@ -37,7 +38,7 @@ const TextHelper = (): {
       fontParams: {
         color: params?.color || DefaultColors().white,
         size: params?.size || Measurements().text.size.small,
-        path: '/Fonts/myFont.json',
+        path: Defaults().fontPath(),
       },
       textBoxParams: {
         height: textBox?.height || 0.5,
