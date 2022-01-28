@@ -166,6 +166,14 @@ export default class FabricService {
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
+  private objectIsFrame(object: any): boolean {
+    if (object.entity) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   getFrameByEntityId(frameId: string) {
     const foundFrame: any = this.state.canvas
       .getObjects()
@@ -175,16 +183,17 @@ export default class FabricService {
 
   generateRelationOnFrameAdd() {
     this.state.canvas.on('object:added', (newObject: any) => {
-      if (this.state.canvas.getObjects().length > 0) {
+      if (
+        this.state.canvas.getObjects().length > 0 &&
+        this.objectIsFrame(newObject.target)
+      ) {
         this.generateRelationBetweenFrames(this.state.selectedImage, newObject.target);
       }
     });
   }
 
-  generateRelationBetweenFrames(frameId1: string, frameId2: string) {
+  generateRelationBetweenFrames(frame1: any, frame2: any) {
     console.log('Generating relation');
-    const frame1 = this.getFrameByEntityId(frameId1);
-    const frame2 = this.getFrameByEntityId(frameId2);
     if (frame1 && frame2) {
       const closestCornerIndex = this.getClosestCorner(frame1, frame2);
       const line = [
