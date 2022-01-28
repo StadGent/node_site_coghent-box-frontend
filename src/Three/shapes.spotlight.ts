@@ -26,7 +26,7 @@ const Spot = (): SpotlightFunctions => {
       CircleHelper().CreateSchema(
         new Vector3(startPosition.x, startPosition.y, startPosition.z),
         1,
-        color || Colors().white,
+        color || Colors().progressGrey,
         Measurements().spotLight.opacity,
       ),
       true,

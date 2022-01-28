@@ -1,6 +1,6 @@
 import Common from '@/composables/common';
 import { StoryData } from '@/services/StoryService';
-import { BoxGeometry, BufferGeometry, Group, Material, MathUtils, Mesh, MeshBasicMaterial, RingGeometry, Vector3 } from 'three';
+import { BoxGeometry, BufferGeometry, CircleGeometry, Group, Material, MathUtils, Mesh, MeshBasicMaterial, MeshNormalMaterial, RingGeometry, Vector3 } from 'three';
 import Colors from './defaults.color';
 import HelperText from './defaults.helperText';
 import Measurements from './defaults.measurements';
@@ -15,7 +15,8 @@ import MetadataLabel from './shapes.metadataLabel';
 import PauseProgressbar, { PauseProgressbarObjects } from './shapes.pauseProgressbar';
 
 const TestSingleComponent = (): {
-  testCube: (_position: Vector3) => Mesh<BoxGeometry, MeshBasicMaterial>;
+  testCube: (_position: Vector3, _dimensions: Vector3) => Mesh<BoxGeometry, MeshBasicMaterial>;
+  testImageCube: (_position: Vector3) => Mesh<BoxGeometry, MeshBasicMaterial>;
   testText: (_position: Vector3) => Mesh<BufferGeometry, any>;
   horizontalProgressbar: Array<Group>;
   circularProgressbar: Mesh<BufferGeometry, Material | Material[]>;
@@ -28,10 +29,14 @@ const TestSingleComponent = (): {
   metadataLabelWithConnection: (position: Vector3, text: string) => Array<Group>;
   pauseStoryCircleProgress: (_position: Vector3) => PauseProgressbarObjects;
   countdownCircle: (_position: Vector3, _progress: number, _color?: number) => Mesh<RingGeometry, MeshBasicMaterial>;
+  spotlight: (_position: Vector3) => Mesh<CircleGeometry, MeshBasicMaterial>;
 } => {
 
-  const testCube = (_position: Vector3) => {
-    return SchemaCube().CreateCube({ position: _position, params: { color: Colors().green, width: 1, height: 1, opacity: 0.6 } as CubeParams } as CubeSchema);
+  const testCube = (_position: Vector3, _dimensions: Vector3) => {
+    return SchemaCube().CreateCube({ position: _position, params: { color: Colors().green, width: _dimensions.x, height: _dimensions.y, opacity: 1 } as CubeParams } as CubeSchema);
+  };
+  const testImageCube = (_position: Vector3) => {
+    return SchemaCube().CreateImageCube({ position: _position, params: { url: 'https://images.unsplash.com/photo-1453728013993-6d66e9c9123a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2370&q=80', color: Colors().green, width: 5, height: 7, opacity: 1 } as CubeParams } as CubeSchema);
   };
 
   const testText = (_position: Vector3) => {
@@ -78,8 +83,8 @@ const TestSingleComponent = (): {
       totalOfFramesSeen: 1,
       storySeen: false,
       storyColor: Colors().green,
-      pausedPosition: new Vector3(0,0,0),
-  }
+      pausedPosition: new Vector3(0, 0, 0),
+    }
     const schema = {
       position: _position,
       params: { radius: Measurements().storyCircle.progressRadius - Measurements().progressBar.thickness / 2, color: Colors().green } as CircleParams,
@@ -106,8 +111,19 @@ const TestSingleComponent = (): {
     return _ring;
   };
 
+  const spotlight = (_position: Vector3) => {
+    const geometry = new CircleGeometry(3, 50);
+    const material = new MeshBasicMaterial({ color: Colors().progressGrey, opacity: 0.4, transparent: true });
+    material.color.convertSRGBToLinear();
+    material.clipIntersection = true;
+    const mesh = new Mesh(geometry,material);
+    Common().setPosition(mesh, _position)
+    return mesh;
+  }
+
   return {
     testCube,
+    testImageCube,
     testText,
     horizontalProgressbar,
     circularProgressbar,
@@ -117,6 +133,7 @@ const TestSingleComponent = (): {
     metadataLabelWithConnection,
     pauseStoryCircleProgress,
     countdownCircle,
+    spotlight,
   }
 };
 
