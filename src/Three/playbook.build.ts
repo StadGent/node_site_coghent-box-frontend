@@ -150,7 +150,8 @@ const PlayBookBuild = (
       new Vector3(
         storyService.activeStoryData.pausedPosition.x,
         -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight,
-        Layers.scene + Layers.fraction),
+        storyService.activeStoryData.pausedPosition.z
+        ),
         storyService.activeStoryData,
     );
     await SceneHelper(threeService, storyService).addPauseScreenObjectsToScene(StoryPaused(taggingService, zoneService, storyService).Create(inactiveStories), zoneService.sceneZone());

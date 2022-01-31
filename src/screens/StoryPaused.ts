@@ -5,7 +5,6 @@ import StoryCircle, { StoryCircleObjects } from '../Three/section.storyCircle';
 
 import useStory from '@/composables/useStory';
 import { Story } from '@/models/GraphqlModel';
-import CircularProgressBar from '@/Three/shapes.circularProgressbar';
 import Colors from '@/Three/defaults.color';
 import TextHelper from '@/Three/helper.text';
 import SchemaCube, { CubeSchema } from '@/Three/schema.cube';
@@ -75,7 +74,7 @@ const StoryPaused = (taggingService: TaggingService, zoneService: ZoneService, _
       storyCircles[_data.storyId] = storyCircle(
         _data,
         useStory(_storyService).getStory(_data.storyId),
-        new Vector3(_data.pausedPosition.x, bannerTopPosition, Layers.scene + Layers.fraction),
+        new Vector3(_data.pausedPosition.x, bannerTopPosition,_data.pausedPosition.z),
         _data.storyColor,
       )
     });
