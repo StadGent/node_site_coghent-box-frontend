@@ -91,7 +91,7 @@ export default defineComponent({
     let activeStoryData = reactive<Story>({} as Story);
     let spotlight: Mesh;
 
-    let subtitles = ref<string>('initial subtitle');
+    let subtitles = ref<string>('');
 
     watch(
       () => props.storySelected,
@@ -205,13 +205,15 @@ export default defineComponent({
       let currentSubtitle = 1;
       interval = setInterval(async () => {
         showProgressOfFrame = true;
-        const subtitleParams = subtitleService.getSubtitleForTime(
+        if(subtitleService.subtitles.length > 0){
+          const subtitleParams = subtitleService.getSubtitleForTime(
           audio.currentTime,
           subtitleService.subtitles,
           currentSubtitle,
         );
         subtitles.value = subtitleParams.subtitle;
         currentSubtitle = subtitleParams.index;
+        }
 
         if (
           audioHelper.DoEvent(
@@ -254,7 +256,7 @@ export default defineComponent({
       const subtitleLink = useFrame(threeSvc).getSubtitleForFrame(
         activeStoryData.frames[currentFrame],
       );
-      subtitleService.downloadSRTFile(subtitleLink as string);
+      await subtitleService.downloadSRTFile(subtitleLink as string);
 
       let progress: Array<Group> = [];
       audio.ontimeupdate = () => {

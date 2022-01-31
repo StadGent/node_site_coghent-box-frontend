@@ -23,14 +23,18 @@ export default class SubtitleService {
   }
 
   async downloadSRTFile(_url: string, _convertToJson = true) {
-    let data: string | Array<srtObject> = `{}`;
-    const response = await axios.get(_url);
-    if (response.status == 200) {
-      data = response.data
-    }
-    if (_convertToJson) {
-      data = this.srtToJsonObjects(data as string);
-      this.setSRTObjects(data);
+    let data: string | Array<srtObject> | null = `{}`;
+    if (_url) {
+      const response = await axios.get(_url);
+      if (response.status == 200) {
+        data = response.data;
+      }
+      if (_convertToJson) {
+        data = this.srtToJsonObjects(data as string);
+        this.setSRTObjects(data);
+      }
+    }else {
+      data = null;
     }
     return data;
   }
@@ -65,19 +69,19 @@ export default class SubtitleService {
   getSubtitleForTime(_currentTime: number, _data: Array<srtObject>, _index: number) {
     let currentSubtitle = '';
     const action = _data.filter(_objects => _index == parseInt(_objects.id))[0];
-    
-    
-    if (_currentTime  == this.timeToSeconds(action.startTime)
-     || _currentTime >= this.timeToSeconds(action.startTime)
-     && _currentTime <= this.timeToSeconds(action.endTime)) {
-       if(Development().showSubtitleLogs()){
+
+
+    if (_currentTime == this.timeToSeconds(action.startTime)
+      || _currentTime >= this.timeToSeconds(action.startTime)
+      && _currentTime <= this.timeToSeconds(action.endTime)) {
+      if (Development().showSubtitleLogs()) {
         console.log('| Subtitle Action');
-        console.log('| currentAction startTime:',this.timeToSeconds(_data.filter(_objects => _index == parseInt(_objects.id))[0].startTime));
-        console.log('| currentAction endTime:',this.timeToSeconds(_data.filter(_objects => _index == parseInt(_objects.id))[0].endTime));
-        console.log('| currentAction startTime:',this.timeToSeconds(_data.filter(_objects => _index+1 == parseInt(_objects.id))[0].startTime));
-        console.log('| currentAction endTime:',this.timeToSeconds(_data.filter(_objects => _index+1 == parseInt(_objects.id))[0].endTime));
+        console.log('| currentAction startTime:', this.timeToSeconds(_data.filter(_objects => _index == parseInt(_objects.id))[0].startTime));
+        console.log('| currentAction endTime:', this.timeToSeconds(_data.filter(_objects => _index == parseInt(_objects.id))[0].endTime));
+        console.log('| currentAction startTime:', this.timeToSeconds(_data.filter(_objects => _index + 1 == parseInt(_objects.id))[0].startTime));
+        console.log('| currentAction endTime:', this.timeToSeconds(_data.filter(_objects => _index + 1 == parseInt(_objects.id))[0].endTime));
         console.log('| --------------------------------');
-       }       
+      }
       currentSubtitle = _data[_index].text;
       _index++;
     } else {
