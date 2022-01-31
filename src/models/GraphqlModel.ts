@@ -79,8 +79,8 @@ export type ComponentMetadata = {
   timestamp_zoom: number;
   position: Position;
   scale: number;
-  audioFile?: string;
-  subtitleFile?: string;
+  audioFile: string;
+  subtitleFile: string;
 };
 
 export type Asset = {
@@ -90,7 +90,6 @@ export type Asset = {
   dimensions: Array<Metadata>;
   timestamps: Array<Metadata>;
   mediafiles: Array<Mediafiles>;
-  relations: Array<Relation>
   primary_mediafile_location: string;
 };
 

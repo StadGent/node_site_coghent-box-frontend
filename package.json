@@ -19,6 +19,7 @@
     "graphql": "^15.6.1",
     "hammerjs": "^2.0.8",
     "mqtt": "^4.2.8",
+    "srt-parser-2": "^1.1.7",
     "three": "^0.133.1",
     "vue": "^3.0.0",
     "vue-class-component": "^8.0.0-0",

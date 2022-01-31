@@ -16,12 +16,13 @@ const useFrame = (_threeService: ThreeService): {
   CreateFrameRecord: (frames: any) => Record<string, string>;
   getLastAssetRelationMetadata: (activeStoryData: Story, currentFrameIndex: number) => ComponentMetadata;
   getAudioForFrame: (frame: Frame) => string;
-  getRelationMetadata: (frame: Frame) => Array<ComponentMetadata>; 
-  getStartTimestampsWithTheirAsset: (frame: Frame) => Record<string,number>; 
+  getSubtitleForFrame: (frame: Frame) => string | null;
+  getRelationMetadata: (frame: Frame) => Array<ComponentMetadata>;
+  getStartTimestampsWithTheirAsset: (frame: Frame) => Record<string, number>;
 } => {
   const title = (_frame: Entity) => {
     let _title = '';
-    if( _frame.title.length > 0)
+    if (_frame.title.length > 0)
       _title = _frame.title[0].value
     return _title;
   };
@@ -77,27 +78,36 @@ const useFrame = (_threeService: ThreeService): {
     });
     return relationMetadata;
   };
-  
+
   const getAudioForFrame = (frame: Frame) => {
     let audioFiles: Array<string> = [];
     let audio = 'No audio for frame';
     audioFiles = [...frame.relationMetadata.filter(_data => _data.audioFile?.includes('download')).map(_item => _item.audioFile as string)];
-    if(audioFiles.length >0){
+    if (audioFiles.length > 0 && audioFiles[0].includes('.mp3')) {
       audio = audioFiles[0];
     }
-    console.log({audio});
+    console.log({ audio });
     return audio;
-  }
+  };
+
+  const getSubtitleForFrame = (frame: Frame) => {
+    let subtitle = null;
+    const subtitles = frame.relationMetadata.filter(_item => _item.subtitleFile);
+    if (subtitles.length > 0)
+      subtitle = subtitles[0].subtitleFile;
+    console.log({ subtitles });
+    return subtitle
+  };
 
   const getRelationMetadata = (frame: Frame) => {
     return frame.relationMetadata;
   };
 
   const getStartTimestampsWithTheirAsset = (frame: Frame) => {
-    const relationMetadata = getRelationMetadata(frame)
-    const assetWithStartTime: Record<string,number> = {};
+    const relationMetadata = getRelationMetadata(frame);
+    const assetWithStartTime: Record<string, number> = {};
     relationMetadata.map(metadata => {
-      if(!metadata.key.includes('mediafiles/')){
+      if (!metadata.key.includes('mediafiles/')) {
         assetWithStartTime[Common().FilterOutIdAfterSlash(metadata.key)] = metadata.timestamp_start;
       }
     })
@@ -112,6 +122,7 @@ const useFrame = (_threeService: ThreeService): {
     CreateFrameRecord,
     getLastAssetRelationMetadata,
     getAudioForFrame,
+    getSubtitleForFrame,
     getRelationMetadata,
     getStartTimestampsWithTheirAsset,
   };

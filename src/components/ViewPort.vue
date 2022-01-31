@@ -1,6 +1,8 @@
 <template>
   <div ref="viewport" class="viewport" />
-  <video ref="videoElement" />
+  <div class="subtitles">
+    <p>{{subtitles}}</p>
+  </div>
 </template>
 
 <script lang="ts">
@@ -40,6 +42,9 @@ import PauseProgressbar from '@/Three/shapes.pauseProgressbar';
 
 import Template from '@/Three/template.shapes';
 
+import SubtitleService from '@/services/SubtitleService';
+import useFrame from '@/composables/useFrame';
+
 export default defineComponent({
   name: 'ViewPort',
   props: {
@@ -68,22 +73,25 @@ export default defineComponent({
     const playBook = PlayBook();
 
     const taggingService = new TaggingService();
-    
+
     let textService: TextService;
     let threeSvc: ThreeService;
     let storyService: StoryService;
     let zoneService: ZoneService;
+    let subtitleService: SubtitleService;
 
     let audio: HTMLAudioElement;
     let audioHelper: AudioHelperFunctions;
     let garbageHelper: GarabageHelperForWall;
     let audioDuration = 90;
-    let currentFrame = 0;
+    let currentFrame = 1;
     let showProgressOfFrame = false;
     let interval: ReturnType<typeof setTimeout>;
     let storyData: Array<Story> = [];
     let activeStoryData = reactive<Story>({} as Story);
     let spotlight: Mesh;
+
+    let subtitles = ref<string>('initial subtitle');
 
     watch(
       () => props.storySelected,
@@ -150,7 +158,7 @@ export default defineComponent({
         storyService = value;
         storyService.setActiveStory(storyService.stories[0].id);
         //TODO:
-        // setup();
+        setup();
       },
     );
 
@@ -194,8 +202,17 @@ export default defineComponent({
 
     const timing = () => {
       let currentFunction = 0;
+      let currentSubtitle = 1;
       interval = setInterval(async () => {
         showProgressOfFrame = true;
+        const subtitleParams = subtitleService.getSubtitleForTime(
+          audio.currentTime,
+          subtitleService.subtitles,
+          currentSubtitle,
+        );
+        subtitles.value = subtitleParams.subtitle;
+        currentSubtitle = subtitleParams.index;
+
         if (
           audioHelper.DoEvent(
             audio.currentTime,
@@ -216,7 +233,7 @@ export default defineComponent({
           currentFunction = 0;
           clearInterval(interval);
         }
-      }, 100);
+      }, 1000);
       interval;
     };
 
@@ -234,6 +251,11 @@ export default defineComponent({
       ).storyData(storyService, activeStoryData, currentFrame);
 
       audio = AudioHelper(threeSvc).setAudioTrack(activeStoryData, currentFrame);
+      const subtitleLink = useFrame(threeSvc).getSubtitleForFrame(
+        activeStoryData.frames[currentFrame],
+      );
+      subtitleService.downloadSRTFile(subtitleLink as string);
+
       let progress: Array<Group> = [];
       audio.ontimeupdate = () => {
         if (showProgressOfFrame) {
@@ -352,8 +374,8 @@ export default defineComponent({
             chooseStory.value = true;
           }
         },
-        playBook.lastAction().time + 1,
-        // audioDuration,
+        // playBook.lastAction().time + 1,
+        audioDuration,
         `Update storyData & show endOfSessions screen or the storyOverview`,
       );
     };
@@ -388,17 +410,31 @@ export default defineComponent({
         Defaults().screenZones(),
       );
       garbageHelper = WallGarbageHelper(threeSvc, taggingService);
+      subtitleService = new SubtitleService();
       threeSvc.ClearScene();
       threeSvc.AddToScene(Tools().Grid(), Tags.Testing);
 
       threeSvc.Animate();
     });
 
-      return { viewport, videoElement };
+    return { viewport, videoElement, subtitles };
   },
 });
 </script>
 <style>
+
+.subtitles {
+  width: 100%;
+  height: 100px;
+  position: fixed;
+  bottom: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  color: white;
+}
+
 .viewport {
   position: relative;
 }
