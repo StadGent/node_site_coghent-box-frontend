@@ -6,7 +6,7 @@ const Development = (): {
   showSubtitleLogs: () => true | false;
 } => {
   const showZonesInOverview = () => false;
-  const showDevTimeLogs = () => true;
+  const showDevTimeLogs = () => false;
   const showGarbageLogs = () => false;
   const showMoveLogs = () => false;
   const showSubtitleLogs = () => false;

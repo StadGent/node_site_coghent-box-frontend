@@ -92,4 +92,14 @@ export default class SubtitleService {
       index: _index,
     };
   }
+
+  returnPreviousSubtitle(_index: number){
+    let previousText = '';
+    if(_index > 1){
+      _index -= 1;
+      const action = this.subtitles.filter(_action => _index == parseInt(_action.id))[0];
+      previousText = action.text;
+    }    
+    return previousText;
+  }
 }

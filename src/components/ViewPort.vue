@@ -211,7 +211,7 @@ export default defineComponent({
           subtitleService.subtitles,
           currentSubtitle,
         );
-        subtitles.value = subtitleParams.subtitle;
+        subtitles.value = `${subtitleParams.subtitle}`;
         currentSubtitle = subtitleParams.index;
         }
 
@@ -232,6 +232,7 @@ export default defineComponent({
           currentFunction++;
         }
         if (currentFunction > playBook.getPlayBookActions().length - 1) {
+          subtitles.value = '';
           currentFunction = 0;
           clearInterval(interval);
         }
@@ -414,7 +415,6 @@ export default defineComponent({
       garbageHelper = WallGarbageHelper(threeSvc, taggingService);
       subtitleService = new SubtitleService();
       threeSvc.ClearScene();
-      threeSvc.AddToScene(Tools().Grid(), Tags.Testing);
 
       threeSvc.Animate();
     });
@@ -433,6 +433,10 @@ export default defineComponent({
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.subtitles p{
+  width: 600px;
+  word-break: break-all;
   font-size: 24px;
   color: white;
 }
