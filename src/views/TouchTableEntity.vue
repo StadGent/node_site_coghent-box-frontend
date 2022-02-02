@@ -4,11 +4,11 @@
   <div id="canvascontainer"></div>
   <canvas id="canvas" class="touchcanvas" />
   <CardComponent :sideStrip="true" :large="true" :reverseColors="true" class="infocard" v-if="entity">
-      <h2 class="font-bold text-4xl pb-4">{{entity.title[0].value}}</h2>
-      <p v-if="entity.description[0].value">{{entity.description[0].value}}</p>
-      <p v-else>This item does not have a description</p>
+      <h2 class="font-bold text-6xl pb-6">{{entity.title[0].value}}</h2>
+      <p class="text-4xl" v-if="entity.description[0].value">{{entity.description[0].value}}</p>
+      <p class="text-4xl" v-else>This item does not have a description</p>
       <div class="flex flex-wrap mt-4">
-        <div v-for="(item, index) in relationsLabelArray" :key="index" class="bg-tag-neutral text-text-dark py-2 px-4 mr-2 my-2 text-center">
+        <div v-for="(item, index) in relationsLabelArray" :key="index" class="bg-tag-neutral text-text-dark py-4 px-6 mr-2 my-2 text-center text-4xl font-bold">
           <p>{{item}}</p>
       </div>
       </div>
@@ -96,8 +96,10 @@ export default defineComponent({
         const tempLabelArray: Array<string> = []
         entity.relations
           .forEach((relation: any) => {
-            tempStringArray.push(relation.key)
-            tempLabelArray.push(relation.value)
+            if (tempStringArray.indexOf(relation.key) < 0){
+              tempStringArray.push(relation.key)
+              tempLabelArray.push(relation.value)
+            }
           })
           relationStringArray.value = tempStringArray
           relationsLabelArray.value = tempLabelArray
@@ -149,7 +151,8 @@ export default defineComponent({
     top: 100px;
     left: 100px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-    width: 500px;
+    width: 800px;
+    height: calc(2160px - 200px)
 }
 #canvas{
   background-color: #F0EDE6;

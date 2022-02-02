@@ -1,6 +1,10 @@
 import { fabric } from 'fabric';
 import { fabricdefaults } from './defaults.fabric';
-import { underlineHelper } from './helper.fabric';
+import {
+  underlineHelper,
+  ImageUrlHelper,
+  availablePositionHelper,
+} from './helper.fabric';
 import { router } from '@/router';
 import { image } from 'd3';
 
@@ -10,12 +14,12 @@ type State = {
   positions: Array<Position>;
 };
 
-type Scale = {
+export type Scale = {
   scaleX: number;
   scaleY: number;
 };
 
-type Position = {
+export type Position = {
   left: number;
   top: number;
 };
@@ -33,7 +37,7 @@ export default class FabricService {
     this.state = {
       canvas: this.setupFabric(),
       selectedImage: undefined,
-      positions: this.getAvailablePositions(),
+      positions: availablePositionHelper(),
     };
     this.setMainImageOnClick();
     this.generateRelationOnFrameAdd();
@@ -43,7 +47,9 @@ export default class FabricService {
     const canvas = new fabric.Canvas('canvas');
     canvas.preserveObjectStacking = true; // keep z-index of selected objects
     canvas.selection = false; // no group selection
-    canvas.setHeight(fabricdefaults.canvas.dimensions.height);
+    canvas.setHeight(
+      fabricdefaults.canvas.dimensions.height - fabricdefaults.canvas.header.height,
+    );
     canvas.setWidth(fabricdefaults.canvas.dimensions.width);
     canvas.setBackgroundColor('#F0EDE6');
     return canvas;
@@ -58,7 +64,7 @@ export default class FabricService {
   }
 
   generateMainImageFrame(entity: any) {
-    const image = this.generateImageUrls(entity)[0];
+    const image = ImageUrlHelper(entity)[0];
     const frame = new fabric.Image.fromURL(image, (image: any) => {
       image.top = fabricdefaults.canvas.selectedImage.canvasPosition.top;
       image.left = fabricdefaults.canvas.selectedImage.canvasPosition.left;
@@ -80,7 +86,7 @@ export default class FabricService {
 
   async generateSecondaryImageFrames(entities: Array<any>) {
     let positions: Array<Position> = this.state.positions;
-    const images: Array<string> = this.generateImageUrls(entities);
+    const images: Array<string> = ImageUrlHelper(entities);
     images.forEach((image, index) => {
       const frame = new fabric.Image.fromURL(image, (image: any) => {
         const randomNumber = this.getRandomNumberInRange(0, positions.length - 1);
@@ -101,11 +107,6 @@ export default class FabricService {
     });
   }
 
-  changeFrameScale(frame: any, scale: Scale) {
-    frame.scaleX = scale.scaleX;
-    frame.scaleY = scale.scaleY;
-  }
-
   setMainImageOnClick() {
     this.state.canvas.on('mouse:down', (selectedObject: any) => {
       if (selectedObject.target) {
@@ -117,41 +118,9 @@ export default class FabricService {
     });
   }
 
-  private getAvailablePositions() {
-    const availablePositionArray: Array<Position> = [];
-    fabricdefaults.canvas.secondaryImage.positions.xAxis.forEach((xPosition) => {
-      fabricdefaults.canvas.secondaryImage.positions.yAxis.forEach((yPosition) => {
-        availablePositionArray.push({ top: yPosition, left: xPosition });
-      });
-    });
-    return availablePositionArray;
-  }
-
   clearCanvas() {
     this.state.canvas.clear();
     this.state.selectedImage = undefined;
-  }
-
-  private generateImageUrls(entities: Array<any> | any) {
-    const imageUrls: Array<any> = [];
-    if (entities instanceof Array) {
-      entities.forEach((entity: any) => {
-        if (entity.primary_mediafile || entity.mediafiles[0].filename) {
-          const image = entity.primary_mediafile || entity.mediafiles[0].filename;
-          imageUrls.push(
-            `https://api-uat.collectie.gent/iiif/image/iiif/3/${image}/full/1000,/0/default.jpg`,
-          );
-        }
-      });
-    } else {
-      if (entities.primary_mediafile || entities.mediafiles[0].filename) {
-        const image = entities.primary_mediafile || entities.mediafiles[0].filename;
-        imageUrls.push(
-          `https://api-uat.collectie.gent/iiif/image/iiif/3/${image}/full/1000,/0/default.jpg`,
-        );
-      }
-    }
-    return imageUrls;
   }
 
   private getRandomNumberInRange(min: number, max: number) {

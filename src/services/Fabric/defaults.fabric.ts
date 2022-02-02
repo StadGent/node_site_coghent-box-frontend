@@ -1,5 +1,8 @@
 type FabricDefaults = {
   canvas: {
+    header: {
+      height: number;
+    };
     amountOfFrames: number;
     dimensions: {
       width: number;
@@ -39,6 +42,7 @@ type FabricDefaults = {
       positions: {
         xAxis: Array<number>;
         yAxis: Array<number>;
+        blockedPositions: Array<{ xIndex: number; yIndex: number }>;
       };
       scale: {
         scaleX: number;
@@ -50,6 +54,9 @@ type FabricDefaults = {
 
 const fabricdefaults: FabricDefaults = {
   canvas: {
+    header: {
+      height: 160,
+    },
     amountOfFrames: 25,
     dimensions: {
       width: 3840,
@@ -58,11 +65,11 @@ const fabricdefaults: FabricDefaults = {
     selectedImage: {
       canvasPosition: {
         left: 3840 / 2,
-        top: 2160 - 20,
+        top: 2160 - 200,
       },
       scale: {
-        scaleX: 0.3,
-        scaleY: 0.3,
+        scaleX: 0.4,
+        scaleY: 0.4,
       },
       controls: {
         bl: false,
@@ -82,7 +89,7 @@ const fabricdefaults: FabricDefaults = {
       underline: {
         spacing: 10,
         color: '#02A77F',
-        stroke: 5,
+        stroke: 10,
       },
     },
     secondaryImage: {
@@ -95,11 +102,12 @@ const fabricdefaults: FabricDefaults = {
           (3840 / 7) * 5,
           (3840 / 7) * 6,
         ],
-        yAxis: [2160 / 7, (2160 / 7) * 2, (2160 / 7) * 3, (2160 / 7) * 4, (2160 / 7) * 5],
+        yAxis: [2160 / 6, (2160 / 6) * 2, (2160 / 6) * 3, (2160 / 6) * 4],
+        blockedPositions: [{ xIndex: 2, yIndex: 3 }],
       },
       scale: {
-        scaleX: 0.2,
-        scaleY: 0.2,
+        scaleX: 0.3,
+        scaleY: 0.3,
       },
     },
   },
