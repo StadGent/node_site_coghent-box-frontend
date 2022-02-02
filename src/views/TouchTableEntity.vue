@@ -22,7 +22,6 @@ import FabricService from '../services/Fabric/FabricService';
 import { useRoute, useRouter } from 'vue-router'
 import { useQuery } from '@vue/apollo-composable'
 import { GetTouchTableEntityByIdDocument, CardComponent, GetTouchTableEntityDocument} from 'coghent-vue-3-component-library'
-import { fabricdefaults } from '@/services/Fabric/defaults.fabric';
 import TouchHeader from '@/components/TouchHeader.vue';
 
 const asString = (x: string | string[]) => (Array.isArray(x) ? x[0] : x)
@@ -113,7 +112,6 @@ export default defineComponent({
             
             fabricService.generateMainImageFrame(queryResult.data.Entity)
             entity.value = queryResult.data.Entity
-            console.log({queryResult})
             headEntityId.value = entity.value.id
             getRelationStrings(entity.value)
         }

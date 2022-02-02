@@ -4,7 +4,6 @@ import { fabric } from 'fabric';
 
 const underlineHelper = (mainImage: any) => {
   const imageCoordinates: Array<Coordinate> = mainImage.getCoords();
-  console.log({ imageCoordinates });
   const bottomCoordinates: Array<Coordinate> = [
     { key: 'bl', x: imageCoordinates[2].x, y: imageCoordinates[2].y },
     { key: 'br', x: imageCoordinates[3].x, y: imageCoordinates[3].y },

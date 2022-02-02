@@ -89,7 +89,7 @@ const fabricdefaults: FabricDefaults = {
       underline: {
         spacing: 10,
         color: '#02A77F',
-        stroke: 10,
+        stroke: 20,
       },
     },
     secondaryImage: {
@@ -102,8 +102,8 @@ const fabricdefaults: FabricDefaults = {
           (3840 / 7) * 5,
           (3840 / 7) * 6,
         ],
-        yAxis: [2160 / 6, (2160 / 6) * 2, (2160 / 6) * 3, (2160 / 6) * 4],
-        blockedPositions: [{ xIndex: 2, yIndex: 3 }],
+        yAxis: [2160 / 6 - 300, 2160 / 6, (2160 / 6) * 2, (2160 / 6) * 3, (2160 / 6) * 4],
+        blockedPositions: [{ xIndex: 2, yIndex: 4 }],
       },
       scale: {
         scaleX: 0.3,
