@@ -1,6 +1,7 @@
 <template>
 <div class="touchtable">
   <touch-header/>
+  <div id="canvascontainer"></div>
   <canvas id="canvas" class="touchcanvas" />
   <CardComponent :sideStrip="true" :large="true" :reverseColors="true" class="infocard" v-if="entity">
       <h2 class="font-bold text-4xl pb-4">{{entity.title[0].value}}</h2>
@@ -107,7 +108,6 @@ export default defineComponent({
             console.log('new canvas')
             fabricService = undefined
             fabricService = new FabricService();
-            fabricService.clearCanvas()
             
             fabricService.generateMainImageFrame(queryResult.data.Entity)
             entity.value = queryResult.data.Entity
@@ -150,5 +150,8 @@ export default defineComponent({
     left: 100px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     width: 500px;
+}
+#canvas{
+  background-color: #F0EDE6;
 }
 </style>

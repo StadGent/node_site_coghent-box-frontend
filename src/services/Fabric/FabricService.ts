@@ -1,6 +1,8 @@
 import { fabric } from 'fabric';
-import { FabricDefaults, fabricdefaults } from './defaults.fabric';
+import { fabricdefaults } from './defaults.fabric';
+import { underlineHelper } from './helper.fabric';
 import { router } from '@/router';
+import { image } from 'd3';
 
 type State = {
   canvas: any;
@@ -16,6 +18,12 @@ type Scale = {
 type Position = {
   left: number;
   top: number;
+};
+
+export type Coordinate = {
+  key?: string;
+  x: number;
+  y: number;
 };
 
 export default class FabricService {
@@ -65,6 +73,8 @@ export default class FabricService {
       image.entity = entity;
       this.state.canvas.add(image);
       this.state.selectedImage = image;
+      const underline = underlineHelper(image);
+      this.state.canvas.add(underline);
     });
   }
 
@@ -115,22 +125,6 @@ export default class FabricService {
       });
     });
     return availablePositionArray;
-  }
-
-  private getClosestCorner(frame1: any, frame2: any) {
-    const centerPoint1 = {
-      top: frame1.top + frame1.height / 2,
-      left: frame1.left + frame1.width / 2,
-    };
-    const centerPoint2 = {
-      top: frame2.top + frame2.height / 2,
-      left: frame2.left + frame2.width / 2,
-    };
-    if (centerPoint2.left < centerPoint1.left) {
-      return 2;
-    } else {
-      return 3;
-    }
   }
 
   clearCanvas() {
@@ -195,12 +189,11 @@ export default class FabricService {
   generateRelationBetweenFrames(frame1: any, frame2: any) {
     console.log('Generating relation');
     if (frame1 && frame2) {
-      const closestCornerIndex = this.getClosestCorner(frame1, frame2);
       const line = [
-        frame1.getCoords()[0].x,
-        frame1.getCoords()[0].y,
-        frame2.getCoords()[closestCornerIndex].x,
-        frame2.getCoords()[closestCornerIndex].y,
+        frame1.getCenterPoint().x,
+        frame1.getCenterPoint().y,
+        frame2.getCenterPoint().x,
+        frame2.getCenterPoint().y,
       ];
       const relation = new fabric.Line(line, {
         fill: 'black',
@@ -210,6 +203,7 @@ export default class FabricService {
         evented: false,
       });
       this.state.canvas.add(relation);
+      relation.sendToBack();
     }
   }
 }

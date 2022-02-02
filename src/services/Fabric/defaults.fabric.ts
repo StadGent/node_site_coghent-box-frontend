@@ -29,6 +29,11 @@ type FabricDefaults = {
         originX: string;
         originY: string;
       };
+      underline: {
+        spacing: number;
+        color: string;
+        stroke: number;
+      };
     };
     secondaryImage: {
       positions: {
@@ -73,6 +78,11 @@ const fabricdefaults: FabricDefaults = {
       origin: {
         originX: 'center',
         originY: 'bottom',
+      },
+      underline: {
+        spacing: 10,
+        color: '#02A77F',
+        stroke: 5,
       },
     },
     secondaryImage: {
