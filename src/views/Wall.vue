@@ -6,7 +6,7 @@
     @restartSession="restartSession"
     @resetSelectedStory="resetSelectedStory"
   />
-  <!-- <mqtt @selectStory="setSelectStory"/> -->
+  <mqtt @selectStory="setSelectStory"/>
 </template>
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
@@ -23,7 +23,7 @@ import StoryService from '@/services/StoryService';
 
 export default defineComponent({
   name: 'Wall',
-  components: { ViewPort },
+  components: { ViewPort, mqtt },
 
   setup() {
     let stories = ref<Array<any>>();
@@ -100,7 +100,7 @@ export default defineComponent({
       }
     };
 
-    const setSelectStory = (sensorValue: { id: number; msg: boolean }) => {
+    const setSelectStory = (sensorValue: { topic: string, id: number; msg: boolean }) => {
       console.log(`MQTT data => `, sensorValue);
       if (sensorValue.msg) {
         storySelected.value = sensorValue.id;

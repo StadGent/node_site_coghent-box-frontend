@@ -7,8 +7,8 @@ export default defineComponent({
   emits: ['selectStory'],
   setup(props, {emit}) {
     const { host, port, endpoint, ...options } = {
-      host: 'broker.hivemq.com',
-      port: 8000,
+      host: 'mqtt.inuits.local',
+      port: 9001,
       endpoint: '/mqtt',
       clean: true,
       connectTimeout: 4000,
@@ -20,7 +20,6 @@ export default defineComponent({
 
     const connectUrl = `ws://${host}:${port}${endpoint}`;
     let client: mqtt.MqttClient;
-    const topic = 'sensor/+/present';
     let subscription: IClientSubscribeOptions = {
       qos: 0,
     };
@@ -36,28 +35,29 @@ export default defineComponent({
       console.log('Connection failed', error);
     });
 
-    const doSubscribe = () => {
+    const doSubscribe = (_topic: string) => {
+      console.log('DO SCUBSCRIBE')
       const { qos } = subscription;
-      client.subscribe(topic, { qos }, (error, res) => {
+      client.subscribe(_topic, { qos }, (error, res) => {
         if (error) {
           console.log('Subscribe to topics error', error);
           return;
         }
       });
 
-      client.on('message', (topic, message) => {
-      emit('selectStory', {id: filterSensorOutOfTopic(topic), msg: JSON.parse(message.toString())});
-    });
+      client.on('message', (_topic, message) => {
+        emit('selectStory', {topic:_topic ,id: filterSensorOutOfTopic(_topic), msg: JSON.parse(message.toString())});
+      });
     };
 
-    const filterSensorOutOfTopic = (topic: string) => {
-      const index = topic.indexOf('/') + 1;
-      const lastIndex = topic.lastIndexOf('/');
-      return topic.substring(index, lastIndex);
+    const filterSensorOutOfTopic = (_topic: string) => {
+      const index = _topic.indexOf('/') + 1;
+      const lastIndex = _topic.lastIndexOf('/');
+      return _topic.substring(index, lastIndex);
     };
 
     onMounted(() => {
-      doSubscribe();
+      doSubscribe('sensors/+/#');
     });
   },
 });
