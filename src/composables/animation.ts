@@ -3,8 +3,8 @@ import ThreeService from '@/services/ThreeService';
 import AnimationDefaults from '@/Three/defaults.animation';
 import Colors from '@/Three/defaults.color';
 import Layers from '@/Three/defaults.layers';
+import CountDownCircle from '@/Three/shapes.countdownCircle';
 import TimerCountdown from '@/Three/shapes.timer';
-import TestSingleComponent from '@/Three/test.components';
 import { Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
 import Common from './common';
 
@@ -15,7 +15,7 @@ const CustomAnimation = (): {
   fadeIn: (object: Mesh<any, MeshBasicMaterial>, fadeTo: number, step: number) => Promise<void>;
   grow: (object: Mesh<any, MeshBasicMaterial>, scaleTo: number, step: number) => Promise<void>;
   shrink: (object: Mesh<any, MeshBasicMaterial>, scaleTo: number, step: number) => Promise<void>;
-  circularCountdown: (_threeService: ThreeService, _position: Vector3) => Promise<void>
+  circularCountdown: (_threeService: ThreeService, _position: Vector3, _radius: number, _thickness: number) => Promise<void>
 } => {
 
   const fadeOut = async (object: Mesh<any, MeshBasicMaterial>, fadeTo: number, step: number) => {
@@ -70,25 +70,21 @@ const CustomAnimation = (): {
     Promise.resolve();
   };
 
-  const circularCountdown = async (_threeService: ThreeService, _position: Vector3) => {
-    const ring = TestSingleComponent().countdownCircle(new Vector3(0, 0, 0), 2);
+  const circularCountdown = async (_threeService: ThreeService, _position: Vector3, _radius: number, _thickness: number) => {
+    const ring = CountDownCircle(_position,2,_radius, _thickness);
     _threeService.AddToScene(ring, Tags.Testing);
     const count = [3, 2, 1];
     for (const _count of count) {
       let progress = 0;
-      const countdownNumber = TimerCountdown(_threeService).createNumber(_count.toString(), new Vector3(-.5, -0.5, Layers.scene));
-      _threeService.AddToScene(countdownNumber,Tags.startOfSessionCountdown)
+      const countdownNumber = TimerCountdown(_threeService).createNumber(_count.toString(), new Vector3(_position.x - .5, _position.y - .5, Layers.scene));
+      _threeService.AddToScene(countdownNumber, Tags.startOfSessionCountdown)
       while (progress <= 1) {
-        const ring_progress = TestSingleComponent().countdownCircle(
-          _position,
-          progress,
-          Colors().white,
-        );
+        const ring_progress = CountDownCircle(_position,progress,_radius, _thickness, Colors().white);
         _threeService.AddToScene(ring_progress, Tags.Testing);
-        await Common().awaitTimeout(2.77);
+        await Common().awaitTimeout(3.6);
         progress += 0.027;
         _threeService.RemoveFromScene(ring_progress);
-        
+
       }
       _threeService.RemoveFromScene(countdownNumber);
     }

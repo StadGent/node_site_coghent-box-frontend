@@ -91,7 +91,7 @@ const Measurements = (): {
 
   const startOfSession = {
     countdownCircleRadius: 3,
-    countdownCircleThickness: 0.5,
+    countdownCircleThickness: 0.15,
   };
 
   return {
