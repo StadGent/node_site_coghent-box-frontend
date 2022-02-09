@@ -84,7 +84,10 @@ export default class FabricService {
     });
   }
 
-  async generateSecondaryImageFrames(entities: Array<any>) {
+  async generateSecondaryImageFrames(
+    entities: Array<any>,
+    subRelationOriginEntityId: string = '',
+  ) {
     let positions: Array<Position> = this.state.positions;
     const images: Array<string> = ImageUrlHelper(entities);
     images.forEach((image, index) => {
@@ -100,11 +103,15 @@ export default class FabricService {
         image.id = entities[index].id;
         image.entity = entities[index];
         image.setCoords();
+        if (subRelationOriginEntityId) {
+          image.relationOriginId = subRelationOriginEntityId;
+        }
         this.lockObjectMovement(image);
         this.state.canvas.add(image);
         positions = positions.filter((pos: any) => pos != positions[randomNumber]);
       });
     });
+    this.state.positions = positions;
   }
 
   setMainImageOnClick() {
@@ -150,7 +157,10 @@ export default class FabricService {
         this.state.canvas.getObjects().length > 0 &&
         this.objectIsFrame(newObject.target)
       ) {
-        this.generateRelationBetweenFrames(this.state.selectedImage, newObject.target);
+        this.generateRelationBetweenFrames(
+          this.getFrameByEntityId(newObject.target.relationOriginId),
+          newObject.target,
+        );
       }
     });
   }

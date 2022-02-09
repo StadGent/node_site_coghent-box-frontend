@@ -4,10 +4,10 @@
   <div id="canvascontainer"></div>
   <canvas id="canvas" class="touchcanvas" />
   <CardComponent :sideStrip="true" :large="true" :reverseColors="true" class="infocard" v-if="entity">
-      <h2 class="font-bold text-6xl pb-6">{{entity.title[0].value}}</h2>
-      <p class="text-4xl" v-if="entity.description[0].value">{{entity.description[0].value}}</p>
-      <p class="text-4xl" v-else>This item does not have a description</p>
-      <div class="flex flex-wrap mt-4">
+      <h2 class="font-bold text-6xl mb-12">{{entity.title[0].value}}</h2>
+      <p class="text-4xl mb-12" v-if="entity.description[0].value">{{entity.description[0].value}}</p>
+      <p class="text-4xl mb-12" v-else>This item does not have a description</p>
+      <div class="flex flex-wrap">
         <div v-for="(item, index) in relationsLabelArray" :key="index" class="bg-tag-neutral text-text-dark py-4 px-6 mr-2 my-2 text-center text-4xl font-bold">
           <p>{{item}}</p>
       </div>
@@ -23,8 +23,14 @@ import { useRoute, useRouter } from 'vue-router'
 import { useQuery } from '@vue/apollo-composable'
 import { GetTouchTableEntityByIdDocument, CardComponent, GetTouchTableEntityDocument} from 'coghent-vue-3-component-library'
 import TouchHeader from '@/components/TouchHeader.vue';
+import {fabricdefaults} from '../services/Fabric/defaults.fabric'
 
 const asString = (x: string | string[]) => (Array.isArray(x) ? x[0] : x)
+
+type SecondaryRelation = {
+  originId: string,
+  relatedEntities: Array<any>
+}
 
 export default defineComponent({
   name: 'TouchTableEntity',
@@ -35,9 +41,10 @@ export default defineComponent({
   setup: () => {
       const route = useRoute()
       const id = asString(route.params['entityID'])
-      const { result, onResult:onEntityResult, refetch } = useQuery(GetTouchTableEntityByIdDocument, { id })
+      const { result, onResult:onEntityResult, refetch } = useQuery(GetTouchTableEntityByIdDocument, { id})
       const relationStringArray = ref<string[]>([])
       const relationsLabelArray = ref<string[]>([])
+      const subRelations = ref<SecondaryRelation[]>([])
       const entity = ref<any>()
       const headEntityId = ref<string>()
       let fabricService: FabricService | undefined = undefined
@@ -46,12 +53,13 @@ export default defineComponent({
       result: relationResult,
       onResult: onRelationResult,
       loading: loadingRelations,
-      refetch: refetchRelations
+      refetch: refetchRelations,
+      fetchMore: fetchMoreRelations,
     } = useQuery(
       GetTouchTableEntityDocument,
         () => ({
-        limit: 0,
-        skip: entity.value,
+        limit: fabricdefaults.canvas.relationLimit,
+        skip: result ? 0 : 1,
         searchValue: {
           value: '',
           isAsc: false,
@@ -76,8 +84,8 @@ export default defineComponent({
         console.log('refetch relations')
         console.log(entity.value)
         refetchRelations({
-        limit: 0,
-        skip: entity.value,
+        limit: fabricdefaults.canvas.relationLimit,
+        skip: result ? 0 : 1,
         searchValue: {
           value: '',
           isAsc: false,
@@ -87,6 +95,14 @@ export default defineComponent({
           has_mediafile: true,
         },
       })
+      }
+      })
+
+      watch(() => subRelations.value.length, () => {
+      if (subRelations.value.length == fabricdefaults.canvas.relationLimit){
+        subRelations.value.forEach((relation: SecondaryRelation) => {
+          fabricService?.generateSecondaryImageFrames(relation.relatedEntities, relation.originId)
+        })
       }
       })
 
@@ -111,9 +127,10 @@ export default defineComponent({
             fabricService = new FabricService();
             
             fabricService.generateMainImageFrame(queryResult.data.Entity)
+            
+            getRelationStrings(queryResult.data.Entity)
+            headEntityId.value = queryResult.data.Entity.id
             entity.value = queryResult.data.Entity
-            headEntityId.value = entity.value.id
-            getRelationStrings(entity.value)
         }
       })
 
@@ -122,7 +139,41 @@ export default defineComponent({
       if(relationResult.data && fabricService){
         const relationEntities = relationResult.data.Entities?.results
         const filteredRelationEntities = relationEntities.filter((ent: any) => ent.id != entity.value.id)
-        fabricService.generateSecondaryImageFrames(filteredRelationEntities)
+        fabricService.generateSecondaryImageFrames(filteredRelationEntities, id)
+        
+        filteredRelationEntities.forEach((entity: any) => {
+          const entityRelations: Array<string> = []
+
+          entity.relations.forEach((relation: any) => {
+            entityRelations.push(relation.key)
+          });
+
+          fetchMoreRelations({
+            variables: {
+              limit: fabricdefaults.canvas.relationLimit,
+              skip: relationResult ? 0 : 1,
+              searchValue: {
+              value: '',
+              isAsc: false,
+              relation_filter: entityRelations,
+              randomize: false,
+              key: 'title',
+              has_mediafile: true,
+            }
+          },
+          updateQuery: (previousData, {fetchMoreResult}) => {
+            console.log(entity.id)
+            console.log({fetchMoreResult})
+            const newRelation: SecondaryRelation = {
+              originId: entity.id,
+              relatedEntities: fetchMoreResult.Entities.results
+            }
+            subRelations.value.push(newRelation)
+          }}
+          )
+          
+        });
+
 
       }
   })

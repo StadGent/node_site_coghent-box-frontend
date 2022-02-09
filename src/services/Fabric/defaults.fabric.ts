@@ -3,7 +3,7 @@ type FabricDefaults = {
     header: {
       height: number;
     };
-    amountOfFrames: number;
+    relationLimit: number;
     dimensions: {
       width: number;
       height: number;
@@ -57,7 +57,7 @@ const fabricdefaults: FabricDefaults = {
     header: {
       height: 160,
     },
-    amountOfFrames: 25,
+    relationLimit: 4,
     dimensions: {
       width: 3840,
       height: 2160,
