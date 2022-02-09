@@ -21,13 +21,19 @@ import mqtt from '@/components/mqtt.vue';
 import { BoxVisiter } from '@/models/GraphqlModel';
 import StoryService from '@/services/StoryService';
 
+export type SensorObject = {
+  sensor: number;
+  instant: boolean;
+  present: boolean;
+}
+
 export default defineComponent({
   name: 'Wall',
   components: { ViewPort, mqtt },
 
   setup() {
     let stories = ref<Array<any>>();
-    const storySelected = ref<number>(1);
+    const storySelected = ref<string>(JSON.stringify({sensor: 1, instant: true, present: true} as SensorObject));
     let visiter: BoxVisiter;
     const storyService = ref<StoryService>();
 
@@ -74,25 +80,25 @@ export default defineComponent({
       // console.log({_visiter});
     };
 
-    const resetSelectedStory = (resetTo: number) => storySelected.value = resetTo;
+    const resetSelectedStory = (_resetTo: SensorObject) => storySelected.value = JSON.stringify(_resetTo);
 
     window.onkeydown = async (key: KeyboardEvent) => {
       switch (key.code) {
         case 'Digit1':
           console.log('pressed 1');
-          storySelected.value = 1;
+          storySelected.value = JSON.stringify({sensor: 1, instant: true, present: true} as SensorObject);
           break;
         case 'Digit2':
           console.log('pressed 2');
-          storySelected.value = 2;
+          storySelected.value = JSON.stringify({sensor: 2, instant: true, present: true} as SensorObject);
           break;
         case 'Digit3':
           console.log('pressed 3');
-          storySelected.value = 3;
+          storySelected.value = JSON.stringify({sensor: 3, instant: true, present: true} as SensorObject);
           break;
         case 'Digit4':
           console.log('pressed 4');
-          storySelected.value = 4;
+          storySelected.value = JSON.stringify({sensor: 4, instant: true, present: true} as SensorObject);
           break;
         case 'Digit5':
           console.log('pressed 5');
@@ -103,7 +109,7 @@ export default defineComponent({
     const setSelectStory = (sensorValue: { topic: string, id: number; msg: boolean }) => {
       console.log(`MQTT data => `, sensorValue);
       if (sensorValue.msg) {
-        storySelected.value = sensorValue.id;
+        storySelected.value = JSON.stringify(sensorValue);
       }
     };
 

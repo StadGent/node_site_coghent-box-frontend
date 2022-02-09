@@ -44,6 +44,7 @@ import Template from '@/Three/template.shapes';
 
 import SubtitleService from '@/services/SubtitleService';
 import useFrame from '@/composables/useFrame';
+import { SensorObject } from '@/views/Wall.vue';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -53,9 +54,9 @@ export default defineComponent({
       required: true,
     },
     storySelected: {
-      type: Number,
+      type: String,
       required: true,
-      default: 1,
+      default: JSON.stringify({sensor: 1, instant: true, present: true} as SensorObject),
     },
     storyService: {
       type: StoryService,
@@ -64,9 +65,10 @@ export default defineComponent({
   },
   emits: ['restartSession', 'resetSelectedStory'],
   setup(props, { emit }) {
+    let storySelected = JSON.parse(props.storySelected) as SensorObject;
     const viewport = ref(null);
     const stories = ref(props.stories);
-    const currentStory = ref<number>(props.storySelected - 1);
+    const currentStory = ref<number>(storySelected.sensor - 1);
     const chooseStory = ref<boolean>(false);
     const videoElement = ref<HTMLVideoElement>();
 
@@ -96,19 +98,20 @@ export default defineComponent({
     watch(
       () => props.storySelected,
       async (value) => {
+        const _storySelected = JSON.parse(value) as SensorObject;
         console.log('You want to select story', props.storySelected);
         console.log('Can you choose a story?', chooseStory.value);
         storyData = stories.value;
         if (
-          value != 0 &&
+          _storySelected.sensor != 0 &&
           chooseStory.value &&
-          value <= storyData.length &&
-          !storyService.storyIsSeen(storyData[value - 1].id)
+          _storySelected.sensor <= storyData.length &&
+          !storyService.storyIsSeen(storyData[_storySelected.sensor - 1].id)
         ) {
-          const _storyData = storyService.getStoryDataOfStory(storyData[value - 1].id);
-          storyService.setActiveStory(storyData[value - 1].id);
+          const _storyData = storyService.getStoryDataOfStory(storyData[_storySelected.sensor - 1].id);
+          storyService.setActiveStory(storyData[_storySelected.sensor - 1].id);
           chooseStory.value = false;
-          currentStory.value = value - 1;
+          currentStory.value = _storySelected.sensor - 1;
           currentFrame = _storyData.totalOfFramesSeen;
           console.log('Selected story => ', currentStory.value);
 
@@ -163,6 +166,7 @@ export default defineComponent({
     );
 
     const setup = async () => {
+      // await Common().awaitTimeout(5000);
       threeSvc.ClearScene();
       spotlight = PlayBookBuild(
         threeSvc,
@@ -175,22 +179,22 @@ export default defineComponent({
       ).initialSpotLight();
       storyService.setStoryPausedPositions(zoneService.zonesInnerToOuter);
 
-      setData();
+      // setData();
 
-      // await PlayBookBuild(
-      //   threeSvc,
-      //   storyService,
-      //   zoneService,
-      //   taggingService,
-      //   playBook,
-      //   spotlight,
-      //   activeStoryData,
-      // )
-      //   .startOfSession()
-      //   .finally(async () => {
-      //     garbageHelper.startOfSession();
-      //     setData();
-      //   });
+      await PlayBookBuild(
+        threeSvc,
+        storyService,
+        zoneService,
+        taggingService,
+        playBook,
+        spotlight,
+        activeStoryData,
+      )
+        .startOfSession()
+        .finally(async () => {
+          garbageHelper.startOfSession();
+          setData();
+        });
     };
 
     const setData = async () => {
@@ -210,9 +214,9 @@ export default defineComponent({
           audio.currentTime,
           subtitleService.subtitles,
           currentSubtitle,
-        );
-        subtitles.value = `${subtitleParams.subtitle}`;
-        currentSubtitle = subtitleParams.index;
+          );
+          subtitles.value = `${subtitleParams.subtitle}`;
+          currentSubtitle = subtitleParams.index;
         }
 
         if (
@@ -257,7 +261,8 @@ export default defineComponent({
       const subtitleLink = useFrame(threeSvc).getSubtitleForFrame(
         activeStoryData.frames[currentFrame],
       );
-      await subtitleService.downloadSRTFile(subtitleLink as string);
+      // TODO: await or not await for subtitles?
+      subtitleService.downloadSRTFile(subtitleLink as string);
 
       let progress: Array<Group> = [];
       audio.ontimeupdate = () => {
@@ -358,7 +363,7 @@ export default defineComponent({
               });
           } else {
             currentStory.value = 0;
-            emit('resetSelectedStory', 0);
+            emit('resetSelectedStory', { sensor: 0, instant: true, present: true } as SensorObject);
             garbageHelper.pauseScreen();
             spotlight.scale.set(
               Measurements().storyCircle.outerCircle,
@@ -377,8 +382,8 @@ export default defineComponent({
             chooseStory.value = true;
           }
         },
-        // playBook.lastAction().time + 1,
-        audioDuration,
+        playBook.lastAction().time + 1,
+        // audioDuration,
         `Update storyData & show endOfSessions screen or the storyOverview`,
       );
     };
