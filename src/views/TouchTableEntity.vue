@@ -1,18 +1,13 @@
 <template>
 <div class="touchtable">
   <touch-header/>
-  <div id="canvascontainer"></div>
-  <canvas id="canvas" class="touchcanvas" />
+  <canvas id="canvas" class="touchcanvas"/>
   <CardComponent :sideStrip="true" :large="true" :reverseColors="true" class="infocard" v-if="entity">
       <h2 class="font-bold text-6xl mb-12">{{entity.title[0].value}}</h2>
       <p class="text-4xl mb-12" v-if="entity.description[0].value">{{entity.description[0].value}}</p>
       <p class="text-4xl mb-12" v-else>This item does not have a description</p>
-      <div class="flex flex-wrap">
-        <div v-for="(item, index) in relationsLabelArray" :key="index" class="bg-tag-neutral text-text-dark py-4 px-6 mr-2 my-2 text-center text-4xl font-bold">
-          <p>{{item}}</p>
-      </div>
-      </div>
   </CardComponent>
+  <relationBrowser v-if="relationsLabelArray" :relations="relationsLabelArray" :loading="loading"/>
 </div>
 </template>
 
@@ -23,6 +18,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useQuery } from '@vue/apollo-composable'
 import { GetTouchTableEntityByIdDocument, CardComponent, GetTouchTableEntityDocument} from 'coghent-vue-3-component-library'
 import TouchHeader from '@/components/TouchHeader.vue';
+import RelationBrowser from '@/components/RelationBrowser.vue';
 import {fabricdefaults} from '../services/Fabric/defaults.fabric'
 
 const asString = (x: string | string[]) => (Array.isArray(x) ? x[0] : x)
@@ -37,11 +33,12 @@ export default defineComponent({
   components: {
       CardComponent,
       TouchHeader,
+      RelationBrowser,
   },
   setup: () => {
       const route = useRoute()
       const id = asString(route.params['entityID'])
-      const { result, onResult:onEntityResult, refetch } = useQuery(GetTouchTableEntityByIdDocument, { id})
+      const { result, onResult:onEntityResult, loading, refetch } = useQuery(GetTouchTableEntityByIdDocument, { id})
       const relationStringArray = ref<string[]>([])
       const relationsLabelArray = ref<string[]>([])
       const subRelations = ref<SecondaryRelation[]>([])
@@ -181,13 +178,14 @@ export default defineComponent({
     return {entity,
     relationStringArray,
     relationsLabelArray,
+    loading,
     route}
   },
 });
 </script>
 
 <style scoped>
-.touchcanvas {
+.touchcanvas{
   width: 100%;
   height: 100%;
 }
@@ -201,7 +199,7 @@ export default defineComponent({
     left: 100px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     width: 800px;
-    height: calc(2160px - 200px)
+    height: calc(2160px - 300px)
 }
 #canvas{
   background-color: #F0EDE6;

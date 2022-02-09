@@ -4,6 +4,8 @@ import {
   underlineHelper,
   ImageUrlHelper,
   availablePositionHelper,
+  getRandomNumberInRangeHelper,
+  coordinatesInRangeHelper,
 } from './helper.fabric';
 import { router } from '@/router';
 import { image } from 'd3';
@@ -47,9 +49,7 @@ export default class FabricService {
     const canvas = new fabric.Canvas('canvas');
     canvas.preserveObjectStacking = true; // keep z-index of selected objects
     canvas.selection = false; // no group selection
-    canvas.setHeight(
-      fabricdefaults.canvas.dimensions.height - fabricdefaults.canvas.header.height,
-    );
+    canvas.setHeight(fabricdefaults.canvas.dimensions.height);
     canvas.setWidth(fabricdefaults.canvas.dimensions.width);
     canvas.setBackgroundColor('#F0EDE6');
     return canvas;
@@ -92,7 +92,7 @@ export default class FabricService {
     const images: Array<string> = ImageUrlHelper(entities);
     images.forEach((image, index) => {
       const frame = new fabric.Image.fromURL(image, (image: any) => {
-        const randomNumber = this.getRandomNumberInRange(0, positions.length - 1);
+        const randomNumber = getRandomNumberInRangeHelper(0, positions.length - 1);
         image.positionNumber = randomNumber;
         image.scaleX = fabricdefaults.canvas.secondaryImage.scale.scaleX;
         image.scaleY = fabricdefaults.canvas.secondaryImage.scale.scaleY;
@@ -102,6 +102,12 @@ export default class FabricService {
         image.hoverCursor = 'pointer';
         image.id = entities[index].id;
         image.entity = entities[index];
+        console.log(
+          coordinatesInRangeHelper(
+            { x: positions[randomNumber].left, y: positions[randomNumber].top },
+            2,
+          ),
+        );
         image.setCoords();
         if (subRelationOriginEntityId) {
           image.relationOriginId = subRelationOriginEntityId;
@@ -128,12 +134,6 @@ export default class FabricService {
   clearCanvas() {
     this.state.canvas.clear();
     this.state.selectedImage = undefined;
-  }
-
-  private getRandomNumberInRange(min: number, max: number) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
   private objectIsFrame(object: any): boolean {

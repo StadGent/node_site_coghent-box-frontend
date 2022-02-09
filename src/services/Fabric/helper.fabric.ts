@@ -18,11 +18,51 @@ const underlineHelper = (mainImage: any) => {
   const lineObject = new fabric.Line(underline, {
     fill: fabricdefaults.canvas.selectedImage.underline.color,
     stroke: fabricdefaults.canvas.selectedImage.underline.color,
-    strokeWidth: 5,
+    strokeWidth: fabricdefaults.canvas.selectedImage.underline.stroke,
     selectable: false,
     evented: false,
   });
   return lineObject;
+};
+
+const coordinateIndexHelper = (coordinate: Coordinate) => {
+  const yIndex: number = fabricdefaults.canvas.secondaryImage.positions.yAxis.indexOf(
+    coordinate.y,
+  );
+  const xIndex: number = fabricdefaults.canvas.secondaryImage.positions.xAxis.indexOf(
+    coordinate.x,
+  );
+
+  return { xIndex, yIndex };
+};
+
+const coordinatesInRangeHelper = (startCoordinate: Coordinate, range: number) => {
+  const coordinates: Coordinate[] = [];
+
+  const indexedCoordinate = coordinateIndexHelper(startCoordinate);
+  console.log(indexedCoordinate);
+
+  const startY: number = Math.max(0, indexedCoordinate.yIndex - range);
+  const endY: number = Math.min(
+    fabricdefaults.canvas.secondaryImage.positions.yAxis.length - 1,
+    indexedCoordinate.yIndex + range,
+  );
+
+  for (let row: number = startY; row <= endY; row++) {
+    const xRange: number = range - Math.abs(row - indexedCoordinate.yIndex);
+
+    const startX: number = Math.max(0, indexedCoordinate.xIndex - xRange);
+    const endX: number = Math.min(
+      fabricdefaults.canvas.secondaryImage.positions.xAxis.length - 1,
+      indexedCoordinate.xIndex + xRange,
+    );
+
+    for (let col = startX; col <= endX; col++) {
+      coordinates.push({ x: col, y: row });
+    }
+  }
+  console.log({ coordinates });
+  return coordinates;
 };
 
 const lineSpacingHelper = (bottomCoordinates: Array<Coordinate>) => {
@@ -74,9 +114,17 @@ const ImageUrlHelper = (entities: Array<any> | any) => {
   return imageUrls;
 };
 
+const getRandomNumberInRangeHelper = (min: number, max: number) => {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1) + min);
+};
+
 export {
   underlineHelper,
   changeFrameScaleHelper,
   ImageUrlHelper,
   availablePositionHelper,
+  getRandomNumberInRangeHelper,
+  coordinatesInRangeHelper,
 };

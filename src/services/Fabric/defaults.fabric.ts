@@ -3,6 +3,9 @@ type FabricDefaults = {
     header: {
       height: number;
     };
+    relationBrowser: {
+      height: number;
+    };
     relationLimit: number;
     dimensions: {
       width: number;
@@ -57,15 +60,18 @@ const fabricdefaults: FabricDefaults = {
     header: {
       height: 160,
     },
+    relationBrowser: {
+      height: 100,
+    },
     relationLimit: 4,
     dimensions: {
       width: 3840,
-      height: 2160,
+      height: 1900,
     },
     selectedImage: {
       canvasPosition: {
         left: 3840 / 2,
-        top: 2160 - 200,
+        top: 1900 - 50,
       },
       scale: {
         scaleX: 0.4,
@@ -89,7 +95,7 @@ const fabricdefaults: FabricDefaults = {
       underline: {
         spacing: 10,
         color: '#02A77F',
-        stroke: 20,
+        stroke: 10,
       },
     },
     secondaryImage: {
@@ -102,7 +108,7 @@ const fabricdefaults: FabricDefaults = {
           (3840 / 7) * 5,
           (3840 / 7) * 6,
         ],
-        yAxis: [2160 / 6 - 300, 2160 / 6, (2160 / 6) * 2, (2160 / 6) * 3, (2160 / 6) * 4],
+        yAxis: [1900 / 6 - 300, 1900 / 6, (1900 / 6) * 2, (1900 / 6) * 3, (1900 / 6) * 4],
         blockedPositions: [{ xIndex: 2, yIndex: 4 }],
       },
       scale: {
