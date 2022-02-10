@@ -34,7 +34,12 @@ export enum Tags {
   Testing,
   FrameProgressbar,
   startSessionText,
-  startOfSessionCountdown,
+  StartOfSessionRing,
+  StartOfSessionProgressRing,
+  StartOfSessionCountdownNumber,
+  SmallCountdownRing,
+  SmallCountdownProgressRing,
+  SmallCountdowndownNumber,
   HighlightedMetadata,
 }
 

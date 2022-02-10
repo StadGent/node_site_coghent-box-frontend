@@ -13,6 +13,7 @@ export type GarabageHelperForWall = {
   highlightedAsset: () => void;
   removeActiveFrameDots: () => void;
   activeStoryCircle: () => void;
+  smallCountdownTimer: () => void;
 };
 
 const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingService): GarabageHelperForWall => {
@@ -109,6 +110,13 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     }
   }
 
+  const smallCountdownTimer = () => {
+    removeByTag(Tags.SmallCountdownProgressRing);
+    removeByTag(Tags.SmallCountdowndownNumber);
+    removeByTag(Tags.SmallCountdownRing);
+    logRemoved('smallCountdown');
+  }
+
   return {
     pauseScreen,
     newStorySelected,
@@ -118,6 +126,7 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     highlightedAsset,
     removeActiveFrameDots,
     activeStoryCircle,
+    smallCountdownTimer,
   }
 };
 

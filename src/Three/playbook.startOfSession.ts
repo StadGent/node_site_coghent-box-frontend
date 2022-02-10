@@ -54,8 +54,13 @@ const useStartOfSession = (
       threeService,
       new Vector3(0, 0, Layers.scene),
       Measurements().startOfSession.countdownCircleRadius,
-      Measurements().startOfSession.countdownCircleThickness)
-    ;
+      Measurements().startOfSession.countdownCircleThickness,
+      [
+        Tags.StartOfSessionRing,
+        Tags.StartOfSessionCountdownNumber,
+        Tags.StartOfSessionProgressRing,
+      ]
+    );
     await CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>, Measurements().storyCircle.radius, AnimationDefaults.values.scaleStep);
     return true;
   };
