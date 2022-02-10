@@ -59,7 +59,9 @@ const useStartOfSession = (
         Tags.StartOfSessionRing,
         Tags.StartOfSessionCountdownNumber,
         Tags.StartOfSessionProgressRing,
-      ]
+      ],
+      new Vector3(-0.5,-0.5,0),
+      Measurements().text.size.veryBig
     );
     await CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>, Measurements().storyCircle.radius, AnimationDefaults.values.scaleStep);
     return true;

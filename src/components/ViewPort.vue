@@ -94,6 +94,7 @@ export default defineComponent({
     let storyData: Array<Story> = [];
     let activeStoryData = reactive<Story>({} as Story);
     let spotlight: Mesh;
+    let smallCountDownStarted = false;
 
     let subtitles = ref<string>('');
 
@@ -109,48 +110,14 @@ export default defineComponent({
           storyData = stories.value;
 
           if (Common().sensorSendsPresent(_storySelected)) {
-            chooseStory.value = false;
-            const _storyData = storyService.getStoryDataOfStory(
-              storyData[_storySelected.sensor - 1].id,
-            );
-            storyService.setActiveStory(storyData[_storySelected.sensor - 1].id);
-            currentStory.value = _storySelected.sensor - 1;
-            currentFrame = _storyData.totalOfFramesSeen;
-            console.log('Selected story => ', currentStory.value);
-
-            await PlayBookBuild(
-              threeSvc,
-              storyService,
-              zoneService,
-              taggingService,
-              playBook,
-              spotlight,
-              activeStoryData,
-            ).setSelectedStory();
-            await garbageHelper.newStorySelected();
-
-            const progressDots = PauseProgressbar(storyService.activeStoryData).dots(
-              Template().storyCircleLayers(zoneService.middleZoneCenter).progressDots,
-              Measurements().storyCircle.progressRadius,
-              storyService.activeStoryData.totalOfFrames,
-              storyService.activeStoryData.storyColor,
-            );
-            await SceneHelper(threeSvc, storyService).addFrameProgressDotsToScene(
-              progressDots,
-              storyService.activeStoryData.storyId,
-              storyService.activeStoryData.totalOfFramesSeen + 1,
-              true,
-            );
-            taggingService.retag(
-              Tags.StoryCircleFrameDot,
-              Tags.ActiveStoryCircleFrameDot,
-            );
-            taggingService.retag(
-              Tags.StoryCircleFrameInnerDot,
-              Tags.ActiveStoryCircleFrameInnerDot,
-            );
-            resetStory();
+            // while(!smallCountDownStarted){return}
+            console.log('START', smallCountDownStarted)
+            garbageHelper.smallCountdownTimer();
+            await setNewStoryWhenSelected(_storySelected.sensor - 1);
           }
+          // } else {
+          //   await startCountdownForSelectedStory(_storySelected.sensor - 1);
+          // }
         }
       },
     );
@@ -171,6 +138,69 @@ export default defineComponent({
         setup();
       },
     );
+
+    const setNewStoryWhenSelected = async (_storySelected: number) => {
+      chooseStory.value = false;
+      const _storyData = storyService.getStoryDataOfStory(storyData[_storySelected].id);
+      storyService.setActiveStory(storyData[_storySelected].id);
+      currentStory.value = _storySelected;
+      currentFrame = _storyData.totalOfFramesSeen;
+      console.log('Selected story => ', currentStory.value);
+
+      await PlayBookBuild(
+        threeSvc,
+        storyService,
+        zoneService,
+        taggingService,
+        playBook,
+        spotlight,
+        activeStoryData,
+      ).setSelectedStory();
+      await garbageHelper.newStorySelected();
+
+      const progressDots = PauseProgressbar(storyService.activeStoryData).dots(
+        Template().storyCircleLayers(zoneService.middleZoneCenter).progressDots,
+        Measurements().storyCircle.progressRadius,
+        storyService.activeStoryData.totalOfFrames,
+        storyService.activeStoryData.storyColor,
+      );
+      await SceneHelper(threeSvc, storyService).addFrameProgressDotsToScene(
+        progressDots,
+        storyService.activeStoryData.storyId,
+        storyService.activeStoryData.totalOfFramesSeen + 1,
+        true,
+      );
+      taggingService.retag(Tags.StoryCircleFrameDot, Tags.ActiveStoryCircleFrameDot);
+      taggingService.retag(
+        Tags.StoryCircleFrameInnerDot,
+        Tags.ActiveStoryCircleFrameInnerDot,
+      );
+      resetStory();
+    };
+
+    const startCountdownForSelectedStory = async (_storySelected: number) => {
+      garbageHelper.smallCountdownTimer();
+      const pausePosition = storyService.getStoryData()[_storySelected].pausedPosition;
+      smallCountDownStarted = true;
+      await CustomAnimation().circularCountdown(
+        threeSvc,
+        new Vector3(
+          pausePosition.x,
+          -(zoneService.sceneZone().height / 2) + 1,
+          pausePosition.z,
+        ),
+        0.3,
+        0.1,
+        [
+          Tags.SmallCountdownRing,
+          Tags.SmallCountdowndownNumber,
+          Tags.SmallCountdownProgressRing,
+        ],
+        new Vector3(-0.1, -0.15, 0),
+        Measurements().text.size.small,
+      );
+      smallCountDownStarted = false;
+    };
 
     const setup = async () => {
       // await Common().awaitTimeout(5000);

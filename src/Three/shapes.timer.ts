@@ -18,7 +18,7 @@ type TimeObjects = {
 
 const TimerCountdown = (_threeService: ThreeService): {
   start: (_timeInMiliseconds: number, _position: Vector3) => Promise<void>;
-  createNumber: (_time: string, _position: Vector3) => Mesh<BufferGeometry,any>
+  createNumber: (_time: string, _position: Vector3, _size: number) => Mesh<BufferGeometry,any>
 } => {
 
   const addZeroIfTimeIsUnderTen = (_time: number) => {
@@ -40,12 +40,12 @@ const TimerCountdown = (_threeService: ThreeService): {
     return letters;
   }
 
-  const createNumber = (_time: string, _position: Vector3) => {
+  const createNumber = (_time: string, _position: Vector3, _size: number) => {
     return TextHelper().CreateText(
       _time,
       _position,
       { width: 1, height: 1, } as CubeParams,
-      { size: Measurements().text.size.veryBig, color: Colors().white } as FontParams,
+      { size: _size, color: Colors().white } as FontParams,
     );
   }
 
@@ -60,18 +60,18 @@ const TimerCountdown = (_threeService: ThreeService): {
   }
 
   const create = (_position: Vector3, _currentTime: number) => {
-    const minutesOne = createNumber(getMinutes(_currentTime)[0], _position)
-    const minutesTwo = createNumber(getMinutes(_currentTime)[1], _position)
+    const minutesOne = createNumber(getMinutes(_currentTime)[0], _position, Measurements().text.size.veryBig)
+    const minutesTwo = createNumber(getMinutes(_currentTime)[1], _position, Measurements().text.size.veryBig)
 
     minutesTwo.position.setX(_position.x - Measurements().text.size.veryBig);
     minutesOne.position.setX(minutesTwo.position.x - Measurements().text.size.veryBig + 0.2);
-    const secondsOne = createNumber(getSeconds(_currentTime)[0], _position)
-    const secondsTwo = createNumber(getSeconds(_currentTime)[1], _position)
+    const secondsOne = createNumber(getSeconds(_currentTime)[0], _position,Measurements().text.size.veryBig)
+    const secondsTwo = createNumber(getSeconds(_currentTime)[1], _position,Measurements().text.size.veryBig)
 
     secondsOne.position.setX(_position.x + Measurements().text.size.veryBig / 2 - 0.2);
     secondsTwo.position.setX(secondsOne.position.x + Measurements().text.size.veryBig - 0.2);
 
-    const semiColon = createNumber(':', _position);
+    const semiColon = createNumber(':', _position, Measurements().text.size.veryBig);
 
     if ((Math.floor((_currentTime / 1000) % 60) + 1) % 10 == 0) {
       _threeService.AddToScene(secondsOne, Tags.Countdown, 'EndOfSession countdown timer');

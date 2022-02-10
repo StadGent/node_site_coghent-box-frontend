@@ -15,7 +15,7 @@ const CustomAnimation = (): {
   fadeIn: (object: Mesh<any, MeshBasicMaterial>, fadeTo: number, step: number) => Promise<void>;
   grow: (object: Mesh<any, MeshBasicMaterial>, scaleTo: number, step: number) => Promise<void>;
   shrink: (object: Mesh<any, MeshBasicMaterial>, scaleTo: number, step: number) => Promise<void>;
-  circularCountdown: (_threeService: ThreeService, _position: Vector3, _radius: number, _thickness: number, _tags: Array<Tags>) => Promise<void>
+  circularCountdown: (_threeService: ThreeService, _position: Vector3, _radius: number, _thickness: number, _tags: Array<Tags>, _textCorrection: Vector3, _fontSize: number) => Promise<void>
 } => {
 
   const fadeOut = async (object: Mesh<any, MeshBasicMaterial>, fadeTo: number, step: number) => {
@@ -70,16 +70,16 @@ const CustomAnimation = (): {
     Promise.resolve();
   };
 
-  const circularCountdown = async (_threeService: ThreeService, _position: Vector3, _radius: number, _thickness: number, _tags: Array<Tags>) => {
-    const ring = CountDownCircle(_position,2,_radius, _thickness);
+  const circularCountdown = async (_threeService: ThreeService, _position: Vector3, _radius: number, _thickness: number, _tags: Array<Tags>, _textCorrection: Vector3, _fontSize: number) => {
+    const ring = CountDownCircle(_position, 2, _radius, _thickness);
     _threeService.AddToScene(ring, _tags[0]);
     const count = [3, 2, 1];
     for (const _count of count) {
       let progress = 0;
-      const countdownNumber = TimerCountdown(_threeService).createNumber(_count.toString(), new Vector3(_position.x - .5, _position.y - .5, Layers.scene));
+      const countdownNumber = TimerCountdown(_threeService).createNumber(_count.toString(), new Vector3(_position.x + _textCorrection.x, _position.y + _textCorrection.y, Layers.scene), _fontSize);
       _threeService.AddToScene(countdownNumber, _tags[1])
       while (progress <= 1) {
-        const ring_progress = CountDownCircle(_position,progress,_radius, _thickness, Colors().white);
+        const ring_progress = CountDownCircle(_position, progress, _radius, _thickness, Colors().white);
         _threeService.AddToScene(ring_progress, _tags[2]);
         await Common().awaitTimeout(27);
         progress += 0.027;
