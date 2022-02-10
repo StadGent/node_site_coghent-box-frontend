@@ -92,6 +92,19 @@ const availablePositionHelper = () => {
   return availablePositionArray;
 };
 
+const getFrameByEntityIdHelper = (frameId: string, objectsOnCanvas: Array<any>) => {
+  const foundFrame: any = objectsOnCanvas.find((object: any) => object.id == frameId);
+  return foundFrame;
+};
+
+const isDuplicateFrameHelper = (newObject: any, canvasObjects: Array<any>): Boolean => {
+  if (canvasObjects.find((object: any) => object.id == newObject.id)) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
 const ImageUrlHelper = (entities: Array<any> | any) => {
   const imageUrls: Array<any> = [];
   if (entities instanceof Array) {
@@ -127,4 +140,6 @@ export {
   availablePositionHelper,
   getRandomNumberInRangeHelper,
   coordinatesInRangeHelper,
+  isDuplicateFrameHelper,
+  getFrameByEntityIdHelper,
 };

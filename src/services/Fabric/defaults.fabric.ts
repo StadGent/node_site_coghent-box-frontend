@@ -71,7 +71,7 @@ const fabricdefaults: FabricDefaults = {
     selectedImage: {
       canvasPosition: {
         left: 3840 / 2,
-        top: 1900 - 50,
+        top: 1900 - 100,
       },
       scale: {
         scaleX: 0.4,

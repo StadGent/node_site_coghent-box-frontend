@@ -96,11 +96,10 @@ export default defineComponent({
       })
 
       watch(() => subRelations.value.length, () => {
-      if (subRelations.value.length == fabricdefaults.canvas.relationLimit){
         subRelations.value.forEach((relation: SecondaryRelation) => {
           fabricService?.generateSecondaryImageFrames(relation.relatedEntities, relation.originId)
+          subRelations.value = subRelations.value.filter((subrelation: any) => subrelation != relation)
         })
-      }
       })
 
       const getRelationStrings = (entity: any) => {

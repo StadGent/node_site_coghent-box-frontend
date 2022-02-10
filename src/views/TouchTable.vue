@@ -4,9 +4,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, ref } from 'vue';
-import { useMutation, useQuery, useResult } from '@vue/apollo-composable';
 import TouchHeader from '@/components/TouchHeader.vue';
-import { GetEntityByIdDocument} from 'coghent-vue-3-component-library'
 import { useRouter } from 'vue-router'
 
 
@@ -18,7 +16,7 @@ export default defineComponent({
   },
   setup: (props) => {
     const router = useRouter()
-    const startId: string = '83f2f012-1691-4e02-841f-0cdc85bd81d8'
+    const startId: string = 'f42792cd-4e59-4dae-8fd0-3997ab4a0ca7'
 
     router.push('/touchtable/' + startId)
 

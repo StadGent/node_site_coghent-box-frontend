@@ -6,6 +6,8 @@ import {
   availablePositionHelper,
   getRandomNumberInRangeHelper,
   coordinatesInRangeHelper,
+  isDuplicateFrameHelper,
+  getFrameByEntityIdHelper,
 } from './helper.fabric';
 import { router } from '@/router';
 import { image } from 'd3';
@@ -102,19 +104,31 @@ export default class FabricService {
         image.hoverCursor = 'pointer';
         image.id = entities[index].id;
         image.entity = entities[index];
-        console.log(
-          coordinatesInRangeHelper(
-            { x: positions[randomNumber].left, y: positions[randomNumber].top },
-            2,
-          ),
-        );
+        // console.log(
+        //   coordinatesInRangeHelper(
+        //     { x: positions[randomNumber].left, y: positions[randomNumber].top },
+        //     2,
+        //   ),
+        // );
         image.setCoords();
         if (subRelationOriginEntityId) {
           image.relationOriginId = subRelationOriginEntityId;
         }
         this.lockObjectMovement(image);
-        this.state.canvas.add(image);
-        positions = positions.filter((pos: any) => pos != positions[randomNumber]);
+        if (!isDuplicateFrameHelper(image, this.state.canvas.getObjects())) {
+          this.state.canvas.add(image);
+          positions = positions.filter((pos: any) => pos != positions[randomNumber]);
+        } else {
+          const existingFrame = getFrameByEntityIdHelper(
+            image.id,
+            this.state.canvas.getObjects(),
+          );
+          const relationOriginFrame = getFrameByEntityIdHelper(
+            image.relationOriginId,
+            this.state.canvas.getObjects(),
+          );
+          this.generateRelationBetweenFrames(existingFrame, relationOriginFrame);
+        }
       });
     });
     this.state.positions = positions;
@@ -144,13 +158,6 @@ export default class FabricService {
     }
   }
 
-  getFrameByEntityId(frameId: string) {
-    const foundFrame: any = this.state.canvas
-      .getObjects()
-      .find((object: any) => object.id == frameId);
-    return foundFrame;
-  }
-
   generateRelationOnFrameAdd() {
     this.state.canvas.on('object:added', (newObject: any) => {
       if (
@@ -158,7 +165,10 @@ export default class FabricService {
         this.objectIsFrame(newObject.target)
       ) {
         this.generateRelationBetweenFrames(
-          this.getFrameByEntityId(newObject.target.relationOriginId),
+          getFrameByEntityIdHelper(
+            newObject.target.relationOriginId,
+            this.state.canvas.getObjects(),
+          ),
           newObject.target,
         );
       }
