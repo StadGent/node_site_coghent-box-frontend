@@ -28,14 +28,15 @@ export default class SubtitleService {
       const response = await axios.get(_url);
       if (response.status == 200) {
         data = response.data;
-      }
-      if (_convertToJson) {
-        data = this.srtToJsonObjects(data as string);
-        this.setSRTObjects(data);
-      }
+        if (_convertToJson) {
+          data = this.srtToJsonObjects(data as string);
+          this.setSRTObjects(data);
+        }
+      }      
     }else {
       data = null;
     }
+    console.log('subtitles', data)
     return data;
   }
 
