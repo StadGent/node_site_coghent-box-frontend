@@ -20,22 +20,18 @@ import {
 import mqtt from '@/components/mqtt.vue';
 import { BoxVisiter } from '@/models/GraphqlModel';
 import StoryService from '@/services/StoryService';
-
-export type SensorObject = {
-  sensor: number;
-  instant: boolean;
-  present: boolean;
-}
+import Common, { SensorObject } from '@/composables/common';
 
 export default defineComponent({
   name: 'Wall',
-  components: { ViewPort, mqtt },
+  components: { ViewPort },
 
   setup() {
     let stories = ref<Array<any>>();
-    const storySelected = ref<string>(JSON.stringify({sensor: 1, instant: true, present: true} as SensorObject));
+    const storySelected = ref<string>(JSON.stringify({previousSensor: 1 , sensor: 1, instant: true, present: true} as SensorObject));
     let visiter: BoxVisiter;
     const storyService = ref<StoryService>();
+    let previousSensor = 1;
 
     // const { onResult: BoxVisiter, fetchMore: GetVisiter } = useQuery(
     //   GetBoxVisiterByIdDocument,
@@ -86,19 +82,28 @@ export default defineComponent({
       switch (key.code) {
         case 'Digit1':
           console.log('pressed 1');
-          storySelected.value = JSON.stringify({sensor: 1, instant: true, present: true} as SensorObject);
+          storySelected.value = JSON.stringify({previousSensor: previousSensor, sensor: 1, instant: true, present: false} as SensorObject);
+          previousSensor = 1;
+          await Common().awaitTimeout(2000);
+          storySelected.value = JSON.stringify({previousSensor: previousSensor, sensor: 1, instant: true, present: true} as SensorObject);
           break;
         case 'Digit2':
           console.log('pressed 2');
-          storySelected.value = JSON.stringify({sensor: 2, instant: true, present: true} as SensorObject);
+          storySelected.value = JSON.stringify({previousSensor: previousSensor, sensor: 2, instant: true, present: false} as SensorObject);
+          await Common().awaitTimeout(2000);
+          previousSensor = 2;
+          storySelected.value = JSON.stringify({previousSensor: previousSensor, sensor: 2, instant: true, present: false} as SensorObject);
           break;
         case 'Digit3':
           console.log('pressed 3');
-          storySelected.value = JSON.stringify({sensor: 3, instant: true, present: true} as SensorObject);
+          storySelected.value = JSON.stringify({previousSensor: previousSensor, sensor: 3, instant: true, present: false} as SensorObject);
+          await Common().awaitTimeout(2000);
+          previousSensor = 3;
+          storySelected.value = JSON.stringify({previousSensor: previousSensor, sensor: 3, instant: true, present: false} as SensorObject);
           break;
         case 'Digit4':
           console.log('pressed 4');
-          storySelected.value = JSON.stringify({sensor: 4, instant: true, present: true} as SensorObject);
+          storySelected.value = JSON.stringify({previousSensor: previousSensor, sensor: 4, instant: true, present: true} as SensorObject);
           break;
         case 'Digit5':
           console.log('pressed 5');

@@ -1,7 +1,7 @@
 <template>
   <div ref="viewport" class="viewport" />
   <div class="subtitles">
-    <p>{{subtitles}}</p>
+    <p>{{ subtitles }}</p>
   </div>
 </template>
 
@@ -15,6 +15,7 @@ import StoryService from '@/services/StoryService';
 import ZoneService from '@/services/ZoneService';
 import TextService from '@/services/TextService';
 import TaggingService, { Tags } from '@/services/TaggingService';
+import SubtitleService from '@/services/SubtitleService';
 
 import Tools from '@/Three/helper.tools';
 import AudioHelper, { AudioHelperFunctions } from '@/Three/helper.audio';
@@ -37,14 +38,11 @@ import PlayBook from '@/composables/playbook';
 import useStory from '@/composables/useStory';
 import MoveObject from '@/composables/moveObject';
 import CustomAnimation from '@/composables/animation';
+import Common, { SensorObject } from '@/composables/common';
+import useFrame from '@/composables/useFrame';
 
 import PauseProgressbar from '@/Three/shapes.pauseProgressbar';
-
 import Template from '@/Three/template.shapes';
-
-import SubtitleService from '@/services/SubtitleService';
-import useFrame from '@/composables/useFrame';
-import { SensorObject } from '@/views/Wall.vue';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -56,7 +54,11 @@ export default defineComponent({
     storySelected: {
       type: String,
       required: true,
-      default: JSON.stringify({sensor: 1, instant: true, present: true} as SensorObject),
+      default: JSON.stringify({
+        sensor: 1,
+        instant: true,
+        present: true,
+      } as SensorObject),
     },
     storyService: {
       type: StoryService,
@@ -99,51 +101,56 @@ export default defineComponent({
       () => props.storySelected,
       async (value) => {
         const _storySelected = JSON.parse(value) as SensorObject;
-        console.log('You want to select story', props.storySelected);
-        console.log('Can you choose a story?', chooseStory.value);
-        storyData = stories.value;
-        if (
-          _storySelected.sensor != 0 &&
-          chooseStory.value &&
-          _storySelected.sensor <= storyData.length &&
-          !storyService.storyIsSeen(storyData[_storySelected.sensor - 1].id)
-        ) {
-          const _storyData = storyService.getStoryDataOfStory(storyData[_storySelected.sensor - 1].id);
-          storyService.setActiveStory(storyData[_storySelected.sensor - 1].id);
-          chooseStory.value = false;
-          currentStory.value = _storySelected.sensor - 1;
-          currentFrame = _storyData.totalOfFramesSeen;
-          console.log('Selected story => ', currentStory.value);
+        if (chooseStory.value && _storySelected.sensor != 0) {
+          console.log('==========================');
+          console.log('_storySelected', _storySelected);
+          console.log('==========================');
+          console.log('You selected sensor', _storySelected.sensor);
+          storyData = stories.value;
 
-          await PlayBookBuild(
-            threeSvc,
-            storyService,
-            zoneService,
-            taggingService,
-            playBook,
-            spotlight,
-            activeStoryData,
-          ).setSelectedStory();
-          await garbageHelper.newStorySelected();
+          if (Common().sensorSendsPresent(_storySelected)) {
+            chooseStory.value = false;
+            const _storyData = storyService.getStoryDataOfStory(
+              storyData[_storySelected.sensor - 1].id,
+            );
+            storyService.setActiveStory(storyData[_storySelected.sensor - 1].id);
+            currentStory.value = _storySelected.sensor - 1;
+            currentFrame = _storyData.totalOfFramesSeen;
+            console.log('Selected story => ', currentStory.value);
 
-          const progressDots = PauseProgressbar(storyService.activeStoryData).dots(
-            Template().storyCircleLayers(zoneService.middleZoneCenter).progressDots,
-            Measurements().storyCircle.progressRadius,
-            storyService.activeStoryData.totalOfFrames,
-            storyService.activeStoryData.storyColor,
-          );
-          await SceneHelper(threeSvc, storyService).addFrameProgressDotsToScene(
-            progressDots,
-            storyService.activeStoryData.storyId,
-            storyService.activeStoryData.totalOfFramesSeen + 1,
-            true,
-          );
-          taggingService.retag(Tags.StoryCircleFrameDot, Tags.ActiveStoryCircleFrameDot);
-          taggingService.retag(
-            Tags.StoryCircleFrameInnerDot,
-            Tags.ActiveStoryCircleFrameInnerDot,
-          );
-          resetStory();
+            await PlayBookBuild(
+              threeSvc,
+              storyService,
+              zoneService,
+              taggingService,
+              playBook,
+              spotlight,
+              activeStoryData,
+            ).setSelectedStory();
+            await garbageHelper.newStorySelected();
+
+            const progressDots = PauseProgressbar(storyService.activeStoryData).dots(
+              Template().storyCircleLayers(zoneService.middleZoneCenter).progressDots,
+              Measurements().storyCircle.progressRadius,
+              storyService.activeStoryData.totalOfFrames,
+              storyService.activeStoryData.storyColor,
+            );
+            await SceneHelper(threeSvc, storyService).addFrameProgressDotsToScene(
+              progressDots,
+              storyService.activeStoryData.storyId,
+              storyService.activeStoryData.totalOfFramesSeen + 1,
+              true,
+            );
+            taggingService.retag(
+              Tags.StoryCircleFrameDot,
+              Tags.ActiveStoryCircleFrameDot,
+            );
+            taggingService.retag(
+              Tags.StoryCircleFrameInnerDot,
+              Tags.ActiveStoryCircleFrameInnerDot,
+            );
+            resetStory();
+          }
         }
       },
     );
@@ -209,11 +216,11 @@ export default defineComponent({
       let currentSubtitle = 1;
       interval = setInterval(async () => {
         showProgressOfFrame = true;
-        if(subtitleService.subtitles.length > 0){
+        if (subtitleService.subtitles.length > 0) {
           const subtitleParams = subtitleService.getSubtitleForTime(
-          audio.currentTime,
-          subtitleService.subtitles,
-          currentSubtitle,
+            audio.currentTime,
+            subtitleService.subtitles,
+            currentSubtitle,
           );
           subtitles.value = `${subtitleParams.subtitle}`;
           currentSubtitle = subtitleParams.index;
@@ -363,7 +370,11 @@ export default defineComponent({
               });
           } else {
             currentStory.value = 0;
-            emit('resetSelectedStory', { sensor: 0, instant: true, present: true } as SensorObject);
+            emit('resetSelectedStory', {
+              sensor: 0,
+              instant: true,
+              present: true,
+            } as SensorObject);
             garbageHelper.pauseScreen();
             spotlight.scale.set(
               Measurements().storyCircle.outerCircle,
@@ -429,7 +440,6 @@ export default defineComponent({
 });
 </script>
 <style>
-
 .subtitles {
   width: 100%;
   height: 100px;
@@ -439,7 +449,7 @@ export default defineComponent({
   justify-content: center;
   align-items: center;
 }
-.subtitles p{
+.subtitles p {
   width: 600px;
   word-break: break-all;
   font-size: 24px;
