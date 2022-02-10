@@ -94,7 +94,6 @@ export default defineComponent({
     let storyData: Array<Story> = [];
     let activeStoryData = reactive<Story>({} as Story);
     let spotlight: Mesh;
-    let smallCountDownStarted = false;
 
     let subtitles = ref<string>('');
 
@@ -103,21 +102,14 @@ export default defineComponent({
       async (value) => {
         const _storySelected = JSON.parse(value) as SensorObject;
         if (chooseStory.value && _storySelected.sensor != 0) {
-          console.log('==========================');
-          console.log('_storySelected', _storySelected);
-          console.log('==========================');
+          chooseStory.value = false;
           console.log('You selected sensor', _storySelected.sensor);
           storyData = stories.value;
 
-          if (Common().sensorSendsPresent(_storySelected)) {
-            // while(!smallCountDownStarted){return}
-            console.log('START', smallCountDownStarted)
-            garbageHelper.smallCountdownTimer();
-            await setNewStoryWhenSelected(_storySelected.sensor - 1);
-          }
-          // } else {
-          //   await startCountdownForSelectedStory(_storySelected.sensor - 1);
-          // }
+          await startCountdownForSelectedStory(_storySelected.sensor - 1, 3);         
+          await startCountdownForSelectedStory(_storySelected.sensor - 1, 2);        
+          await startCountdownForSelectedStory(_storySelected.sensor - 1, 1);
+          await setNewStoryWhenSelected(_storySelected.sensor - 1);       
         }
       },
     );
@@ -178,11 +170,12 @@ export default defineComponent({
       resetStory();
     };
 
-    const startCountdownForSelectedStory = async (_storySelected: number) => {
-      garbageHelper.smallCountdownTimer();
+    const startCountdownForSelectedStory = async (
+      _storySelected: number,
+      _count: number,
+    ) => {
       const pausePosition = storyService.getStoryData()[_storySelected].pausedPosition;
-      smallCountDownStarted = true;
-      await CustomAnimation().circularCountdown(
+      await CustomAnimation().singleCircularCountdown(
         threeSvc,
         new Vector3(
           pausePosition.x,
@@ -196,10 +189,10 @@ export default defineComponent({
           Tags.SmallCountdowndownNumber,
           Tags.SmallCountdownProgressRing,
         ],
-        new Vector3(-0.1, -0.15, 0),
+        new Vector3(-0.12, -0.15, 0),
         Measurements().text.size.small,
+        _count,
       );
-      smallCountDownStarted = false;
     };
 
     const setup = async () => {

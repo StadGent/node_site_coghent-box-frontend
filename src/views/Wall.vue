@@ -82,24 +82,18 @@ export default defineComponent({
       switch (key.code) {
         case 'Digit1':
           console.log('pressed 1');
-          storySelected.value = JSON.stringify({previousSensor: previousSensor, sensor: 1, instant: true, present: false} as SensorObject);
-          previousSensor = 1;
-          await Common().awaitTimeout(2000);
           storySelected.value = JSON.stringify({previousSensor: previousSensor, sensor: 1, instant: true, present: true} as SensorObject);
+          previousSensor = 1;
           break;
         case 'Digit2':
           console.log('pressed 2');
-          storySelected.value = JSON.stringify({previousSensor: previousSensor, sensor: 2, instant: true, present: false} as SensorObject);
+          storySelected.value = JSON.stringify({previousSensor: previousSensor, sensor: 2, instant: true, present: true} as SensorObject);
           previousSensor = 2;
-          await Common().awaitTimeout(2000);
-          storySelected.value = JSON.stringify({previousSensor: previousSensor, sensor: 2, instant: true, present: false} as SensorObject);
           break;
         case 'Digit3':
           console.log('pressed 3');
-          storySelected.value = JSON.stringify({previousSensor: previousSensor, sensor: 3, instant: true, present: false} as SensorObject);
+          storySelected.value = JSON.stringify({previousSensor: previousSensor, sensor: 3, instant: true, present: true} as SensorObject);
           previousSensor = 3;
-          await Common().awaitTimeout(2000);
-          storySelected.value = JSON.stringify({previousSensor: previousSensor, sensor: 3, instant: true, present: false} as SensorObject);
           break;
         case 'Digit4':
           console.log('pressed 4');

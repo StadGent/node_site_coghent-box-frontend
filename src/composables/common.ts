@@ -50,7 +50,7 @@ const Common = (): {
   };
 
   const sensorSendsPresent = (_object: SensorObject) => {
-    return _object.instant && _object.present && _object.sensor == _object.previousSensor
+    return _object.instant && _object.present
   }
 
   return {

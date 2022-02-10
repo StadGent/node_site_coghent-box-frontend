@@ -16,6 +16,7 @@ const CustomAnimation = (): {
   grow: (object: Mesh<any, MeshBasicMaterial>, scaleTo: number, step: number) => Promise<void>;
   shrink: (object: Mesh<any, MeshBasicMaterial>, scaleTo: number, step: number) => Promise<void>;
   circularCountdown: (_threeService: ThreeService, _position: Vector3, _radius: number, _thickness: number, _tags: Array<Tags>, _textCorrection: Vector3, _fontSize: number) => Promise<void>
+  singleCircularCountdown: (_threeService: ThreeService, _position: Vector3, _radius: number, _thickness: number, _tags: Array<Tags>, _textCorrection: Vector3, _fontSize: number, _count: number) => Promise<void>
 } => {
 
   const fadeOut = async (object: Mesh<any, MeshBasicMaterial>, fadeTo: number, step: number) => {
@@ -71,10 +72,16 @@ const CustomAnimation = (): {
   };
 
   const circularCountdown = async (_threeService: ThreeService, _position: Vector3, _radius: number, _thickness: number, _tags: Array<Tags>, _textCorrection: Vector3, _fontSize: number) => {
-    const ring = CountDownCircle(_position, 2, _radius, _thickness);
-    _threeService.AddToScene(ring, _tags[0]);
     const count = [3, 2, 1];
     for (const _count of count) {
+      await singleCircularCountdown(_threeService,_position,_radius,_thickness,_tags,_textCorrection,_fontSize,_count)
+    }
+    Promise.resolve();
+  }
+
+  const singleCircularCountdown = async (_threeService: ThreeService, _position: Vector3, _radius: number, _thickness: number, _tags: Array<Tags>, _textCorrection: Vector3, _fontSize: number, _count: number) => {
+    const ring = CountDownCircle(_position, 2, _radius, _thickness);
+    _threeService.AddToScene(ring, _tags[0]);
       let progress = 0;
       const countdownNumber = TimerCountdown(_threeService).createNumber(_count.toString(), new Vector3(_position.x + _textCorrection.x, _position.y + _textCorrection.y, Layers.scene), _fontSize);
       _threeService.AddToScene(countdownNumber, _tags[1])
@@ -86,7 +93,6 @@ const CustomAnimation = (): {
         _threeService.RemoveFromScene(ring_progress);
       }
       _threeService.RemoveFromScene(countdownNumber);
-    }
     _threeService.RemoveFromScene(ring);
     Promise.resolve();
   }
@@ -99,6 +105,7 @@ const CustomAnimation = (): {
     grow,
     shrink,
     circularCountdown,
+    singleCircularCountdown
   }
 };
 
