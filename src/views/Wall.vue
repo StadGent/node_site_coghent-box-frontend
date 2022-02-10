@@ -28,10 +28,9 @@ export default defineComponent({
 
   setup() {
     let stories = ref<Array<any>>();
-    const storySelected = ref<string>(JSON.stringify({previousSensor: 1 , sensor: 1, instant: true, present: true} as SensorObject));
+    const storySelected = ref<string>(JSON.stringify({ topic: 'sensors/1/present', id: 1, msg: true } as SensorObject));
     let visiter: BoxVisiter;
     const storyService = ref<StoryService>();
-    let previousSensor = 1;
 
     // const { onResult: BoxVisiter, fetchMore: GetVisiter } = useQuery(
     //   GetBoxVisiterByIdDocument,
@@ -82,23 +81,19 @@ export default defineComponent({
       switch (key.code) {
         case 'Digit1':
           console.log('pressed 1');
-          storySelected.value = JSON.stringify({previousSensor: previousSensor, sensor: 1, instant: true, present: true} as SensorObject);
-          previousSensor = 1;
+          storySelected.value = JSON.stringify({ topic: 'sensors/1/present', id: 1, msg: true } as SensorObject);
           break;
         case 'Digit2':
           console.log('pressed 2');
-          storySelected.value = JSON.stringify({previousSensor: previousSensor, sensor: 2, instant: true, present: true} as SensorObject);
-          previousSensor = 2;
+          storySelected.value = JSON.stringify({ topic: 'sensors/2/present', id: 2, msg: true } as SensorObject);
           break;
         case 'Digit3':
           console.log('pressed 3');
-          storySelected.value = JSON.stringify({previousSensor: previousSensor, sensor: 3, instant: true, present: true} as SensorObject);
-          previousSensor = 3;
+          storySelected.value = JSON.stringify({ topic: 'sensors/3/present', id: 3, msg: true } as SensorObject);
           break;
         case 'Digit4':
           console.log('pressed 4');
-          storySelected.value = JSON.stringify({previousSensor: previousSensor, sensor: 4, instant: true, present: true} as SensorObject);
-          previousSensor = 4;
+          storySelected.value = JSON.stringify({ topic: 'sensors/4/present', id:4, msg: true } as SensorObject);
           break;
         case 'Digit5':
           console.log('pressed 5');
@@ -108,7 +103,7 @@ export default defineComponent({
 
     const setSelectStory = (sensorValue: { topic: string, id: number; msg: boolean }) => {
       console.log(`MQTT data => `, sensorValue);
-      if (sensorValue.msg) {
+      if (sensorValue.topic.includes('present') && sensorValue.msg) {
         storySelected.value = JSON.stringify(sensorValue);
       }
     };

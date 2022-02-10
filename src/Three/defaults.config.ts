@@ -27,7 +27,7 @@ const Defaults = (): {
   const screenZonePadding = () => 2;
   const boundaryPadding = () => 1;
   
-  const maxFrames = () => 2;
+  const maxFrames = () => 3;
   const countdown = () => 3; 
 
   const fontPath = () => '/Fonts/myFont.json';

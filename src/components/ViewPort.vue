@@ -38,7 +38,7 @@ import PlayBook from '@/composables/playbook';
 import useStory from '@/composables/useStory';
 import MoveObject from '@/composables/moveObject';
 import CustomAnimation from '@/composables/animation';
-import Common, { SensorObject } from '@/composables/common';
+import { SensorObject } from '@/composables/common';
 import useFrame from '@/composables/useFrame';
 
 import PauseProgressbar from '@/Three/shapes.pauseProgressbar';
@@ -55,9 +55,9 @@ export default defineComponent({
       type: String,
       required: true,
       default: JSON.stringify({
-        sensor: 1,
-        instant: true,
-        present: true,
+        topic: 'sensors/1/present',
+        id: 1,
+        msg: true,
       } as SensorObject),
     },
     storyService: {
@@ -70,7 +70,7 @@ export default defineComponent({
     let storySelected = JSON.parse(props.storySelected) as SensorObject;
     const viewport = ref(null);
     const stories = ref(props.stories);
-    const currentStory = ref<number>(storySelected.sensor - 1);
+    const currentStory = ref<number>(storySelected.id - 1);
     const chooseStory = ref<boolean>(false);
     const videoElement = ref<HTMLVideoElement>();
 
@@ -101,15 +101,15 @@ export default defineComponent({
       () => props.storySelected,
       async (value) => {
         const _storySelected = JSON.parse(value) as SensorObject;
-        if (chooseStory.value && _storySelected.sensor != 0) {
+        if (chooseStory.value && _storySelected.id != 0) {
           chooseStory.value = false;
-          console.log('You selected sensor', _storySelected.sensor);
+          console.log('You selected sensor', _storySelected.id);
           storyData = stories.value;
 
-          await startCountdownForSelectedStory(_storySelected.sensor - 1, 3);         
-          await startCountdownForSelectedStory(_storySelected.sensor - 1, 2);        
-          await startCountdownForSelectedStory(_storySelected.sensor - 1, 1);
-          await setNewStoryWhenSelected(_storySelected.sensor - 1);       
+          await startCountdownForSelectedStory(_storySelected.id - 1, 3);
+          await startCountdownForSelectedStory(_storySelected.id - 1, 2);
+          await startCountdownForSelectedStory(_storySelected.id - 1, 1);
+          await setNewStoryWhenSelected(_storySelected.id - 1);
         }
       },
     );
@@ -394,9 +394,9 @@ export default defineComponent({
           } else {
             currentStory.value = 0;
             emit('resetSelectedStory', {
-              sensor: 0,
-              instant: true,
-              present: true,
+              topic: 'sensors/0/present',
+              id: 0,
+              msg: true,
             } as SensorObject);
             garbageHelper.pauseScreen();
             spotlight.scale.set(
