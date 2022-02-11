@@ -1,3 +1,5 @@
+import { Coordinate, Scale, Position, IndexedPosition } from './FabricService';
+
 type FabricDefaults = {
   canvas: {
     header: {
@@ -45,7 +47,7 @@ type FabricDefaults = {
       positions: {
         xAxis: Array<number>;
         yAxis: Array<number>;
-        blockedPositions: Array<{ xIndex: number; yIndex: number }>;
+        blockedPositions: IndexedPosition[];
       };
       scale: {
         scaleX: number;
@@ -71,7 +73,7 @@ const fabricdefaults: FabricDefaults = {
     selectedImage: {
       canvasPosition: {
         left: 3840 / 2,
-        top: 1900 - 100,
+        top: 1900 - 50,
       },
       scale: {
         scaleX: 0.4,

@@ -1,5 +1,5 @@
 import { fabricdefaults } from './defaults.fabric';
-import { Coordinate, Scale, Position } from './FabricService';
+import { Coordinate, Scale, Position, IndexedPosition } from './FabricService';
 import { fabric } from 'fabric';
 
 const underlineHelper = (mainImage: any) => {
@@ -36,33 +36,63 @@ const coordinateIndexHelper = (coordinate: Coordinate) => {
   return { xIndex, yIndex };
 };
 
-const coordinatesInRangeHelper = (startCoordinate: Coordinate, range: number) => {
-  const coordinates: Coordinate[] = [];
+const availableIndexedPositionsHelper = (
+  indexedPosition: IndexedPosition,
+  range: number,
+  takenPositions: Array<IndexedPosition>,
+): Array<IndexedPosition> => {
+  let positionsInRange: Array<IndexedPosition> = indexedPositionsInRangeHelper(
+    indexedPosition,
+    range,
+  );
 
-  const indexedCoordinate = coordinateIndexHelper(startCoordinate);
-  console.log(indexedCoordinate);
+  positionsInRange.forEach((position: IndexedPosition) => {
+    if (
+      fabricdefaults.canvas.secondaryImage.positions.blockedPositions.find(
+        (blockedPosition: IndexedPosition) => blockedPosition == position,
+      )
+    ) {
+      positionsInRange = positionsInRange.filter(
+        (positionInRange: IndexedPosition) => positionInRange != position,
+      );
+    } else if (
+      takenPositions.find((takenPosition: IndexedPosition) => takenPosition == position)
+    ) {
+      positionsInRange = positionsInRange.filter(
+        (positionInRange: IndexedPosition) => positionInRange != position,
+      );
+    }
+  });
 
-  const startY: number = Math.max(0, indexedCoordinate.yIndex - range);
+  return positionsInRange;
+};
+
+const indexedPositionsInRangeHelper = (
+  indexedPosition: IndexedPosition,
+  range: number,
+) => {
+  const indexedPositions: IndexedPosition[] = [];
+
+  const startY: number = Math.max(0, indexedPosition.yIndex - range);
   const endY: number = Math.min(
     fabricdefaults.canvas.secondaryImage.positions.yAxis.length - 1,
-    indexedCoordinate.yIndex + range,
+    indexedPosition.yIndex + range,
   );
 
   for (let row: number = startY; row <= endY; row++) {
-    const xRange: number = range - Math.abs(row - indexedCoordinate.yIndex);
+    const xRange: number = range - Math.abs(row - indexedPosition.yIndex);
 
-    const startX: number = Math.max(0, indexedCoordinate.xIndex - xRange);
+    const startX: number = Math.max(0, indexedPosition.xIndex - xRange);
     const endX: number = Math.min(
       fabricdefaults.canvas.secondaryImage.positions.xAxis.length - 1,
-      indexedCoordinate.xIndex + xRange,
+      indexedPosition.xIndex + xRange,
     );
 
     for (let col = startX; col <= endX; col++) {
-      coordinates.push({ x: col, y: row });
+      indexedPositions.push({ xIndex: col, yIndex: row });
     }
   }
-  console.log({ coordinates });
-  return coordinates;
+  return indexedPositions;
 };
 
 const lineSpacingHelper = (bottomCoordinates: Array<Coordinate>) => {
@@ -78,18 +108,31 @@ const changeFrameScaleHelper = (frame: any, scale: Scale) => {
 };
 
 const availablePositionHelper = () => {
-  const availablePositionArray: Array<Position> = [];
+  const availablePositionArray: Array<IndexedPosition> = [];
   fabricdefaults.canvas.secondaryImage.positions.xAxis.forEach((xPosition, xIndex) => {
     fabricdefaults.canvas.secondaryImage.positions.yAxis.forEach((yPosition, yIndex) => {
       if (
         !fabricdefaults.canvas.secondaryImage.positions.blockedPositions.find(
-          (position: any) => position.xIndex == xIndex && position.yIndex == yIndex,
+          (position: IndexedPosition) =>
+            position.xIndex == xIndex && position.yIndex == yIndex,
         )
-      )
-        availablePositionArray.push({ top: yPosition, left: xPosition });
+      ) {
+        availablePositionArray.push({ yIndex, xIndex });
+      }
     });
   });
   return availablePositionArray;
+};
+
+const getPositionIndexesByIdHelper = (entityId: string, objectsOnCanvas: Array<any>) => {
+  const positionIndexEntity = objectsOnCanvas.find(
+    (object: any) => object.id == entityId,
+  );
+  if (positionIndexEntity) {
+    return positionIndexEntity.positionIndexes;
+  } else {
+    return undefined;
+  }
 };
 
 const getFrameByEntityIdHelper = (frameId: string, objectsOnCanvas: Array<any>) => {
@@ -133,13 +176,23 @@ const getRandomNumberInRangeHelper = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
+const lockObjectMovementHelper = (object: any) => {
+  object.lockMovementX = true;
+  object.lockMovementY = true;
+  object.lockScalingX = true;
+  object.lockScalingY = true;
+  object.setControlsVisibility(fabricdefaults.canvas.selectedImage.controls);
+};
+
 export {
   underlineHelper,
   changeFrameScaleHelper,
   ImageUrlHelper,
   availablePositionHelper,
   getRandomNumberInRangeHelper,
-  coordinatesInRangeHelper,
+  indexedPositionsInRangeHelper,
   isDuplicateFrameHelper,
   getFrameByEntityIdHelper,
+  getPositionIndexesByIdHelper,
+  lockObjectMovementHelper,
 };

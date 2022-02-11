@@ -5,9 +5,11 @@ import {
   ImageUrlHelper,
   availablePositionHelper,
   getRandomNumberInRangeHelper,
-  coordinatesInRangeHelper,
+  indexedPositionsInRangeHelper,
   isDuplicateFrameHelper,
   getFrameByEntityIdHelper,
+  getPositionIndexesByIdHelper,
+  lockObjectMovementHelper,
 } from './helper.fabric';
 import { router } from '@/router';
 import { image } from 'd3';
@@ -15,12 +17,18 @@ import { image } from 'd3';
 type State = {
   canvas: any;
   selectedImage: any;
-  positions: Array<Position>;
+  positions: Array<IndexedPosition>;
+  takenPositions: Array<IndexedPosition>;
 };
 
 export type Scale = {
   scaleX: number;
   scaleY: number;
+};
+
+export type IndexedPosition = {
+  xIndex: number;
+  yIndex: number;
 };
 
 export type Position = {
@@ -42,6 +50,7 @@ export default class FabricService {
       canvas: this.setupFabric(),
       selectedImage: undefined,
       positions: availablePositionHelper(),
+      takenPositions: [],
     };
     this.setMainImageOnClick();
     this.generateRelationOnFrameAdd();
@@ -57,14 +66,6 @@ export default class FabricService {
     return canvas;
   }
 
-  lockObjectMovement(object: any) {
-    object.lockMovementX = true;
-    object.lockMovementY = true;
-    object.lockScalingX = true;
-    object.lockScalingY = true;
-    object.setControlsVisibility(fabricdefaults.canvas.selectedImage.controls);
-  }
-
   generateMainImageFrame(entity: any) {
     const image = ImageUrlHelper(entity)[0];
     const frame = new fabric.Image.fromURL(image, (image: any) => {
@@ -74,7 +75,11 @@ export default class FabricService {
       image.scaleY = fabricdefaults.canvas.selectedImage.scale.scaleY;
       image.originX = fabricdefaults.canvas.selectedImage.origin.originX;
       image.originY = fabricdefaults.canvas.selectedImage.origin.originY;
-      this.lockObjectMovement(image);
+      image.positionIndexes = {
+        xIndex: fabricdefaults.canvas.secondaryImage.positions.blockedPositions[0].xIndex,
+        yIndex: fabricdefaults.canvas.secondaryImage.positions.blockedPositions[0].xIndex,
+      };
+      lockObjectMovementHelper(image);
       image.hoverCursor = 'pointer';
       image.setCoords();
       image.id = entity.id;
@@ -88,36 +93,48 @@ export default class FabricService {
 
   async generateSecondaryImageFrames(
     entities: Array<any>,
-    subRelationOriginEntityId: string = '',
+    subRelationOriginEntityId: string,
   ) {
-    let positions: Array<Position> = this.state.positions;
+    const closeAvailablePositions: Array<IndexedPosition> = indexedPositionsInRangeHelper(
+      getPositionIndexesByIdHelper(
+        subRelationOriginEntityId,
+        this.state.canvas.getObjects(),
+      ),
+      3,
+    );
+    console.log(closeAvailablePositions);
     const images: Array<string> = ImageUrlHelper(entities);
     images.forEach((image, index) => {
       const frame = new fabric.Image.fromURL(image, (image: any) => {
-        const randomNumber = getRandomNumberInRangeHelper(0, positions.length - 1);
+        const randomNumber = getRandomNumberInRangeHelper(
+          0,
+          closeAvailablePositions.length - 1,
+        );
         image.positionNumber = randomNumber;
         image.scaleX = fabricdefaults.canvas.secondaryImage.scale.scaleX;
         image.scaleY = fabricdefaults.canvas.secondaryImage.scale.scaleY;
-        image.top = positions[randomNumber].top;
-        image.left = positions[randomNumber].left;
+        image.top =
+          fabricdefaults.canvas.secondaryImage.positions.yAxis[
+            closeAvailablePositions[randomNumber].yIndex
+          ];
+        image.left =
+          fabricdefaults.canvas.secondaryImage.positions.xAxis[
+            closeAvailablePositions[randomNumber].xIndex
+          ];
+        image.positionIndexes = {
+          xIndex: closeAvailablePositions[randomNumber].xIndex,
+          yIndex: closeAvailablePositions[randomNumber].yIndex,
+        };
         image.type = 'image';
         image.hoverCursor = 'pointer';
         image.id = entities[index].id;
         image.entity = entities[index];
-        // console.log(
-        //   coordinatesInRangeHelper(
-        //     { x: positions[randomNumber].left, y: positions[randomNumber].top },
-        //     2,
-        //   ),
-        // );
         image.setCoords();
-        if (subRelationOriginEntityId) {
-          image.relationOriginId = subRelationOriginEntityId;
-        }
-        this.lockObjectMovement(image);
+        image.relationOriginId = subRelationOriginEntityId;
+        lockObjectMovementHelper(image);
         if (!isDuplicateFrameHelper(image, this.state.canvas.getObjects())) {
           this.state.canvas.add(image);
-          positions = positions.filter((pos: any) => pos != positions[randomNumber]);
+          this.state.takenPositions.push(image.positionIndexes);
         } else {
           const existingFrame = getFrameByEntityIdHelper(
             image.id,
@@ -131,7 +148,6 @@ export default class FabricService {
         }
       });
     });
-    this.state.positions = positions;
   }
 
   setMainImageOnClick() {
