@@ -95,14 +95,13 @@ export default class FabricService {
     entities: Array<any>,
     subRelationOriginEntityId: string,
   ) {
-    const closeAvailablePositions: Array<IndexedPosition> = indexedPositionsInRangeHelper(
+    let closeAvailablePositions: Array<IndexedPosition> = indexedPositionsInRangeHelper(
       getPositionIndexesByIdHelper(
         subRelationOriginEntityId,
         this.state.canvas.getObjects(),
       ),
-      3,
+      fabricdefaults.canvas.secondaryImage.positions.range,
     );
-    console.log(closeAvailablePositions);
     const images: Array<string> = ImageUrlHelper(entities);
     images.forEach((image, index) => {
       const frame = new fabric.Image.fromURL(image, (image: any) => {
@@ -134,6 +133,10 @@ export default class FabricService {
         lockObjectMovementHelper(image);
         if (!isDuplicateFrameHelper(image, this.state.canvas.getObjects())) {
           this.state.canvas.add(image);
+          closeAvailablePositions = closeAvailablePositions.filter(
+            (pos: any) => pos != closeAvailablePositions[randomNumber],
+          );
+
           this.state.takenPositions.push(image.positionIndexes);
         } else {
           const existingFrame = getFrameByEntityIdHelper(

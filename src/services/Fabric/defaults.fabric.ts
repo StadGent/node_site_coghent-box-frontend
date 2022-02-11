@@ -48,6 +48,7 @@ type FabricDefaults = {
         xAxis: Array<number>;
         yAxis: Array<number>;
         blockedPositions: IndexedPosition[];
+        range: number;
       };
       scale: {
         scaleX: number;
@@ -112,6 +113,7 @@ const fabricdefaults: FabricDefaults = {
         ],
         yAxis: [1900 / 6 - 300, 1900 / 6, (1900 / 6) * 2, (1900 / 6) * 3, (1900 / 6) * 4],
         blockedPositions: [{ xIndex: 2, yIndex: 4 }],
+        range: 2,
       },
       scale: {
         scaleX: 0.3,

@@ -92,6 +92,10 @@ const indexedPositionsInRangeHelper = (
       indexedPositions.push({ xIndex: col, yIndex: row });
     }
   }
+
+  console.log({ indexedPosition });
+  console.log({ range });
+  console.log({ indexedPositions });
   return indexedPositions;
 };
 
