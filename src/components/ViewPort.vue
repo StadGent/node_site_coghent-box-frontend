@@ -88,7 +88,7 @@ export default defineComponent({
     let audioHelper: AudioHelperFunctions;
     let garbageHelper: GarabageHelperForWall;
     let audioDuration = 90;
-    let currentFrame = 1;
+    let currentFrame = 0;
     let showProgressOfFrame = false;
     let interval: ReturnType<typeof setTimeout>;
     let storyData: Array<Story> = [];
@@ -416,8 +416,8 @@ export default defineComponent({
             chooseStory.value = true;
           }
         },
-        playBook.lastAction().time + 1,
-        // audioDuration,
+        // playBook.lastAction().time + 1,
+        audioDuration,
         `Update storyData & show endOfSessions screen or the storyOverview`,
       );
     };
