@@ -5,6 +5,7 @@ import { DefaultApolloClient } from '@vue/apollo-composable';
 
 import 'coghent-vue-3-component-library/lib/index.css';
 import { router } from './router';
+import './style.css';
 
 async function main () {
   const config = await fetch('../config.json').then((r) => r.json());
