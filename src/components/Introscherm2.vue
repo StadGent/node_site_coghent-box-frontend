@@ -1,5 +1,5 @@
 <template>
-  <div class="flex justify-center flex-wrap h-screen w-screen">
+  <div class="flex justify-center flex-wrap h-screen w-screen bg-background-light">
     <CardComponent
       :large="true"
       :backgroundColor="`bg-accent-yellow`"
