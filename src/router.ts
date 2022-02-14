@@ -3,6 +3,7 @@ import TouchTable from '@/views/TouchTable.vue';
 import TouchTableEntity from '@/views/TouchTableEntity.vue';
 import Entrance from '@/views/Entrance.vue';
 import Wall from '@/views/Wall.vue';
+import Introscherm1 from '@/components/Introscherm1.vue';
 
 export const routes: RouteRecordRaw[] = [
   {
@@ -15,7 +16,26 @@ export const routes: RouteRecordRaw[] = [
     name: 'Entrance',
     meta: { title: 'Entrance' },
     component: Entrance,
-    children: [],
+    children: [
+      {
+        path: '/intro-1',
+        name: 'introscherm1',
+        meta: { title: 'Entrance | intro 1' },
+        component: Introscherm1,
+      },
+      {
+        path: '/intro-2',
+        name: 'introscherm2',
+        meta: { title: 'Entrance | intro 2' },
+        component: Introscherm1,
+      },
+      {
+        path: '/intro-3',
+        name: 'introscherm3',
+        meta: { title: 'Entrance | intro 3' },
+        component: Introscherm1,
+      },
+    ],
   },
   {
     path: '/wall',
