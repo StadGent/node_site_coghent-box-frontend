@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, ref, watch } from 'vue';
-import FabricService from '../services/Fabric/FabricService';
+import FabricService, {Relation} from '../services/Fabric/FabricService';
 import { useRoute, useRouter } from 'vue-router'
 import { useQuery } from '@vue/apollo-composable'
 import { GetTouchTableEntityByIdDocument, CardComponent, GetTouchTableEntityDocument} from 'coghent-vue-3-component-library'
@@ -26,7 +26,7 @@ const asString = (x: string | string[]) => (Array.isArray(x) ? x[0] : x)
 
 type SecondaryRelation = {
   originId: string,
-  relatedEntities: Array<any>
+  relatedEntities: Array<Relation>
 }
 
 export default defineComponent({
@@ -42,6 +42,7 @@ export default defineComponent({
       const { result, onResult:onEntityResult, loading, refetch } = useQuery(GetTouchTableEntityByIdDocument, { id})
       const relationStringArray = ref<string[]>([])
       const relationsLabelArray = ref<string[]>([])
+      const relationsArray = ref<Relation[]>([])
       const subRelations = ref<SecondaryRelation[]>([])
       const entity = ref<any>()
       const headEntityId = ref<string>()
@@ -119,7 +120,7 @@ export default defineComponent({
       }
 
       const highlightSelectedFilter = (filterIndex: number) => {
-        console.log(filterIndex)
+        fabricService?.highlightRelatedFrames(filterIndex, relationsArray.value)
       }
 
       onEntityResult((queryResult: any)=> {
@@ -133,6 +134,7 @@ export default defineComponent({
             getRelationStrings(queryResult.data.Entity)
             headEntityId.value = queryResult.data.Entity.id
             entity.value = queryResult.data.Entity
+            relationsArray.value = queryResult.data.Entity.relations
         }
       })
 
@@ -146,7 +148,7 @@ export default defineComponent({
         filteredRelationEntities.forEach((entity: any) => {
           const entityRelations: Array<string> = []
 
-          entity.relations.forEach((relation: any) => {
+          entity.relations.forEach((relation: Relation) => {
             entityRelations.push(relation.key)
           });
 
@@ -208,6 +210,6 @@ export default defineComponent({
     height: calc(2160px - 300px)
 }
 #canvas{
-  background-color: #F0EDE6;
+  background-color: #E5E5E5;
 }
 </style>

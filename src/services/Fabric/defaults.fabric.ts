@@ -1,4 +1,4 @@
-import { Coordinate, Scale, Position, IndexedPosition } from './FabricService';
+import { Coordinate, Scale, Position } from './FabricService';
 
 type FabricDefaults = {
   canvas: {
@@ -7,6 +7,10 @@ type FabricDefaults = {
     };
     relationBrowser: {
       height: number;
+      selectedRelationBorder: {
+        color: string;
+        stroke: number;
+      };
     };
     relationLimit: number;
     dimensions: {
@@ -47,7 +51,7 @@ type FabricDefaults = {
       positions: {
         xAxis: Array<number>;
         yAxis: Array<number>;
-        blockedPositions: IndexedPosition[];
+        blockedPositions: Position[];
         range: number;
       };
       scale: {
@@ -65,6 +69,10 @@ const fabricdefaults: FabricDefaults = {
     },
     relationBrowser: {
       height: 100,
+      selectedRelationBorder: {
+        color: '#02A77F',
+        stroke: 10,
+      },
     },
     relationLimit: 5,
     dimensions: {
@@ -113,7 +121,7 @@ const fabricdefaults: FabricDefaults = {
         ],
         yAxis: [1900 / 6 - 300, 1900 / 6, (1900 / 6) * 2, (1900 / 6) * 3, (1900 / 6) * 4],
         blockedPositions: [{ xIndex: 2, yIndex: 4 }],
-        range: 1,
+        range: 2,
       },
       scale: {
         scaleX: 0.3,

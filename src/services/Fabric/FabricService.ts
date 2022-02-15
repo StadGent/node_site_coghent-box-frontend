@@ -11,6 +11,9 @@ import {
   getPositionIndexesByIdHelper,
   lockObjectMovementHelper,
   availablePositionsInRangeHelper,
+  objectIsTypeHelper,
+  frameBorderHelper,
+  objectOpacityHelper,
 } from './helper.fabric';
 import { router } from '@/router';
 import { image } from 'd3';
@@ -18,8 +21,8 @@ import { image } from 'd3';
 type State = {
   canvas: any;
   selectedImage: any;
-  positions: Array<IndexedPosition>;
-  takenPositions: Array<IndexedPosition>;
+  positions: Array<Position>;
+  takenPositions: Array<Position>;
 };
 
 export type Scale = {
@@ -27,20 +30,20 @@ export type Scale = {
   scaleY: number;
 };
 
-export type IndexedPosition = {
+export type Position = {
   xIndex: number;
   yIndex: number;
-};
-
-export type Position = {
-  left: number;
-  top: number;
 };
 
 export type Coordinate = {
   key?: string;
   x: number;
   y: number;
+};
+
+export type Relation = {
+  key: string;
+  label: string;
 };
 
 export default class FabricService {
@@ -82,6 +85,7 @@ export default class FabricService {
       };
       lockObjectMovementHelper(image);
       image.hoverCursor = 'pointer';
+      image.objectType = 'frame';
       image.setCoords();
       image.id = entity.id;
       image.entity = entity;
@@ -96,7 +100,7 @@ export default class FabricService {
     entities: Array<any>,
     subRelationOriginEntityId: string,
   ) {
-    let closeAvailablePositions: Array<IndexedPosition> = availablePositionsInRangeHelper(
+    let closeAvailablePositions: Array<Position> = availablePositionsInRangeHelper(
       getPositionIndexesByIdHelper(
         subRelationOriginEntityId,
         this.state.canvas.getObjects(),
@@ -126,12 +130,12 @@ export default class FabricService {
           xIndex: closeAvailablePositions[randomNumber].xIndex,
           yIndex: closeAvailablePositions[randomNumber].yIndex,
         };
-        image.type = 'image';
         image.hoverCursor = 'pointer';
         image.id = entities[index].id;
         image.entity = entities[index];
         image.setCoords();
         image.relationOriginId = subRelationOriginEntityId;
+        image.objectType = 'frame';
         lockObjectMovementHelper(image);
         if (!isDuplicateFrameHelper(image, this.state.canvas.getObjects())) {
           this.state.canvas.add(image);
@@ -171,19 +175,11 @@ export default class FabricService {
     this.state.selectedImage = undefined;
   }
 
-  private objectIsFrame(object: any): boolean {
-    if (object.entity) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
   generateRelationOnFrameAdd() {
     this.state.canvas.on('object:added', (newObject: any) => {
       if (
         this.state.canvas.getObjects().length > 0 &&
-        this.objectIsFrame(newObject.target)
+        objectIsTypeHelper('frame', newObject.target)
       ) {
         this.generateRelationBetweenFrames(
           getFrameByEntityIdHelper(
@@ -196,7 +192,36 @@ export default class FabricService {
     });
   }
 
-  highlightRelatedFrames() {}
+  highlightRelatedFrames(selectedFilterIndex: number, relations: Array<Relation>) {
+    const relation: Relation = relations[selectedFilterIndex];
+
+    const canvasObjects: Array<any> = this.state.canvas.getObjects();
+    const canvasFrames: Array<any> = canvasObjects.filter((object: any) =>
+      objectIsTypeHelper('frame', object),
+    );
+
+    canvasFrames.forEach((canvasFrame: any) => {
+      objectOpacityHelper(canvasFrame, 1);
+      frameBorderHelper(canvasFrame, 'remove');
+    });
+
+    if (relation) {
+      canvasFrames.forEach((canvasFrame: any) => {
+        if (
+          canvasFrame.entity.relations.find(
+            (canvasRelation: Relation) => canvasRelation.key == relation.key,
+          ) &&
+          canvasFrame.id != this.state.selectedImage.id
+        ) {
+          frameBorderHelper(canvasFrame, 'add');
+        } else if (canvasFrame.id != this.state.selectedImage.id) {
+          objectOpacityHelper(canvasFrame, 0.4);
+        }
+        console.log(canvasFrame);
+      });
+    }
+    this.state.canvas.renderAll();
+  }
 
   generateRelationBetweenFrames(frame1: any, frame2: any) {
     console.log('Generating relation');
@@ -213,6 +238,9 @@ export default class FabricService {
         strokeWidth: 3,
         selectable: false,
         evented: false,
+        fromId: frame1.id,
+        toId: frame2.id,
+        objectType: 'line',
       });
       this.state.canvas.add(relation);
       relation.sendToBack();
