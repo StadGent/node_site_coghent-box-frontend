@@ -11,6 +11,9 @@ type FabricDefaults = {
         color: string;
         stroke: number;
       };
+      selectedRelationLine: {
+        color: string;
+      };
     };
     relationLimit: number;
     dimensions: {
@@ -72,6 +75,9 @@ const fabricdefaults: FabricDefaults = {
       selectedRelationBorder: {
         color: '#02A77F',
         stroke: 10,
+      },
+      selectedRelationLine: {
+        color: '#B65099',
       },
     },
     relationLimit: 5,

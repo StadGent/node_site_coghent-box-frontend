@@ -12,8 +12,9 @@ import {
   lockObjectMovementHelper,
   availablePositionsInRangeHelper,
   objectIsTypeHelper,
-  frameBorderHelper,
+  frameBorderHighlightHelper,
   objectOpacityHelper,
+  relationHighlightHelper,
 } from './helper.fabric';
 import { router } from '@/router';
 import { image } from 'd3';
@@ -66,7 +67,7 @@ export default class FabricService {
     canvas.selection = false; // no group selection
     canvas.setHeight(fabricdefaults.canvas.dimensions.height);
     canvas.setWidth(fabricdefaults.canvas.dimensions.width);
-    canvas.setBackgroundColor('#F0EDE6');
+    canvas.setBackgroundColor('#E5E5E5');
     return canvas;
   }
 
@@ -202,7 +203,7 @@ export default class FabricService {
 
     canvasFrames.forEach((canvasFrame: any) => {
       objectOpacityHelper(canvasFrame, 1);
-      frameBorderHelper(canvasFrame, 'remove');
+      frameBorderHighlightHelper(canvasFrame, false);
     });
 
     if (relation) {
@@ -213,7 +214,13 @@ export default class FabricService {
           ) &&
           canvasFrame.id != this.state.selectedImage.id
         ) {
-          frameBorderHelper(canvasFrame, 'add');
+          frameBorderHighlightHelper(canvasFrame, true);
+          relationHighlightHelper(
+            canvasFrame,
+            true,
+            this.state.canvas.getObjects(),
+            this.state.selectedImage,
+          );
         } else if (canvasFrame.id != this.state.selectedImage.id) {
           objectOpacityHelper(canvasFrame, 0.4);
         }

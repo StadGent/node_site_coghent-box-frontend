@@ -1,6 +1,7 @@
 import { fabricdefaults } from './defaults.fabric';
 import { Coordinate, Scale, Position } from './FabricService';
 import { fabric } from 'fabric';
+import { Relation } from 'coghent-vue-3-component-library/lib/queries';
 
 const underlineHelper = (mainImage: any) => {
   const imageCoordinates: Array<Coordinate> = mainImage.getCoords();
@@ -172,15 +173,40 @@ const ImageUrlHelper = (entities: Array<any> | any) => {
   return imageUrls;
 };
 
-const frameBorderHelper = (frame: any, action: any) => {
-  frame.stroke =
-    action == 'add'
-      ? fabricdefaults.canvas.relationBrowser.selectedRelationBorder.color
-      : undefined;
-  frame.strokeWidth =
-    action == 'add'
-      ? fabricdefaults.canvas.relationBrowser.selectedRelationBorder.stroke
-      : 0;
+const frameBorderHighlightHelper = (frame: any, highlight: boolean) => {
+  frame.stroke = highlight
+    ? fabricdefaults.canvas.relationBrowser.selectedRelationBorder.color
+    : undefined;
+  frame.strokeWidth = highlight
+    ? fabricdefaults.canvas.relationBrowser.selectedRelationBorder.stroke
+    : 0;
+};
+
+const relationHighlightHelper = (
+  frame: any,
+  highlight: boolean,
+  canvasObjects: Array<any>,
+  selectedFrame: any,
+) => {
+  const relationLines = canvasObjects.filter((canvasObject: any) =>
+    objectIsTypeHelper('line', canvasObject),
+  );
+  relationLines.forEach((relationLine: any) => {
+    if (highlight) {
+      const lineEndObject = canvasObjects.find(
+        (canvasObject: any) => canvasObject.id == relationLine.toId,
+      );
+      if (relationLine.fromId == selectedFrame.id && lineEndObject.id == frame.id) {
+        relationLine.stroke =
+          fabricdefaults.canvas.relationBrowser.selectedRelationLine.color;
+        relationLine.fill =
+          fabricdefaults.canvas.relationBrowser.selectedRelationLine.color;
+      }
+    } else {
+      relationLine.stroke = 'black';
+      relationLine.fill = 'black';
+    }
+  });
 };
 
 const objectOpacityHelper = (canvasObject: any, opacity: number) => {
@@ -214,6 +240,7 @@ export {
   lockObjectMovementHelper,
   availablePositionsInRangeHelper,
   objectIsTypeHelper,
-  frameBorderHelper,
+  frameBorderHighlightHelper,
   objectOpacityHelper,
+  relationHighlightHelper,
 };
