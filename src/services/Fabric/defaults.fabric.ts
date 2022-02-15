@@ -66,7 +66,7 @@ const fabricdefaults: FabricDefaults = {
     relationBrowser: {
       height: 100,
     },
-    relationLimit: 4,
+    relationLimit: 5,
     dimensions: {
       width: 3840,
       height: 1900,
@@ -113,7 +113,7 @@ const fabricdefaults: FabricDefaults = {
         ],
         yAxis: [1900 / 6 - 300, 1900 / 6, (1900 / 6) * 2, (1900 / 6) * 3, (1900 / 6) * 4],
         blockedPositions: [{ xIndex: 2, yIndex: 4 }],
-        range: 2,
+        range: 1,
       },
       scale: {
         scaleX: 0.3,

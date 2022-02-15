@@ -10,6 +10,7 @@ import {
   getFrameByEntityIdHelper,
   getPositionIndexesByIdHelper,
   lockObjectMovementHelper,
+  availablePositionsInRangeHelper,
 } from './helper.fabric';
 import { router } from '@/router';
 import { image } from 'd3';
@@ -95,12 +96,13 @@ export default class FabricService {
     entities: Array<any>,
     subRelationOriginEntityId: string,
   ) {
-    let closeAvailablePositions: Array<IndexedPosition> = indexedPositionsInRangeHelper(
+    let closeAvailablePositions: Array<IndexedPosition> = availablePositionsInRangeHelper(
       getPositionIndexesByIdHelper(
         subRelationOriginEntityId,
         this.state.canvas.getObjects(),
       ),
       fabricdefaults.canvas.secondaryImage.positions.range,
+      this.state.takenPositions,
     );
     const images: Array<string> = ImageUrlHelper(entities);
     images.forEach((image, index) => {
@@ -193,6 +195,8 @@ export default class FabricService {
       }
     });
   }
+
+  highlightRelatedFrames() {}
 
   generateRelationBetweenFrames(frame1: any, frame2: any) {
     console.log('Generating relation');

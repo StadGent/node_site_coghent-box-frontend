@@ -7,7 +7,7 @@
       <p class="text-4xl mb-12" v-if="entity.description[0].value">{{entity.description[0].value}}</p>
       <p class="text-4xl mb-12" v-else>This item does not have a description</p>
   </CardComponent>
-  <relationBrowser v-if="relationsLabelArray" :relations="relationsLabelArray" :loading="loading"/>
+  <relationBrowser v-if="relationsLabelArray" :relations="relationsLabelArray" :loading="loading" @selected="highlightSelectedFilter"/>
 </div>
 </template>
 
@@ -20,6 +20,7 @@ import { GetTouchTableEntityByIdDocument, CardComponent, GetTouchTableEntityDocu
 import TouchHeader from '@/components/TouchHeader.vue';
 import RelationBrowser from '@/components/RelationBrowser.vue';
 import {fabricdefaults} from '../services/Fabric/defaults.fabric'
+import { router } from '@/router';
 
 const asString = (x: string | string[]) => (Array.isArray(x) ? x[0] : x)
 
@@ -73,7 +74,8 @@ export default defineComponent({
 
     watch(() => route.params.entityID, () => {
       console.log('Refetch entity')
-        refetch({id :asString(route.params.entityID)})
+        // refetch({id :asString(route.params.entityID)})
+        router.go(0)
       })
 
       watch(() => entity.value, () => {
@@ -114,6 +116,10 @@ export default defineComponent({
           })
           relationStringArray.value = tempStringArray
           relationsLabelArray.value = tempLabelArray
+      }
+
+      const highlightSelectedFilter = (filterIndex: number) => {
+        console.log(filterIndex)
       }
 
       onEntityResult((queryResult: any)=> {
@@ -178,7 +184,8 @@ export default defineComponent({
     relationStringArray,
     relationsLabelArray,
     loading,
-    route}
+    route,
+    highlightSelectedFilter}
   },
 });
 </script>

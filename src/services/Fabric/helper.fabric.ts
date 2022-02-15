@@ -36,7 +36,7 @@ const coordinateIndexHelper = (coordinate: Coordinate) => {
   return { xIndex, yIndex };
 };
 
-const availableIndexedPositionsHelper = (
+const availablePositionsInRangeHelper = (
   indexedPosition: IndexedPosition,
   range: number,
   takenPositions: Array<IndexedPosition>,
@@ -49,20 +49,36 @@ const availableIndexedPositionsHelper = (
   positionsInRange.forEach((position: IndexedPosition) => {
     if (
       fabricdefaults.canvas.secondaryImage.positions.blockedPositions.find(
-        (blockedPosition: IndexedPosition) => blockedPosition == position,
+        (blockedPosition: IndexedPosition) =>
+          blockedPosition.xIndex == position.xIndex &&
+          blockedPosition.yIndex == position.yIndex,
       )
     ) {
       positionsInRange = positionsInRange.filter(
         (positionInRange: IndexedPosition) => positionInRange != position,
       );
     } else if (
-      takenPositions.find((takenPosition: IndexedPosition) => takenPosition == position)
+      takenPositions.find(
+        (takenPosition: IndexedPosition) =>
+          takenPosition.xIndex == position.xIndex &&
+          takenPosition.yIndex == position.yIndex,
+      )
+    ) {
+      positionsInRange = positionsInRange.filter(
+        (positionInRange: IndexedPosition) => positionInRange != position,
+      );
+    }
+    if (
+      indexedPosition.xIndex == position.xIndex &&
+      indexedPosition.yIndex == position.yIndex
     ) {
       positionsInRange = positionsInRange.filter(
         (positionInRange: IndexedPosition) => positionInRange != position,
       );
     }
   });
+
+  console.log({ positionsInRange, indexedPosition });
 
   return positionsInRange;
 };
@@ -92,10 +108,6 @@ const indexedPositionsInRangeHelper = (
       indexedPositions.push({ xIndex: col, yIndex: row });
     }
   }
-
-  console.log({ indexedPosition });
-  console.log({ range });
-  console.log({ indexedPositions });
   return indexedPositions;
 };
 
@@ -199,4 +211,5 @@ export {
   getFrameByEntityIdHelper,
   getPositionIndexesByIdHelper,
   lockObjectMovementHelper,
+  availablePositionsInRangeHelper,
 };

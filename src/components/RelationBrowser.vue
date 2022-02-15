@@ -25,7 +25,8 @@ export default defineComponent({
         default: false,
     }
   },
-  setup: (props) => {
+  emits: ['selected'],
+  setup: (props, {emit}) => {
       const selectedTagIndex = ref<number>()
       const root = document.documentElement;
       root.style.setProperty('--browser_height', fabricdefaults.canvas.relationBrowser.height.toString() + 'px');
@@ -37,7 +38,7 @@ export default defineComponent({
           else{
               selectedTagIndex.value = tagIndex
           }
-          console.log(selectedTagIndex.value)
+          emit('selected', [selectedTagIndex.value])
       }
 
       return {selectTag,
