@@ -1,5 +1,7 @@
 <template>
-  <div class="flex justify-center flex-wrap h-screen w-screen bg-background-light">
+  <div
+    class="flex justify-center flex-wrap h-screen w-screen bg-background-light"
+  >
     <CardComponent
       :large="true"
       :backgroundColor="`bg-accent-yellow`"
@@ -38,7 +40,7 @@
       <div class="flex flex-col-4 mt-12 justify-center flex-wrap gap-12">
         <div
           v-for="(item, index) in stories"
-          @click="nextStep(item)"
+          @click="nextStep(item, index)"
           :key="index"
           class="flex flex-col items-center"
         >
@@ -70,8 +72,10 @@ export default defineComponent({
   setup() {
     const router = useRouter();
 
-    const nextStep = (_relation: Relation) => {
-      console.log({ _relation });
+    const nextStep = (_relation: Relation, index: number) => {
+      localStorage.setItem('STORY_KEY', _relation.key);
+      localStorage.setItem('STORY_TITLE', _relation.value as string);
+      localStorage.setItem('STORY_COLOR', colors[index]);
       router.push({ name: 'entrance.step3' });
     };
 

@@ -5,7 +5,7 @@ import Entrance from '@/views/Entrance.vue';
 import Wall from '@/views/Wall.vue';
 import Introscherm1 from '@/components/Introscherm1.vue';
 import Introscherm2 from '@/components/Introscherm2.vue';
-import Introscherm3 from '@/components/Introscherm2.vue';
+import Introscherm3 from '@/components/Introscherm3.vue';
 
 export const routes: RouteRecordRaw[] = [
   {

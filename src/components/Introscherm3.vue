@@ -73,25 +73,11 @@ import { useRouter } from 'vue-router';
 export default defineComponent({
   name: 'Introscherm3',
   components: {},
-  props: {
-    storyTitle: {
-      type: String,
-      default: 'Title',
-      required: false,
-    },
-    storyColor: {
-      type: String,
-      default: 'bg-black',
-      required: false,
-    },
-  },
   setup(props) {
-    const router = useRouter();
-    const nextStep = () => {
-      // router.push(`/entrance${props.nextPath}`)
-    };
-
-    return {};
+    const storyTitle = localStorage.getItem('STORY_TITLE');
+    const storyColor = localStorage.getItem('STORY_COLOR');
+    const storyKey = localStorage.getItem('STORY_KEY');
+    return { storyTitle, storyColor};
   },
 });
 </script>
