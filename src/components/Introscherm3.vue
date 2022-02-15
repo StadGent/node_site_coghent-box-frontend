@@ -74,11 +74,6 @@ export default defineComponent({
   name: 'Introscherm3',
   components: {},
   props: {
-    nextPath: {
-      type: String,
-      default: '/intro-4',
-      required: false,
-    },
     storyTitle: {
       type: String,
       default: 'Title',

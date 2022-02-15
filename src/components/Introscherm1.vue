@@ -28,17 +28,10 @@ import { useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'Introscherm1',
-  props: {
-    nextPath: {
-      type: String,
-      default: '/intro-2',
-      required: false,
-    },
-  },
-  setup(props) {
+  setup() {
     const router = useRouter();
     const nextStep = () => {
-      // router.push(`/entrance${props.nextPath}`)
+      router.push({name: 'entrance.step2'})
     };
 
     return { nextStep };

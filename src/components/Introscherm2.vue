@@ -13,7 +13,7 @@
         </h1>
       </div>
     </CardComponent>
-    <img class="absolute mt-32 z-0 w-full" src="/images_entrance/intro2.svg" alt="" />
+    <img class="fixed mt-32 z-0 w-full" src="/images_entrance/intro2.svg" alt="" />
     <p class="text-3xl z-10 mt-48 px-8 py-4 w-full h-48 text-center text-lg font-normal">
       Je kan hier grasduinen in de <br />
       erfgoedcollectie van stad Gent. Laat je <br />
@@ -36,21 +36,21 @@
       <p class="text-3xl p-2">Welk verhaal wil je graag verder ontdekken?</p>
       <p class="font-bold text-3xl">Maak hier je keuze:</p>
       <div class="flex flex-col-4 mt-12 justify-center flex-wrap gap-12">
-        <div class="flex flex-col items-center">
-          <div class="circle text-white flex justify-center items-center font-bold text-5xl">1</div>
-          <p class="p-4 text-center w-36">Het gravensteen doorheen de tijd</p>
-        </div>
-        <div class="flex flex-col items-center">
-          <div class="circle text-white flex justify-center items-center font-bold text-5xl">2</div>
-          <p class="p-4 text-center w-36">De opkomst van Turkse handelaars</p>
-        </div>
-        <div class="flex flex-col items-center">
-          <div class="circle text-white flex justify-center items-center font-bold text-5xl">3</div>
-          <p class="p-4 text-center w-36">Het gravensteen doorheen de tijd</p>
-        </div>
-        <div class="flex flex-col items-center">
-          <div class="circle text-white flex justify-center items-center font-bold text-5xl">4</div>
-          <p class="p-4 text-center w-36">De opkomst van Turkse handelaars</p>
+        <div
+          v-for="(item, index) in stories"
+          @click="nextStep(item)"
+          :key="index"
+          class="flex flex-col items-center"
+        >
+          <div
+            :class="
+              colors[index] +
+              ' circle text-white flex justify-center items-center font-bold text-5xl'
+            "
+          >
+            {{ index + 1 }}
+          </div>
+          <p class="p-4 text-center w-36">{{ item.value }}</p>
         </div>
       </div>
     </div>
@@ -58,28 +58,38 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { CardComponent } from 'coghent-vue-3-component-library';
+import { CardComponent, GetActiveBoxDocument } from 'coghent-vue-3-component-library';
+import { Relation } from 'coghent-vue-3-component-library/lib/queries';
+import { useQuery } from '@vue/apollo-composable';
 
 export default defineComponent({
   name: 'Introscherm2',
   components: { CardComponent },
-  props: {
-    nextPath: {
-      type: String,
-      default: '/intro-3',
-      required: false,
-    },
-  },
   setup() {
     const router = useRouter();
-    const stories = ['item 1', 'item 2', 'item 3'];
-    const nextStep = () => {
-      // router.push(`/entrance${props.nextPath}`)
+
+    const nextStep = (_relation: Relation) => {
+      console.log({ _relation });
+      router.push({ name: 'entrance.step3' });
     };
 
-    return { stories };
+    const colors = [
+      'bg-stories-pink',
+      'bg-stories-green',
+      'bg-stories-blue',
+      'bg-stories-yellow',
+    ];
+    const stories = ref<Array<Relation>>([]);
+
+    const { onResult: onActiveBox } = useQuery(GetActiveBoxDocument);
+
+    onActiveBox((value) => {
+      stories.value = value.data.ActiveBox as Array<Relation>;
+    });
+
+    return { stories, colors, nextStep };
   },
 });
 </script>
@@ -88,9 +98,9 @@ export default defineComponent({
 .circle {
   width: 162px;
   height: 162px;
-  opacity: 0.8;
+  opacity: 1;
   border-radius: 50%;
-  background: black;
+  /* background: black; */
   color: white;
 }
 </style>

@@ -1,22 +1,20 @@
 <template>
-  <!-- <Introscherm1 nextPath="/intro-2"/> -->
-  <!-- <Introscherm2 nextPath="/intro-3"/> -->
-  <Introscherm3
-    :storyTitle="`Opkomst van de Turkse handelaars`"
-    :storyColor="`bg-neutral-400`"
-    nextPath="/intro-3"
-  />
+  <router-view/>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue';
-import Introscherm1 from '@/components/Introscherm1.vue';
-import Introscherm2 from '@/components/Introscherm2.vue';
-import Introscherm3 from '@/components/Introscherm3.vue';
+import { defineComponent, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+
 export default defineComponent({
   name: 'Entrance',
-  components: { Introscherm3 },
-  setup() {},
-});
+  components: {},
+  setup() {
+    const router = useRouter()
+    onMounted(() => {
+      router.push({name: 'entrance.step1'})
+    })
+  },
+}); 
 </script>
 
 <style>
