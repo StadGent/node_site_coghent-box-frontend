@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="flex justify-center flex-wrap h-screen w-screen bg-background-light"
-  >
+  <div class="flex justify-center flex-wrap h-screen w-screen bg-background-light">
     <CardComponent
       :large="true"
       :backgroundColor="`bg-accent-yellow`"
@@ -60,7 +58,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { CardComponent, GetActiveBoxDocument } from 'coghent-vue-3-component-library';
 import { Relation } from 'coghent-vue-3-component-library/lib/queries';
@@ -87,10 +85,13 @@ export default defineComponent({
     ];
     const stories = ref<Array<Relation>>([]);
 
-    const { onResult: onActiveBox } = useQuery(GetActiveBoxDocument);
+    const { refetch: updatedStories } = useQuery(GetActiveBoxDocument);
 
-    onActiveBox((value) => {
-      stories.value = value.data.ActiveBox as Array<Relation>;
+    onMounted(() => {
+      console.log('mounted');
+      updatedStories()?.then(
+        (value) => (stories.value = value.data.ActiveBox as Array<Relation>),
+      );
     });
 
     return { stories, colors, nextStep };

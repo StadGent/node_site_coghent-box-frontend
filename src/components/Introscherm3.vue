@@ -30,9 +30,7 @@
     <div
       class="
         z-10
-        fixed
-        inset-x-0
-        bottom-0
+ 
         w-screen
         h-2/6
         gap-12
@@ -63,6 +61,10 @@
         <p class="p-4 text-center w-40 text-2xl font-bold">Scan de code om te starten</p>
       </div>
     </div>
+    <div class="bg-background-medium w-screen grid grid-cols-2 py-6 pb-12 text-center items-center">
+      <button class="flex text-center justify-center mx-8 py-4 px-6 bg-background-light text-2xl" @click="naarStart">Naar start</button>
+      <button class="flex text-center justify-center mx-8 py-4 px-6 bg-background-light text-2xl" @click="printTicket">Print</button>
+    </div>
   </div>
 </template>
 
@@ -72,12 +74,19 @@ import { useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'Introscherm3',
-  components: {},
+  components: { },
   setup(props) {
     const storyTitle = localStorage.getItem('STORY_TITLE');
     const storyColor = localStorage.getItem('STORY_COLOR');
     const storyKey = localStorage.getItem('STORY_KEY');
-    return { storyTitle, storyColor};
+    const router = useRouter();
+    const printTicket = () => {
+      console.log('print ticket');
+    };
+    const naarStart = () => {
+      router.push({name: 'entrance.step1'})
+    };
+    return { storyTitle, storyColor, printTicket, naarStart};
   },
 });
 </script>
