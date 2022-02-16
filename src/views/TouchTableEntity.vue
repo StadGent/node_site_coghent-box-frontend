@@ -143,9 +143,9 @@ export default defineComponent({
       if(relationResult.data && fabricService){
         const relationEntities = relationResult.data.Entities?.results
         const filteredRelationEntities = relationEntities.filter((ent: any) => ent.id != entity.value.id)
-        fabricService.generateSecondaryImageFrames(filteredRelationEntities, id)
-        
-        filteredRelationEntities.forEach((entity: any) => {
+        fabricService.generateSecondaryImageFrames(filteredRelationEntities, id).then(() => {
+
+          filteredRelationEntities.forEach((entity: any) => {
           const entityRelations: Array<string> = []
 
           entity.relations.forEach((relation: Relation) => {
@@ -166,7 +166,6 @@ export default defineComponent({
             }
           },
           updateQuery: (previousData, {fetchMoreResult}) => {
-            console.log(entity.id)
             console.log({fetchMoreResult})
             const newRelation: SecondaryRelation = {
               originId: entity.id,
@@ -177,8 +176,7 @@ export default defineComponent({
           )
           
         });
-
-
+        })
       }
   })
 

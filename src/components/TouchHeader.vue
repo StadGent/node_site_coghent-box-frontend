@@ -1,19 +1,32 @@
 <template>
   <div class="p-10 header">
-      <h1 class="font-bold text-6xl">Mijn verhalenbox ({{basketAmount}})</h1>
+    <div class="spacer"></div>
+    <div class="">
+      <h1 class="font-bold text-6xl w-full pr-auto">Mijn verhalenbox ({{basketAmount}})</h1>
       <base-icon icon="downwardArrows" class="w-10 h-10 text-text-black"/>
+    </div>
+    <div class="">
+      <base-button
+          class="shutdown-button"
+          customStyle="touchtable-white-round"
+          customIcon="door"
+          :iconShown="true"
+          text="Afsluiten"
+        />
+        </div>
   </div>    
 </template>
 
 <script lang="ts">
 import { defineComponent, onMounted, ref } from 'vue';
-import { baseIcon} from 'coghent-vue-3-component-library'
+import { baseIcon, BaseButton} from 'coghent-vue-3-component-library'
 import { fabricdefaults } from '@/services/Fabric/defaults.fabric';
 
 export default defineComponent({
   name: 'TouchHeader',
   components: {
-      baseIcon
+      baseIcon,
+      BaseButton
   },
   props: {
     basketAmount: {
@@ -32,8 +45,11 @@ export default defineComponent({
 <style scoped>
 .header{
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   height: var(--header_height);
+}
+.shutdown-button{
+  box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.2);
 }
 </style>

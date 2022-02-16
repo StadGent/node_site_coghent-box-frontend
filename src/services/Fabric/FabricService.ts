@@ -8,7 +8,7 @@ import {
   indexedPositionsInRangeHelper,
   isDuplicateFrameHelper,
   getFrameByEntityIdHelper,
-  getPositionIndexesByIdHelper,
+  getPositionByIdHelper,
   lockObjectMovementHelper,
   availablePositionsInRangeHelper,
   objectIsTypeHelper,
@@ -102,10 +102,7 @@ export default class FabricService {
     subRelationOriginEntityId: string,
   ) {
     let closeAvailablePositions: Array<Position> = availablePositionsInRangeHelper(
-      getPositionIndexesByIdHelper(
-        subRelationOriginEntityId,
-        this.state.canvas.getObjects(),
-      ),
+      getPositionByIdHelper(subRelationOriginEntityId, this.state.canvas.getObjects()),
       fabricdefaults.canvas.secondaryImage.positions.range,
       this.state.takenPositions,
     );
@@ -158,6 +155,7 @@ export default class FabricService {
         }
       });
     });
+    Promise.resolve();
   }
 
   setMainImageOnClick() {
@@ -224,7 +222,6 @@ export default class FabricService {
         } else if (canvasFrame.id != this.state.selectedImage.id) {
           objectOpacityHelper(canvasFrame, 0.4);
         }
-        console.log(canvasFrame);
       });
     }
     this.state.canvas.renderAll();

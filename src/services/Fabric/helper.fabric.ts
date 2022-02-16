@@ -127,7 +127,7 @@ const availablePositionHelper = () => {
   return availablePositionArray;
 };
 
-const getPositionIndexesByIdHelper = (entityId: string, objectsOnCanvas: Array<any>) => {
+const getPositionByIdHelper = (entityId: string, objectsOnCanvas: Array<any>) => {
   const positionIndexEntity = objectsOnCanvas.find(
     (object: any) => object.id == entityId,
   );
@@ -236,7 +236,7 @@ export {
   indexedPositionsInRangeHelper,
   isDuplicateFrameHelper,
   getFrameByEntityIdHelper,
-  getPositionIndexesByIdHelper,
+  getPositionByIdHelper,
   lockObjectMovementHelper,
   availablePositionsInRangeHelper,
   objectIsTypeHelper,
