@@ -1,7 +1,9 @@
 <template>
 <div class="touchtable">
   <touch-header/>
+  <div id="canvas-container">
   <canvas id="canvas" class="touchcanvas"/>
+  </div>
   <CardComponent :sideStrip="true" :large="true" :reverseColors="true" class="infocard" v-if="entity">
       <h2 class="font-bold text-6xl mb-12">{{entity.title[0].value}}</h2>
       <p class="text-4xl mb-12" v-if="entity.description[0].value">{{entity.description[0].value}}</p>
@@ -83,6 +85,9 @@ export default defineComponent({
       if(entity.value){
         console.log('refetch relations')
         console.log(entity.value)
+        if(entity.value.id == window.sessionStorage.getItem('startId')){
+          // fabricService?.generateInfoBar(entity.value, entity.value)
+        }
         refetchRelations({
         limit: fabricdefaults.canvas.relationLimit,
         skip: result ? 0 : 1,
@@ -105,21 +110,32 @@ export default defineComponent({
         })
       })
 
-      const getRelationStrings = (entity: any) => {
-        const tempStringArray: Array<string> = []
-        const tempLabelArray: Array<string> = []
+      const getRelations = (entity: any) => {
+
+        const metaDataInLabel: string[] = [
+        'objectnaam',
+        'object_category',
+        'MensgemaaktObject.draagt',
+        'Entiteit.maaktDeelUitVan',
+        'MaterieelDing.productie',
+        'MensgemaaktObject.maaktDeelUitVan',
+        'MaterieelDing.bestaatUit',
+        'MaterieelDing.isOvergedragenBijVerwerving',
+        'Entiteit.classificatie',
+        'Entiteit.wordtNaarVerwezenDoor',
+      ]
         entity.relations
           .forEach((relation: any) => {
-            if (tempStringArray.indexOf(relation.key) < 0){
-              tempStringArray.push(relation.key)
-              tempLabelArray.push(relation.value)
+            if (relationStringArray.value.indexOf(relation.key) < 0 && !metaDataInLabel.includes(relation.label)){
+              relationsArray.value.push(relation)
+              relationStringArray.value.push(relation.key)
+              relationsLabelArray.value.push(relation.value)
             }
           })
-          relationStringArray.value = tempStringArray
-          relationsLabelArray.value = tempLabelArray
       }
 
       const highlightSelectedFilter = (filterIndex: number) => {
+        console.log(relationsArray.value)
         fabricService?.highlightRelatedFrames(filterIndex, relationsArray.value)
       }
 
@@ -131,10 +147,9 @@ export default defineComponent({
             
             fabricService.generateMainImageFrame(queryResult.data.Entity)
             
-            getRelationStrings(queryResult.data.Entity)
+            getRelations(queryResult.data.Entity)
             headEntityId.value = queryResult.data.Entity.id
             entity.value = queryResult.data.Entity
-            relationsArray.value = queryResult.data.Entity.relations
         }
       })
 
@@ -147,6 +162,8 @@ export default defineComponent({
 
           filteredRelationEntities.forEach((entity: any) => {
           const entityRelations: Array<string> = []
+
+          getRelations(entity)
 
           entity.relations.forEach((relation: Relation) => {
             entityRelations.push(relation.key)

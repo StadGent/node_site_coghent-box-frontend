@@ -5,7 +5,6 @@ import {
   ImageUrlHelper,
   availablePositionHelper,
   getRandomNumberInRangeHelper,
-  indexedPositionsInRangeHelper,
   isDuplicateFrameHelper,
   getFrameByEntityIdHelper,
   getPositionByIdHelper,
@@ -15,6 +14,7 @@ import {
   frameBorderHighlightHelper,
   objectOpacityHelper,
   relationHighlightHelper,
+  canvasTextHelper,
 } from './helper.fabric';
 import { router } from '@/router';
 import { image } from 'd3';
@@ -95,6 +95,47 @@ export default class FabricService {
       const underline = underlineHelper(image);
       this.state.canvas.add(underline);
     });
+  }
+
+  generateInfoBar(startEntity: any, historyEntity: any) {
+    const startFrame = new fabric.Image.fromURL(image, (image: any) => {
+      image.top = fabricdefaults.canvas.infoBar.startFrame.position.top;
+      image.left = fabricdefaults.canvas.infoBar.startFrame.position.left;
+      image.scaleX = fabricdefaults.canvas.infoBar.startFrame.scale.scaleX;
+      image.scaleY = fabricdefaults.canvas.infoBar.startFrame.scale.scaleY;
+      image.originX = fabricdefaults.canvas.infoBar.startFrame.origin.originX;
+      image.originY = fabricdefaults.canvas.infoBar.startFrame.origin.originY;
+      image.objectType = 'infoItem';
+      image.hoverCursor = 'pointer';
+      image.id = startEntity.id;
+      image.setCoords();
+      lockObjectMovementHelper(image);
+    });
+    const startText = canvasTextHelper(
+      fabricdefaults.canvas.infoBar.startFrame.textPosition,
+      'Start afbeelding',
+    );
+    console.log({ startText });
+
+    const historyFrame = new fabric.Image.fromURL(image, (image: any) => {
+      image.top = fabricdefaults.canvas.infoBar.historyFrame.position.top;
+      image.left = fabricdefaults.canvas.infoBar.historyFrame.position.left;
+      image.scaleX = fabricdefaults.canvas.infoBar.historyFrame.scale.scaleX;
+      image.scaleY = fabricdefaults.canvas.infoBar.historyFrame.scale.scaleY;
+      image.originX = fabricdefaults.canvas.infoBar.historyFrame.origin.originX;
+      image.originY = fabricdefaults.canvas.infoBar.historyFrame.origin.originY;
+      image.objectType = 'infoItem';
+      image.hoverCursor = 'pointer';
+      image.id = historyEntity.id;
+      image.setCoords();
+      lockObjectMovementHelper(image);
+    });
+
+    const historyText = canvasTextHelper(
+      fabricdefaults.canvas.infoBar.historyFrame.textPosition,
+      'Geschiedenis',
+    );
+    console.log({ historyText });
   }
 
   async generateSecondaryImageFrames(

@@ -5,9 +5,15 @@
       <h1 class="font-bold text-6xl w-full pr-auto">Mijn verhalenbox ({{basketAmount}})</h1>
       <base-icon icon="downwardArrows" class="w-10 h-10 text-text-black"/>
     </div>
-    <div class="">
+    <div class="flex">
       <base-button
-          class="shutdown-button"
+          class="header-button mr-8"
+          customStyle="touchtable-green-round"
+          :iconShown="false"
+          text="Overzicht alle verhalen"
+        />
+      <base-button
+          class="header-button"
           customStyle="touchtable-white-round"
           customIcon="door"
           :iconShown="true"
@@ -49,7 +55,11 @@ export default defineComponent({
   align-items: center;
   height: var(--header_height);
 }
-.shutdown-button{
+.header-button{
   box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.2);
+}
+.spacer{
+  width: 700px;
+  height: 100%;
 }
 </style>

@@ -151,6 +151,15 @@ const isDuplicateFrameHelper = (newObject: any, canvasObjects: Array<any>): Bool
   }
 };
 
+const canvasTextHelper = (coordinate: Coordinate, text: string) => {
+  const textbox = new fabric.Textbox(text, {
+    top: coordinate.y,
+    left: coordinate.x,
+    fontSize: fabricdefaults.canvas.infoBar.fontSize,
+  });
+  return textbox;
+};
+
 const ImageUrlHelper = (entities: Array<any> | any) => {
   const imageUrls: Array<any> = [];
   if (entities instanceof Array) {
@@ -243,4 +252,5 @@ export {
   frameBorderHighlightHelper,
   objectOpacityHelper,
   relationHighlightHelper,
+  canvasTextHelper,
 };

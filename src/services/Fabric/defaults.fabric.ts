@@ -50,6 +50,39 @@ type FabricDefaults = {
         stroke: number;
       };
     };
+    infoBar: {
+      fontSize: number;
+      startFrame: {
+        textPosition: {
+          x: number;
+          y: number;
+        };
+        position: {
+          top: number;
+          left: number;
+        };
+        origin: {
+          originX: string;
+          originY: string;
+        };
+        scale: Scale;
+      };
+      historyFrame: {
+        textPosition: {
+          x: number;
+          y: number;
+        };
+        position: {
+          top: number;
+          left: number;
+        };
+        origin: {
+          originX: string;
+          originY: string;
+        };
+        scale: Scale;
+      };
+    };
     secondaryImage: {
       positions: {
         xAxis: Array<number>;
@@ -115,6 +148,45 @@ const fabricdefaults: FabricDefaults = {
         stroke: 10,
       },
     },
+    infoBar: {
+      fontSize: 16,
+      startFrame: {
+        textPosition: {
+          x: 3840 / 2 - 300,
+          y: 1900 - 300,
+        },
+        position: {
+          top: 1900 - 50,
+          left: 3840 / 2 - 300,
+        },
+        scale: {
+          scaleX: 0.5,
+          scaleY: 0.5,
+        },
+        origin: {
+          originX: 'left',
+          originY: 'bottom',
+        },
+      },
+      historyFrame: {
+        textPosition: {
+          x: 0,
+          y: 0,
+        },
+        position: {
+          top: 1900 - 50,
+          left: 3840 / 2 + 300,
+        },
+        scale: {
+          scaleX: 0.5,
+          scaleY: 0.5,
+        },
+        origin: {
+          originX: 'left',
+          originY: 'bottom',
+        },
+      },
+    },
     secondaryImage: {
       positions: {
         xAxis: [
@@ -124,10 +196,11 @@ const fabricdefaults: FabricDefaults = {
           (3840 / 7) * 4,
           (3840 / 7) * 5,
           (3840 / 7) * 6,
+          (3840 / 7) * 7,
         ],
         yAxis: [1900 / 6 - 300, 1900 / 6, (1900 / 6) * 2, (1900 / 6) * 3, (1900 / 6) * 4],
         blockedPositions: [{ xIndex: 2, yIndex: 4 }],
-        range: 2,
+        range: 1,
       },
       scale: {
         scaleX: 0.3,
