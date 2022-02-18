@@ -14,3 +14,4 @@ variables:
   APPLICATION: 'coghent-box-frontend'
   TERRAFORM_IMAGE: 'box-terraform'
   TERRAFORM_TAG: 'latest'
+  SKIP_DEPLOY: 'true'
