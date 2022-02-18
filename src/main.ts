@@ -7,6 +7,11 @@ import 'coghent-vue-3-component-library/lib/index.css';
 import { router } from './router';
 import './style.css';
 
+export const apolloClient = new ApolloClient({
+  link: createHttpLink({ uri: '/api/graphql' }),
+  cache: new InMemoryCache(),
+})
+
 async function main () {
   const config = await fetch('../config.json').then((r) => r.json());
 

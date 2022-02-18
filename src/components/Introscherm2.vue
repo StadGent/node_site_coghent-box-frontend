@@ -88,7 +88,6 @@ export default defineComponent({
     const { refetch: updatedStories } = useQuery(GetActiveBoxDocument);
 
     onMounted(() => {
-      console.log('mounted');
       updatedStories()?.then(
         (value) => (stories.value = value.data.ActiveBox as Array<Relation>),
       );
