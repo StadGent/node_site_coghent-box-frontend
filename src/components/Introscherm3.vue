@@ -76,7 +76,7 @@ export default defineComponent({
   name: 'Introscherm3',
   components: { },
   setup(props) {
-    const storyTitle = localStorage.getItem('STORY_TITLE');
+    const storyTitle = localStorage.getItem('STORY_TITLE') || "";
     const storyColor = localStorage.getItem('STORY_COLOR');
     const storyKey = localStorage.getItem('STORY_KEY');
     const router = useRouter();

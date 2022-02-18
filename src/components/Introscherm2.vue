@@ -72,7 +72,7 @@ export default defineComponent({
 
     const nextStep = (_relation: Relation, index: number) => {
       localStorage.setItem('STORY_KEY', _relation.key);
-      localStorage.setItem('STORY_TITLE', _relation.value as string);
+      // localStorage.setItem('STORY_TITLE', _relation.value as string);
       localStorage.setItem('STORY_COLOR', colors[index]);
       router.push({ name: 'entrance.step3' });
     };
