@@ -56,7 +56,7 @@ export default defineComponent({
       if (activeStories) {
         storyService.value = new StoryService(
           activeStories,
-          '8c9836ce-3540-4d62-b16a-4112df237b76',
+          '03529366',
         );
         stories.value = [...activeStories];
         console.log(`=> Stories <=`, _stories);

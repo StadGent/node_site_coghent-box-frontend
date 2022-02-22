@@ -1,7 +1,10 @@
+import { apolloClient } from '@/main';
 import { Frame, Story } from '@/models/GraphqlModel';
 import Colors from '@/Three/defaults.color';
 import Defaults from '@/Three/defaults.config';
 import Positions from '@/Three/defaults.positions';
+import { BoxVisiter, boxVisiter, useBoxVisiter } from 'coghent-vue-3-component-library/lib';
+import { Relation } from 'coghent-vue-3-component-library/lib/queries';
 import { Vector3 } from 'three';
 
 export type StoryData = {
@@ -20,17 +23,18 @@ export default class StoryService {
   private totalOfSeenFrames: number;
 
   stories: Array<Story>;
-  visiterId: string;
+  visiterCode: string;
   activeStory!: Story;
   activeStoryData!: StoryData;
 
 
-  constructor(_stories: Array<Story>, _visiterId: string) {
+  constructor(_stories: Array<Story>, _visiterCode: string) {
     this.stories = _stories;
-    this.visiterId = _visiterId;
+    this.visiterCode = _visiterCode;
     this.storyIds = [];
     this.storyData = [];
     this.totalOfSeenFrames = 0;
+    useBoxVisiter(apolloClient).getByCode(this.visiterCode)
     this.fillUpDataSources();
     this.assignColorToStories();
   }
@@ -56,17 +60,21 @@ export default class StoryService {
     return this.storyData.filter((data) => data.storyId == storyId)[0].storyColor;
   }
 
-  updateSeenFramesOfStory(currentStoryId: string, seenFrame: Frame) {
+  async updateSeenFramesOfStory(currentStoryId: string, seenFrame: Frame) {
+    await this.storyIsAddedToVisiter(currentStoryId)
     if (this.storyData.length > 0 && seenFrame != undefined) {
       const storyToUpdate = this.storyData.filter(
         (story) => story.storyId === currentStoryId,
       )[0];
       this.totalOfSeenFrames++;
       if (!this.itemIsInRecord(currentStoryId, seenFrame)) {
-        //TODO: useQuery for updateing the metadata on the user with the frameId
         this.addTimestampToSeenFrame(currentStoryId, seenFrame);
         storyToUpdate['totalOfFramesSeen'] = Object.keys(storyToUpdate.seenFrames).length;
       }
+      await useBoxVisiter(apolloClient).addFrameToStory(this.visiterCode, {
+        storyId: currentStoryId,
+        frameId: seenFrame.id,
+      } as any)
       storyToUpdate['storySeen'] = this.IHaveSeenTheStory(currentStoryId);
     }
     return this.storyData;
@@ -80,13 +88,13 @@ export default class StoryService {
     return this.totalOfSeenFrames == Defaults().maxFrames()
   }
 
-  setStoryPausedPositions(positions: Array<Vector3>){
+  setStoryPausedPositions(positions: Array<Vector3>) {
     this.storyData.map((_data, index) => {
       _data['pausedPosition'] = positions[index];
     })
   }
 
-  getDataOfInactiveStories(){
+  getDataOfInactiveStories() {
     return this.storyData.filter(_data => _data.storyId != this.activeStory.id);
   }
 
@@ -96,7 +104,7 @@ export default class StoryService {
     }
   }
 
-  storyIsActive(_storyId: string){
+  storyIsActive(_storyId: string) {
     return this.activeStoryData.storyId == _storyId;
   }
 
@@ -118,7 +126,7 @@ export default class StoryService {
 
   private assignColorToStories() {
     if (this.storyData.length > 0) {
-      for (let index = 0; index < this.storyData.length; index++) {
+      for (let index = 0;index < this.storyData.length;index++) {
         this.storyData[index]['storyColor'] = Defaults().StoryColors()[index];
       }
     }
@@ -152,5 +160,21 @@ export default class StoryService {
 
   private addStoryIdToStoryIds(story: Story) {
     this.storyIds.push(story.id);
+  }
+
+  private async storyIsAddedToVisiter(_storyId: string): Promise<boolean> {
+    let isCreated = false
+    const matches = boxVisiter.relations.filter((_relation: Relation) => _relation.key.replace('entities/', '') == _storyId)
+    if (matches.length == 0) {
+      await useBoxVisiter(apolloClient).addStoryToVisiter(this.visiterCode, {
+        key: _storyId,
+        active: true,
+        last_frame: ''
+      } as any)
+      isCreated = true
+    } else {
+      isCreated = false
+    }
+    return isCreated
   }
 }

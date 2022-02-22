@@ -54,10 +54,10 @@ const PlayBookBuild = (
     storyService: StoryService,
     activeStoryData: Story,
     frameIndex: number,
-  ) => {
+  ) => Promise<{
     storyData: Array<StoryData>;
     endOfSession: true | false;
-  };
+  }>;
   startOfSession: () => Promise<true | false>;
   setSelectedStory: () => Promise<void>;
 } => {
@@ -137,7 +137,7 @@ const PlayBookBuild = (
 
   const endOfSession = async () => {
     await CustomAnimation().grow(spotlight as Mesh<any, MeshBasicMaterial>, Measurements().spotLight.radius, AnimationDefaults.values.scaleStep);
-    await MoveObject().startMoving(spotlight, new Vector3(zoneService.middleZoneCenter.x,zoneService.middleZoneCenter.y - 1,zoneService.middleZoneCenter.z));
+    await MoveObject().startMoving(spotlight, new Vector3(zoneService.middleZoneCenter.x, zoneService.middleZoneCenter.y - 1, zoneService.middleZoneCenter.z));
     return useEndOfSession(threeService, zoneService).create();
   };
 
@@ -151,8 +151,8 @@ const PlayBookBuild = (
         storyService.activeStoryData.pausedPosition.x,
         -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight,
         storyService.activeStoryData.pausedPosition.z
-        ),
-        storyService.activeStoryData,
+      ),
+      storyService.activeStoryData,
     );
     await SceneHelper(threeService, storyService).addPauseScreenObjectsToScene(StoryPaused(taggingService, zoneService, storyService).Create(inactiveStories), zoneService.sceneZone());
     await MoveObject().startMoving(spotlight, new Vector3(0.01, -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight, Layers.scene));
@@ -162,12 +162,12 @@ const PlayBookBuild = (
     TaggingHelper(taggingService).tagActiveStorycircleAsStoryCircle();
   };
 
-  const storyData = (
+  const storyData = async (
     storyService: StoryService,
     activeStoryData: Story,
     frameIndex: number,
   ) => {
-    const storyData = storyService.updateSeenFramesOfStory(
+    const storyData = await storyService.updateSeenFramesOfStory(
       activeStoryData.id,
       activeStoryData.frames[frameIndex],
     );
