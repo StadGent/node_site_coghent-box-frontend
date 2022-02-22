@@ -1,6 +1,7 @@
 <template>
-<div class="touchtable">
-  <touch-header/>
+<div class="touchtable" :key="id">
+  <shutdown-modal :code="code"/>
+  <touch-header :basketAmount="basketItems.length"/>
   <div id="canvas-container">
   <canvas id="canvas" class="touchcanvas"/>
   </div>
@@ -8,6 +9,15 @@
       <h2 class="font-bold text-6xl mb-12">{{entity.title[0].value}}</h2>
       <p class="text-4xl mb-12" v-if="entity.description[0].value">{{entity.description[0].value}}</p>
       <p class="text-4xl mb-12" v-else>This item does not have a description</p>
+      <div class="flex w-full justify-center items-center mt-12">
+      <base-button
+          customStyle="touchtable-purple"
+          customIcon="archiveDrawer"
+          :iconShown="true"
+          text="Aan verhalenbox toevoegen"
+          @click="addToBasket"
+        />
+      </div>
   </CardComponent>
   <relationBrowser v-if="relationsLabelArray" :relations="relationsLabelArray" :loading="loading" @selected="highlightSelectedFilter"/>
 </div>
@@ -15,13 +25,15 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, ref, watch } from 'vue';
-import FabricService, {Relation} from '../services/Fabric/FabricService';
+import FabricService from '../services/Fabric/FabricService';
 import { useRoute, useRouter } from 'vue-router'
-import { useQuery } from '@vue/apollo-composable'
-import { GetTouchTableEntityByIdDocument, CardComponent, GetTouchTableEntityDocument} from 'coghent-vue-3-component-library'
+import { useQuery, useMutation } from '@vue/apollo-composable'
+import { GetTouchTableEntityByIdDocument, CardComponent, GetTouchTableEntityDocument, BaseButton, GetBoxVisiterRelationsByTypeDocument, AddAssetToBoxVisiterDocument} from 'coghent-vue-3-component-library'
 import TouchHeader from '@/components/TouchHeader.vue';
+import ShutdownModal from '@/components/ShutdownModal.vue';
 import RelationBrowser from '@/components/RelationBrowser.vue';
 import {fabricdefaults} from '../services/Fabric/defaults.fabric'
+import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries'
 import { router } from '@/router';
 
 const asString = (x: string | string[]) => (Array.isArray(x) ? x[0] : x)
@@ -37,17 +49,24 @@ export default defineComponent({
       CardComponent,
       TouchHeader,
       RelationBrowser,
+      BaseButton,
+      ShutdownModal
   },
   setup: () => {
       const route = useRoute()
       const id = asString(route.params['entityID'])
-      const { result, onResult:onEntityResult, loading, refetch } = useQuery(GetTouchTableEntityByIdDocument, { id})
+      const code = ref<string>('74173758')
+      const { result, onResult:onEntityResult, loading, refetch } = useQuery(GetTouchTableEntityByIdDocument, {id})
+      const { result: basketResult, onResult:onBasketResult, refetch:refetchBasket } = useQuery(GetBoxVisiterRelationsByTypeDocument, { code: code.value, type: "inBasket"})
+      const { mutate: mutateBasket, onDone: onDoneAddingToBasket } = useMutation(AddAssetToBoxVisiterDocument, {variables: {code: code.value, assetId: id, type: "inBasket"}})
+      const { mutate: mutateHistory, onDone: onDoneAddingHistory } = useMutation(AddAssetToBoxVisiterDocument, {variables: {code: code.value, assetId: id, type: "visited"}})
       const relationStringArray = ref<string[]>([])
       const relationsLabelArray = ref<string[]>([])
       const relationsArray = ref<Relation[]>([])
       const subRelations = ref<SecondaryRelation[]>([])
       const entity = ref<any>()
       const headEntityId = ref<string>()
+      const basketItems = ref<Array<any>>([])
       let fabricService: FabricService | undefined = undefined
 
       const {
@@ -74,10 +93,12 @@ export default defineComponent({
         prefetch: false,
       })
     )
-
+    
     watch(() => route.params.entityID, () => {
       console.log('Refetch entity')
         // refetch({id :asString(route.params.entityID)})
+        window.sessionStorage.setItem('historyEntity', JSON.stringify(entity.value))
+        mutateHistory()
         router.go(0)
       })
 
@@ -86,7 +107,7 @@ export default defineComponent({
         console.log('refetch relations')
         console.log(entity.value)
         if(entity.value.id == window.sessionStorage.getItem('startId')){
-          // fabricService?.generateInfoBar(entity.value, entity.value)
+          window.sessionStorage.setItem('startEntity', JSON.stringify(entity.value))
         }
         refetchRelations({
         limit: fabricdefaults.canvas.relationLimit,
@@ -110,7 +131,12 @@ export default defineComponent({
         })
       })
 
-      const getRelations = (entity: any) => {
+      const addToBasket = () => {
+          mutateBasket()
+
+      }
+
+      const getRelations = (entity: Entity) => {
 
         const metaDataInLabel: string[] = [
         'objectnaam',
@@ -124,6 +150,8 @@ export default defineComponent({
         'Entiteit.classificatie',
         'Entiteit.wordtNaarVerwezenDoor',
       ]
+
+      if (entity.relations){
         entity.relations
           .forEach((relation: any) => {
             if (relationStringArray.value.indexOf(relation.key) < 0 && !metaDataInLabel.includes(relation.label)){
@@ -132,6 +160,8 @@ export default defineComponent({
               relationsLabelArray.value.push(relation.value)
             }
           })
+      }
+        
       }
 
       const highlightSelectedFilter = (filterIndex: number) => {
@@ -150,6 +180,14 @@ export default defineComponent({
             getRelations(queryResult.data.Entity)
             headEntityId.value = queryResult.data.Entity.id
             entity.value = queryResult.data.Entity
+
+            if (window.sessionStorage.getItem('startEntity')){
+              const startEntity = window.sessionStorage.getItem('startEntity')
+              const historyEntity = window.sessionStorage.getItem('historyEntity')
+            if(startEntity && historyEntity){
+              fabricService?.generateInfoBar(JSON.parse(startEntity), JSON.parse(historyEntity))
+            }
+        }
         }
       })
 
@@ -157,7 +195,7 @@ export default defineComponent({
       console.log('Relation result')
       if(relationResult.data && fabricService){
         const relationEntities = relationResult.data.Entities?.results
-        const filteredRelationEntities = relationEntities.filter((ent: any) => ent.id != entity.value.id)
+        const filteredRelationEntities = relationEntities.filter((ent: Entity) => ent.id != entity.value.id)
         fabricService.generateSecondaryImageFrames(filteredRelationEntities, id).then(() => {
 
           filteredRelationEntities.forEach((entity: any) => {
@@ -197,12 +235,27 @@ export default defineComponent({
       }
   })
 
+  onBasketResult((basketResult) => {
+    if (basketResult.data){
+      basketItems.value = basketResult.data.BoxVisiterRelationsByType
+    }
+  })
+
+  onDoneAddingToBasket((_basketItems) => {
+    if(_basketItems.data){
+      basketItems.value = _basketItems.data.AddAssetToBoxVisiter.filter((asset: any) => asset.type == "inBasket")
+    }
+  })
+
     return {entity,
     relationStringArray,
     relationsLabelArray,
     loading,
     route,
-    highlightSelectedFilter}
+    highlightSelectedFilter,
+    addToBasket,
+    basketItems,
+    code}
   },
 });
 </script>

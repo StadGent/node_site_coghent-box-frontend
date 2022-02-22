@@ -15,9 +15,11 @@ import {
   objectOpacityHelper,
   relationHighlightHelper,
   canvasTextHelper,
+  getObjectsByObjectTypeHelper,
+  moveObjectOnZAxisHelper,
 } from './helper.fabric';
 import { router } from '@/router';
-import { image } from 'd3';
+import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
 
 type State = {
   canvas: any;
@@ -40,11 +42,6 @@ export type Coordinate = {
   key?: string;
   x: number;
   y: number;
-};
-
-export type Relation = {
-  key: string;
-  label: string;
 };
 
 export default class FabricService {
@@ -71,7 +68,7 @@ export default class FabricService {
     return canvas;
   }
 
-  generateMainImageFrame(entity: any) {
+  generateMainImageFrame(entity: Entity) {
     const image = ImageUrlHelper(entity)[0];
     const frame = new fabric.Image.fromURL(image, (image: any) => {
       image.top = fabricdefaults.canvas.selectedImage.canvasPosition.top;
@@ -97,56 +94,93 @@ export default class FabricService {
     });
   }
 
-  generateInfoBar(startEntity: any, historyEntity: any) {
-    const startFrame = new fabric.Image.fromURL(image, (image: any) => {
+  generateInfoBar(startEntity: Entity, historyEntity: Entity) {
+    console.log({ startEntity, historyEntity });
+
+    const backgroundRect = new fabric.Rect({
+      width: fabricdefaults.canvas.dimensions.width,
+      height: 400,
+      originX: 'left',
+      originY: 'bottom',
+      top: fabricdefaults.canvas.dimensions.height,
+      left: 0,
+      fill: '#F0EDE6',
+      objectType: 'infoContainer',
+      hoverCursor: 'default',
+    });
+    this.state.canvas.add(backgroundRect);
+
+    const startImage = ImageUrlHelper(startEntity)[0];
+    const startFrame = new fabric.Image.fromURL(startImage, (image: any) => {
       image.top = fabricdefaults.canvas.infoBar.startFrame.position.top;
       image.left = fabricdefaults.canvas.infoBar.startFrame.position.left;
       image.scaleX = fabricdefaults.canvas.infoBar.startFrame.scale.scaleX;
       image.scaleY = fabricdefaults.canvas.infoBar.startFrame.scale.scaleY;
       image.originX = fabricdefaults.canvas.infoBar.startFrame.origin.originX;
       image.originY = fabricdefaults.canvas.infoBar.startFrame.origin.originY;
-      image.objectType = 'infoItem';
+      image.objectType = 'startFrame';
       image.hoverCursor = 'pointer';
-      image.id = startEntity.id;
       image.setCoords();
+      image.entity = startEntity;
       lockObjectMovementHelper(image);
+      this.state.canvas.add(image);
     });
+    console.log({ startFrame });
     const startText = canvasTextHelper(
-      fabricdefaults.canvas.infoBar.startFrame.textPosition,
+      fabricdefaults.canvas.infoBar.startFrame.text.position,
       'Start afbeelding',
+      fabricdefaults.canvas.infoBar.startFrame.text.origin,
+      fabricdefaults.canvas.infoBar.startFrame.text.fontSize,
+      fabricdefaults.canvas.infoBar.historyFrame.text.fontFamily,
+      'bold',
     );
-    console.log({ startText });
+    this.state.canvas.add(startText);
 
-    const historyFrame = new fabric.Image.fromURL(image, (image: any) => {
+    const historyImage = ImageUrlHelper(startEntity)[0];
+    const historyFrame = new fabric.Image.fromURL(historyImage, (image: any) => {
       image.top = fabricdefaults.canvas.infoBar.historyFrame.position.top;
       image.left = fabricdefaults.canvas.infoBar.historyFrame.position.left;
       image.scaleX = fabricdefaults.canvas.infoBar.historyFrame.scale.scaleX;
       image.scaleY = fabricdefaults.canvas.infoBar.historyFrame.scale.scaleY;
       image.originX = fabricdefaults.canvas.infoBar.historyFrame.origin.originX;
       image.originY = fabricdefaults.canvas.infoBar.historyFrame.origin.originY;
-      image.objectType = 'infoItem';
+      image.objectType = 'historyFrame';
       image.hoverCursor = 'pointer';
-      image.id = historyEntity.id;
       image.setCoords();
+      image.entity = historyEntity;
       lockObjectMovementHelper(image);
+      this.state.canvas.add(image);
     });
 
     const historyText = canvasTextHelper(
-      fabricdefaults.canvas.infoBar.historyFrame.textPosition,
+      fabricdefaults.canvas.infoBar.historyFrame.text.position,
       'Geschiedenis',
+      fabricdefaults.canvas.infoBar.historyFrame.text.origin,
+      fabricdefaults.canvas.infoBar.historyFrame.text.fontSize,
+      fabricdefaults.canvas.infoBar.historyFrame.text.fontFamily,
+      'bold',
     );
-    console.log({ historyText });
+    this.state.canvas.add(historyText);
   }
 
   async generateSecondaryImageFrames(
     entities: Array<any>,
     subRelationOriginEntityId: string,
   ) {
+    let range: number = fabricdefaults.canvas.secondaryImage.positions.range;
     let closeAvailablePositions: Array<Position> = availablePositionsInRangeHelper(
       getPositionByIdHelper(subRelationOriginEntityId, this.state.canvas.getObjects()),
-      fabricdefaults.canvas.secondaryImage.positions.range,
+      range,
       this.state.takenPositions,
     );
+    while (closeAvailablePositions.length <= entities.length) {
+      range = range + 1;
+      closeAvailablePositions = availablePositionsInRangeHelper(
+        getPositionByIdHelper(subRelationOriginEntityId, this.state.canvas.getObjects()),
+        range,
+        this.state.takenPositions,
+      );
+    }
     const images: Array<string> = ImageUrlHelper(entities);
     images.forEach((image, index) => {
       const frame = new fabric.Image.fromURL(image, (image: any) => {
@@ -201,11 +235,15 @@ export default class FabricService {
 
   setMainImageOnClick() {
     this.state.canvas.on('mouse:down', (selectedObject: any) => {
-      if (selectedObject.target) {
+      if (
+        (selectedObject.target && objectIsTypeHelper('frame', selectedObject.target)) ||
+        objectIsTypeHelper('startFrame', selectedObject.target) ||
+        objectIsTypeHelper('historyFrame', selectedObject.target)
+      ) {
         selectedObject = selectedObject.target;
         console.log({ selectedObject });
         this.state.selectedImage = selectedObject.entity;
-        router.push('/touchtable/' + selectedObject.id);
+        router.push('/touchtable/' + selectedObject.entity.id);
       }
     });
   }
@@ -288,7 +326,14 @@ export default class FabricService {
         objectType: 'line',
       });
       this.state.canvas.add(relation);
-      relation.sendToBack();
+      moveObjectOnZAxisHelper(relation, 'back');
+      const infoContainer = getObjectsByObjectTypeHelper(
+        this.state.canvas.getObjects(),
+        'infoContainer',
+      )[0];
+      if (infoContainer) {
+        moveObjectOnZAxisHelper(infoContainer, 'back');
+      }
     }
   }
 }

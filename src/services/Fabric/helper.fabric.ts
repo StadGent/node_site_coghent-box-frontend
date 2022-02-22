@@ -1,7 +1,7 @@
 import { fabricdefaults } from './defaults.fabric';
 import { Coordinate, Scale, Position } from './FabricService';
 import { fabric } from 'fabric';
-import { Relation } from 'coghent-vue-3-component-library/lib/queries';
+import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
 
 const underlineHelper = (mainImage: any) => {
   const imageCoordinates: Array<Coordinate> = mainImage.getCoords();
@@ -138,9 +138,18 @@ const getPositionByIdHelper = (entityId: string, objectsOnCanvas: Array<any>) =>
   }
 };
 
-const getFrameByEntityIdHelper = (frameId: string, objectsOnCanvas: Array<any>) => {
-  const foundFrame: any = objectsOnCanvas.find((object: any) => object.id == frameId);
+const getFrameByEntityIdHelper = (frameId: string, canvasObjects: Array<any>) => {
+  const foundFrame: any = canvasObjects.find(
+    (object: any) => object.id == frameId && object.objectType == 'frame',
+  );
   return foundFrame;
+};
+
+const getObjectsByObjectTypeHelper = (canvasObjects: Array<any>, objectType: string) => {
+  const foundObjects: any = canvasObjects.filter(
+    (object: any) => object.objectType == objectType,
+  );
+  return foundObjects;
 };
 
 const isDuplicateFrameHelper = (newObject: any, canvasObjects: Array<any>): Boolean => {
@@ -151,12 +160,34 @@ const isDuplicateFrameHelper = (newObject: any, canvasObjects: Array<any>): Bool
   }
 };
 
-const canvasTextHelper = (coordinate: Coordinate, text: string) => {
+const moveObjectOnZAxisHelper = (object: any, move: string) => {
+  if (move === 'front') {
+    object.bringToFront();
+  }
+  if (move === 'back') {
+    object.sendToBack();
+  }
+};
+
+const canvasTextHelper = (
+  coordinate: Coordinate,
+  text: string,
+  origin: { originX: string; originY: string },
+  size: number,
+  fontFamily: string,
+  fontWeight: string,
+) => {
   const textbox = new fabric.Textbox(text, {
     top: coordinate.y,
     left: coordinate.x,
-    fontSize: fabricdefaults.canvas.infoBar.fontSize,
+    fontSize: size,
+    originX: origin.originX,
+    originY: origin.originY,
+    fontFamily: fontFamily,
+    fontWeight: fontWeight,
+    hoverCursor: 'default',
   });
+  lockObjectMovementHelper(textbox);
   return textbox;
 };
 
@@ -225,7 +256,7 @@ const objectOpacityHelper = (canvasObject: any, opacity: number) => {
 const getRandomNumberInRangeHelper = (min: number, max: number) => {
   min = Math.ceil(min);
   max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1) + min);
+  return Math.floor(Math.random() * (max - min) + min);
 };
 
 const lockObjectMovementHelper = (object: any) => {
@@ -253,4 +284,6 @@ export {
   objectOpacityHelper,
   relationHighlightHelper,
   canvasTextHelper,
+  getObjectsByObjectTypeHelper,
+  moveObjectOnZAxisHelper,
 };

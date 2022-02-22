@@ -51,11 +51,18 @@ type FabricDefaults = {
       };
     };
     infoBar: {
-      fontSize: number;
       startFrame: {
-        textPosition: {
-          x: number;
-          y: number;
+        text: {
+          position: {
+            x: number;
+            y: number;
+          };
+          origin: {
+            originX: string;
+            originY: string;
+          };
+          fontSize: number;
+          fontFamily: string;
         };
         position: {
           top: number;
@@ -68,9 +75,17 @@ type FabricDefaults = {
         scale: Scale;
       };
       historyFrame: {
-        textPosition: {
-          x: number;
-          y: number;
+        text: {
+          position: {
+            x: number;
+            y: number;
+          };
+          origin: {
+            originX: string;
+            originY: string;
+          };
+          fontSize: number;
+          fontFamily: string;
         };
         position: {
           top: number;
@@ -149,37 +164,52 @@ const fabricdefaults: FabricDefaults = {
       },
     },
     infoBar: {
-      fontSize: 16,
       startFrame: {
-        textPosition: {
-          x: 3840 / 2 - 300,
-          y: 1900 - 300,
+        text: {
+          position: {
+            x: 3840 / 2 - 300,
+            y: 1900 - 300,
+          },
+          origin: {
+            originX: 'right',
+            originY: 'bottom',
+          },
+          fontSize: 24,
+          fontFamily: 'Avenir',
         },
         position: {
           top: 1900 - 50,
           left: 3840 / 2 - 300,
         },
         scale: {
-          scaleX: 0.5,
-          scaleY: 0.5,
+          scaleX: 0.3,
+          scaleY: 0.3,
         },
         origin: {
-          originX: 'left',
+          originX: 'right',
           originY: 'bottom',
         },
       },
       historyFrame: {
-        textPosition: {
-          x: 0,
-          y: 0,
+        text: {
+          position: {
+            x: 3840 / 2 + 300,
+            y: 1900 - 300,
+          },
+          origin: {
+            originX: 'left',
+            originY: 'bottom',
+          },
+          fontSize: 24,
+          fontFamily: 'Avenir',
         },
         position: {
           top: 1900 - 50,
           left: 3840 / 2 + 300,
         },
         scale: {
-          scaleX: 0.5,
-          scaleY: 0.5,
+          scaleX: 0.3,
+          scaleY: 0.3,
         },
         origin: {
           originX: 'left',
