@@ -93,10 +93,11 @@ export default defineComponent({
         prefetch: false,
       })
     )
-    
+
     watch(() => route.params.entityID, () => {
       console.log('Refetch entity')
         // refetch({id :asString(route.params.entityID)})
+        window.sessionStorage.removeItem('historyEntity')
         window.sessionStorage.setItem('historyEntity', JSON.stringify(entity.value))
         mutateHistory()
         router.go(0)

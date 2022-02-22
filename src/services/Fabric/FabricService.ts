@@ -108,6 +108,7 @@ export default class FabricService {
       objectType: 'infoContainer',
       hoverCursor: 'default',
     });
+    lockObjectMovementHelper(backgroundRect);
     this.state.canvas.add(backgroundRect);
 
     const startImage = ImageUrlHelper(startEntity)[0];
@@ -167,6 +168,7 @@ export default class FabricService {
     entities: Array<any>,
     subRelationOriginEntityId: string,
   ) {
+    // Get positions around main entity, if none left increase the range
     let range: number = fabricdefaults.canvas.secondaryImage.positions.range;
     let closeAvailablePositions: Array<Position> = availablePositionsInRangeHelper(
       getPositionByIdHelper(subRelationOriginEntityId, this.state.canvas.getObjects()),
@@ -181,6 +183,8 @@ export default class FabricService {
         this.state.takenPositions,
       );
     }
+
+    // Frame object
     const images: Array<string> = ImageUrlHelper(entities);
     images.forEach((image, index) => {
       const frame = new fabric.Image.fromURL(image, (image: any) => {
@@ -211,6 +215,7 @@ export default class FabricService {
         image.objectType = 'frame';
         lockObjectMovementHelper(image);
         if (!isDuplicateFrameHelper(image, this.state.canvas.getObjects())) {
+          // Add to canvas and remove position from list
           this.state.canvas.add(image);
           closeAvailablePositions = closeAvailablePositions.filter(
             (pos: any) => pos != closeAvailablePositions[randomNumber],
@@ -218,6 +223,7 @@ export default class FabricService {
 
           this.state.takenPositions.push(image.positionIndexes);
         } else {
+          // Generate relation instead of frame
           const existingFrame = getFrameByEntityIdHelper(
             image.id,
             this.state.canvas.getObjects(),
@@ -235,15 +241,17 @@ export default class FabricService {
 
   setMainImageOnClick() {
     this.state.canvas.on('mouse:down', (selectedObject: any) => {
-      if (
-        (selectedObject.target && objectIsTypeHelper('frame', selectedObject.target)) ||
-        objectIsTypeHelper('startFrame', selectedObject.target) ||
-        objectIsTypeHelper('historyFrame', selectedObject.target)
-      ) {
-        selectedObject = selectedObject.target;
-        console.log({ selectedObject });
-        this.state.selectedImage = selectedObject.entity;
-        router.push('/touchtable/' + selectedObject.entity.id);
+      if (selectedObject.target) {
+        if (
+          (selectedObject.target && objectIsTypeHelper('frame', selectedObject.target)) ||
+          objectIsTypeHelper('startFrame', selectedObject.target) ||
+          objectIsTypeHelper('historyFrame', selectedObject.target)
+        ) {
+          selectedObject = selectedObject.target;
+          console.log({ selectedObject });
+          this.state.selectedImage = selectedObject.entity;
+          router.push('/touchtable/' + selectedObject.entity.id);
+        }
       }
     });
   }
