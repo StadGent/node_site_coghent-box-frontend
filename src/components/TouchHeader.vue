@@ -7,17 +7,18 @@
     </div>
     <div class="flex">
       <base-button
-          class="header-button mr-8"
+          class="shadow mr-8"
           customStyle="touchtable-green-round"
           :iconShown="false"
           text="Overzicht alle verhalen"
         />
       <base-button
-          class="header-button"
+          class="shadow"
           customStyle="touchtable-white-round"
           customIcon="door"
           :iconShown="true"
           text="Afsluiten"
+          @click="openShutdownModal"
         />
         </div>
   </div>    
@@ -27,6 +28,7 @@
 import { defineComponent, onMounted, ref } from 'vue';
 import { baseIcon, BaseButton} from 'coghent-vue-3-component-library'
 import { fabricdefaults } from '@/services/Fabric/defaults.fabric';
+import {useShutdownModal} from '@/components/ShutdownModal.vue';
 
 export default defineComponent({
   name: 'TouchHeader',
@@ -42,8 +44,14 @@ export default defineComponent({
     }
   },
   setup: (props) => {
+    const { openShutdownModal, closeShutdownModal } = useShutdownModal()
+
     const root = document.documentElement;
-      root.style.setProperty('--header_height', fabricdefaults.canvas.header.height.toString() + 'px');
+      root.style.setProperty('--header_height', fabricdefaults.canvas.header.height.toString() + 'px'); 
+
+    return {
+      openShutdownModal,
+    }
   }
 });
 </script>
@@ -55,7 +63,7 @@ export default defineComponent({
   align-items: center;
   height: var(--header_height);
 }
-.header-button{
+.shadow{
   box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.2);
 }
 .spacer{
