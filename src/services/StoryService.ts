@@ -3,7 +3,7 @@ import { Frame, Story } from '@/models/GraphqlModel';
 import Colors from '@/Three/defaults.color';
 import Defaults from '@/Three/defaults.config';
 import Positions from '@/Three/defaults.positions';
-import { BoxVisiter, boxVisiter, useBoxVisiter } from 'coghent-vue-3-component-library/lib';
+import { BoxVisiter, boxVisiter, useBoxVisiter } from 'coghent-vue-3-component-library';
 import { Relation } from 'coghent-vue-3-component-library/lib/queries';
 import { Vector3 } from 'three';
 

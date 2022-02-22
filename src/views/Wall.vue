@@ -11,16 +11,12 @@
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import ViewPort from '@/components/ViewPort.vue';
-import { useMutation, useQuery } from '@vue/apollo-composable';
-import {
-  GetStoriesDocument,
-  GetBoxVisiterByIdDocument,
-  AddFrameToVisiterDocument,
-} from 'coghent-vue-3-component-library';
+import { useQuery } from '@vue/apollo-composable';
 import mqtt from '@/components/mqtt.vue';
 import { BoxVisiter } from '@/models/GraphqlModel';
 import StoryService from '@/services/StoryService';
-import Common, { SensorObject } from '@/composables/common';
+import { SensorObject } from '@/composables/common';
+import { GetActiveBoxDocument } from 'coghent-vue-3-component-library';
 
 export default defineComponent({
   name: 'Wall',
@@ -38,7 +34,7 @@ export default defineComponent({
     //     id: '743ca110-384a-43f7-a57b-796cbd89c8cb',
     //   },
     // );
-    const { onResult: Stories } = useQuery(GetStoriesDocument);
+    const { onResult: Stories } = useQuery(GetActiveBoxDocument);
     // const { mutate, onDone } = useMutation(AddFrameToVisiterDocument, {variables: {visiterId: "eaedf3ab-4de9-473f-9668-5e3e6d5b0510"}})
 
     // BoxVisiter((_visiter) => {
@@ -52,7 +48,7 @@ export default defineComponent({
     // })
     Stories(async (_stories) => {
       console.log({ _stories });
-      const activeStories = _stories.data.Stories.results;
+      const activeStories = _stories.data.ActiveBox.results;
       if (activeStories) {
         storyService.value = new StoryService(
           activeStories,
