@@ -1,5 +1,5 @@
 <template>
-    <BaseModal :modal-state="IIIFModalState.state" @hide-modal="closeIIIFModal" customStyles="z-50">
+    <BaseModal :large="true" :modal-state="IIIFModalState.state" @hide-modal="closeIIIFModal" customStyles="z-50">
     <section class="h-large flex relative w-full">
       <a
         @click="closeIIIFModal"
