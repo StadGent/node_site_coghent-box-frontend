@@ -24,7 +24,7 @@
   type Key = {
     key: string;
     value: string;
-    enterKey?: boolean;
+    backKey?: boolean;
   };
 
   export default defineComponent({
@@ -46,7 +46,7 @@
           { type: 'number', value: '3' },
           { type: 'spacer', value: '' },
           { type: 'number', value: '0' },
-          { type: 'icon', value: 'arrowLeft', enterKey: true },
+          { type: 'icon', value: 'arrowLeft', backKey: true },
         ],
       },
       columns: {
@@ -69,8 +69,9 @@
         'flex justify-center items-center bg-background-light py-5 px-5 text-3xl font-bold rounded-md cursor-pointer';
 
       const addCharacterToResultArray = (key: Key) => {
-        if (key.enterKey) {
-          console.log('Enter');
+        if (key.backKey) {
+          valueArray.value.pop();
+          emit('code', valueArray.value);
         } else {
           if (valueArray.value.length < props.maxAmountOfCharacters) {
             valueArray.value.push(key.value);
