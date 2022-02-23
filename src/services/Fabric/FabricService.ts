@@ -94,7 +94,7 @@ export default class FabricService {
     });
   }
 
-  generateInfoBar(startEntity: Entity, historyEntity: Entity) {
+  generateInfoBar(startEntity: Entity, historyEntity: Entity | undefined) {
     console.log({ startEntity, historyEntity });
 
     const backgroundRect = new fabric.Rect({
@@ -137,31 +137,33 @@ export default class FabricService {
     );
     this.state.canvas.add(startText);
 
-    const historyImage = ImageUrlHelper(startEntity)[0];
-    const historyFrame = new fabric.Image.fromURL(historyImage, (image: any) => {
-      image.top = fabricdefaults.canvas.infoBar.historyFrame.position.top;
-      image.left = fabricdefaults.canvas.infoBar.historyFrame.position.left;
-      image.scaleX = fabricdefaults.canvas.infoBar.historyFrame.scale.scaleX;
-      image.scaleY = fabricdefaults.canvas.infoBar.historyFrame.scale.scaleY;
-      image.originX = fabricdefaults.canvas.infoBar.historyFrame.origin.originX;
-      image.originY = fabricdefaults.canvas.infoBar.historyFrame.origin.originY;
-      image.objectType = 'historyFrame';
-      image.hoverCursor = 'pointer';
-      image.setCoords();
-      image.entity = historyEntity;
-      lockObjectMovementHelper(image);
-      this.state.canvas.add(image);
-    });
+    if (historyEntity) {
+      const historyImage = ImageUrlHelper(historyEntity)[0];
+      const historyFrame = new fabric.Image.fromURL(historyImage, (image: any) => {
+        image.top = fabricdefaults.canvas.infoBar.historyFrame.position.top;
+        image.left = fabricdefaults.canvas.infoBar.historyFrame.position.left;
+        image.scaleX = fabricdefaults.canvas.infoBar.historyFrame.scale.scaleX;
+        image.scaleY = fabricdefaults.canvas.infoBar.historyFrame.scale.scaleY;
+        image.originX = fabricdefaults.canvas.infoBar.historyFrame.origin.originX;
+        image.originY = fabricdefaults.canvas.infoBar.historyFrame.origin.originY;
+        image.objectType = 'historyFrame';
+        image.hoverCursor = 'pointer';
+        image.setCoords();
+        image.entity = historyEntity;
+        lockObjectMovementHelper(image);
+        this.state.canvas.add(image);
+      });
 
-    const historyText = canvasTextHelper(
-      fabricdefaults.canvas.infoBar.historyFrame.text.position,
-      'Geschiedenis',
-      fabricdefaults.canvas.infoBar.historyFrame.text.origin,
-      fabricdefaults.canvas.infoBar.historyFrame.text.fontSize,
-      fabricdefaults.canvas.infoBar.historyFrame.text.fontFamily,
-      'bold',
-    );
-    this.state.canvas.add(historyText);
+      const historyText = canvasTextHelper(
+        fabricdefaults.canvas.infoBar.historyFrame.text.position,
+        'Geschiedenis',
+        fabricdefaults.canvas.infoBar.historyFrame.text.origin,
+        fabricdefaults.canvas.infoBar.historyFrame.text.fontSize,
+        fabricdefaults.canvas.infoBar.historyFrame.text.fontFamily,
+        'bold',
+      );
+      this.state.canvas.add(historyText);
+    }
   }
 
   async generateSecondaryImageFrames(

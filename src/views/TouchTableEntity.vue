@@ -97,7 +97,7 @@ export default defineComponent({
     watch(() => route.params.entityID, () => {
       console.log('Refetch entity')
         // refetch({id :asString(route.params.entityID)})
-        window.sessionStorage.removeItem('historyEntity')
+        console.log(entity.value)
         window.sessionStorage.setItem('historyEntity', JSON.stringify(entity.value))
         mutateHistory()
         router.go(0)
@@ -185,8 +185,8 @@ export default defineComponent({
             if (window.sessionStorage.getItem('startEntity')){
               const startEntity = window.sessionStorage.getItem('startEntity')
               const historyEntity = window.sessionStorage.getItem('historyEntity')
-            if(startEntity && historyEntity){
-              fabricService?.generateInfoBar(JSON.parse(startEntity), JSON.parse(historyEntity))
+            if(startEntity){
+              fabricService?.generateInfoBar(JSON.parse(startEntity), historyEntity ? JSON.parse(historyEntity) : undefined)
             }
         }
         }
