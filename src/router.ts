@@ -6,6 +6,7 @@ import Wall from '@/views/Wall.vue';
 import Introscherm1 from '@/components/Introscherm1.vue';
 import Introscherm2 from '@/components/Introscherm2.vue';
 import Introscherm3 from '@/components/Introscherm3.vue';
+import StartCode from '@/components/StartCode.vue';
 
 export const routes: RouteRecordRaw[] = [
   {
@@ -49,13 +50,13 @@ export const routes: RouteRecordRaw[] = [
   {
     path: '/touchtable',
     redirect: '/touchtable/start',
-    component: TouchTable,
+    component: StartCode,
   },
   {
     path: '/touchtable/start',
-    name: 'Touchtable',
-    meta: { title: 'Touchtable' },
-    component: TouchTable,
+    name: 'TouchtableStartCode',
+    meta: { title: 'TouchtableStartCode' },
+    component: StartCode,
     children: [],
   },
   {
