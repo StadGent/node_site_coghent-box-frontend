@@ -1,6 +1,7 @@
 <template>
 <div class="touchtable" :key="id">
   <shutdown-modal :code="code"/>
+  <IIIF-modal :imageUrl="IIIFImageUrl"/>
   <touch-header :basketAmount="basketItems.length"/>
   <div id="canvas-container">
   <canvas id="canvas" class="touchcanvas"/>
@@ -9,7 +10,14 @@
       <h2 class="font-bold text-6xl mb-12">{{entity.title[0].value}}</h2>
       <p class="text-4xl mb-12" v-if="entity.description[0].value">{{entity.description[0].value}}</p>
       <p class="text-4xl mb-12" v-else>This item does not have a description</p>
-      <div class="flex w-full justify-center items-center mt-12">
+      <div class="flex w-full flex-wrap justify-center items-center mt-12">
+        <base-button
+          customStyle="touchtable-black"
+          customIcon="zoomIn"
+          :iconShown="true"
+          text="Afbeelding vergroten"
+          @click="showPictureModal"
+        />
       <base-button
           customStyle="touchtable-purple"
           customIcon="archiveDrawer"
@@ -34,7 +42,9 @@ import ShutdownModal from '@/components/ShutdownModal.vue';
 import RelationBrowser from '@/components/RelationBrowser.vue';
 import {fabricdefaults} from '../services/Fabric/defaults.fabric'
 import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries'
+import IIIFModal, {useIIIFModal} from '@/components/IIIFModal.vue';
 import { router } from '@/router';
+import {IIIFImageUrlHelper} from '../services/Fabric/helper.fabric'
 
 const asString = (x: string | string[]) => (Array.isArray(x) ? x[0] : x)
 
@@ -50,7 +60,8 @@ export default defineComponent({
       TouchHeader,
       RelationBrowser,
       BaseButton,
-      ShutdownModal
+      ShutdownModal,
+      IIIFModal,
   },
   setup: () => {
       const route = useRoute()
@@ -67,7 +78,9 @@ export default defineComponent({
       const entity = ref<any>()
       const headEntityId = ref<string>()
       const basketItems = ref<Array<any>>([])
+      const IIIFImageUrl = ref<string>()
       let fabricService: FabricService | undefined = undefined
+      const {closeIIIFModal, openIIIFModal, IIIFModalState} = useIIIFModal()
 
       const {
       result: relationResult,
@@ -97,7 +110,6 @@ export default defineComponent({
     watch(() => route.params.entityID, () => {
       console.log('Refetch entity')
         // refetch({id :asString(route.params.entityID)})
-        console.log(entity.value)
         window.sessionStorage.setItem('historyEntity', JSON.stringify(entity.value))
         mutateHistory()
         router.go(0)
@@ -134,7 +146,11 @@ export default defineComponent({
 
       const addToBasket = () => {
           mutateBasket()
+      }
 
+      const showPictureModal = () => {
+        IIIFImageUrl.value = IIIFImageUrlHelper(entity.value)
+        openIIIFModal()
       }
 
       const getRelations = (entity: Entity) => {
@@ -256,7 +272,9 @@ export default defineComponent({
     highlightSelectedFilter,
     addToBasket,
     basketItems,
-    code}
+    code,
+    showPictureModal,
+    IIIFImageUrl}
   },
 });
 </script>

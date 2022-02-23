@@ -213,6 +213,12 @@ const ImageUrlHelper = (entities: Array<any> | any) => {
   return imageUrls;
 };
 
+const IIIFImageUrlHelper = (entity: any): string => {
+  const filename = entity.primary_mediafile || entity.mediafiles[0].filename;
+
+  return `https://api-uat.collectie.gent/iiif/image/iiif/3/${filename}/info.json`;
+};
+
 const frameBorderHighlightHelper = (frame: any, highlight: boolean) => {
   frame.stroke = highlight
     ? fabricdefaults.canvas.relationBrowser.selectedRelationBorder.color
@@ -286,4 +292,5 @@ export {
   canvasTextHelper,
   getObjectsByObjectTypeHelper,
   moveObjectOnZAxisHelper,
+  IIIFImageUrlHelper,
 };
