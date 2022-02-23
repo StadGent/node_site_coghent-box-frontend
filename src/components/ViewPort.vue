@@ -235,9 +235,15 @@ export default defineComponent({
     };
 
     const timing = () => {
+      console.log('| MASTER playbook: ', playBook.getPlayBookActions());
       let currentFunction = 0;
       let currentSubtitle = 1;
+      let timingCount = 0;
       interval = setInterval(async () => {
+        ++timingCount;
+        if (Development().showDevTimeLogs()) {
+          console.log({ timingCount });
+        }
         showProgressOfFrame = true;
         if (subtitleService.subtitles.length > 0) {
           const subtitleParams = subtitleService.getSubtitleForTime(
@@ -248,12 +254,13 @@ export default defineComponent({
           subtitles.value = `${subtitleParams.subtitle}`;
           currentSubtitle = subtitleParams.index;
         }
+        let time = audio.currentTime;
+        if (isNaN(audio.duration)) {
+          time = timingCount;
+        }
 
         if (
-          audioHelper.DoEvent(
-            audio.currentTime,
-            playBook.getPlayBookActions()[currentFunction].time,
-          )
+          audioHelper.DoEvent(time, playBook.getPlayBookActions()[currentFunction].time)
         ) {
           if (Development().showDevTimeLogs()) {
             console.log(
@@ -269,6 +276,7 @@ export default defineComponent({
           subtitles.value = '';
           currentFunction = 0;
           clearInterval(interval);
+          timingCount = 0;
         }
       }, 1000);
       interval;
@@ -288,6 +296,7 @@ export default defineComponent({
       ).storyData(storyService, activeStoryData, currentFrame);
 
       audio = AudioHelper(threeSvc).setAudioTrack(activeStoryData, currentFrame);
+
       const subtitleLink = useFrame(threeSvc).getSubtitleForFrame(
         activeStoryData.frames[currentFrame],
       );
@@ -317,7 +326,8 @@ export default defineComponent({
 
       audio.onloadedmetadata = () => {
         audioDuration = audio.duration;
-        setAfterFrameScreen();
+        // REVIEW:maybe duplicate
+        // setAfterFrameScreen();
         console.log('| MASTER playbook: ', playBook.getPlayBookActions());
         audio.play();
         timing();
@@ -367,6 +377,11 @@ export default defineComponent({
         playBook.lastAction().time + Timing.delayToPauseScreen,
         'Move the spotlight to the center of the screen until the frame ends',
       );
+      setAfterFrameScreen();
+
+      if (isNaN(audio.duration)) {
+        timing();
+      }
     };
 
     const setAfterFrameScreen = () => {
@@ -416,8 +431,8 @@ export default defineComponent({
             chooseStory.value = true;
           }
         },
-        // playBook.lastAction().time + 1,
-        audioDuration,
+        isNaN(audio.duration)?playBook.lastAction().time + 1:audioDuration,
+        // audioDuration,
         `Update storyData & show endOfSessions screen or the storyOverview`,
       );
     };

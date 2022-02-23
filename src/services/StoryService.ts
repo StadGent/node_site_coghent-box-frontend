@@ -164,16 +164,16 @@ export default class StoryService {
 
   private async storyIsAddedToVisiter(_storyId: string): Promise<boolean> {
     let isCreated = false
-    const matches = boxVisiter.relations.filter((_relation: Relation) => _relation.key.replace('entities/', '') == _storyId)
-    if (matches.length == 0) {
-      await useBoxVisiter(apolloClient).addStoryToVisiter(this.visiterCode, {
-        key: _storyId,
-        active: true,
-        last_frame: ''
-      } as any)
-      isCreated = true
-    } else {
-      isCreated = false
+    if (boxVisiter.relations) {
+      const matches = boxVisiter.relations.filter((_relation: Relation) => _relation.key.replace('entities/', '') == _storyId)
+      if (matches.length == 0) {
+        await useBoxVisiter(apolloClient).addStoryToVisiter(this.visiterCode, {
+          key: _storyId,
+          active: true,
+          last_frame: ''
+        } as any)
+        isCreated = true
+      }
     }
     return isCreated
   }

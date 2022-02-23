@@ -135,9 +135,9 @@ const useFrameAssetOverview = (
     const metadataInfo = useAsset(threeService).addMetadata(
       asset,
       storyColor,
-      `${title}, Me (${collections[0].value})`,
+      `${title}, ${collections[0]?`(${collections[0].value}0`:''}`,
     );
-    threeService.AddGroupsToScene([metadataInfo], Tags.HighlightedMetadata, 'Metadata for image.', `${title}, Me (${collections[0].value})`);
+    threeService.AddGroupsToScene([metadataInfo], Tags.HighlightedMetadata, 'Metadata for image.');
   };
 
   const create = (
