@@ -86,19 +86,26 @@ import { useRouter } from 'vue-router';
 import { CardComponent, GetActiveBoxDocument } from 'coghent-vue-3-component-library';
 import { Entity, Relation } from 'coghent-vue-3-component-library/lib/queries';
 import { useQuery } from '@vue/apollo-composable';
+import { useBoxVisiter } from 'coghent-vue-3-component-library';
+import { apolloClient } from '@/main';
 
 export default defineComponent({
   name: 'Introscherm2',
   components: { CardComponent },
   setup() {
     const router = useRouter();
-
-    const nextStep = (_entity: Entity, index: number) => {
-      localStorage.setItem('STORY_KEY', `entities/${_entity.id}`);
-      if (_entity.title && _entity.title[0]) {
-        localStorage.setItem('STORY_TITLE', _entity.title[0].value as string);
+    const { setSelectedStory } = useBoxVisiter();
+    const nextStep = async (_entity: any, index: number) => {
+      let title = ''
+      if (_entity.title) {
+        title =  _entity.title[0]?.value as string
       }
-      localStorage.setItem('STORY_COLOR', colors[index]);
+      setSelectedStory({
+        id: _entity.id,
+        color: colors[index],
+        title: title,
+      });
+      
       router.push({ name: 'entrance.step3' });
     };
 

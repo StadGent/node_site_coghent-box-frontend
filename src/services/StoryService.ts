@@ -34,7 +34,6 @@ export default class StoryService {
     this.storyIds = [];
     this.storyData = [];
     this.totalOfSeenFrames = 0;
-    useBoxVisiter(apolloClient).getByCode(this.visiterCode)
     this.fillUpDataSources();
     this.assignColorToStories();
   }

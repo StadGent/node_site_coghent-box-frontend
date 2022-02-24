@@ -12,11 +12,11 @@
   >
     <div
       :class="
-        storyColor +
+        selectedStory.color +
         ` circle  w-screen my-16 flex justify-center items-center text-6xl shadow-xl`
       "
     >
-      {{ storyTitle }}
+      {{ selectedStory.title }}
     </div>
     <p class="font-bold text-7xl w-screen mt-16">Mooie keuze!</p>
     <p class="text-center w-screen text-3xl mt-16">
@@ -122,15 +122,12 @@ export default defineComponent({
   name: 'Introscherm3',
   components: {},
   setup(props) {
-    const storyTitle = localStorage.getItem('STORY_TITLE') || '';
-    const storyColor = localStorage.getItem('STORY_COLOR');
-    const storyKey = localStorage.getItem('STORY_KEY');
     const router = useRouter();
+    const { selectedStory } = useBoxVisiter();
+    console.log(selectedStory);
 
-    // if (storyKey) {
-    //   useBoxVisiter(apolloClient).create(storyKey.replace('entities/', ''));
-    //   console.log('box visiter', boxVisiter as BoxVisiter);
-    // }
+    // useBoxVisiter(apolloClient).create(selectedStory.id as string);
+    // console.log('box visiter', boxVisiter);
 
     const printTicket = () => {
       console.log('print ticket');
@@ -138,7 +135,7 @@ export default defineComponent({
     const naarStart = () => {
       router.push({ name: 'entrance.step1' });
     };
-    return { storyTitle, storyColor, printTicket, naarStart };
+    return { printTicket, naarStart, selectedStory };
   },
 });
 </script>
