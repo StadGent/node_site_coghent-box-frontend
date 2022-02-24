@@ -9,14 +9,14 @@
   <mqtt @selectStory="setSelectStory" />
 </template>
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
+import { defineComponent, onMounted, ref, watch } from 'vue';
 import ViewPort from '@/components/ViewPort.vue';
 import { useQuery } from '@vue/apollo-composable';
 import mqtt from '@/components/mqtt.vue';
 import { BoxVisiter } from '@/models/GraphqlModel';
 import StoryService from '@/services/StoryService';
 import { SensorObject } from '@/composables/common';
-import { GetActiveBoxDocument } from 'coghent-vue-3-component-library';
+import { GetActiveBoxDocument, RelationType } from 'coghent-vue-3-component-library';
 import { useBoxVisiter } from 'coghent-vue-3-component-library';
 import { apolloClient } from '@/main';
 import { boxVisiter } from 'coghent-vue-3-component-library';
@@ -31,41 +31,34 @@ export default defineComponent({
       JSON.stringify({ topic: 'sensors/1/present', id: 1, msg: true } as SensorObject),
     );
     const storyService = ref<StoryService>();
-    const visitercode = ref<string>('52389932');
+    const visitercode = ref<string | null>(null);
 
-    const { onResult: Stories } = useQuery(GetActiveBoxDocument);
+    const { fetchMore } = useQuery(GetActiveBoxDocument);
 
-    Stories(async (_stories) => {
-      console.log({ _stories });
-      const activeStories = _stories.data.ActiveBox.results;
-      if (activeStories && visitercode.value != '') {
-        storyService.value = new StoryService(activeStories, String(visitercode.value));
-        stories.value = [...activeStories];
-        console.log(`=> Stories <=`, _stories);
-      }
-    });
+    watch(visitercode, async (value) => {
+      console.log('value of getvisiter', value)
+      const activeStories = await fetchMore({})
+      stories.value = activeStories?.data.ActiveBox.results
+      storyService.value = new StoryService(stories.value as Array<any>, String(visitercode.value));
+    })
 
     const restartSession = async (start: boolean) => {
       console.log({ start });
       console.log('Restart session');
-      // const _visiter = await GetVisiter({
-      //   variables: { code: 'b5e5034f-07c7-4b5c-8855-0ac3d04c62c0' },
-      //   updateQuery: (prevVisiter, { fetchMoreResult }) => {
-      //     return fetchMoreResult;
-      //   },
-      // });
-      // console.log({_visiter});
     };
 
-    const getCode = () => {
+    const getCode = async () => {
       const code = prompt('Enter visiter code');
+      const visiter = await useBoxVisiter(apolloClient).getByCode(String(code));
+      if(visiter == null){
+        await getCode()
+      }
       visitercode.value = String(code)
-      useBoxVisiter(apolloClient).getByCode(visitercode.value);
-      console.log('get visiter', boxVisiter);
+      console.log('get visiter', visiter);
     };
 
-    onMounted(() => {
-      // getCode();
+    onMounted(async () => {
+      getCode();
     });
 
     const resetSelectedStory = (_resetTo: SensorObject) =>
