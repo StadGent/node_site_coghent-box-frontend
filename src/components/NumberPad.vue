@@ -68,6 +68,10 @@
       const keyStyles: string =
         'flex justify-center items-center bg-background-light py-5 px-5 text-3xl font-bold rounded-md cursor-pointer';
 
+      const resetCode = () => {
+        valueArray.value = [];
+      };
+
       const addCharacterToResultArray = (key: Key) => {
         if (key.backKey) {
           valueArray.value.pop();
@@ -79,6 +83,7 @@
           } else if ((valueArray.value.length = props.maxAmountOfCharacters - 1)) {
             valueArray.value.push(key.value);
             emit('codeComplete', true);
+            resetCode();
           }
         }
       };
