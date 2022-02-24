@@ -5,13 +5,14 @@
   "scripts": {
     "serve": "vue-cli-service serve --port 8082",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "prod": "vue-cli-service serve --mode production --port 8040"
   },
   "dependencies": {
     "@apollo/client": "^3.3.21",
     "@vue/apollo-composable": "^4.0.0-alpha.14",
     "axios": "^0.21.1",
-    "coghent-vue-3-component-library": "^0.1.0",
+    "coghent-vue-3-component-library": "^0.1.27",
     "core-js": "^3.6.5",
     "d3": "^7.2.1",
     "fabric": "^4.5.1",
