@@ -60,7 +60,7 @@
         default: 8,
       },
     },
-    emits: ['code'],
+    emits: ['code', 'codeComplete'],
     setup: (props, { emit }) => {
       const valueArray = ref<Array<any>>([]);
       const containerStyles: string = `grid grid-cols-${props.columns} gap-5`;
@@ -73,9 +73,12 @@
           valueArray.value.pop();
           emit('code', valueArray.value);
         } else {
-          if (valueArray.value.length < props.maxAmountOfCharacters) {
+          if (valueArray.value.length < props.maxAmountOfCharacters - 1) {
             valueArray.value.push(key.value);
             emit('code', valueArray.value);
+          } else if ((valueArray.value.length = props.maxAmountOfCharacters - 1)) {
+            valueArray.value.push(key.value);
+            emit('codeComplete', true);
           }
         }
       };

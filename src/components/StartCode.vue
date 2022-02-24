@@ -4,14 +4,24 @@
       :large="true"
       backgroundColor="bg-accent-yellow"
       roundsColor="bg-touchtable-dark"
-      class="w-1/4 h-1/4"
+      class="w-1/2 lg:w-1/4"
     >
-      <number-display
-        :code="code"
-        :maxAmountOfCharacters="maxAmountOfNumbers"
-        class="mb-12"
-      />
-      <number-pad @code="updateCode" />
+      <section class="p-8">
+        <number-display
+          :code="code"
+          :maxAmountOfCharacters="maxAmountOfNumbers"
+          class="mb-12"
+        />
+        <number-pad @code="updateCode" @codeComplete="checkCode" />
+      </section>
+      <section class="flex justify-center items-center w-full mt-12">
+        <base-button
+          class="text-lg underline"
+          customStyle="touchtable-black"
+          :iconShown="false"
+          text="Ik heb nog geen code"
+        />
+      </section>
     </CardComponent>
   </main>
 </template>
@@ -19,14 +29,16 @@
 <script lang="ts">
   import { defineComponent, onMounted, ref, watch } from 'vue';
   import {
-    BaseModal,
-    IIIFViewer,
-    BaseIcon,
     CardComponent,
+    GetBoxVisiterByCodeDocument,
+    BaseButton,
   } from 'coghent-vue-3-component-library';
   import NumberPad from '@/components/NumberPad.vue';
   import NumberDisplay from '@/components/NumberDisplay.vue';
   import { useRouter } from 'vue-router';
+  import { useQuery, useMutation } from '@vue/apollo-composable';
+  import { BoxVisiter, boxVisiter, useBoxVisiter } from 'coghent-vue-3-component-library';
+  import { apolloClient } from '@/main';
 
   export default defineComponent({
     name: 'StartCode',
@@ -34,6 +46,7 @@
       CardComponent,
       NumberPad,
       NumberDisplay,
+      BaseButton,
     },
     props: {},
     setup: (props) => {
@@ -43,13 +56,29 @@
       const startId: string = 'f42792cd-4e59-4dae-8fd0-3997ab4a0ca7';
 
       const updateCode = (value: any) => {
+        console.log({ value });
         code.value = value;
       };
 
-      window.sessionStorage.setItem('startId', startId);
-      // router.push('/touchtable/' + startId)
+      const showWrongCodeMessage = () => {
+        alert('Wrong code');
+      };
 
-      return { startId, updateCode, maxAmountOfNumbers, code };
+      const checkCode = () => {
+        const resolvedBoxVisit = useBoxVisiter(apolloClient).getByCode(
+          code.value.join(''),
+        );
+        resolvedBoxVisit.then((boxVisit: any) => {
+          window.sessionStorage.setItem('startId', startId);
+          router.push('/touchtable/' + startId);
+        });
+        resolvedBoxVisit.catch(() => {
+          code.value = [];
+          showWrongCodeMessage();
+        });
+      };
+
+      return { startId, updateCode, maxAmountOfNumbers, code, checkCode };
     },
   });
 </script>
