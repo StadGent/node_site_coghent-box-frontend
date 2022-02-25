@@ -32,15 +32,19 @@ export default defineComponent({
     );
     const storyService = ref<StoryService>();
     const visitercode = ref<string | null>(null);
+    const { selectedStory } = useBoxVisiter();
 
     const { fetchMore } = useQuery(GetActiveBoxDocument);
 
     watch(visitercode, async (value) => {
-      console.log('value of getvisiter', value)
-      const activeStories = await fetchMore({})
-      stories.value = activeStories?.data.ActiveBox.results
-      storyService.value = new StoryService(stories.value as Array<any>, String(visitercode.value));
-    })
+      console.log('value of getvisiter', value);
+      const activeStories = await fetchMore({});
+      stories.value = activeStories?.data.ActiveBox.results;
+      storyService.value = new StoryService(
+        stories.value as Array<any>,
+        String(visitercode.value),
+      );
+    });
 
     const restartSession = async (start: boolean) => {
       console.log({ start });
@@ -49,12 +53,14 @@ export default defineComponent({
 
     const getCode = async () => {
       const code = prompt('Enter visiter code');
+      console.log('INPUT', String(code));
       const visiter = await useBoxVisiter(apolloClient).getByCode(String(code));
-      if(visiter == null){
-        await getCode()
+      if (visiter == null) {
+        await getCode();
+      } else {
+        visitercode.value = String(code);
+        console.log('visiter', visiter);
       }
-      visitercode.value = String(code)
-      console.log('get visiter', visiter);
     };
 
     onMounted(async () => {
