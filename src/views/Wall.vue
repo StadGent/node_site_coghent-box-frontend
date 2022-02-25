@@ -1,4 +1,9 @@
 <template>
+  <label :v-if="visitercode == null" for="">
+    <input type="text" v-model="inputValue" /><button @click="getCode(inputValue)">
+      Submit
+    </button>
+  </label>
   <ViewPort
     :stories="stories"
     :storySelected="storySelected"
@@ -6,7 +11,7 @@
     @restartSession="restartSession"
     @resetSelectedStory="resetSelectedStory"
   />
-  <mqtt @selectStory="setSelectStory" />
+  <!-- <mqtt @selectStory="setSelectStory" /> -->
 </template>
 <script lang="ts">
 import { defineComponent, onMounted, ref, watch } from 'vue';
@@ -33,6 +38,7 @@ export default defineComponent({
     const storyService = ref<StoryService>();
     const visitercode = ref<string | null>(null);
     const { selectedStory } = useBoxVisiter();
+    const inputValue = ref<string>('');
 
     const { fetchMore } = useQuery(GetActiveBoxDocument);
 
@@ -51,20 +57,20 @@ export default defineComponent({
       console.log('Restart session');
     };
 
-    const getCode = async () => {
-      const code = prompt('Enter visiter code');
+    const getCode = async (code: string) => {
+      console.log({ code });
+      // const code = prompt('Enter visiter code');
       console.log('INPUT', String(code));
       const visiter = await useBoxVisiter(apolloClient).getByCode(String(code));
-      if (visiter == null) {
-        await getCode();
-      } else {
+      if (visiter != null) {
+        // await getCode();
         visitercode.value = String(code);
         console.log('visiter', visiter);
       }
     };
 
     onMounted(async () => {
-      getCode();
+      // getCode();
     });
 
     const resetSelectedStory = (_resetTo: SensorObject) =>
@@ -124,6 +130,8 @@ export default defineComponent({
       storyService,
       restartSession,
       resetSelectedStory,
+      inputValue,
+      getCode,
     };
   },
 });
