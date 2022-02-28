@@ -16,6 +16,7 @@ const Defaults = (): {
   fontPath: () => string;
   circlePoints: () => Array<CirclePoint>;
   StoryColors: () => Array<number>;
+  StoryColorsCss: () => Array<string>;
   Circle: () => CircleSchema;
   ImageCube: () => CubeSchema;
   Word: (text: string, position: Vector3) => TextSchema;
@@ -26,9 +27,9 @@ const Defaults = (): {
   const zonePadding = () => 2;
   const screenZonePadding = () => 2;
   const boundaryPadding = () => 1;
-  
+
   const maxFrames = () => 2;
-  const countdown = () => 3; 
+  const countdown = () => 3;
 
   const fontPath = () => '/Fonts/myFont.json';
 
@@ -48,6 +49,15 @@ const Defaults = (): {
       Colors().yellow,
       Colors().green,
       Colors().lightBlue,
+    ];
+  };
+
+  const StoryColorsCss = () => {
+    return [
+      'bg-stories-pink',
+      'bg-stories-yellow',
+      'bg-stories-green',
+      'bg-stories-blue',
     ];
   };
 
@@ -101,6 +111,7 @@ const Defaults = (): {
     fontPath,
     circlePoints,
     StoryColors,
+    StoryColorsCss,
     Circle,
     ImageCube,
     Word,
