@@ -126,7 +126,6 @@ export default defineComponent({
       () => props.storyService,
       (value) => {
         storyService = value;
-        storyService.setActiveStory(storyService.stories[0].id);
         //TODO:
         setup();
       },

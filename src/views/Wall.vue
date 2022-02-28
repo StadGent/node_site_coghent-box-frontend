@@ -61,7 +61,7 @@ export default defineComponent({
           stories.value as Array<any>,
           String(visitercode.value),
         );
-        // tmpStoryService.setActiveStory(storyToSet.key.replace('entities/',''))
+        tmpStoryService.setActiveStory(storyToSet.key.replace('entities/',''))
         storyService.value = tmpStoryService
       }else{
         console.log('All stories seen')
