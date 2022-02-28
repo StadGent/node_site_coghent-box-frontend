@@ -101,7 +101,8 @@ export default defineComponent({
       () => props.storySelected,
       async (value) => {
         const _storySelected = JSON.parse(value) as SensorObject;
-        if (chooseStory.value && _storySelected.id != 0) {
+        const storyDataOfSelected = storyService.getStoryData()[_storySelected.id -1]
+        if (chooseStory.value && _storySelected.id != 0 && !storyDataOfSelected.storySeen) {
           chooseStory.value = false;
           console.log('You selected sensor', _storySelected.id);
           storyData = stories.value;
