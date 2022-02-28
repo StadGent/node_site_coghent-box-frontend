@@ -84,11 +84,9 @@
 import { defineComponent, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { CardComponent, GetActiveBoxDocument } from 'coghent-vue-3-component-library';
-import { Entity, Relation } from 'coghent-vue-3-component-library/lib/queries';
+import { Entity } from 'coghent-vue-3-component-library/lib/queries';
 import { useQuery } from '@vue/apollo-composable';
 import { useBoxVisiter } from 'coghent-vue-3-component-library';
-import { apolloClient } from '@/main';
-
 export default defineComponent({
   name: 'Introscherm2',
   components: { CardComponent },

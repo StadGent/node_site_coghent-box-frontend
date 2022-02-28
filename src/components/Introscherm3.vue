@@ -106,16 +106,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch } from 'vue';
+import { defineComponent } from 'vue';
 import { useRouter } from 'vue-router';
-import {
-  useBoxVisiter,
-  boxVisiter,
-  UseBoxVisiter,
-  BoxVisiter,
-  FrameInput,
-  StoryInput,
-} from 'coghent-vue-3-component-library';
+import { useBoxVisiter } from 'coghent-vue-3-component-library';
+
 import { apolloClient } from '@/main';
 
 export default defineComponent({
@@ -123,11 +117,15 @@ export default defineComponent({
   components: {},
   setup(props) {
     const router = useRouter();
-    const { selectedStory } = useBoxVisiter();
+    const { selectedStory } = useBoxVisiter(apolloClient);
     console.log(selectedStory);
 
-    // useBoxVisiter(apolloClient).create(selectedStory.id as string);
-    // console.log('box visiter', boxVisiter);
+    useBoxVisiter(apolloClient)
+      .create(`entities/${selectedStory.value.id}`)
+      .then((visiter: any) => {
+        console.log('box visiter', visiter);
+        alert(visiter.code);
+      });
 
     const printTicket = () => {
       console.log('print ticket');

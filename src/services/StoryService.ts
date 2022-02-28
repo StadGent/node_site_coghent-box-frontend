@@ -45,6 +45,7 @@ export default class StoryService {
   setActiveStory(_id: string) {
     this.activeStory = this.stories.filter(_story => _story.id == _id)[0];
     this.activeStoryData = this.storyData.filter(_data => _data.storyId == _id)[0];
+    console.log('active story set', this.activeStory)
   }
 
   getTotalOfSeenFrames() {
