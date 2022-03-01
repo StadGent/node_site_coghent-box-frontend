@@ -6,11 +6,11 @@ import Positions from '@/Three/defaults.positions';
 import StoryService, { StoryData } from '@/services/StoryService';
 
 const useStory = (_storyService: StoryService): {
-  setActiveStory: (stories: Array<Story>, story: number) => Story;
-  title: (activeStory: Story) => string;
-  setFrameTitles: (activeStory: Story) => Array<string>;
-  setFrameAssets: (activeStory: Story, frame: number) => Record<string, string>;
-  getStory: (storyId: string) => Story;
+  setActiveStory: (stories: Array<Entity>, storyID: string) => Entity | null;
+  title: (activeStory: Entity) => string;
+  setFrameTitles: (activeStory: Entity) => Array<string>;
+  setFrameAssets: (activeStory: Entity, frame: number) => Record<string, string>;
+  getStory: (storyId: string) => Entity;
   getStoriesWithTheirProgress: (stories: Array<Story>, storyData: Array<StoryData>) => Record<string, StoryData>;
   GetStoryTitles: (stories: Array<Story>) => Array<string>;
   getRelationMetadataOfFrames: (activeStoryData: Story) => Array<ComponentMetadata>;
@@ -21,33 +21,52 @@ const useStory = (_storyService: StoryService): {
   RelationIds: (story: Entity) => Array<string>;
   CreateCenterWords: (words: Array<string>) => Record<string, Vector3>;
 } => {
-  const setActiveStory = (stories: Array<any>, story: number) => {
-    return stories[story];
+  const setActiveStory = (stories: Array<Entity>, storyID: string) => {
+    let story = null;
+    if(stories.length > 0){
+      for(const _story of stories){
+        if(_story.id == storyID){
+          story = _story
+        }
+      }
+    }else{
+      story = null
+      console.log(`Couldn't set active story => story does not exist..`)
+    }
+    return story;
   };
 
-  const title = (activeStory: Story) => {
-    return activeStory.title[0].value;
+  const title = (activeStory: Entity) => {
+    let title =''
+    if(activeStory.title && activeStory.title[0]){
+      title =  activeStory.title[0].value as string
+    }
+    return title;
   };
 
-  const setFrameTitles = (activeStory: Story) => {
+  const setFrameTitles = (activeStory: Entity) => {
     const titles: Array<string> = [];
-    activeStory.frames.forEach((frame) => {
-      titles.push(frame.title[0].value);
+    activeStory.frames?.forEach((frame) => {
+      if(frame?.title && frame?.title[0]){
+        titles.push(frame?.title[0].value as string);
+      }
     });
     return titles;
   };
 
-  const setFrameAssets = (activeStory: Story, frame: number) => {
+  const setFrameAssets = (activeStory: Entity, frame: number) => {
     const frameAssets: Record<string, string> = {};
-    activeStory.frames[frame].assets.forEach((asset: Asset) => {
-      frameAssets[asset.title[0].value] = asset.mediafiles?.[0].original_file_location;
-    });
+    if(activeStory.frames){
+      activeStory.frames[frame]?.assets?.forEach((asset: any) => {
+        frameAssets[asset.title[0].value] = asset.mediafiles?.[0].original_file_location;
+      });
+    }
     return frameAssets;
   };
 
   const getStory = (storyId: string) => {
     const stories = _storyService.stories.filter(_story => _story.id == storyId);
-    let story: Story = {} as Story;
+    let story: Entity = {} as Entity;
     if(stories.length > 0){
       story = stories[0];
     }

@@ -1,10 +1,11 @@
 import {
   ComponentMetadata,
-  Entity,
   Story,
-  Frame
+  Frame,
+  Asset
 } from '@/models/GraphqlModel';
 import ThreeService from '@/services/ThreeService';
+import { Entity } from 'coghent-vue-3-component-library/lib/queries';
 import Common from './common';
 import useAsset from './useAsset';
 
@@ -14,7 +15,7 @@ const useFrame = (_threeService: ThreeService): {
   GetFrameMainImage: (frame: Entity) => string;
   GetFramesMainImages: (frames: Array<Entity>) => Array<string>;
   CreateFrameRecord: (frames: any) => Record<string, string>;
-  getLastAssetRelationMetadata: (activeStoryData: Story, currentFrameIndex: number) => ComponentMetadata;
+  getLastAssetRelationMetadata: (activeStoryData: Entity, currentFrameIndex: number) => ComponentMetadata;
   getAudioForFrame: (frame: Frame) => string;
   getSubtitleForFrame: (frame: Frame) => string | null;
   getRelationMetadata: (frame: Frame) => Array<ComponentMetadata>;
@@ -22,8 +23,8 @@ const useFrame = (_threeService: ThreeService): {
 } => {
   const title = (_frame: Entity) => {
     let _title = '';
-    if (_frame.title.length > 0)
-      _title = _frame.title[0].value
+    if (_frame.title && _frame.title.length > 0)
+      _title = _frame.title[0]?.value as string
     return _title;
   };
 
@@ -62,14 +63,14 @@ const useFrame = (_threeService: ThreeService): {
     return record;
   };
 
-  const getLastAssetRelationMetadata = (activeStoryData: Story, currentFrameIndex: number) => {
+  const getLastAssetRelationMetadata = (activeStory: any, currentFrameIndex: number) => {
     let relationMetadata = useAsset(_threeService).connectRelationMetadata(
-      activeStoryData.frames[currentFrameIndex],
-      activeStoryData.frames[currentFrameIndex].assets[0],
+      activeStory.frames?.[currentFrameIndex] as unknown as Frame,
+      activeStory.frames[currentFrameIndex]?.assets[0] as unknown as Asset,
     );
-    activeStoryData.frames[currentFrameIndex].assets.forEach((asset) => {
+    activeStory.frames[currentFrameIndex].assets.forEach((asset: Frame | Asset) => {
       const data = useAsset(_threeService).connectRelationMetadata(
-        activeStoryData.frames[currentFrameIndex],
+        activeStory.frames[currentFrameIndex],
         asset,
       );
       if (data.timestamp_end > relationMetadata.timestamp_end) {
@@ -92,10 +93,11 @@ const useFrame = (_threeService: ThreeService): {
 
   const getSubtitleForFrame = (frame: Frame) => {
     let subtitle = null;
-    const subtitles = frame.relationMetadata.filter(_item => _item.subtitleFile);
-    if (subtitles.length > 0)
-      subtitle = subtitles[0].subtitleFile;
-    console.log({ subtitles });
+    if (frame.relationMetadata) {
+      const subtitles = frame.relationMetadata.filter(_item => _item.subtitleFile);
+      if (subtitles.length > 0)
+        subtitle = subtitles[0].subtitleFile;
+    }
     return subtitle
   };
 

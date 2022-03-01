@@ -11,6 +11,7 @@ import MetadataLabel from '@/Three/shapes.metadataLabel';
 import Common from './common';
 import Spot from '@/Three/shapes.spotlight';
 import { Tags } from '@/services/TaggingService';
+import { Entity } from 'coghent-vue-3-component-library/lib';
 
 const useAsset = (
   threeService: ThreeService,
@@ -37,7 +38,7 @@ const useAsset = (
     color: number,
     text: string,
   ) => Group;
-  getAssetsFromFrame: (activeStory: Story, frame: number) => Array<Asset>;
+  getAssetsFromFrame: (activeStory: Entity, frame: number) => Array<Entity>;
   connectRelationMetadata: (
     parent: Frame | Story,
     child: Asset | Frame,
@@ -134,8 +135,8 @@ const useAsset = (
     await CustomAnimation().fadeIn(assetImageCube, AnimationDefaults.values.opacityActive, AnimationDefaults.values.fadeStep);
   };
 
-  const getAssetsFromFrame = (activeStory: Story, frame: number) => {
-    return activeStory.frames[frame].assets;
+  const getAssetsFromFrame = (activeStory: Entity, frame: number) => {
+    return activeStory.frames?.[frame]?.assets as Array<Entity>;
   };
 
   const connectRelationMetadata = (parent: Frame | Story, child: Asset | Frame) => {

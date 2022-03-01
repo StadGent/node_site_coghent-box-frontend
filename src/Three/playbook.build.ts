@@ -1,6 +1,6 @@
 import useFrame from '@/composables/useFrame';
 import { PlayBookFunctions } from '@/composables/playbook';
-import { Story } from '@/models/GraphqlModel';
+import { Frame, Story } from '@/models/GraphqlModel';
 import ThreeService from '@/services/ThreeService';
 import { Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
 import AudioHelper from './helper.audio';
@@ -25,6 +25,8 @@ import MoveHelper from './helper.move';
 import SceneHelper from './helper.scene';
 import StoryCircle from './section.storyCircle';
 import { CircleParams, CircleSchema } from './schema.circle';
+import { Entity } from 'coghent-vue-3-component-library/lib';
+import Development from './defaults.development';
 
 const PlayBookBuild = (
   threeService: ThreeService,
@@ -33,7 +35,7 @@ const PlayBookBuild = (
   taggingService: TaggingService,
   playBook: PlayBookFunctions,
   spotlight: Mesh,
-  activeStoryData: Story,
+  activeStory: Entity,
 ): {
   updateAudio: (
     audio: HTMLAudioElement,
@@ -52,39 +54,49 @@ const PlayBookBuild = (
   storyPaused: (taggingService: TaggingService) => Promise<void>;
   storyData: (
     storyService: StoryService,
-    activeStoryData: Story,
+    activeStory: Entity,
     frameIndex: number,
   ) => Promise<{
-    storyData: Array<StoryData>;
+    storyData: Array<StoryData> | null;
     endOfSession: true | false;
   }>;
   startOfSession: () => Promise<true | false>;
   setSelectedStory: () => Promise<void>;
 } => {
+
+  const logBuild = (_buildName: string) => {
+    if(Development().showBuildLogs()){
+      console.log(`PLAYBOOK BUILD | ${_buildName}`)
+    }
+  }
+
   const updateAudio = (
-    audio: HTMLAudioElement,
+    audio: HTMLAudioElement | null,
     activeFrameIndex: number,
   ) => {
+    logBuild('updateAudio')
     playBook.addToPlayBook(
       () => {
         audio = AudioHelper(threeService).setAudioTrack(
-          activeStoryData,
+          activeStory,
           activeFrameIndex,
         );
-        audio.play();
+        if(audio != null)
+          audio.play();
       },
-      useFrame(threeService).getLastAssetRelationMetadata(activeStoryData, activeFrameIndex)
+      useFrame(threeService).getLastAssetRelationMetadata(activeStory, activeFrameIndex)
         .timestamp_end,
       'Set audio track',
     );
   };
 
   const storyCircle = (currentFrameIndex: number, storyColor: number, canAddToSCene: boolean) => {
-    useStoryCircle(threeService, taggingService, storyService, activeStoryData, playBook).create(
+    logBuild('storyCircle')
+    useStoryCircle(threeService, taggingService, storyService, activeStory, playBook).create(
       new Vector3(zoneService.middleZoneCenter.x, zoneService.middleZoneCenter.y, Layers.scene + Layers.fraction),
       storyColor,
       currentFrameIndex,
-      activeStoryData.frames.length,
+      activeStory.frames?.length as number,
       playBook.lastAction().time,
       canAddToSCene,
     );
@@ -95,10 +107,11 @@ const PlayBookBuild = (
     storyColor: number,
     garbageHelper: GarabageHelperForWall,
   ) => {
+    logBuild('frameOverview')
     useFrameAssetOverview(
       threeService,
       zoneService,
-      activeStoryData,
+      activeStory,
       playBook,
       spotlight,
       garbageHelper,
@@ -110,8 +123,9 @@ const PlayBookBuild = (
   };
 
   const progressOfFrame = (frameIndex: number, color: number, currentTime: number, audioDuration: number, progressbar: Array<Group>) => {
+    logBuild('progressOfFrame')
     const assetsWithTimestampStart = useFrame(threeService).getStartTimestampsWithTheirAsset(
-      activeStoryData.frames[frameIndex],
+      activeStory.frames?.[frameIndex] as unknown as Frame
     );
     taggingService.removeAllTagsFrom(Tags.FrameProgressbar);
     threeService.RemoveGroupsFromScene(progressbar);
@@ -127,6 +141,7 @@ const PlayBookBuild = (
   }
 
   const initialSpotLight = () => {
+    logBuild('initialSpotLight')
     const spotlight = Spot().create(
       zoneService.middleZoneCenter,
       Measurements().storyCircle.radius,
@@ -136,12 +151,14 @@ const PlayBookBuild = (
   };
 
   const endOfSession = async () => {
+    logBuild('endOfSession')
     await CustomAnimation().grow(spotlight as Mesh<any, MeshBasicMaterial>, Measurements().spotLight.radius, AnimationDefaults.values.scaleStep);
     await MoveObject().startMoving(spotlight, new Vector3(zoneService.middleZoneCenter.x, zoneService.middleZoneCenter.y - 1, zoneService.middleZoneCenter.z));
     return useEndOfSession(threeService, zoneService).create();
   };
 
   const storyPaused = async (taggingService: TaggingService) => {
+    logBuild('storyPaused')
     const assetsOnScreen = taggingService.getByTag(Tags.GroupOfAssets)[0].object as Group;
     assetsOnScreen.position.setZ(Layers.background);
     CustomAnimation().grow(spotlight as Mesh<any, MeshBasicMaterial>, Measurements().pauseScreen.spotLightRadius, AnimationDefaults.values.scaleStep);
@@ -164,13 +181,18 @@ const PlayBookBuild = (
 
   const storyData = async (
     storyService: StoryService,
-    activeStoryData: Story,
+    activeStory: Entity,
     frameIndex: number,
   ) => {
-    const storyData = await storyService.updateSeenFramesOfStory(
-      activeStoryData.id,
-      activeStoryData.frames[frameIndex],
-    );
+    logBuild('storyData')
+    let storyData = null
+    if(activeStory.frames && activeStory.frames[frameIndex]){
+      storyData = await storyService.updateSeenFramesOfStory(
+        activeStory.id,
+        activeStory.frames[frameIndex] as unknown as Frame,
+      );
+    }
+    
     return {
       storyData: storyData,
       endOfSession: storyService.isEndOfSession(),
@@ -178,10 +200,12 @@ const PlayBookBuild = (
   };
 
   const startOfSession = async () => {
+    logBuild('startOfSession')
     return await useStartOfSession(threeService, zoneService, spotlight).create();
   };
 
   const setSelectedStory = async () => {
+    logBuild('setSelectedStory')
     spotlight.position.set(spotlight.position.x - 0.01, spotlight.position.y, spotlight.position.z)
     TaggingHelper(taggingService).tagStorycircleAsActiveStoryCircle(storyService.activeStoryData.storyId);
     await CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>, Measurements().storyCircle.radius, AnimationDefaults.values.scaleStep);

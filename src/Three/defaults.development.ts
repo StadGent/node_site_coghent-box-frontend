@@ -4,12 +4,14 @@ const Development = (): {
   showGarbageLogs: () => true | false;
   showMoveLogs: () => true | false;
   showSubtitleLogs: () => true | false;
+  showBuildLogs: () => true | false;
 } => {
   const showZonesInOverview = () => false;
   const showDevTimeLogs = () => false;
   const showGarbageLogs = () => false;
   const showMoveLogs = () => false;
   const showSubtitleLogs = () => false;
+  const showBuildLogs = () => false;
 
   return {
     showZonesInOverview,
@@ -17,6 +19,7 @@ const Development = (): {
     showGarbageLogs,
     showMoveLogs,
     showSubtitleLogs,
+    showBuildLogs,
   }
 }
 

@@ -8,10 +8,10 @@
 <script lang="ts">
 import { defineComponent, onMounted, PropType, reactive, Ref, ref, watch } from 'vue';
 import { Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
-import { Entity as _Entity, Story } from '@/models/GraphqlModel';
+import { Entity as _Entity, Frame, Story } from '@/models/GraphqlModel';
 
 import ThreeService from '@/services/ThreeService';
-import StoryService from '@/services/StoryService';
+import StoryService, { StoryData } from '@/services/StoryService';
 import ZoneService from '@/services/ZoneService';
 import TextService from '@/services/TextService';
 import TaggingService, { Tags } from '@/services/TaggingService';
@@ -43,12 +43,13 @@ import useFrame from '@/composables/useFrame';
 
 import PauseProgressbar from '@/Three/shapes.pauseProgressbar';
 import Template from '@/Three/template.shapes';
+import { Entity } from 'coghent-vue-3-component-library/lib';
 
 export default defineComponent({
   name: 'ViewPort',
   props: {
     stories: {
-      type: Array as PropType<Array<Story>>,
+      type: Array as PropType<Array<Entity>>,
       required: true,
     },
     storySelected: {
@@ -70,7 +71,7 @@ export default defineComponent({
     let storySelected = JSON.parse(props.storySelected) as SensorObject;
     const viewport = ref(null);
     const stories = ref(props.stories);
-    const currentStory = ref<number>(storySelected.id - 1);
+    const currentStoryID = ref<string>('');
     const chooseStory = ref<boolean>(false);
     const videoElement = ref<HTMLVideoElement>();
 
@@ -91,8 +92,8 @@ export default defineComponent({
     let currentFrame = 0;
     let showProgressOfFrame = false;
     let interval: ReturnType<typeof setTimeout>;
-    let storyData: Array<Story> = [];
-    let activeStoryData = reactive<Story>({} as Story);
+    let storyData: Array<Entity> = [];
+    // let activeStoryData = reactive<Entity>({} as Entity);
     let spotlight: Mesh;
 
     let subtitles = ref<string>('');
@@ -100,9 +101,14 @@ export default defineComponent({
     watch(
       () => props.storySelected,
       async (value) => {
+        console.log('storySelected')
         const _storySelected = JSON.parse(value) as SensorObject;
-        const storyDataOfSelected = storyService.getStoryData()[_storySelected.id -1]
-        if (chooseStory.value && _storySelected.id != 0 && !storyDataOfSelected.storySeen) {
+        const storyDataOfSelected = storyService.getStoryData()[_storySelected.id - 1];
+        if (
+          chooseStory.value &&
+          _storySelected.id != 0 &&
+          !storyDataOfSelected.storySeen
+        ) {
           chooseStory.value = false;
           console.log('You selected sensor', _storySelected.id);
           storyData = stories.value;
@@ -126,6 +132,7 @@ export default defineComponent({
       () => props.storyService,
       (value) => {
         storyService = value;
+        console.log('storyService updated');
         //TODO:
         setup();
       },
@@ -135,9 +142,10 @@ export default defineComponent({
       chooseStory.value = false;
       const _storyData = storyService.getStoryDataOfStory(storyData[_storySelected].id);
       storyService.setActiveStory(storyData[_storySelected].id);
-      currentStory.value = _storySelected;
+      currentStoryID.value = storyService.activeStoryData.storyId;
+
       currentFrame = _storyData.totalOfFramesSeen;
-      console.log('Selected story => ', currentStory.value);
+      console.log('Selected story => ', storyService.activeStoryData);
 
       await PlayBookBuild(
         threeSvc,
@@ -146,7 +154,7 @@ export default defineComponent({
         taggingService,
         playBook,
         spotlight,
-        activeStoryData,
+        storyService.activeStory,
       ).setSelectedStory();
       await garbageHelper.newStorySelected();
 
@@ -205,7 +213,7 @@ export default defineComponent({
         taggingService,
         playBook,
         spotlight,
-        activeStoryData,
+        storyService.activeStory,
       ).initialSpotLight();
       storyService.setStoryPausedPositions(zoneService.zonesInnerToOuter);
 
@@ -218,7 +226,7 @@ export default defineComponent({
         taggingService,
         playBook,
         spotlight,
-        activeStoryData,
+        storyService.activeStory,
       )
         .startOfSession()
         .finally(async () => {
@@ -231,7 +239,7 @@ export default defineComponent({
       audioHelper = AudioHelper(threeSvc);
       storyData = storyService.stories;
       console.log('StoryData', storyService.getStoryData());
-      buildStory(currentStory.value);
+      buildStory(currentStoryID.value);
     };
 
     const timing = () => {
@@ -241,9 +249,6 @@ export default defineComponent({
       let timingCount = 0;
       interval = setInterval(async () => {
         ++timingCount;
-        if (Development().showDevTimeLogs()) {
-          console.log({ timingCount });
-        }
         showProgressOfFrame = true;
         if (subtitleService.subtitles.length > 0) {
           const subtitleParams = subtitleService.getSubtitleForTime(
@@ -264,7 +269,7 @@ export default defineComponent({
         ) {
           if (Development().showDevTimeLogs()) {
             console.log(
-              `| Time: ${
+              `| timingCount: ${timingCount}\n| Time: ${
                 playBook.getPlayBookActions()[currentFunction].time
               } \n| Context: ${playBook.getPlayBookActions()[currentFunction].context}`,
             );
@@ -273,6 +278,7 @@ export default defineComponent({
           currentFunction++;
         }
         if (currentFunction > playBook.getPlayBookActions().length - 1) {
+          console.log(`| timing: reset interval & timeCount`);
           subtitles.value = '';
           currentFunction = 0;
           clearInterval(interval);
@@ -282,9 +288,7 @@ export default defineComponent({
       interval;
     };
 
-    const buildStory = async (currentStory: number) => {
-      activeStoryData = useStory(storyService).setActiveStory(storyData, currentStory);
-
+    const buildStory = async (_currenStoryId: string) => {
       PlayBookBuild(
         threeSvc,
         storyService,
@@ -292,18 +296,21 @@ export default defineComponent({
         taggingService,
         playBook,
         spotlight,
-        activeStoryData,
-      ).storyData(storyService, activeStoryData, currentFrame);
+        storyService.activeStory,
+      ).storyData(storyService, storyService.activeStory, currentFrame);
 
-      audio = AudioHelper(threeSvc).setAudioTrack(activeStoryData, currentFrame);
-
+      audio = AudioHelper(threeSvc).setAudioTrack(storyService.activeStory, currentFrame);
+      console.log('the audio', audio);
+      console.log({ audio });
+      
       const subtitleLink = useFrame(threeSvc).getSubtitleForFrame(
-        activeStoryData.frames[currentFrame],
+        storyService.activeStory.frames?.[currentFrame] as unknown as Frame,
       );
       // TODO: await or not await for subtitles?
       subtitleService.downloadSRTFile(subtitleLink as string);
 
       let progress: Array<Group> = [];
+
       audio.ontimeupdate = () => {
         if (showProgressOfFrame) {
           progress = PlayBookBuild(
@@ -313,22 +320,20 @@ export default defineComponent({
             taggingService,
             framePlaybook,
             spotlight,
-            activeStoryData,
+            storyService.activeStory,
           ).progressOfFrame(
             currentFrame,
-            storyService.getStoryColor(activeStoryData.id),
+            storyService.getStoryColor(storyService.activeStory.id),
             audio.currentTime,
             audioDuration,
             progress,
           );
         }
       };
-
       audio.onloadedmetadata = () => {
         audioDuration = audio.duration;
         // REVIEW:maybe duplicate
         // setAfterFrameScreen();
-        console.log('| MASTER playbook: ', playBook.getPlayBookActions());
         audio.play();
         timing();
       };
@@ -342,11 +347,11 @@ export default defineComponent({
         taggingService,
         framePlaybook,
         spotlight,
-        activeStoryData,
+        storyService.activeStory,
       ).storyCircle(
         currentFrame,
-        storyService.getStoryColor(activeStoryData.id),
-        !taggingService.idAlreadyInList(activeStoryData.id),
+        storyService.getStoryColor(storyService.activeStory.id),
+        !taggingService.idAlreadyInList(storyService.activeStory.id),
       );
 
       PlayBookBuild(
@@ -356,10 +361,10 @@ export default defineComponent({
         taggingService,
         framePlaybook,
         spotlight,
-        activeStoryData,
+        storyService.activeStory,
       ).frameOverview(
         currentFrame,
-        storyService.getStoryColor(activeStoryData.id),
+        storyService.getStoryColor(storyService.activeStory.id),
         garbageHelper,
       );
       playBook.mergeActionsWithPlaybook(framePlaybook.getSortedPlayBookActions());
@@ -378,16 +383,13 @@ export default defineComponent({
         'Move the spotlight to the center of the screen until the frame ends',
       );
       setAfterFrameScreen();
-
-      if (isNaN(audio.duration)) {
-        timing();
-      }
     };
 
     const setAfterFrameScreen = () => {
       playBook.addToPlayBook(
         () => {
           audio.pause();
+
           showProgressOfFrame = false;
           storyService.setStoryColor();
           if (storyService.isEndOfSession()) {
@@ -399,7 +401,7 @@ export default defineComponent({
               taggingService,
               playBook,
               spotlight,
-              activeStoryData,
+              storyService.activeStory,
             )
               .endOfSession()
               .then((_start) => {
@@ -407,7 +409,8 @@ export default defineComponent({
                 // setup();
               });
           } else {
-            currentStory.value = 0;
+            // FIXME:
+            // currentStory.value = 0;
             emit('resetSelectedStory', {
               topic: 'sensors/0/present',
               id: 0,
@@ -426,21 +429,24 @@ export default defineComponent({
               taggingService,
               playBook,
               spotlight,
-              activeStoryData,
+              storyService.activeStory,
             ).storyPaused(taggingService);
             chooseStory.value = true;
           }
         },
-        isNaN(audio.duration)?playBook.lastAction().time + 1:audioDuration,
+        isNaN(audio.duration) ? playBook.lastAction().time + 1 : audioDuration,
         // audioDuration,
         `Update storyData & show endOfSessions screen or the storyOverview`,
       );
+      // if (isNaN(audio.duration)) {
+      //   timing();
+      // }
     };
 
     const resetStory = () => {
       clearInterval(interval);
       playBook.clearPlaybook(true);
-      buildStory(currentStory.value);
+      buildStory(currentStoryID.value);
     };
 
     const playStartVideo = () => {

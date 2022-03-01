@@ -45,7 +45,6 @@ export default defineComponent({
     const { fetchMore } = useQuery(GetActiveBoxDocument);
 
     watch(visitercode, async (value) => {
-      console.log('value of getvisiter', value);
       const activeStories = await fetchMore({});
       stories.value = activeStories?.data.ActiveBox.results;
       console.log('stories after code set', stories.value);
@@ -74,14 +73,12 @@ export default defineComponent({
     };
 
     const getCode = async (code: string) => {
-      console.log('INPUT', String(code));
+      // code = '71181823'
       const visiterByCode = await useBoxVisiter(apolloClient).getByCode(String(code));
       console.log('visiter', visiter);
-
       if (visiterByCode != null) {
         visitercode.value = String(code);
         visiter.value = visiterByCode;
-        console.log('visiter', visiter);
       }
     };
 

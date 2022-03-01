@@ -18,6 +18,7 @@ import ZoneService from '@/services/ZoneService';
 import schemaCube from '@/Three/schema.cube';
 import Measurements from '@/Three/defaults.measurements';
 import Defaults from '@/Three/defaults.config';
+import { Entity } from 'coghent-vue-3-component-library/lib';
 
 export type PauseScreenObjects = {
   text: Array<Group>,
@@ -31,7 +32,7 @@ const StoryPaused = (taggingService: TaggingService, zoneService: ZoneService, _
 } => {
   const bannerTopPosition = -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight;
   const bannerCenterPosition = -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight / 2;
-  const storyCircle = (_storyData:StoryData, story: Story, position: Vector3, storyColor: number) => {
+  const storyCircle = (_storyData:StoryData, story: Entity, position: Vector3, storyColor: number) => {
     const titleCircle = StoryCircle(_storyService).Create(
       _storyData,
       useStory(_storyService).title(story),

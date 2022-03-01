@@ -1,5 +1,5 @@
 import useAsset from '@/composables/useAsset';
-import { Asset, Story } from '@/models/GraphqlModel';
+import { Asset, Frame, Story } from '@/models/GraphqlModel';
 import FrameOverview from '@/screens/FrameOverview';
 import ThreeService from '@/services/ThreeService';
 import { BoxBufferGeometry, Group, Mesh, MeshBasicMaterial, Object3D, Vector3 } from 'three';
@@ -16,11 +16,12 @@ import { GarabageHelperForWall } from '@/Three/helper.wall.garbage';
 import Measurements from './defaults.measurements';
 import Development from './defaults.development';
 import MoveObject from '@/composables/moveObject';
+import { Entity } from 'coghent-vue-3-component-library/lib';
 
 const useFrameAssetOverview = (
   threeService: ThreeService,
   zoneService: ZoneService,
-  activeStoryData: Story,
+  activeStory: Entity,
   playBook: PlayBookFunctions,
   spotlight: Mesh,
   garbageHelper: GarabageHelperForWall,
@@ -145,13 +146,13 @@ const useFrameAssetOverview = (
     _storyColor: number,
     timestamp: number,
   ) => {
-    assets = useAsset(threeService).getAssetsFromFrame(activeStoryData, currentFrame);
+    assets = useAsset(threeService).getAssetsFromFrame(activeStory, currentFrame) as unknown as Array<Asset>;
     storyColor = _storyColor;
     if (assets.length > 0) {
-      displayAllAssets(activeStoryData.frames[currentFrame], timestamp);
+      displayAllAssets(activeStory.frames?.[currentFrame] as unknown as Frame, timestamp);
       group.children.forEach((asset, index) => {
         const relationMetadata = useAsset(threeService).connectRelationMetadata(
-          activeStoryData.frames[currentFrame],
+          activeStory.frames?.[currentFrame] as unknown as Frame,
           assets[index],
         );
         if (relationMetadata.timestamp_start) {

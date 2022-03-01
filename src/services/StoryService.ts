@@ -4,7 +4,7 @@ import Colors from '@/Three/defaults.color';
 import Defaults from '@/Three/defaults.config';
 import Positions from '@/Three/defaults.positions';
 import { boxVisiter, useBoxVisiter } from 'coghent-vue-3-component-library';
-import { Relation } from 'coghent-vue-3-component-library/lib/queries';
+import { Entity, Relation } from 'coghent-vue-3-component-library/lib/queries';
 import { Vector3 } from 'three';
 
 export type StoryData = {
@@ -22,13 +22,13 @@ export default class StoryService {
   private storyIds: Array<string>;
   private totalOfSeenFrames: number;
 
-  stories: Array<Story>;
+  stories: Array<Entity>;
   visiterCode: string;
-  activeStory!: Story;
+  activeStory!: Entity;
   activeStoryData!: StoryData;
 
 
-  constructor(_stories: Array<Story>, _visiterCode: string) {
+  constructor(_stories: Array<Entity>, _visiterCode: string) {
     this.stories = _stories;
     this.visiterCode = _visiterCode;
     this.storyIds = [];
@@ -46,6 +46,7 @@ export default class StoryService {
     this.activeStory = this.stories.filter(_story => _story.id == _id)[0];
     this.activeStoryData = this.storyData.filter(_data => _data.storyId == _id)[0];
     console.log('active story set', this.activeStory)
+    return this.activeStoryData
   }
 
   getTotalOfSeenFrames() {
@@ -146,10 +147,10 @@ export default class StoryService {
     }
   }
 
-  private createStoryDataObject(story: Story, index: number) {
+  private createStoryDataObject(story: Entity, index: number) {
     return {
       storyId: story.id,
-      totalOfFrames: story.frames.length,
+      totalOfFrames: story.frames?.length,
       seenFrames: {} as Record<string, Frame>,
       totalOfFramesSeen: 0,
       storySeen: false,
@@ -158,7 +159,7 @@ export default class StoryService {
     } as StoryData;
   }
 
-  private addStoryIdToStoryIds(story: Story) {
+  private addStoryIdToStoryIds(story: Entity) {
     this.storyIds.push(story.id);
   }
 

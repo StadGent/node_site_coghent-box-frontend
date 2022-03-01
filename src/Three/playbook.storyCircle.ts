@@ -11,12 +11,13 @@ import Images from './defaults.images';
 import StoryService from '@/services/StoryService';
 import SceneHelper from './helper.scene';
 import TaggingHelper from './helper.tagging';
+import { Entity } from 'coghent-vue-3-component-library/lib';
 
 const useStoryCircle = (
   threeService: ThreeService,
   _taggingService: TaggingService,
   _storyService: StoryService,
-  activeStoryData: Story,
+  activeStory: Entity,
   playBook: PlayBookFunctions,
 ): {
   create: (
@@ -31,7 +32,7 @@ const useStoryCircle = (
   const titleCircle = (position: Vector3, storyColor: number, currentFrame: number) => {
     return StoryCircle(_storyService).Create(
       _storyService.activeStoryData,
-      useStory(_storyService).title(activeStoryData),
+      useStory(_storyService).title(activeStory),
       CircleHelper().CreateSchema(
         position,
         Measurements().storyCircle.radius,
