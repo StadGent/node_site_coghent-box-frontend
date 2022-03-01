@@ -16,6 +16,7 @@ const useStartOfSession = (
   zoneService: ZoneService,
   spotlight: Mesh,
 ): {
+  showScanImage: () => void
   create: () => Promise<true | false>;
 } => {
   const setSpotlightOnPosition = () => {
@@ -47,8 +48,6 @@ const useStartOfSession = (
 
 
   const create = async () => {
-    showScanImage();
-    await Common().awaitTimeout(Timing.startOfSession.videoDelay);
     await MoveObject().startMoving(spotlight, new Vector3(0, 0, Layers.scene));
     await CustomAnimation().circularCountdown(
       threeService,
@@ -67,7 +66,7 @@ const useStartOfSession = (
     return true;
   };
 
-  return { create };
+  return { showScanImage, create };
 };
 
 export default useStartOfSession;

@@ -44,6 +44,8 @@ import useFrame from '@/composables/useFrame';
 import PauseProgressbar from '@/Three/shapes.pauseProgressbar';
 import Template from '@/Three/template.shapes';
 import { Entity } from 'coghent-vue-3-component-library/lib';
+import useStartOfSession from '@/Three/playbook.startOfSession';
+import Spot from '@/Three/shapes.spotlight';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -131,7 +133,7 @@ export default defineComponent({
       () => props.storyService,
       (value) => {
         storyService = value;
-        setup();
+        setData();
       },
     );
 
@@ -200,21 +202,25 @@ export default defineComponent({
     };
 
     const setup = async () => {
-      // await Common().awaitTimeout(5000);
       threeSvc.ClearScene();
-      spotlight = PlayBookBuild(
-        threeSvc,
-        storyService,
-        zoneService,
-        taggingService,
-        playBook,
-        spotlight,
-        storyService.activeStory,
-      ).initialSpotLight();
-      storyService.setStoryPausedPositions(zoneService.zonesInnerToOuter);
+
+      spotlight = Spot().create(
+        zoneService.middleZoneCenter,
+        Measurements().storyCircle.radius,
+      );
+      threeSvc.AddToScene(spotlight, Tags.Spotlight, 'InitialSpotlight');
+      useStartOfSession(threeSvc, zoneService, spotlight).showScanImage();
 
       // setData();
+    };
 
+    const setData = async () => {
+      audioHelper = AudioHelper(threeSvc);
+      storyData = storyService.stories;
+      showProgressOfFrame = false;
+      audio = null;
+      clearInterval(interval);
+      storyService.setStoryPausedPositions(zoneService.zonesInnerToOuter);
       await PlayBookBuild(
         threeSvc,
         storyService,
@@ -227,18 +233,9 @@ export default defineComponent({
         .startOfSession()
         .finally(async () => {
           garbageHelper.startOfSession();
-          setData();
+          buildStory(currentStoryID.value);
         });
-    };
-
-    const setData = async () => {
-      audioHelper = AudioHelper(threeSvc);
-      storyData = storyService.stories;
-      console.log('StoryData', storyService.getStoryData());
-      showProgressOfFrame = false
-      audio = null
-      clearInterval(interval)
-      buildStory(currentStoryID.value);
+      
     };
 
     const timing = () => {
@@ -413,11 +410,9 @@ export default defineComponent({
               .endOfSession()
               .then((_start) => {
                 emit('restartSession', _start);
-                // setup();
+                setup();
               });
           } else {
-            // FIXME:
-            // currentStory.value = 0;
             emit('resetSelectedStory', {
               topic: 'sensors/0/present',
               id: 0,
@@ -442,12 +437,8 @@ export default defineComponent({
           }
         },
         audio && isNaN(audio.duration) ? playBook.lastAction().time + 1 : audioDuration,
-        // audioDuration,
         `Update storyData & show endOfSessions screen or the storyOverview`,
       );
-      // if (isNaN(audio.duration)) {
-      //   timing();
-      // }
     };
 
     const resetStory = () => {
@@ -482,10 +473,10 @@ export default defineComponent({
       garbageHelper = WallGarbageHelper(threeSvc, taggingService);
       subtitleService = new SubtitleService();
       threeSvc.ClearScene();
+      setup()
 
       threeSvc.Animate();
     });
-
     return { viewport, videoElement, subtitles };
   },
 });
