@@ -7,6 +7,8 @@ const Colors = (): {
   black: number;
   grey: number;
   progressGrey: number;
+  story: () => Array<number>
+  storyCss: () => Array<string>
 } => {
   const green = 0x02a77f;
   const pink = 0xb65099;
@@ -17,6 +19,24 @@ const Colors = (): {
   const grey = 0xdcdcdc;
   const progressGrey = 0xc6c6c6;
 
+  const story = () => {
+    return [
+      pink,
+      yellow,
+      green,
+      lightBlue,
+    ];
+  };
+
+  const storyCss = () => {
+    return [
+      'bg-stories-pink',
+      'bg-stories-yellow',
+      'bg-stories-green',
+      'bg-stories-blue',
+    ];
+  };
+
   return {
     green,
     pink,
@@ -25,7 +45,9 @@ const Colors = (): {
     white,
     black,
     grey,
-    progressGrey
+    progressGrey,
+    story,
+    storyCss
   };
 };
 

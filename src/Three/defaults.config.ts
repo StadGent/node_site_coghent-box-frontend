@@ -15,8 +15,6 @@ const Defaults = (): {
   countdown: () => number;
   fontPath: () => string;
   circlePoints: () => Array<CirclePoint>;
-  StoryColors: () => Array<number>;
-  StoryColorsCss: () => Array<string>;
   Circle: () => CircleSchema;
   ImageCube: () => CubeSchema;
   Word: (text: string, position: Vector3) => TextSchema;
@@ -40,24 +38,6 @@ const Defaults = (): {
       { angle: 155, radius: 3 },
       { angle: 235, radius: 3 },
       { angle: 310, radius: 3 },
-    ];
-  };
-
-  const StoryColors = () => {
-    return [
-      Colors().pink,
-      Colors().yellow,
-      Colors().green,
-      Colors().lightBlue,
-    ];
-  };
-
-  const StoryColorsCss = () => {
-    return [
-      'bg-stories-pink',
-      'bg-stories-yellow',
-      'bg-stories-green',
-      'bg-stories-blue',
     ];
   };
 
@@ -110,8 +90,6 @@ const Defaults = (): {
     countdown,
     fontPath,
     circlePoints,
-    StoryColors,
-    StoryColorsCss,
     Circle,
     ImageCube,
     Word,

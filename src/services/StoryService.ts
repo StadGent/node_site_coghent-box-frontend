@@ -3,7 +3,7 @@ import { Frame, Story } from '@/models/GraphqlModel';
 import Colors from '@/Three/defaults.color';
 import Defaults from '@/Three/defaults.config';
 import Positions from '@/Three/defaults.positions';
-import { BoxVisiter, boxVisiter, useBoxVisiter } from 'coghent-vue-3-component-library';
+import { boxVisiter, useBoxVisiter } from 'coghent-vue-3-component-library';
 import { Relation } from 'coghent-vue-3-component-library/lib/queries';
 import { Vector3 } from 'three';
 
@@ -127,7 +127,7 @@ export default class StoryService {
   private assignColorToStories() {
     if (this.storyData.length > 0) {
       for (let index = 0;index < this.storyData.length;index++) {
-        this.storyData[index]['storyColor'] = Defaults().StoryColors()[index];
+        this.storyData[index]['storyColor'] = Colors().story()[index];
       }
     }
   }

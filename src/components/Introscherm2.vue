@@ -87,7 +87,7 @@ import { CardComponent, GetActiveBoxDocument } from 'coghent-vue-3-component-lib
 import { Entity } from 'coghent-vue-3-component-library/lib/queries';
 import { useQuery } from '@vue/apollo-composable';
 import { useBoxVisiter } from 'coghent-vue-3-component-library';
-import Defaults from '@/Three/defaults.config';
+import Colors from '@/Three/defaults.color';
 
 export default defineComponent({
   name: 'Introscherm2',
@@ -95,7 +95,7 @@ export default defineComponent({
   setup() {
     const router = useRouter();
     const { setSelectedStory } = useBoxVisiter();
-    const colors = Defaults().StoryColorsCss()
+    const colors = Colors().storyCss()
     const nextStep = async (_entity: any, index: number) => {
       let title = ''
       if (_entity.title) {
