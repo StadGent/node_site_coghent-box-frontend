@@ -235,6 +235,9 @@ export default defineComponent({
       audioHelper = AudioHelper(threeSvc);
       storyData = storyService.stories;
       console.log('StoryData', storyService.getStoryData());
+      showProgressOfFrame = false
+      audio = null
+      clearInterval(interval)
       buildStory(currentStoryID.value);
     };
 
