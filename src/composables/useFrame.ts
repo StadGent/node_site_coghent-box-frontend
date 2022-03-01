@@ -16,7 +16,7 @@ const useFrame = (_threeService: ThreeService): {
   GetFramesMainImages: (frames: Array<Entity>) => Array<string>;
   CreateFrameRecord: (frames: any) => Record<string, string>;
   getLastAssetRelationMetadata: (activeStoryData: Entity, currentFrameIndex: number) => ComponentMetadata;
-  getAudioForFrame: (frame: Frame) => string;
+  getAudioForFrame: (frame: Frame) => string | null;
   getSubtitleForFrame: (frame: Frame) => string | null;
   getRelationMetadata: (frame: Frame) => Array<ComponentMetadata>;
   getStartTimestampsWithTheirAsset: (frame: Frame) => Record<string, number>;
@@ -82,7 +82,7 @@ const useFrame = (_threeService: ThreeService): {
 
   const getAudioForFrame = (frame: Frame) => {
     let audioFiles: Array<string> = [];
-    let audio = 'No audio for frame';
+    let audio = null;
     audioFiles = [...frame.relationMetadata.filter(_data => _data.audioFile?.includes('download')).map(_item => _item.audioFile as string)];
     if (audioFiles.length > 0 && audioFiles[0].includes('.mp3')) {
       audio = audioFiles[0];

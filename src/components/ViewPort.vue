@@ -85,7 +85,7 @@ export default defineComponent({
     let zoneService: ZoneService;
     let subtitleService: SubtitleService;
 
-    let audio: HTMLAudioElement;
+    let audio: HTMLAudioElement | null;
     let audioHelper: AudioHelperFunctions;
     let garbageHelper: GarabageHelperForWall;
     let audioDuration = 90;
@@ -101,7 +101,6 @@ export default defineComponent({
     watch(
       () => props.storySelected,
       async (value) => {
-        console.log('storySelected')
         const _storySelected = JSON.parse(value) as SensorObject;
         const storyDataOfSelected = storyService.getStoryData()[_storySelected.id - 1];
         if (
@@ -132,8 +131,6 @@ export default defineComponent({
       () => props.storyService,
       (value) => {
         storyService = value;
-        console.log('storyService updated');
-        //TODO:
         setup();
       },
     );
@@ -145,7 +142,6 @@ export default defineComponent({
       currentStoryID.value = storyService.activeStoryData.storyId;
 
       currentFrame = _storyData.totalOfFramesSeen;
-      console.log('Selected story => ', storyService.activeStoryData);
 
       await PlayBookBuild(
         threeSvc,
@@ -250,7 +246,7 @@ export default defineComponent({
       interval = setInterval(async () => {
         ++timingCount;
         showProgressOfFrame = true;
-        if (subtitleService.subtitles.length > 0) {
+        if (audio && subtitleService.subtitles.length > 0) {
           const subtitleParams = subtitleService.getSubtitleForTime(
             audio.currentTime,
             subtitleService.subtitles,
@@ -259,9 +255,9 @@ export default defineComponent({
           subtitles.value = `${subtitleParams.subtitle}`;
           currentSubtitle = subtitleParams.index;
         }
-        let time = audio.currentTime;
-        if (isNaN(audio.duration)) {
-          time = timingCount;
+        let time = timingCount;
+        if (audio != null && !isNaN(audio.duration)) {
+          time = audio.currentTime;
         }
 
         if (
@@ -300,9 +296,11 @@ export default defineComponent({
       ).storyData(storyService, storyService.activeStory, currentFrame);
 
       audio = AudioHelper(threeSvc).setAudioTrack(storyService.activeStory, currentFrame);
-      console.log('the audio', audio);
+      if (audio == null) {
+        timing();
+      }
       console.log({ audio });
-      
+
       const subtitleLink = useFrame(threeSvc).getSubtitleForFrame(
         storyService.activeStory.frames?.[currentFrame] as unknown as Frame,
       );
@@ -311,32 +309,36 @@ export default defineComponent({
 
       let progress: Array<Group> = [];
 
-      audio.ontimeupdate = () => {
-        if (showProgressOfFrame) {
-          progress = PlayBookBuild(
-            threeSvc,
-            storyService,
-            zoneService,
-            taggingService,
-            framePlaybook,
-            spotlight,
-            storyService.activeStory,
-          ).progressOfFrame(
-            currentFrame,
-            storyService.getStoryColor(storyService.activeStory.id),
-            audio.currentTime,
-            audioDuration,
-            progress,
-          );
-        }
-      };
-      audio.onloadedmetadata = () => {
-        audioDuration = audio.duration;
-        // REVIEW:maybe duplicate
-        // setAfterFrameScreen();
-        audio.play();
-        timing();
-      };
+      if (audio != null) {
+        audio.ontimeupdate = () => {
+          if (audio && showProgressOfFrame) {
+            progress = PlayBookBuild(
+              threeSvc,
+              storyService,
+              zoneService,
+              taggingService,
+              framePlaybook,
+              spotlight,
+              storyService.activeStory,
+            ).progressOfFrame(
+              currentFrame,
+              storyService.getStoryColor(storyService.activeStory.id),
+              audio.currentTime,
+              audioDuration,
+              progress,
+            );
+          }
+        };
+        audio.onloadedmetadata = () => {
+          if (audio) {
+            audioDuration = audio.duration;
+            // REVIEW:maybe duplicate
+            // setAfterFrameScreen();
+            audio.play();
+            timing();
+          }
+        };
+      }
 
       const framePlaybook = PlayBook();
 
@@ -388,7 +390,9 @@ export default defineComponent({
     const setAfterFrameScreen = () => {
       playBook.addToPlayBook(
         () => {
-          audio.pause();
+          if (audio) {
+            audio.pause();
+          }
 
           showProgressOfFrame = false;
           storyService.setStoryColor();
@@ -434,7 +438,7 @@ export default defineComponent({
             chooseStory.value = true;
           }
         },
-        isNaN(audio.duration) ? playBook.lastAction().time + 1 : audioDuration,
+        audio && isNaN(audio.duration) ? playBook.lastAction().time + 1 : audioDuration,
         // audioDuration,
         `Update storyData & show endOfSessions screen or the storyOverview`,
       );

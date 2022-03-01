@@ -6,7 +6,7 @@ import Development from './defaults.development';
 
 export type AudioHelperFunctions  = {
   DoEvent: (currentTime: number, eventTime: number) => boolean;
-  setAudioTrack: (activeStory: Entity, currentFrameIndex: number) => HTMLAudioElement;
+  setAudioTrack: (activeStory: Entity, currentFrameIndex: number) => HTMLAudioElement | null;
 };
 
 const AudioHelper = (threeService: ThreeService): AudioHelperFunctions => {
@@ -18,12 +18,15 @@ const AudioHelper = (threeService: ThreeService): AudioHelperFunctions => {
   };
 
   const setAudioTrack = (activeStory: Entity, currentFrameIndex: number) => {
-    let audioSrc = ''
+    let audio: HTMLAudioElement | null = null
+    let audioSrc = null
     if(activeStory.frames && activeStory.frames.length > 0){
       audioSrc = useFrame(threeService).getAudioForFrame(activeStory.frames[currentFrameIndex] as unknown as Frame)
+      if(audioSrc){
+        audio = new Audio(audioSrc)
+      }
     }
-    console.log('Audio Source', audioSrc)
-    return new Audio(audioSrc)
+    return audio
   };
 
   return {
