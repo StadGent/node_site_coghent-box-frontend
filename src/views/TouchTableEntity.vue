@@ -1,5 +1,5 @@
 <template>
-  <div class="touchtable" :key="id">
+  <div class="touchtable">
     <shutdown-modal :code="code" />
     <IIIF-modal :imageUrl="IIIFImageUrl" />
     <touch-header :basketAmount="basketItems.length" />
@@ -151,7 +151,7 @@
         () => route.params.entityID,
         () => {
           console.log('Refetch entity');
-          // refetch({id :asString(route.params.entityID)})
+          // refetch({ id: asString(route.params.entityID) });
           window.sessionStorage.setItem('historyEntity', JSON.stringify(entity.value));
           mutateHistory();
           router.go(0);
@@ -225,7 +225,9 @@
           entity.relations.forEach((relation: any) => {
             if (
               relationStringArray.value.indexOf(relation.key) < 0 &&
-              !metaDataInLabel.includes(relation.label)
+              !metaDataInLabel.includes(relation.label) &&
+              relation.key &&
+              relation.value
             ) {
               relationsArray.value.push(relation);
               relationStringArray.value.push(relation.key);
@@ -262,6 +264,8 @@
               );
             }
           }
+        } else {
+          alert('Entity not foud');
         }
       });
 

@@ -70,7 +70,7 @@
         );
         resolvedBoxVisit.then((boxVisit: any) => {
           window.sessionStorage.setItem('startId', startId);
-          router.push('/touchtable/' + startId);
+          router.push('/touchtable/stories');
         });
         resolvedBoxVisit.catch(() => {
           code.value = [];

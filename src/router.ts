@@ -1,12 +1,13 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import TouchTable from '@/views/TouchTable.vue';
 import TouchTableEntity from '@/views/TouchTableEntity.vue';
+import TouchTableStories from '@/views/TouchTableStories.vue';
 import Entrance from '@/views/Entrance.vue';
 import Wall from '@/views/Wall.vue';
 import Introscherm1 from '@/components/Introscherm1.vue';
 import Introscherm2 from '@/components/Introscherm2.vue';
 import Introscherm3 from '@/components/Introscherm3.vue';
-import StartCode from '@/components/StartCode.vue';
+import StartCode from '@/views/StartCode.vue';
 
 export const routes: RouteRecordRaw[] = [
   {
@@ -57,6 +58,13 @@ export const routes: RouteRecordRaw[] = [
     name: 'TouchtableStartCode',
     meta: { title: 'TouchtableStartCode' },
     component: StartCode,
+    children: [],
+  },
+  {
+    path: '/touchtable/stories',
+    name: 'TouchtableStories',
+    meta: { title: 'TouchtableStories' },
+    component: TouchTableStories,
     children: [],
   },
   {

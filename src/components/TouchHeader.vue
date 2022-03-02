@@ -1,5 +1,5 @@
 <template>
-  <div class="p-10 header">
+  <nav class="p-10 header">
     <div class="spacer"></div>
     <div class="">
       <h1 class="font-bold text-6xl w-full pr-auto">
@@ -23,7 +23,7 @@
         @click="openShutdownModal"
       />
     </div>
-  </div>
+  </nav>
 </template>
 
 <script lang="ts">
