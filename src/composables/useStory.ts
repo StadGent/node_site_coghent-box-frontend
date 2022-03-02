@@ -1,11 +1,12 @@
-import { Entity } from 'coghent-vue-3-component-library/lib/queries';
-import { Vector, Vector3 } from 'three';
+import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
+import { Vector3 } from 'three';
 import Common from '@/composables/common';
-import { Asset, ComponentMetadata, Story } from '@/models/GraphqlModel';
+import { ComponentMetadata, Story } from '@/models/GraphqlModel';
 import Positions from '@/Three/defaults.positions';
 import StoryService, { StoryData } from '@/services/StoryService';
 
 const useStory = (_storyService: StoryService): {
+  createStoryDataOfVisiter: (_storyRelations: Array<Relation>) => Array<StoryData>
   setActiveStory: (stories: Array<Entity>, storyID: string) => Entity | null;
   title: (activeStory: Entity) => string;
   setFrameTitles: (activeStory: Entity) => Array<string>;
@@ -21,15 +22,42 @@ const useStory = (_storyService: StoryService): {
   RelationIds: (story: Entity) => Array<string>;
   CreateCenterWords: (words: Array<string>) => Record<string, Vector3>;
 } => {
+
+  const createStoryDataOfVisiter = (_storyRelations: Array<Relation>) => {
+    console.log({_storyRelations});
+    
+    const theData: Array<StoryData> = []
+    if (_storyRelations.length > 0) {
+      for (const _relation of _storyRelations) {
+        if (_relation.seen_frames && _relation.seen_frames.length > 0) {
+          const frameRecord: Record<string, string> = {}
+          for (const _frame of _relation.seen_frames) {
+            if (_frame?.date) {
+              frameRecord[_frame?.date] = _frame.id
+            }
+          }
+          const data = {
+            seenFrames: frameRecord,
+            totalOfFramesSeen: Object.keys(frameRecord).length,
+            storySeen: Object.keys(frameRecord).length == _relation.total_frames ? true : false
+          } as StoryData
+          theData.push(data)
+        }
+      }
+    }
+    console.log('storyData from visiter', theData)
+    return theData
+  }
+
   const setActiveStory = (stories: Array<Entity>, storyID: string) => {
     let story = null;
-    if(stories.length > 0){
-      for(const _story of stories){
-        if(_story.id == storyID){
+    if (stories.length > 0) {
+      for (const _story of stories) {
+        if (_story.id == storyID) {
           story = _story
         }
       }
-    }else{
+    } else {
       story = null
       console.log(`Couldn't set active story => story does not exist..`)
     }
@@ -37,9 +65,9 @@ const useStory = (_storyService: StoryService): {
   };
 
   const title = (activeStory: Entity) => {
-    let title =''
-    if(activeStory.title && activeStory.title[0]){
-      title =  activeStory.title[0].value as string
+    let title = ''
+    if (activeStory.title && activeStory.title[0]) {
+      title = activeStory.title[0].value as string
     }
     return title;
   };
@@ -47,7 +75,7 @@ const useStory = (_storyService: StoryService): {
   const setFrameTitles = (activeStory: Entity) => {
     const titles: Array<string> = [];
     activeStory.frames?.forEach((frame) => {
-      if(frame?.title && frame?.title[0]){
+      if (frame?.title && frame?.title[0]) {
         titles.push(frame?.title[0].value as string);
       }
     });
@@ -56,7 +84,7 @@ const useStory = (_storyService: StoryService): {
 
   const setFrameAssets = (activeStory: Entity, frame: number) => {
     const frameAssets: Record<string, string> = {};
-    if(activeStory.frames){
+    if (activeStory.frames) {
       activeStory.frames[frame]?.assets?.forEach((asset: any) => {
         frameAssets[asset.title[0].value] = asset.mediafiles?.[0].original_file_location;
       });
@@ -67,7 +95,7 @@ const useStory = (_storyService: StoryService): {
   const getStory = (storyId: string) => {
     const stories = _storyService.stories.filter(_story => _story.id == storyId);
     let story: Entity = {} as Entity;
-    if(stories.length > 0){
+    if (stories.length > 0) {
       story = stories[0];
     }
     return story;
@@ -117,6 +145,7 @@ const useStory = (_storyService: StoryService): {
   }
 
   return {
+    createStoryDataOfVisiter,
     setActiveStory,
     title,
     setFrameTitles,

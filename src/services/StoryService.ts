@@ -1,16 +1,17 @@
+import useStory from '@/composables/useStory';
 import { apolloClient } from '@/main';
-import { Frame, Story } from '@/models/GraphqlModel';
+import { Frame } from '@/models/GraphqlModel';
 import Colors from '@/Three/defaults.color';
 import Defaults from '@/Three/defaults.config';
 import Positions from '@/Three/defaults.positions';
 import { boxVisiter, useBoxVisiter } from 'coghent-vue-3-component-library';
-import { Entity, Relation } from 'coghent-vue-3-component-library/lib/queries';
+import Entity, {Relation, RelationType } from 'coghent-vue-3-component-library';
 import { Vector3 } from 'three';
 
 export type StoryData = {
   storyId: string;
   totalOfFrames: number;
-  seenFrames: Record<string, Frame>;
+  seenFrames: Record<string, string>;
   totalOfFramesSeen: number;
   storySeen: boolean;
   storyColor: number;
@@ -22,15 +23,15 @@ export default class StoryService {
   private storyIds: Array<string>;
   private totalOfSeenFrames: number;
 
-  stories: Array<Entity>;
-  visiterCode: string;
-  activeStory!: Entity;
+  stories: Array<typeof Entity>;
+  visiter: any;
+  activeStory!: typeof Entity;
   activeStoryData!: StoryData;
 
 
-  constructor(_stories: Array<Entity>, _visiterCode: string) {
+  constructor(_stories: Array<typeof Entity>, _visiter: any) {
     this.stories = _stories;
-    this.visiterCode = _visiterCode;
+    this.visiter = _visiter;
     this.storyIds = [];
     this.storyData = [];
     this.totalOfSeenFrames = 0;
@@ -72,7 +73,7 @@ export default class StoryService {
         this.addTimestampToSeenFrame(currentStoryId, seenFrame);
         storyToUpdate['totalOfFramesSeen'] = Object.keys(storyToUpdate.seenFrames).length;
       }
-      await useBoxVisiter(apolloClient).addFrameToStory(this.visiterCode, {
+      await useBoxVisiter(apolloClient).addFrameToStory(this.visiter.code, {
         storyId: currentStoryId,
         frameId: seenFrame.id,
       } as any)
@@ -113,7 +114,7 @@ export default class StoryService {
     const rec = this.getStoryDataOfStory(storyId).seenFrames;
     let exists = false;
     for (const key in rec) {
-      if (frame == rec[key]) {
+      if (frame.id == rec[key]) {
         exists = true;
       }
     }
@@ -122,7 +123,7 @@ export default class StoryService {
 
   private addTimestampToSeenFrame(storyId: string, frame: Frame) {
     const timestamp = new Date().toLocaleString();
-    this.getStoryDataOfStory(storyId).seenFrames[timestamp] = frame;
+    this.getStoryDataOfStory(storyId).seenFrames[timestamp] = frame.id;
   }
 
   private assignColorToStories() {
@@ -138,7 +139,10 @@ export default class StoryService {
     return story.totalOfFramesSeen === story.totalOfFrames;
   }
 
-  private fillUpDataSources() {
+  fillUpDataSources() {
+    // const storyRelations = await useBoxVisiter(apolloClient).getRelationsByType(this.visiter.code, RelationType.Stories)
+    // console.log({storyRelations});
+    // const result = useStory(this).createStoryDataOfVisiter(storyRelations)
     if (this.stories.length > 0) {
       this.stories.map((story, index) => {
         this.addStoryIdToStoryIds(story);
@@ -147,11 +151,11 @@ export default class StoryService {
     }
   }
 
-  private createStoryDataObject(story: Entity, index: number) {
+  private createStoryDataObject(story: typeof Entity, index: number) {
     return {
       storyId: story.id,
       totalOfFrames: story.frames?.length,
-      seenFrames: {} as Record<string, Frame>,
+      seenFrames: {} as Record<string, string>,
       totalOfFramesSeen: 0,
       storySeen: false,
       storyColor: Colors().white,
@@ -159,16 +163,16 @@ export default class StoryService {
     } as StoryData;
   }
 
-  private addStoryIdToStoryIds(story: Entity) {
+  private addStoryIdToStoryIds(story: typeof Entity) {
     this.storyIds.push(story.id);
   }
 
   private async storyIsAddedToVisiter(_storyId: string): Promise<boolean> {
     let isCreated = false
     if (boxVisiter.relations) {
-      const matches = boxVisiter.relations.filter((_relation: Relation) => _relation.key.replace('entities/', '') == _storyId)
+      const matches = boxVisiter.relations.filter((_relation: typeof Relation) => _relation.key.replace('entities/', '') == _storyId)
       if (matches.length == 0) {
-        await useBoxVisiter(apolloClient).addStoryToVisiter(this.visiterCode, {
+        await useBoxVisiter(apolloClient).addStoryToVisiter(this.visiter.code, {
           key: _storyId,
           active: true,
           last_frame: ''

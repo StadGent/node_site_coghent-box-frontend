@@ -18,13 +18,11 @@ import { defineComponent, onMounted, ref, watch } from 'vue';
 import ViewPort from '@/components/ViewPort.vue';
 import { useQuery } from '@vue/apollo-composable';
 import mqtt from '@/components/mqtt.vue';
-import { BoxVisiter } from '@/models/GraphqlModel';
 import StoryService from '@/services/StoryService';
 import { SensorObject } from '@/composables/common';
 import { GetActiveBoxDocument, RelationType } from 'coghent-vue-3-component-library';
 import { useBoxVisiter } from 'coghent-vue-3-component-library';
 import { apolloClient } from '@/main';
-import { boxVisiter } from 'coghent-vue-3-component-library';
 import { Relation } from 'coghent-vue-3-component-library/lib/queries';
 import { getFirstStoryToSee, getUnseenStories } from '@/composables/useBox';
 
@@ -39,7 +37,7 @@ export default defineComponent({
     );
     const storyService = ref<StoryService>();
     const visitercode = ref<string | null>(null);
-    const visiter = ref<BoxVisiter | null>(null);
+    const visiter = ref<any | null>(null);
     const inputValue = ref<string>('');
 
     const { fetchMore } = useQuery(GetActiveBoxDocument);
@@ -58,9 +56,10 @@ export default defineComponent({
         console.log({ storyToSet });
         const tmpStoryService = new StoryService(
           stories.value as Array<any>,
-          String(visitercode.value),
+          visiter.value,
         );
         tmpStoryService.setActiveStory(storyToSet.key.replace('entities/',''))
+        // tmpStoryService.fillUpDataSources()
         storyService.value = tmpStoryService
       }else{
         console.log('All stories seen')
