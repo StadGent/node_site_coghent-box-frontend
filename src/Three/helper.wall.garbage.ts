@@ -8,6 +8,7 @@ export type GarabageHelperForWall = {
   removeGroupsByTag: (_tag: Tags) => void;
   pauseScreen: () => void;
   newStorySelected: () => Promise<void>;
+  newStorySelectedWithNoActive: () => void;
   endOfSessionScreen: () => void;
   startOfSession: () => void;
   highlightedAsset: () => void;
@@ -20,7 +21,7 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
 
   const removeArrayOfGroupsByTag = (_tag: Tags) => {
     const _groups = taggingService.getByTag(_tag);
-    for(const item of _groups){
+    for (const item of _groups) {
       threeService.RemoveGroupsFromScene(item.object);
     }
     taggingService.removeAllTagsFrom(_tag);
@@ -36,7 +37,7 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
 
   const removeByTag = (_tag: Tags) => {
     const taggedObject = taggingService.getByTag(_tag);
-    if (taggedObject.length > 0){
+    if (taggedObject.length > 0) {
       threeService.RemoveFromScene(taggedObject[0].object);
       removeByTag(_tag);
     }
@@ -55,7 +56,14 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     threeService.RemoveFromScene(groupOfAssetsTags[0].object);
     storyCircle();
     removeArrayOfGroupsByTag(Tags.PauseScreenCenterText)
-    removeByTag(Tags.PauseScreenBanner);    
+    removeByTag(Tags.PauseScreenBanner);
+    logRemoved('newStorySelected')
+  };
+
+  const newStorySelectedWithNoActive = () => {
+    storyCircle();
+    removeArrayOfGroupsByTag(Tags.PauseScreenCenterText)
+    removeByTag(Tags.PauseScreenBanner);
     logRemoved('newStorySelected')
   };
 
@@ -103,7 +111,7 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
   };
 
   const logRemoved = (_context: string) => {
-    if(Development().showGarbageLogs()){
+    if (Development().showGarbageLogs()) {
       console.log(`-------------`);
       console.log(`garbageHelper removed =>`, _context);
       console.log(`-------------`);
@@ -120,6 +128,7 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
   return {
     pauseScreen,
     newStorySelected,
+    newStorySelectedWithNoActive,
     endOfSessionScreen,
     removeGroupsByTag,
     startOfSession,

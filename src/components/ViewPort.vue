@@ -67,6 +67,10 @@ export default defineComponent({
       type: StoryService,
       required: true,
     },
+    showPauseOverview: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: ['restartSession', 'resetSelectedStory'],
   setup(props, { emit }) {
@@ -95,7 +99,6 @@ export default defineComponent({
     let showProgressOfFrame = false;
     let interval: ReturnType<typeof setTimeout>;
     let storyData: Array<Entity> = [];
-    // let activeStoryData = reactive<Entity>({} as Entity);
     let spotlight: Mesh;
 
     let subtitles = ref<string>('');
@@ -133,7 +136,22 @@ export default defineComponent({
       () => props.storyService,
       (value) => {
         storyService = value;
-        setData();
+        if (!props.showPauseOverview) {
+          setData();
+        } else {
+          garbageHelper.startOfSession();
+          storyService.setStoryPausedPositions(zoneService.zonesInnerToOuter);
+          PlayBookBuild(
+            threeSvc,
+            storyService,
+            zoneService,
+            taggingService,
+            playBook,
+            spotlight,
+            {} as Entity,
+          ).storyPausedWithNoActiveStory();
+          chooseStory.value = true;
+        }
       },
     );
 
@@ -154,7 +172,12 @@ export default defineComponent({
         spotlight,
         storyService.activeStory,
       ).setSelectedStory();
-      await garbageHelper.newStorySelected();
+      if (props.showPauseOverview) {
+        garbageHelper.newStorySelectedWithNoActive();
+        audioHelper = AudioHelper(threeSvc);
+      } else {
+        await garbageHelper.newStorySelected();
+      }
 
       const progressDots = PauseProgressbar(storyService.activeStoryData).dots(
         Template().storyCircleLayers(zoneService.middleZoneCenter).progressDots,
@@ -235,7 +258,6 @@ export default defineComponent({
           garbageHelper.startOfSession();
           buildStory(currentStoryID.value);
         });
-      
     };
 
     const timing = () => {
@@ -432,7 +454,7 @@ export default defineComponent({
               playBook,
               spotlight,
               storyService.activeStory,
-            ).storyPaused(taggingService);
+            ).storyPaused();
             chooseStory.value = true;
           }
         },
@@ -473,7 +495,7 @@ export default defineComponent({
       garbageHelper = WallGarbageHelper(threeSvc, taggingService);
       subtitleService = new SubtitleService();
       threeSvc.ClearScene();
-      setup()
+      setup();
 
       threeSvc.Animate();
     });

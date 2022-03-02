@@ -51,7 +51,8 @@ const PlayBookBuild = (
   progressOfFrame: (frameIndex: number, color: number, currentTime: number, audioDuration: number, progressbar: Array<Group>) => Array<Group>;
   initialSpotLight: () => Mesh;
   endOfSession: () => Promise<void>;
-  storyPaused: (taggingService: TaggingService) => Promise<void>;
+  storyPaused: () => Promise<void>;
+  storyPausedWithNoActiveStory: () => Promise<void>;
   storyData: (
     storyService: StoryService,
     activeStory: Entity,
@@ -157,7 +158,7 @@ const PlayBookBuild = (
     return useEndOfSession(threeService, zoneService).create();
   };
 
-  const storyPaused = async (taggingService: TaggingService) => {
+  const storyPaused = async () => {
     logBuild('storyPaused')
     const assetsOnScreen = taggingService.getByTag(Tags.GroupOfAssets)[0].object as Group;
     assetsOnScreen.position.setZ(Layers.background);
@@ -177,6 +178,13 @@ const PlayBookBuild = (
     await CustomAnimation().fadeOut(taggingService.getByTag(Tags.ActiveStoryCircleShade)[0].object, -1, AnimationDefaults.values.fadeStep);
     taggingService.removeAllTagsFrom(Tags.ActiveStoryCircleShade);
     TaggingHelper(taggingService).tagActiveStorycircleAsStoryCircle();
+  };
+
+  const storyPausedWithNoActiveStory = async () => {
+    logBuild('storyPausedWithNoActiveStory')
+    CustomAnimation().grow(spotlight as Mesh<any, MeshBasicMaterial>, Measurements().pauseScreen.spotLightRadius, AnimationDefaults.values.scaleStep);
+    await SceneHelper(threeService, storyService).addPauseScreenObjectsToScene(StoryPaused(taggingService, zoneService, storyService).Create(storyService.getStoryData()), zoneService.sceneZone());
+    await MoveObject().startMoving(spotlight, new Vector3(0.01, -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight, Layers.scene));
   };
 
   const storyData = async (
@@ -229,6 +237,7 @@ const PlayBookBuild = (
     initialSpotLight,
     endOfSession,
     storyPaused,
+    storyPausedWithNoActiveStory,
     storyData,
     startOfSession,
     setSelectedStory,

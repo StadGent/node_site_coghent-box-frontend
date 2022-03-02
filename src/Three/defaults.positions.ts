@@ -24,7 +24,7 @@ const Positions = (): {
       new Vector3(-15, 0, 0),
       new Vector3(15, 0, 0),
       new Vector3(-7, 0, 0),
-      new Vector3(-7, 0, 0),
+      new Vector3(7, 0, 0),
     ];
   };
 

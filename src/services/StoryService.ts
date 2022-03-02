@@ -152,6 +152,9 @@ export default class StoryService {
       const matches = storyDataOfVisiter.filter(_visiterData => _visiterData.storyId == data.storyId)
       if (matches[0]) {
         Object.assign(data, matches[0])
+        if(data.storySeen){
+          data.storyColor = Colors().grey
+        }
       }
     }
     console.log('merged storydata', this.storyData)

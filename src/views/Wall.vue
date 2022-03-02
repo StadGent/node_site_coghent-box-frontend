@@ -10,6 +10,7 @@
     :storyService="storyService"
     @restartSession="restartSession"
     @resetSelectedStory="resetSelectedStory"
+    :showPauseOverview="showPauseOverview"
   />
   <!-- <mqtt @selectStory="setSelectStory" /> -->
 </template>
@@ -39,6 +40,7 @@ export default defineComponent({
     const visitercode = ref<string | null>(null);
     const visiter = ref<any | null>(null);
     const inputValue = ref<string>('');
+    const showPauseOverview = ref<boolean>(false);
 
     const { fetchMore } = useQuery(GetActiveBoxDocument);
 
@@ -49,22 +51,39 @@ export default defineComponent({
         visitercode.value,
         RelationType.Stories,
       )) as Array<Relation>;
+
+      const tmpStoryService = new StoryService(
+        stories.value as Array<any>,
+        visiter.value,
+      );
+      tmpStoryService.fillUpDataSources();
+      tmpStoryService.mergeVisiterStoryRelationsWithStoryData(storyRelations);
+
       const storiesToSee = getUnseenStories(storyRelations);
       if (storiesToSee.length > 0) {
         const storyToSet = getFirstStoryToSee(storiesToSee);
         if (storyToSet) {
-          const tmpStoryService = new StoryService(
-            stories.value as Array<any>,
-            visiter.value,
-          );
-          tmpStoryService.fillUpDataSources();
-          tmpStoryService.mergeVisiterStoryRelationsWithStoryData(storyRelations);
           tmpStoryService.setActiveStory(storyToSet.key.replace('entities/', ''));
           storyService.value = tmpStoryService;
         }
       } else {
         // TODO: Show the overview of all the available stories
-        console.log('All stories seen')
+        console.log('All stories seen');
+        const storiesSeen = storyRelations.map((_rel) =>
+          _rel.key.replace('entities/', ''),
+        ) as Array<string>;
+        let storyToSetActive = null;
+        stories.value?.forEach((_story) => {
+          if (!storiesSeen.includes(_story.id)) {
+            storyToSetActive = _story.id as string;
+          }
+        });
+        console.log('storydata from service', tmpStoryService.getStoryData())
+        if (storyToSetActive) {
+          tmpStoryService.setActiveStory(storyToSetActive);
+          storyService.value = tmpStoryService;
+          showPauseOverview.value = true;
+        }
       }
     });
 
@@ -142,6 +161,7 @@ export default defineComponent({
       resetSelectedStory,
       inputValue,
       getCode,
+      showPauseOverview,
     };
   },
 });
