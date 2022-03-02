@@ -45,23 +45,25 @@ export default defineComponent({
     watch(visitercode, async (value) => {
       const activeStories = await fetchMore({});
       stories.value = activeStories?.data.ActiveBox.results;
-      console.log('stories after code set', stories.value);
       const storyRelations = (await useBoxVisiter(apolloClient).getRelationsByType(
         visitercode.value,
         RelationType.Stories,
       )) as Array<Relation>;
       const storiesToSee = getUnseenStories(storyRelations);
-      const storyToSet = getFirstStoryToSee(storiesToSee);
-      if (storyToSet) {
-        console.log({ storyToSet });
-        const tmpStoryService = new StoryService(
-          stories.value as Array<any>,
-          visiter.value,
-        );
-        tmpStoryService.setActiveStory(storyToSet.key.replace('entities/',''))
-        // tmpStoryService.fillUpDataSources()
-        storyService.value = tmpStoryService
-      }else{
+      if (storiesToSee.length > 0) {
+        const storyToSet = getFirstStoryToSee(storiesToSee);
+        if (storyToSet) {
+          const tmpStoryService = new StoryService(
+            stories.value as Array<any>,
+            visiter.value,
+          );
+          tmpStoryService.fillUpDataSources();
+          tmpStoryService.mergeVisiterStoryRelationsWithStoryData(storyRelations);
+          tmpStoryService.setActiveStory(storyToSet.key.replace('entities/', ''));
+          storyService.value = tmpStoryService;
+        }
+      } else {
+        // TODO: Show the overview of all the available stories
         console.log('All stories seen')
       }
     });

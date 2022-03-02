@@ -37,6 +37,7 @@ const useStory = (_storyService: StoryService): {
             }
           }
           const data = {
+            storyId: _relation.key.replace('entities/',''),
             seenFrames: frameRecord,
             totalOfFramesSeen: Object.keys(frameRecord).length,
             storySeen: Object.keys(frameRecord).length == _relation.total_frames ? true : false

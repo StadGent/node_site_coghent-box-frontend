@@ -4,8 +4,7 @@ import { Frame } from '@/models/GraphqlModel';
 import Colors from '@/Three/defaults.color';
 import Defaults from '@/Three/defaults.config';
 import Positions from '@/Three/defaults.positions';
-import { boxVisiter, useBoxVisiter } from 'coghent-vue-3-component-library';
-import Entity, {Relation, RelationType } from 'coghent-vue-3-component-library';
+import { boxVisiter, useBoxVisiter, Relation, Entity } from 'coghent-vue-3-component-library';
 import { Vector3 } from 'three';
 
 export type StoryData = {
@@ -35,8 +34,6 @@ export default class StoryService {
     this.storyIds = [];
     this.storyData = [];
     this.totalOfSeenFrames = 0;
-    this.fillUpDataSources();
-    this.assignColorToStories();
   }
 
   getStoryData() {
@@ -122,7 +119,7 @@ export default class StoryService {
   }
 
   private addTimestampToSeenFrame(storyId: string, frame: Frame) {
-    const timestamp = new Date().toLocaleString();
+    const timestamp = Math.round(Date.now() / 1000);
     this.getStoryDataOfStory(storyId).seenFrames[timestamp] = frame.id;
   }
 
@@ -140,15 +137,24 @@ export default class StoryService {
   }
 
   fillUpDataSources() {
-    // const storyRelations = await useBoxVisiter(apolloClient).getRelationsByType(this.visiter.code, RelationType.Stories)
-    // console.log({storyRelations});
-    // const result = useStory(this).createStoryDataOfVisiter(storyRelations)
     if (this.stories.length > 0) {
       this.stories.map((story, index) => {
         this.addStoryIdToStoryIds(story);
         this.storyData.push(this.createStoryDataObject(story, index));
       });
     }
+    this.assignColorToStories();
+  }
+
+  mergeVisiterStoryRelationsWithStoryData(_relations: Array<typeof Relation>) {
+    const storyDataOfVisiter = useStory(this).createStoryDataOfVisiter(_relations)
+    for (const data of this.storyData) {
+      const matches = storyDataOfVisiter.filter(_visiterData => _visiterData.storyId == data.storyId)
+      if (matches[0]) {
+        Object.assign(data, matches[0])
+      }
+    }
+    console.log('merged storydata', this.storyData)
   }
 
   private createStoryDataObject(story: typeof Entity, index: number) {
