@@ -114,6 +114,7 @@ import { apolloClient } from '@/main';
 import { useQuery } from '@vue/apollo-composable';
 import { PrintBoxTicketDocument } from 'coghent-vue-3-component-library';
 import { BoxVisiter } from 'coghent-vue-3-component-library';
+import useTicket from '@/composables/useTicket';
 
 export default defineComponent({
   name: 'Introscherm3',
@@ -122,23 +123,30 @@ export default defineComponent({
     const router = useRouter();
     const { selectedStory } = useBoxVisiter(apolloClient);
     let currentVisiter: any = null;
+    const { print } = useTicket();
 
-    const { fetchMore: printNewTicket } = useQuery(PrintBoxTicketDocument, {code:''});
+    const { fetchMore: printNewTicket } = useQuery(PrintBoxTicketDocument, { code: '' });
 
     useBoxVisiter(apolloClient)
       .create(`entities/${selectedStory.value.id}`)
       .then(async (visiter: any) => {
-        currentVisiter = visiter
-        if(currentVisiter.code){
-          printTicket()
+        currentVisiter = visiter;
+        if (currentVisiter.code) {
+          printTicket();
         }
         alert(visiter.code);
       });
 
     const printTicket = async () => {
-      console.log('print ticket');
-      const ticket = await printNewTicket({variables: {code: currentVisiter.code} as any})
-      console.log({ticket})
+      const ticket = await printNewTicket({
+        variables: { code: currentVisiter.code } as any,
+      });
+      console.log({ ticket });
+      try {
+        await print(ticket?.data.PrintBoxTicket.body as string);
+      } catch (error) {
+        console.log('Print service offline.');
+      }
     };
     const naarStart = () => {
       router.push({ name: 'entrance.step1' });

@@ -1,3 +1,4 @@
 {
-  "graphQlLink": "/api/graphql"
+  "graphQlLink": "/api/graphql",
+  "printerService": "http://0.0.0.0:8080"
 }
