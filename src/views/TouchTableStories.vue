@@ -22,7 +22,7 @@
         />
       </div>
     </nav>
-    <main class="bg-background-light h-auto min-h-screen p-24" v-if="endOfData">
+    <main class="bg-background-light h-auto min-h-screen p-24">
       <story-item
         v-for="(storyAsset, index) in storyAssets"
         :key="storyAsset.story.id"
@@ -31,7 +31,6 @@
         :storyEntities="storyAsset.assets"
         :storyColor="colors[index]"
         :loading="loadingEntity"
-        :endOfData="endOfData"
       />
     </main>
   </div>

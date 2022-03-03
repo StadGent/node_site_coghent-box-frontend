@@ -56,7 +56,6 @@
       const startId: string = 'f42792cd-4e59-4dae-8fd0-3997ab4a0ca7';
 
       const updateCode = (value: any) => {
-        console.log({ value });
         code.value = value;
       };
 
