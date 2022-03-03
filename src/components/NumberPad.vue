@@ -1,19 +1,21 @@
 <template>
-  <section :class="containerStyles">
-    <div
-      v-for="(key, index) in keys"
-      :key="index"
-      :class="key.type == 'number' || key.type == 'icon' ? keyStyles : spacerStyles"
-      @click="addCharacterToResultArray(key)"
-    >
-      <p v-if="key.type == 'number'">{{ key.value }}</p>
-      <base-icon
-        v-if="key.type == 'icon'"
-        :icon="key.value"
-        class="stroke-current stroke-2"
-      />
-    </div>
-  </section>
+  <div class="w-full flex justify-center">
+    <section :class="containerStyles">
+      <div
+        v-for="(key, index) in keys"
+        :key="index"
+        :class="key.type == 'number' || key.type == 'icon' ? keyStyles : spacerStyles"
+        @click="addCharacterToResultArray(key)"
+      >
+        <p v-if="key.type == 'number'">{{ key.value }}</p>
+        <base-icon
+          v-if="key.type == 'icon'"
+          :icon="key.value"
+          class="stroke-current stroke-2"
+        />
+      </div>
+    </section>
+  </div>
 </template>
 
 <script lang="ts">
@@ -63,10 +65,10 @@
     emits: ['code', 'codeComplete'],
     setup: (props, { emit }) => {
       const valueArray = ref<Array<any>>([]);
-      const containerStyles: string = `grid grid-cols-${props.columns} gap-5`;
+      const containerStyles: string = `grid grid-cols-${props.columns} w-1/2`;
       const spacerStyles: string = '';
       const keyStyles: string =
-        'flex justify-center items-center bg-background-light py-5 px-5 text-3xl font-bold rounded-md cursor-pointer select-none';
+        'flex justify-center items-center bg-background-light p-5 m-5 text-3xl font-bold rounded-md cursor-pointer select-none w-24 h-24';
 
       const resetCode = () => {
         valueArray.value = [];
