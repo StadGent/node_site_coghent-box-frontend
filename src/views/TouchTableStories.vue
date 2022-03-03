@@ -8,30 +8,38 @@
       <div class="flex">
         <base-button
           class="shadow mr-8 text-3xl"
-          customStyle="touchtable-white-round"
-          customIcon="door"
-          :iconShown="true"
+          custom-style="touchtable-white-round"
+          custom-icon="door"
+          :icon-shown="true"
           text="Afsluiten"
           @click="openShutdownModal"
         />
         <base-button
           class="shadow text-3xl"
-          customStyle="touchtable-white-round"
+          custom-style="touchtable-white-round"
           text="?"
-          :iconShown="false"
+          :icon-shown="false"
         />
       </div>
     </nav>
     <main class="bg-background-light h-auto min-h-screen p-24">
-      <story-item
-        v-for="(storyAsset, index) in storyAssets"
-        :key="storyAsset.story.id"
-        :storyNumber="index + 1"
-        :storyName="storyAsset.story.title[0].value"
-        :storyEntities="storyAsset.assets"
-        :storyColor="colors[index]"
-        :loading="loadingEntity"
-      />
+      <div
+        v-if="
+          !loadingActiveBoxResult &&
+          activeBoxResult.ActiveBox &&
+          activeBoxResult.ActiveBox.results
+        "
+      >
+        <story-item
+          v-for="(storyAsset, index) in activeBoxResult.ActiveBox.results"
+          :key="storyAsset.id"
+          :story-number="index + 1"
+          :story-name="storyAsset.title[0].value"
+          :story-entities="storyAsset.frames"
+          :story-color="colors[index]"
+          :loading="loadingActiveBoxResult"
+        />
+      </div>
     </main>
   </div>
 </template>
@@ -45,6 +53,7 @@
     boxVisiter,
     useBoxVisiter,
     GetStoryByIdDocument,
+    GetActiveBoxDocument,
     GetEntityByIdDocument,
   } from 'coghent-vue-3-component-library';
   import { useRouter } from 'vue-router';
@@ -75,86 +84,8 @@
       const colors = ['accent-purple', 'accent-green', 'accent-blue', 'accent-yellow'];
       const router = useRouter();
 
-      const {
-        result: storyResult,
-        onResult: onStoryResult,
-        loading: loadingStory,
-        refetch: refetchStory,
-      } = useQuery(GetStoryByIdDocument, { id: '' });
-
-      const {
-        result: entityResult,
-        onResult: onEntityResult,
-        loading: loadingEntity,
-        refetch: refetchEntity,
-        fetchMore: fetchMoreEntities,
-      } = useQuery(GetEntityByIdDocument, { id: '' });
-
-      console.log(boxVisiter.value);
-
-      watch(
-        () => stories.value,
-        () => {
-          const storyArray = stories.value;
-          storyArray.forEach((story) => {
-            console.log({ story });
-            refetchStory({ id: story.key.replace('entities/', '') });
-          });
-        },
-      );
-
-      watch(
-        () => storyResults.value.length,
-        () => {
-          storyResults.value.forEach((storyResult: StoryResult, index: number) => {
-            const story: Entity = storyResult.story;
-            const assets: Array<Entity> = [];
-            storyResult.assetIds.forEach((assetId: string) => {
-              fetchMoreEntities({
-                variables: { id: assetId },
-                updateQuery: (previousData, { fetchMoreResult }) => {
-                  assets.push(fetchMoreResult.Entity);
-                },
-              });
-            });
-            const storyObject = {
-              story,
-              assets: { results: assets },
-            };
-            storyAssets.value.push(storyObject);
-            console.log(storyAssets.value[index].assets.results.length);
-            console.log('results ' + storyResults.value[index].assetIds.length);
-            if (
-              storyAssets.value[index].assets.results.length ==
-              storyResults.value[index].assetIds.length
-            ) {
-              console.log('endOfData');
-              endOfData.value = true;
-            }
-          });
-        },
-      );
-
-      onStoryResult((queryResult) => {
-        if (queryResult.data.Entity) {
-          let storyAssetIds: Array<string> = [];
-          queryResult.data.Entity.frames.forEach((frame: any) => {
-            frame.assets.forEach((asset: any) => {
-              console.log({ asset });
-              console.log(queryResult.data.Entity);
-              storyAssetIds.push(asset.id);
-            });
-          });
-          if (storyAssetIds) {
-            const story = {
-              story: queryResult.data.Entity,
-              assetIds: storyAssetIds,
-            };
-            storyResults.value.push(story);
-          }
-          console.log(storyResults.value);
-        }
-      });
+      const { result: activeBoxResult, loading: loadingActiveBoxResult } =
+        useQuery(GetActiveBoxDocument);
 
       if (!boxVisiter.value) {
         router.push('/touchtable/start');
@@ -166,12 +97,13 @@
 
       return {
         openShutdownModal,
+        activeBoxResult,
         boxVisiter,
         stories,
         storyResults,
         colors,
         storyAssets,
-        loadingEntity,
+        loadingActiveBoxResult,
         endOfData,
       };
     },

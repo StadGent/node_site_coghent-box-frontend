@@ -2,14 +2,14 @@
   <main class="flex justify-center items-center h-screen w-screen bg-touchtable-dark">
     <CardComponent
       :large="true"
-      backgroundColor="bg-accent-yellow"
-      roundsColor="bg-touchtable-dark"
+      background-color="bg-accent-yellow"
+      rounds-color="bg-touchtable-dark"
       class="w-1/2 lg:w-1/4"
     >
       <section class="p-8">
         <number-display
           :code="code"
-          :maxAmountOfCharacters="maxAmountOfNumbers"
+          :max-amount-of-characters="maxAmountOfNumbers"
           class="mb-12"
         />
         <number-pad @code="updateCode" @codeComplete="checkCode" />
@@ -17,8 +17,8 @@
       <section class="flex justify-center items-center w-full mt-12">
         <base-button
           class="text-lg underline"
-          customStyle="touchtable-black"
-          :iconShown="false"
+          custom-style="touchtable-black"
+          :icon-shown="false"
           text="Ik heb nog geen code"
         />
       </section>
@@ -54,6 +54,7 @@
       const code = ref<Array<any>>([]);
       const router = useRouter();
       const startId: string = 'f42792cd-4e59-4dae-8fd0-3997ab4a0ca7';
+      const { getByCode } = useBoxVisiter(apolloClient);
 
       const updateCode = (value: any) => {
         code.value = value;
@@ -65,9 +66,7 @@
 
       const checkCode = () => {
         code.value = ['5', '2', '3', '8', '9', '9', '3', '2'];
-        const resolvedBoxVisit = useBoxVisiter(apolloClient).getByCode(
-          code.value.join(''),
-        );
+        const resolvedBoxVisit = getByCode(code.value.join(''));
         resolvedBoxVisit.then((boxVisit: any) => {
           window.sessionStorage.setItem('startId', startId);
           router.push('/touchtable/stories');

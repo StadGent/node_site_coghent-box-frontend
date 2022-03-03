@@ -1,25 +1,33 @@
 <template>
-  <p class="text-7xl">{{ storyEntities.results }}</p>
   <section>
     <section class="flex items-center">
       <div
         :class="`flex justify-center items-center mr-12 h-40 w-40 rounded-full bg-${storyColor} shadow-purple`"
       >
-        <p class="font-bold text-7xl text-text-white">{{ storyNumber }}</p>
+        <p class="font-bold text-7xl text-text-white">
+          {{ storyNumber }}
+        </p>
       </div>
       <div>
-        <h2 :class="`text-5xl font-bold text-${storyColor}`">{{ storyName }}</h2>
+        <h2 :class="`text-5xl font-bold text-${storyColor}`">
+          {{ storyName }}
+        </h2>
       </div>
     </section>
     <section>
       <the-masonry
         ref="masonry"
-        :entities="storyEntities"
+        :entities="entityData"
         :loading="loading"
-        :generateUrl="generateUrl"
-        :noImageUrl="noImageUrl"
-        :showLoadMore="false"
-        :itemsEachLoad="10"
+        :generate-url="generateUrl"
+        :no-image-url="noImageUrl"
+        :show-load-more="false"
+        :items-each-load="10"
+        :make-url="
+          (entity: any) => {
+            return '/touchtable/' + entity.id;
+          }
+        "
       />
     </section>
   </section>
@@ -29,6 +37,8 @@
   import { defineComponent, onMounted, onUpdated, ref, watch } from 'vue';
   import useIIIF from '@/composables/useIIIF';
   import { TheMasonry } from 'coghent-vue-3-component-library';
+  import { useBoxVisiter } from 'coghent-vue-3-component-library';
+  import { apolloClient } from '@/main';
 
   export default defineComponent({
     name: 'StoryItem',
@@ -58,17 +68,25 @@
     setup(props) {
       const { generateUrl, noImageUrl } = useIIIF();
       const masonry = ref<any>(null);
+      const entityData = ref({ results: [] });
+      const { boxVisiter } = useBoxVisiter(apolloClient);
+      const relation = boxVisiter.value.relations.find(
+        (relation: any) => relation.type === 'stories',
+      );
+      console.log(relation);
 
-      console.log(props.storyEntities.results);
-
-      onUpdated(() => {
-        if (masonry.value && masonry.value.constructTiles) {
-          console.log('ye');
-          masonry.value.constructTiles();
-        }
+      props.storyEntities.forEach((frame: any) => {
+        console.log(frame.id);
+        const isFrameSeen = relation.seen_frames.find(
+          (seenFrame: any) => seenFrame.id === 'entities/' + frame.id,
+        );
+        console.log(isFrameSeen);
+        //Set variable on assets to indicate it has been seen
+        entityData.value.results = entityData.value.results.concat(frame.assets);
       });
 
       return {
+        entityData,
         generateUrl,
         noImageUrl,
         masonry,
