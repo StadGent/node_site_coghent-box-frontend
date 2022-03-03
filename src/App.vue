@@ -11,12 +11,7 @@
 
   export default defineComponent({
     name: 'App',
-    setup: (props) => {
-      const configStore = StoreFactory.get(ConfigStore);
-      const config = fetch('../config.json').then((r) => r.json());
-      config.then((result) => configStore.setConfig(result));
-      console.log(config);
-    },
+    setup: () => {},
   });
 </script>
 
