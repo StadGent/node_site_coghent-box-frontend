@@ -106,11 +106,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import { useBoxVisiter } from 'coghent-vue-3-component-library';
 
 import { apolloClient } from '@/main';
+import { useQuery } from '@vue/apollo-composable';
+import { PrintBoxTicketDocument } from 'coghent-vue-3-component-library';
+import { BoxVisiter } from 'coghent-vue-3-component-library';
 
 export default defineComponent({
   name: 'Introscherm3',
@@ -118,21 +121,29 @@ export default defineComponent({
   setup(props) {
     const router = useRouter();
     const { selectedStory } = useBoxVisiter(apolloClient);
-    console.log(selectedStory);
+    let currentVisiter: any = null;
+
+    const { fetchMore: printNewTicket } = useQuery(PrintBoxTicketDocument, {code:''});
 
     useBoxVisiter(apolloClient)
       .create(`entities/${selectedStory.value.id}`)
-      .then((visiter: any) => {
-        console.log('box visiter', visiter);
+      .then(async (visiter: any) => {
+        currentVisiter = visiter
+        if(currentVisiter.code){
+          printTicket()
+        }
         alert(visiter.code);
       });
 
-    const printTicket = () => {
+    const printTicket = async () => {
       console.log('print ticket');
+      const ticket = await printNewTicket({variables: {code: currentVisiter.code} as any})
+      console.log({ticket})
     };
     const naarStart = () => {
       router.push({ name: 'entrance.step1' });
     };
+
     return { printTicket, naarStart, selectedStory };
   },
 });
