@@ -139,6 +139,11 @@ export default defineComponent({
         if (!props.showPauseOverview) {
           setData();
         } else {
+          emit('resetSelectedStory', {
+            topic: 'sensors/0/present',
+            id: 0,
+            msg: true,
+          } as SensorObject);
           garbageHelper.startOfSession();
           storyService.setStoryPausedPositions(zoneService.zonesInnerToOuter);
           PlayBookBuild(
@@ -160,6 +165,7 @@ export default defineComponent({
       const _storyData = storyService.getStoryDataOfStory(storyData[_storySelected].id);
       storyService.setActiveStory(storyData[_storySelected].id);
       currentStoryID.value = storyService.activeStoryData.storyId;
+      console.log();
 
       currentFrame = _storyData.totalOfFramesSeen;
 
