@@ -66,7 +66,7 @@
       const containerStyles: string = `grid grid-cols-${props.columns} gap-5`;
       const spacerStyles: string = '';
       const keyStyles: string =
-        'flex justify-center items-center bg-background-light py-5 px-5 text-3xl font-bold rounded-md cursor-pointer';
+        'flex justify-center items-center bg-background-light py-5 px-5 text-3xl font-bold rounded-md cursor-pointer select-none';
 
       const resetCode = () => {
         valueArray.value = [];

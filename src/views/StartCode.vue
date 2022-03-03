@@ -37,7 +37,7 @@
   import NumberDisplay from '@/components/NumberDisplay.vue';
   import { useRouter } from 'vue-router';
   import { useQuery, useMutation } from '@vue/apollo-composable';
-  import { BoxVisiter, boxVisiter, useBoxVisiter } from 'coghent-vue-3-component-library';
+  import { useBoxVisiter } from 'coghent-vue-3-component-library';
   import { apolloClient } from '@/main';
 
   export default defineComponent({
@@ -65,6 +65,7 @@
       };
 
       const checkCode = () => {
+        code.value = ['5', '2', '3', '8', '9', '9', '3', '2'];
         const resolvedBoxVisit = useBoxVisiter(apolloClient).getByCode(
           code.value.join(''),
         );
@@ -77,6 +78,8 @@
           showWrongCodeMessage();
         });
       };
+
+      checkCode();
 
       return { startId, updateCode, maxAmountOfNumbers, code, checkCode };
     },

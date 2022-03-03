@@ -1,4 +1,5 @@
 <template>
+  <p class="text-7xl">{{ storyEntities.results }}</p>
   <section>
     <section class="flex items-center">
       <div
@@ -18,13 +19,14 @@
         :generateUrl="generateUrl"
         :noImageUrl="noImageUrl"
         :showLoadMore="false"
+        :itemsEachLoad="10"
       />
     </section>
   </section>
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref, watch } from 'vue';
+  import { defineComponent, onMounted, onUpdated, ref, watch } from 'vue';
   import useIIIF from '@/composables/useIIIF';
   import { TheMasonry } from 'coghent-vue-3-component-library';
 
@@ -57,14 +59,14 @@
       const { generateUrl, noImageUrl } = useIIIF();
       const masonry = ref<any>(null);
 
-      watch(
-        () => props.storyEntities,
-        () => {
-          if (masonry.value && masonry.value.constructTiles) {
-            masonry.value.constructTiles();
-          }
-        },
-      );
+      console.log(props.storyEntities.results);
+
+      onUpdated(() => {
+        if (masonry.value && masonry.value.constructTiles) {
+          console.log('ye');
+          masonry.value.constructTiles();
+        }
+      });
 
       return {
         generateUrl,

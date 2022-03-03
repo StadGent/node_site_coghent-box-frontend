@@ -22,9 +22,8 @@
         />
       </div>
     </nav>
-    <main class="bg-background-light h-auto min-h-screen p-24">
+    <main class="bg-background-light h-auto min-h-screen p-24" v-if="endOfData">
       <story-item
-        v-show="storyAssets.length"
         v-for="(storyAsset, index) in storyAssets"
         :key="storyAsset.story.id"
         :storyNumber="index + 1"
@@ -70,7 +69,7 @@
     props: {},
     setup(props) {
       const { openShutdownModal, closeShutdownModal } = useShutdownModal();
-      const stories = ref<Array<any>>([]);
+      const stories = ref<Array<Relation>>([]);
       const storyResults = ref<Array<StoryResult>>([]);
       const storyAssets = ref<Array<any>>([]);
       const endOfData = ref<Boolean>(false);
@@ -108,14 +107,14 @@
       watch(
         () => storyResults.value.length,
         () => {
-          storyResults.value.forEach((storyResult: StoryResult) => {
+          storyResults.value.forEach((storyResult: StoryResult, index: number) => {
             const story: Entity = storyResult.story;
             const assets: Array<Entity> = [];
             storyResult.assetIds.forEach((assetId: string) => {
               fetchMoreEntities({
                 variables: { id: assetId },
                 updateQuery: (previousData, { fetchMoreResult }) => {
-                  assets.push(fetchMoreResult);
+                  assets.push(fetchMoreResult.Entity);
                 },
               });
             });
@@ -124,10 +123,15 @@
               assets: { results: assets },
             };
             storyAssets.value.push(storyObject);
-            if (storyAssets.value.length == storyResults.value.length) {
+            console.log(storyAssets.value[index].assets.results.length);
+            console.log('results ' + storyResults.value[index].assetIds.length);
+            if (
+              storyAssets.value[index].assets.results.length ==
+              storyResults.value[index].assetIds.length
+            ) {
+              console.log('endOfData');
               endOfData.value = true;
             }
-            console.log(storyAssets);
           });
         },
       );

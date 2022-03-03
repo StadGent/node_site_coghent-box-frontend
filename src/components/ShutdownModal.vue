@@ -67,6 +67,7 @@
         state: 'show',
       });
     };
+
     return {
       closeShutdownModal,
       openShutdownModal,
