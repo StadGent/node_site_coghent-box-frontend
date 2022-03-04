@@ -4,7 +4,6 @@ import StoreFactory from '@/stores/StoreFactory';
 const useIIIF = () => {
   const configStore = StoreFactory.get(ConfigStore);
   const iiifUrl = configStore.config.value.iiifLink;
-  console.log(iiifUrl);
   const storageLink = configStore.config.value.storageLink;
 
   const noImageUrl = '/no-image.png';

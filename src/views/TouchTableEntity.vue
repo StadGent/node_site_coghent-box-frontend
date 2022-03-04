@@ -58,6 +58,7 @@
     BaseButton,
     GetBoxVisiterRelationsByTypeDocument,
     AddAssetToBoxVisiterDocument,
+    boxVisiter,
   } from 'coghent-vue-3-component-library';
   import TouchHeader from '@/components/TouchHeader.vue';
   import ShutdownModal from '@/components/ShutdownModal.vue';
@@ -69,6 +70,8 @@
   import { IIIFImageUrlHelper } from '../services/Fabric/helper.fabric';
 
   const asString = (x: string | string[]) => (Array.isArray(x) ? x[0] : x);
+
+  // Todo: get code for shutdownModal
 
   type SecondaryRelation = {
     originId: string;
@@ -121,6 +124,9 @@
       const IIIFImageUrl = ref<string>();
       let fabricService: FabricService | undefined = undefined;
       const { closeIIIFModal, openIIIFModal, IIIFModalState } = useIIIFModal();
+
+      console.log('heey');
+      console.log(boxVisiter);
 
       const {
         result: relationResult,

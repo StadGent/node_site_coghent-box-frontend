@@ -1,8 +1,8 @@
 <template>
-  <section>
+  <section class="py-24">
     <section class="flex items-center">
       <div
-        :class="`flex justify-center items-center mr-12 h-40 w-40 rounded-full bg-${storyColor} shadow-purple`"
+        :class="`flex justify-center items-center mr-12 h-52 w-52 -mb-12 z-40 rounded-full bg-${storyColor} shadow-${storyColor}`"
       >
         <p class="font-bold text-7xl text-text-white">
           {{ storyNumber }}
@@ -23,11 +23,7 @@
         :no-image-url="noImageUrl"
         :show-load-more="false"
         :items-each-load="10"
-        :make-url="
-          (entity: any) => {
-            return '/touchtable/' + entity.id;
-          }
-        "
+        :useRouterNavigation="router"
       />
     </section>
   </section>
@@ -39,6 +35,7 @@
   import { TheMasonry } from 'coghent-vue-3-component-library';
   import { useBoxVisiter } from 'coghent-vue-3-component-library';
   import { apolloClient } from '@/main';
+  import { useRouter } from 'vue-router';
 
   export default defineComponent({
     name: 'StoryItem',
@@ -73,6 +70,7 @@
       const relation = boxVisiter.value.relations.find(
         (relation: any) => relation.type === 'stories',
       );
+      const router = useRouter();
       console.log(relation);
 
       props.storyEntities.forEach((frame: any) => {
@@ -90,13 +88,23 @@
         generateUrl,
         noImageUrl,
         masonry,
+        router,
       };
     },
   });
 </script>
 
 <style scoped>
-  .shadow-purple {
-    box-shadow: 0px 0px 12px rgba(182, 80, 153, 0.2);
+  .shadow-accent-purple {
+    box-shadow: 0px 0px 20px rgba(182, 80, 153, 0.75);
+  }
+  .shadow-accent-blue {
+    box-shadow: 0px 0px 20px rgba(159, 205, 217, 0.75);
+  }
+  .shadow-accent-yellow {
+    box-shadow: 0px 0px 20px rgba(253, 194, 11, 0.75);
+  }
+  .shadow-accent-green {
+    box-shadow: 0px 0px 20px rgba(2, 167, 127, 0.75);
   }
 </style>

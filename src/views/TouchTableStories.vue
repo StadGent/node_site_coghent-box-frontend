@@ -80,7 +80,6 @@
       const stories = ref<Array<Relation>>([]);
       const storyResults = ref<Array<StoryResult>>([]);
       const storyAssets = ref<Array<any>>([]);
-      const endOfData = ref<Boolean>(false);
       const colors = ['accent-purple', 'accent-green', 'accent-blue', 'accent-yellow'];
       const router = useRouter();
 
@@ -104,7 +103,6 @@
         colors,
         storyAssets,
         loadingActiveBoxResult,
-        endOfData,
       };
     },
   });

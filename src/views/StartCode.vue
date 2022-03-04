@@ -6,7 +6,7 @@
       rounds-color="bg-touchtable-dark"
       class="w-1/2 lg:w-1/4"
     >
-      <section class="p-8">
+      <section class="w-full">
         <number-display
           :code="code"
           :max-amount-of-characters="maxAmountOfNumbers"

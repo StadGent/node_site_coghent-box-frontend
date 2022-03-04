@@ -13,6 +13,7 @@
         customStyle="touchtable-green-round"
         :iconShown="false"
         text="Overzicht alle verhalen"
+        @click="goToStoriesPage"
       />
       <base-button
         class="shadow text-3xl"
@@ -31,6 +32,7 @@
   import { baseIcon, BaseButton } from 'coghent-vue-3-component-library';
   import { fabricdefaults } from '@/services/Fabric/defaults.fabric';
   import { useShutdownModal } from '@/components/ShutdownModal.vue';
+  import { useRouter } from 'vue-router';
 
   export default defineComponent({
     name: 'TouchHeader',
@@ -47,6 +49,7 @@
     },
     setup: (props) => {
       const { openShutdownModal, closeShutdownModal } = useShutdownModal();
+      const router = useRouter();
 
       const root = document.documentElement;
       root.style.setProperty(
@@ -54,8 +57,13 @@
         fabricdefaults.canvas.header.height.toString() + 'px',
       );
 
+      const goToStoriesPage = () => {
+        router.push('stories');
+      };
+
       return {
         openShutdownModal,
+        goToStoriesPage,
       };
     },
   });
