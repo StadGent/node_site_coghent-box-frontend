@@ -25,8 +25,6 @@ const useStory = (_storyService: StoryService): {
 } => {
 
   const createStoryDataOfVisiter = (_storyRelations: Array<Relation>) => {
-    console.log({_storyRelations});
-    
     const theData: Array<StoryData> = []
     if (_storyRelations.length > 0) {
       for (const _relation of _storyRelations) {
@@ -38,7 +36,7 @@ const useStory = (_storyService: StoryService): {
             }
           }
           const data = {
-            storyId: _relation.key.replace('entities/',''),
+            storyId: _relation.key.replace('entities/', ''),
             seenFrames: frameRecord,
             totalOfFramesSeen: Object.keys(frameRecord).length,
             storySeen: Object.keys(frameRecord).length == _relation.total_frames ? true : false,
@@ -47,7 +45,6 @@ const useStory = (_storyService: StoryService): {
         }
       }
     }
-    console.log('storyData from visiter', theData)
     return theData
   }
 

@@ -43,7 +43,6 @@ export default class StoryService {
   setActiveStory(_id: string) {
     this.activeStory = this.stories.filter(_story => _story.id == _id)[0];
     this.activeStoryData = this.storyData.filter(_data => _data.storyId == _id)[0];
-    console.log('active story set', this.activeStory)
     return this.activeStoryData
   }
 
@@ -66,7 +65,7 @@ export default class StoryService {
         (story) => story.storyId === currentStoryId,
       )[0];
       this.totalOfSeenFrames++;
-      if (!this.itemIsInRecord(currentStoryId, seenFrame)) {
+      if (!this.frameIsInRecord(currentStoryId, seenFrame)) {
         this.addTimestampToSeenFrame(currentStoryId, seenFrame);
         storyToUpdate['totalOfFramesSeen'] = Object.keys(storyToUpdate.seenFrames).length;
       }
@@ -107,11 +106,11 @@ export default class StoryService {
     return this.activeStoryData.storyId == _storyId;
   }
 
-  private itemIsInRecord(storyId: string, frame: Frame) {
+  private frameIsInRecord(storyId: string, frame: Frame) {
     const rec = this.getStoryDataOfStory(storyId).seenFrames;
     let exists = false;
     for (const key in rec) {
-      if (frame.id == rec[key]) {
+      if (Object.values(rec).includes(frame.id)) {
         exists = true;
       }
     }
@@ -152,12 +151,25 @@ export default class StoryService {
       const matches = storyDataOfVisiter.filter(_visiterData => _visiterData.storyId == data.storyId)
       if (matches[0]) {
         Object.assign(data, matches[0])
-        if(data.storySeen){
+        if (data.storySeen) {
           data.storyColor = Colors().grey
         }
       }
     }
-    console.log('merged storydata', this.storyData)
+  }
+
+  setNextFrameForStory(_storyId: string) {
+    let nextFrame = 0
+    const nextStory = _storyId
+    const matches = this.storyData.filter(_data => _data.storyId == _storyId)
+    if (matches.length > 0) {
+      const match = matches[0]
+        nextFrame = match.totalOfFramesSeen
+    }
+    return {
+      storyId: nextStory,
+      frame: nextFrame
+    }
   }
 
   private createStoryDataObject(story: typeof Entity, index: number) {
@@ -178,14 +190,10 @@ export default class StoryService {
 
   private async storyIsAddedToVisiter(_storyId: string): Promise<boolean> {
     let isCreated = false
-    if (boxVisiter.relations) {
-      const matches = boxVisiter.relations.filter((_relation: typeof Relation) => _relation.key.replace('entities/', '') == _storyId)
+    if (this.visiter.relations) {
+      const matches = this.visiter.relations.filter((_relation: typeof Relation) => _relation.key.replace('entities/', '') == _storyId)
       if (matches.length == 0) {
-        await useBoxVisiter(apolloClient).addStoryToVisiter(this.visiter.code, {
-          key: _storyId,
-          active: true,
-          last_frame: ''
-        } as any)
+        await useBoxVisiter(apolloClient).addStoryToVisiter(this.visiter.code, _storyId)
         isCreated = true
       }
     }

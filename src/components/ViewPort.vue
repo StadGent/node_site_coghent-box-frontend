@@ -163,11 +163,10 @@ export default defineComponent({
     const setNewStoryWhenSelected = async (_storySelected: number) => {
       chooseStory.value = false;
       const _storyData = storyService.getStoryDataOfStory(storyData[_storySelected].id);
+      const next = storyService.setNextFrameForStory(_storyData.storyId);
+      currentFrame = next.frame;
       storyService.setActiveStory(storyData[_storySelected].id);
       currentStoryID.value = storyService.activeStoryData.storyId;
-      console.log();
-
-      currentFrame = _storyData.totalOfFramesSeen;
 
       await PlayBookBuild(
         threeSvc,
@@ -239,8 +238,6 @@ export default defineComponent({
       );
       threeSvc.AddToScene(spotlight, Tags.Spotlight, 'InitialSpotlight');
       useStartOfSession(threeSvc, zoneService, spotlight).showScanImage();
-
-      // setData();
     };
 
     const setData = async () => {
@@ -248,6 +245,8 @@ export default defineComponent({
       storyData = storyService.stories;
       showProgressOfFrame = false;
       audio = null;
+      const next = storyService.setNextFrameForStory(storyService.activeStory.id);
+      currentFrame = next.frame;
       clearInterval(interval);
       storyService.setStoryPausedPositions(zoneService.zonesInnerToOuter);
       await PlayBookBuild(
@@ -327,7 +326,6 @@ export default defineComponent({
       if (audio == null) {
         timing();
       }
-      console.log({ audio });
 
       const subtitleLink = useFrame(threeSvc).getSubtitleForFrame(
         storyService.activeStory.frames?.[currentFrame] as unknown as Frame,
