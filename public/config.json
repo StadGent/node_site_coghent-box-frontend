@@ -1,7 +1,23 @@
 {
 "graphQlLink": "/api/graphql",
+<<<<<<< HEAD
 "printerService": "http://0.0.0.0:8080",
 "userEditUrl": "https://accounts.inuits.io/auth/admin/master/console/#/realms/dams/users/",
 "lazyLoad": "https://data-uat.collectie.gent/lazy-loading.svg",
 "iiifLink": "https://api-uat.collectie.gent/iiif/image"
+=======
+"userEditUrl": "https://accounts.inuits.io/auth/admin/master/console/#/realms/dams/users/",
+"lazyLoad": "https://data-uat.collectie.gent/lazy-loading.svg",
+"iiifLink": "https://api-uat.collectie.gent/iiif/image",
+"vueAppIndex": "false",
+"oidc": {
+"baseUrl": "https://accounts.collectie.gent/auth/realms/coghent",
+"clientId": "coghent-web-portal-uat",
+"serverBaseUrl": "https://data-uat.collectie.gent/api/oidc",
+"authEndpoint": "/protocol/openid-connect/auth",
+"logoutEndpoint": "/protocol/openid-connect/logout",
+"tokenEndpoint": "/protocol/openid-connect/token",
+"apiCodeEndpoint": "/api/auth_code"
+}
+>>>>>>> Reworked routing for touchtable masonry & added button links
 }
