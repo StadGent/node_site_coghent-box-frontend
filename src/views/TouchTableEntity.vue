@@ -91,7 +91,7 @@
     setup: () => {
       const route = useRoute();
       const id = asString(route.params['entityID']);
-      const code = ref<string>('52389932');
+      const code = ref<string>(boxVisiter.value.code);
       const {
         result,
         onResult: onEntityResult,
@@ -124,9 +124,6 @@
       const IIIFImageUrl = ref<string>();
       let fabricService: FabricService | undefined = undefined;
       const { closeIIIFModal, openIIIFModal, IIIFModalState } = useIIIFModal();
-
-      console.log('heey');
-      console.log(boxVisiter);
 
       const {
         result: relationResult,
@@ -334,6 +331,10 @@
           );
         }
       });
+
+      if (!boxVisiter.value) {
+        router.push('/touchtable/start');
+      }
 
       return {
         entity,

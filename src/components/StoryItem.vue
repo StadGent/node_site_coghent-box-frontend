@@ -23,7 +23,8 @@
         :no-image-url="noImageUrl"
         :show-load-more="false"
         :items-each-load="10"
-        :useRouterNavigation="router"
+        :useRouterNavigation="true"
+        @navigateWithRouter="navigateToTouchtable"
       />
     </section>
   </section>
@@ -36,6 +37,7 @@
   import { useBoxVisiter } from 'coghent-vue-3-component-library';
   import { apolloClient } from '@/main';
   import { useRouter } from 'vue-router';
+  import { Entity } from 'coghent-vue-3-component-library/lib/queries';
 
   export default defineComponent({
     name: 'StoryItem',
@@ -66,7 +68,7 @@
       const { generateUrl, noImageUrl } = useIIIF();
       const masonry = ref<any>(null);
       const entityData = ref({ results: [] });
-      const { boxVisiter } = useBoxVisiter(apolloClient);
+      const { boxVisiter, setStartAsset } = useBoxVisiter(apolloClient);
       const relation = boxVisiter.value.relations.find(
         (relation: any) => relation.type === 'stories',
       );
@@ -83,12 +85,18 @@
         entityData.value.results = entityData.value.results.concat(frame.assets);
       });
 
+      const navigateToTouchtable = (entity: Entity) => {
+        setStartAsset(entity);
+        router.push('/touchtable/' + entity.id);
+      };
+
       return {
         entityData,
         generateUrl,
         noImageUrl,
         masonry,
         router,
+        navigateToTouchtable,
       };
     },
   });
