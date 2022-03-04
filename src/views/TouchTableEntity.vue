@@ -59,6 +59,8 @@
     GetBoxVisiterRelationsByTypeDocument,
     AddAssetToBoxVisiterDocument,
     boxVisiter,
+    startAsset,
+    useBoxVisiter,
   } from 'coghent-vue-3-component-library';
   import TouchHeader from '@/components/TouchHeader.vue';
   import ShutdownModal from '@/components/ShutdownModal.vue';
@@ -68,10 +70,9 @@
   import IIIFModal, { useIIIFModal } from '@/components/IIIFModal.vue';
   import { router } from '@/router';
   import { IIIFImageUrlHelper } from '../services/Fabric/helper.fabric';
+  import { apolloClient } from '@/main';
 
   const asString = (x: string | string[]) => (Array.isArray(x) ? x[0] : x);
-
-  // Todo: get code for shutdownModal
 
   type SecondaryRelation = {
     originId: string;
@@ -123,7 +124,8 @@
       const basketItems = ref<Array<any>>([]);
       const IIIFImageUrl = ref<string>();
       let fabricService: FabricService | undefined = undefined;
-      const { closeIIIFModal, openIIIFModal, IIIFModalState } = useIIIFModal();
+      const { openIIIFModal, IIIFModalState } = useIIIFModal();
+      const { getTouchTableHistory } = useBoxVisiter(apolloClient);
 
       const {
         result: relationResult,
@@ -167,9 +169,6 @@
           if (entity.value) {
             console.log('refetch relations');
             console.log(entity.value);
-            if (entity.value.id == window.sessionStorage.getItem('startId')) {
-              window.sessionStorage.setItem('startEntity', JSON.stringify(entity.value));
-            }
             refetchRelations({
               limit: fabricdefaults.canvas.relationLimit,
               skip: result ? 0 : 1,
@@ -256,14 +255,16 @@
           getRelations(queryResult.data.Entity);
           headEntityId.value = queryResult.data.Entity.id;
           entity.value = queryResult.data.Entity;
+          console.log('generate bar');
+          console.log(getTouchTableHistory());
 
-          if (window.sessionStorage.getItem('startEntity')) {
-            const startEntity = window.sessionStorage.getItem('startEntity');
-            const historyEntity = window.sessionStorage.getItem('historyEntity');
+          if (startAsset.value && boxVisiter.value) {
+            const startEntity = startAsset.value;
+            const historyEntity = getTouchTableHistory()[0];
             if (startEntity) {
               fabricService?.generateInfoBar(
-                JSON.parse(startEntity),
-                historyEntity ? JSON.parse(historyEntity) : undefined,
+                startEntity,
+                historyEntity ? historyEntity : undefined,
               );
             }
           }
