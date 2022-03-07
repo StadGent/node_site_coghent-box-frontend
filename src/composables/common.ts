@@ -15,6 +15,7 @@ const Common = (): {
   awaitTimeout: (time: number) => Promise<unknown>;
   setScale: (_object: Mesh, scale: number) => void;
   setPosition: (_object: Mesh, _position: Vector3) => void;
+  getFilenameFromStorageLink: (_storageAPILink: string, _download: string) => string
 } => {
   const FilterOutIdAfterSlash = (str: string) => {
     const index = (str.indexOf('/') as number) + 1;
@@ -47,6 +48,13 @@ const Common = (): {
     _object.position.set(_position.x, _position.y, _position.z);
   };
 
+  const getFilenameFromStorageLink = (_storageAPILink: string, _download: string) => {
+    // FORMAT https://api-uat.collectie.gent/storage/v1/download/3d4c1271e69f2b9a0a913144a9718f27-08575.JPG
+    const endIndexOfDownload = _storageAPILink.indexOf(_download) + _download.length
+    const filename = _storageAPILink.split('').splice(endIndexOfDownload).join('')
+    return filename
+  }
+
   return {
     FilterOutIdAfterSlash,
     RemoveEntersFromString,
@@ -55,6 +63,7 @@ const Common = (): {
     awaitTimeout,
     setScale,
     setPosition,
+    getFilenameFromStorageLink,
   };
 };
 

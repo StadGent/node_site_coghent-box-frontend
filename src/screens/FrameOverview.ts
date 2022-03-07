@@ -7,28 +7,32 @@ import SchemaCube, { CubeSchema } from '@/Three/schema.cube';
 import Layers from '@/Three/defaults.layers';
 import GroupHelper from '@/Three/helper.group';
 import { Group, Mesh, Vector3 } from 'three';
+import useIIIF from '@/composables/useIIIF';
 
 const FrameOverview = (threeService: ThreeService): {
-  addImage:(asset: Asset, scale:number, position: Vector3) => Promise<Mesh>;
+  addImage: (asset: Asset, scale: number, position: Vector3) => Promise<Mesh>;
   create: (assets: Record<string, string>) => {
     groups: Array<Group>;
     schemas: Array<CubeSchema>;
   };
 } => {
+  const { generateUrl } = useIIIF()
 
   const addImage = async (asset: Asset, scale: number, position: Vector3) => {
     // const schema = CubeHelper().CreateSchema(position,useAsset(threeService).getImage(asset),new Vector3(3,2,0));
-    const schema = CubeHelper().CreateSchema(position,useAsset(threeService).getImage(asset),new Vector3(Common().pixelsToMeters(asset.mediafiles[0]?.mediainfo.width), Common().pixelsToMeters(asset.mediafiles[0]?.mediainfo.height),0));
-    console.log('schema url', schema.params.url)
+    const schema = CubeHelper().CreateSchema(position, useAsset(threeService).getImage(asset), new Vector3(Common().pixelsToMeters(asset.mediafiles[0]?.mediainfo.width), Common().pixelsToMeters(asset.mediafiles[0]?.mediainfo.height), 0));
+    
+    const filename = Common().getFilenameFromStorageLink(schema.params.url as string, 'download/')
+    schema.params.url = generateUrl(filename,'full', 'max')
+
     const cube = await SchemaCube().CreateImageCubeAsync(schema);
-    // cube.scale.set(0,0,0);
-    cube.scale.set(scale,scale,scale);
+    cube.scale.set(scale, scale, 0);
     cube.material.opacity = 0;
     return cube;
   };
 
   const createImageCubes = (assets: Record<string, string>) => {
-  
+
     const cubes: Array<Mesh> = [];
     const schemas: Array<CubeSchema> = [];
     let pos = -15;
