@@ -21,11 +21,11 @@ const FrameOverview = (threeService: ThreeService): {
   const addImage = async (asset: Asset, scale: number, position: Vector3) => {
     // const schema = CubeHelper().CreateSchema(position,useAsset(threeService).getImage(asset),new Vector3(3,2,0));
     const schema = CubeHelper().CreateSchema(position, useAsset(threeService).getImage(asset), new Vector3(Common().pixelsToMeters(asset.mediafiles[0]?.mediainfo.width), Common().pixelsToMeters(asset.mediafiles[0]?.mediainfo.height), 0));
-    
-    const filename = Common().getFilenameFromStorageLink(schema.params.url as string, 'download/')
-    schema.params.url = generateUrl(filename,'full', 'max')
 
-    const cube = await SchemaCube().CreateImageCubeAsync(schema);
+    const filename = Common().getFilenameFromStorageLink(schema.params.url as string, 'download/')
+    schema.params.url = generateUrl(filename, 'full', 'max')
+
+    const cube = await SchemaCube().CreateImageCubeAsync(schema, threeService.cachedTextures);
     cube.scale.set(scale, scale, 0);
     cube.material.opacity = 0;
     return cube;

@@ -34,7 +34,7 @@ export type CubeSchema = {
 const SchemaCube = (): {
   CreateCube: (schema: CubeSchema) => Mesh<BoxBufferGeometry, MeshBasicMaterial>;
   CreateImageCube: (schema: CubeSchema) => Mesh<BoxBufferGeometry, MeshBasicMaterial>;
-  CreateImageCubeAsync: (schema: CubeSchema) => Promise<Mesh<BoxBufferGeometry, MeshBasicMaterial>>;
+  CreateImageCubeAsync: (schema: CubeSchema, _cachedTextures: Array<Texture>) => Promise<Mesh<BoxBufferGeometry, MeshBasicMaterial>>;
 } => {
   const chapeHelper = ChapeHelper();
 
@@ -70,12 +70,23 @@ const SchemaCube = (): {
     return cube;
   };
 
-  const CreateImageCubeAsync = async (schema: CubeSchema) => {
+  const CreateImageCubeAsync = async (schema: CubeSchema, _cachedTextures: Array<Texture>) => {
     const geometry = new BoxBufferGeometry(schema.params.width, schema.params.height, 0);
-    const loadedImage = await loadTexture(schema.params.url as string)
+    let texture = null
+    _cachedTextures.forEach(_texture => {
+      if (_texture.image) {
+        if (_texture.image.currentSrc == schema.params.url) {
+          texture = _texture
+        }
+      }
+    })
+    if (texture == null) {
+      texture = await loadTexture(schema.params.url as string)
+    }
+
     const material = new MeshBasicMaterial({
       transparent: true,
-      map: loadedImage as Texture
+      map: texture as Texture
     });
     const cube = new Mesh(geometry, material);
     chapeHelper.SetPosition(schema.position, cube);

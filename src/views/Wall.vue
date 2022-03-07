@@ -41,64 +41,78 @@ export default defineComponent({
     const visiter = ref<any | null>(null);
     const inputValue = ref<string>('');
     const showPauseOverview = ref<boolean>(false);
-    const { getByCode } = useBoxVisiter(apolloClient);
+    const canScanTicket = ref<boolean>(false);
+    const { getByCode, getRelationsByType } = useBoxVisiter(apolloClient);
 
-    const { fetchMore } = useQuery(
+    const { onResult, fetchMore } = useQuery(
       GetActiveBoxDocument,
       {},
       { fetchPolicy: 'cache-first' },
     );
 
-    watch(visitercode, async (value) => {
-      const activeStories = await fetchMore({});
-      stories.value = activeStories?.data.ActiveBox.results;
-      const storyRelations = (await useBoxVisiter(apolloClient).getRelationsByType(
-        visitercode.value,
-        RelationType.Stories,
-      )) as Array<Relation>;
+    onResult((_stories) => {
+      stories.value = _stories.data.ActiveBox.results;
+      canScanTicket.value = true;
+    });
 
+    watch(visitercode, async (value) => {
+      if (canScanTicket.value) {
+        const storyRelations = (await useBoxVisiter(apolloClient).getRelationsByType(
+          visitercode.value,
+          RelationType.Stories,
+        )) as Array<Relation>;
+
+        const tmpStoryService = createTempStoryService(storyRelations);
+
+        const storiesToSee = getUnseenStories(
+          storyRelations.map((_relation) =>
+            tmpStoryService.getStoryDataOfStory(_relation.key.replace('entities/', '')),
+          ),
+        );
+        if (storiesToSee.length > 0) {
+          const storyToSet = getFirstStoryToSee(storiesToSee);
+          if (storyToSet) {
+            tmpStoryService.setActiveStory(storyToSet.storyId);
+            storyService.value = tmpStoryService;
+          }
+        } else {
+          const storiesSeen = storyRelations.map((_rel) =>
+            _rel.key.replace('entities/', ''),
+          ) as Array<string>;
+          let storyToSetActive = null;
+          stories.value?.forEach((_story) => {
+            if (!storiesSeen.includes(_story.id)) {
+              storyToSetActive = _story.id as string;
+            }
+          });
+          if (storyToSetActive) {
+            tmpStoryService.setActiveStory(storyToSetActive);
+            showPauseOverview.value = true;
+            storyService.value = tmpStoryService;
+          }
+        }
+        canScanTicket.value = false;
+      }
+    });
+
+    const createTempStoryService = (_storyRelations: Array<Relation>) => {
       const tmpStoryService = new StoryService(
         stories.value as Array<any>,
         visiter.value,
       );
       tmpStoryService.fillUpDataSources();
-      tmpStoryService.mergeVisiterStoryRelationsWithStoryData(storyRelations);
-      const storiesToSee = getUnseenStories(
-        storyRelations.map((_relation) =>
-          tmpStoryService.getStoryDataOfStory(_relation.key.replace('entities/', '')),
-        ),
-      );
-      if (storiesToSee.length > 0) {
-        const storyToSet = getFirstStoryToSee(storiesToSee);
-        if (storyToSet) {
-          tmpStoryService.setActiveStory(storyToSet.storyId);
-          storyService.value = tmpStoryService;
-        }
-      } else {
-        const storiesSeen = storyRelations.map((_rel) =>
-          _rel.key.replace('entities/', ''),
-        ) as Array<string>;
-        let storyToSetActive = null;
-        stories.value?.forEach((_story) => {
-          if (!storiesSeen.includes(_story.id)) {
-            storyToSetActive = _story.id as string;
-          }
-        });
-        if (storyToSetActive) {
-          tmpStoryService.setActiveStory(storyToSetActive);
-          showPauseOverview.value = true;
-          storyService.value = tmpStoryService;
-        }
-      }
-    });
+      tmpStoryService.mergeVisiterStoryRelationsWithStoryData(_storyRelations);
+      return tmpStoryService;
+    };
 
     const restartSession = async (start: boolean) => {
       console.log({ start });
       console.log('Restart session');
+      canScanTicket.value = start;
     };
 
     const getCode = async (code: string) => {
-      const visiterByCode = await getByCode(String(code));
+      const visiterByCode = await useBoxVisiter(apolloClient).getByCode(String(code));
       console.log('visiter', visiter);
       if (visiterByCode != null) {
         visitercode.value = String(code);

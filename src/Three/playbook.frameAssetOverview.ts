@@ -59,9 +59,6 @@ const useFrameAssetOverview = (
 
     playBook.addToPlayBook(
       async () => {
-        // for(const img of images){
-        //   threeService.AddToScene(img, Tags.Asset)
-        // }
         threeService.AddToScene(group, Tags.GroupOfAssets, ' Group of all the assets from the frame');
         await CustomAnimation().fadeInGroups([group], AnimationDefaults.values.opacityActive, AnimationDefaults.values.fadeStep);
       },
@@ -77,22 +74,16 @@ const useFrameAssetOverview = (
     spotlight: Mesh,
   ) => {
     garbageHelper.highlightedAsset();
-    
 
-    await useAsset(threeService).moveSpotlightToAsset(
-      spotlight,
-      asset as unknown as Mesh<BoxBufferGeometry, any>,
-      scale,
-    ),
     CustomAnimation().shrink(asset as unknown as Mesh<any, MeshBasicMaterial>, scale, AnimationDefaults.values.scaleStep);
     await Common().awaitTimeout(250);
-    await CustomAnimation().shrink(spotlight as unknown as Mesh<any, MeshBasicMaterial>, scale + (Measurements().spotLight.spaceAroundObject*2), AnimationDefaults.values.scaleStep);
+    await CustomAnimation().shrink(spotlight as unknown as Mesh<any, MeshBasicMaterial>, scale + (Measurements().spotLight.spaceAroundObject * 2), AnimationDefaults.values.scaleStep);
     await Common().awaitTimeout(150);
     await Promise.all([
       MoveObject().startMoving(asset, positions[currentAsset]),
       MoveObject().startMoving(spotlight, positions[currentAsset]),
-    // spotlight.position.set(positions[currentAsset].x, positions[currentAsset].y, positions[currentAsset].z),
-  ]);
+      // spotlight.position.set(positions[currentAsset].x, positions[currentAsset].y, positions[currentAsset].z),
+    ]);
   };
 
   const setAssetsInactive = async (displayedAsset: Mesh<BoxBufferGeometry, any>) => {
@@ -142,7 +133,7 @@ const useFrameAssetOverview = (
     const metadataInfo = useAsset(threeService).addMetadata(
       asset,
       storyColor,
-      `${title} ${collections[0]?`, (${collections[0].value}0`:''}`,
+      `${title} ${collections[0] ? `, (${collections[0].value}0` : ''}`,
     );
     threeService.AddGroupsToScene([metadataInfo], Tags.HighlightedMetadata, 'Metadata for image.');
   };

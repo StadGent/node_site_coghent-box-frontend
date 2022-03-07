@@ -9,6 +9,7 @@ import {
   Vector3,
   MathUtils,
   Color,
+  Texture,
 } from 'three';
 import * as d3 from 'd3';
 import { Ref } from 'vue';
@@ -40,12 +41,14 @@ export default class ThreeService {
   element: Ref;
   defaultvalues: ThreeDefaults;
   taggingService: TaggingService;
+  cachedTextures: Array<Texture>;
 
   constructor(
     _element: Ref,
     _defaultvalues: ThreeDefaults,
     _taggingService: TaggingService,
   ) {
+    console.log('init three service')
     this.state = initState;
     this.element = _element;
     this.defaultvalues = _defaultvalues;
@@ -53,6 +56,7 @@ export default class ThreeService {
     this.SetViewPort(_defaultvalues.viewport, window.innerHeight);
     this.InitializeRenderer();
     this.InitializeCamera();
+    this.cachedTextures = []
   }
 
   private calculateDimensionsOfScene() {

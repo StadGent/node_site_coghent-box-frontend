@@ -438,6 +438,7 @@ export default defineComponent({
           showProgressOfFrame = false;
           storyService.setStoryColor();
           if (storyService.isEndOfSession()) {
+            emit('restartSession', true);
             garbageHelper.endOfSessionScreen();
             PlayBookBuild(
               threeSvc,
@@ -450,7 +451,6 @@ export default defineComponent({
             )
               .endOfSession()
               .then((_start) => {
-                emit('restartSession', _start);
                 setup();
               });
           } else {
@@ -459,6 +459,7 @@ export default defineComponent({
               id: 0,
               msg: true,
             } as SensorObject);
+            emit('restartSession', true);
             garbageHelper.pauseScreen();
             spotlight.scale.set(
               Measurements().storyCircle.outerCircle,
