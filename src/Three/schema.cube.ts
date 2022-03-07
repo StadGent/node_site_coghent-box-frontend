@@ -73,7 +73,6 @@ const SchemaCube = (): {
   const CreateImageCubeAsync = async (schema: CubeSchema) => {
     const geometry = new BoxBufferGeometry(schema.params.width, schema.params.height, 0);
     const loadedImage = await loadTexture(schema.params.url as string)
-    console.log({ loadedImage })
     const material = new MeshBasicMaterial({
       transparent: true,
       map: loadedImage as Texture

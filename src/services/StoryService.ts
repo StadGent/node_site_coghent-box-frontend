@@ -4,7 +4,7 @@ import { Frame } from '@/models/GraphqlModel';
 import Colors from '@/Three/defaults.color';
 import Defaults from '@/Three/defaults.config';
 import Positions from '@/Three/defaults.positions';
-import { boxVisiter, useBoxVisiter, Relation, Entity } from 'coghent-vue-3-component-library';
+import { useBoxVisiter, Relation, Entity } from 'coghent-vue-3-component-library';
 import { Vector3 } from 'three';
 
 export type StoryData = {
@@ -75,6 +75,7 @@ export default class StoryService {
       } as any)
       storyToUpdate['storySeen'] = this.IHaveSeenTheStory(currentStoryId);
     }
+    console.log('this.StoryData UPDATED', this.storyData)
     return this.storyData;
   }
 
@@ -150,10 +151,10 @@ export default class StoryService {
     for (const data of this.storyData) {
       const matches = storyDataOfVisiter.filter(_visiterData => _visiterData.storyId == data.storyId)
       if (matches[0]) {
-        Object.assign(data, matches[0])
-        if (data.storySeen) {
-          data.storyColor = Colors().grey
+        if (matches[0].storySeen) {
+          matches[0].storyColor = Colors().grey
         }
+        Object.assign(data, matches[0])
       }
     }
   }
@@ -164,7 +165,7 @@ export default class StoryService {
     const matches = this.storyData.filter(_data => _data.storyId == _storyId)
     if (matches.length > 0) {
       const match = matches[0]
-        nextFrame = match.totalOfFramesSeen
+      nextFrame = match.totalOfFramesSeen
     }
     return {
       storyId: nextStory,
@@ -193,8 +194,12 @@ export default class StoryService {
     if (this.visiter.relations) {
       const matches = this.visiter.relations.filter((_relation: typeof Relation) => _relation.key.replace('entities/', '') == _storyId)
       if (matches.length == 0) {
-        await useBoxVisiter(apolloClient).addStoryToVisiter(this.visiter.code, _storyId)
-        isCreated = true
+        try {
+          await useBoxVisiter(apolloClient).addStoryToVisiter(this.visiter.code, _storyId)
+        } catch (error) {
+          console.error(`Couldn't add the story to visiter ${this.visiter.code}`)
+          isCreated = false
+        }
       }
     }
     return isCreated

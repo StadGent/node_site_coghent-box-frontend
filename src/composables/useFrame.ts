@@ -83,7 +83,6 @@ const useFrame = (_threeService: ThreeService): {
   const getAudioForFrame = (frame: Frame) => {
     let audioFiles: Array<string> = [];
     let audio = null;
-    console.log({frame})
     if (frame && frame.relationMetadata) {
       audioFiles = [...frame.relationMetadata.filter(_data => _data.audioFile?.includes('download')).map(_item => _item.audioFile as string)];
       if (audioFiles.length > 0 && audioFiles[0].includes('.mp3')) {

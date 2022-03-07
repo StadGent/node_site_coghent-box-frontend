@@ -15,7 +15,7 @@
   <!-- <mqtt @selectStory="setSelectStory" /> -->
 </template>
 <script lang="ts">
-import { defineComponent, onMounted, ref, watch } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 import ViewPort from '@/components/ViewPort.vue';
 import { useQuery } from '@vue/apollo-composable';
 import mqtt from '@/components/mqtt.vue';
@@ -41,8 +41,13 @@ export default defineComponent({
     const visiter = ref<any | null>(null);
     const inputValue = ref<string>('');
     const showPauseOverview = ref<boolean>(false);
+    const { getByCode } = useBoxVisiter(apolloClient);
 
-    const { fetchMore } = useQuery(GetActiveBoxDocument);
+    const { fetchMore } = useQuery(
+      GetActiveBoxDocument,
+      {},
+      { fetchPolicy: 'cache-first' },
+    );
 
     watch(visitercode, async (value) => {
       const activeStories = await fetchMore({});
@@ -58,16 +63,18 @@ export default defineComponent({
       );
       tmpStoryService.fillUpDataSources();
       tmpStoryService.mergeVisiterStoryRelationsWithStoryData(storyRelations);
-
-      const storiesToSee = getUnseenStories(storyRelations);
+      const storiesToSee = getUnseenStories(
+        storyRelations.map((_relation) =>
+          tmpStoryService.getStoryDataOfStory(_relation.key.replace('entities/', '')),
+        ),
+      );
       if (storiesToSee.length > 0) {
         const storyToSet = getFirstStoryToSee(storiesToSee);
         if (storyToSet) {
-          tmpStoryService.setActiveStory(storyToSet.key.replace('entities/', ''));
+          tmpStoryService.setActiveStory(storyToSet.storyId);
           storyService.value = tmpStoryService;
         }
       } else {
-        // TODO: Show the overview of all the available stories
         const storiesSeen = storyRelations.map((_rel) =>
           _rel.key.replace('entities/', ''),
         ) as Array<string>;
@@ -80,7 +87,7 @@ export default defineComponent({
         if (storyToSetActive) {
           tmpStoryService.setActiveStory(storyToSetActive);
           showPauseOverview.value = true;
-          storyService.value = tmpStoryService;          
+          storyService.value = tmpStoryService;
         }
       }
     });
@@ -91,8 +98,7 @@ export default defineComponent({
     };
 
     const getCode = async (code: string) => {
-      // code = '71181823'
-      const visiterByCode = await useBoxVisiter(apolloClient).getByCode(String(code));
+      const visiterByCode = await getByCode(String(code));
       console.log('visiter', visiter);
       if (visiterByCode != null) {
         visitercode.value = String(code);

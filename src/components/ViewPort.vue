@@ -6,12 +6,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, PropType, reactive, Ref, ref, watch } from 'vue';
+import { defineComponent, onMounted, PropType, Ref, ref, watch } from 'vue';
 import { Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
-import { Entity as _Entity, Frame, Story } from '@/models/GraphqlModel';
+import { Entity as _Entity, Frame } from '@/models/GraphqlModel';
 
 import ThreeService from '@/services/ThreeService';
-import StoryService, { StoryData } from '@/services/StoryService';
+import StoryService from '@/services/StoryService';
 import ZoneService from '@/services/ZoneService';
 import TextService from '@/services/TextService';
 import TaggingService, { Tags } from '@/services/TaggingService';
@@ -46,8 +46,6 @@ import Template from '@/Three/template.shapes';
 import { Entity } from 'coghent-vue-3-component-library/lib';
 import useStartOfSession from '@/Three/playbook.startOfSession';
 import Spot from '@/Three/shapes.spotlight';
-import SchemaCube, { CubeSchema } from '@/Three/schema.cube';
-import Colors from '@/Three/defaults.color';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -113,7 +111,8 @@ export default defineComponent({
         if (
           chooseStory.value &&
           _storySelected.id != 0 &&
-          !storyDataOfSelected.storySeen
+          !storyDataOfSelected.storySeen &&
+          storyDataOfSelected.totalOfFrames > storyDataOfSelected.totalOfFramesSeen
         ) {
           chooseStory.value = false;
           console.log('You selected sensor', _storySelected.id);
@@ -169,6 +168,16 @@ export default defineComponent({
       currentFrame = next.frame;
       storyService.setActiveStory(storyData[_storySelected].id);
       currentStoryID.value = storyService.activeStoryData.storyId;
+
+      const resultStoryData = await PlayBookBuild(
+        threeSvc,
+        storyService,
+        zoneService,
+        taggingService,
+        playBook,
+        spotlight,
+        storyService.activeStory,
+      ).storyData(storyService, storyService.activeStory, currentFrame);
 
       await PlayBookBuild(
         threeSvc,
@@ -251,7 +260,7 @@ export default defineComponent({
       currentFrame = next.frame;
       clearInterval(interval);
       storyService.setStoryPausedPositions(zoneService.zonesInnerToOuter);
-      await PlayBookBuild(
+      const resultStoryData = await PlayBookBuild(
         threeSvc,
         storyService,
         zoneService,
@@ -259,12 +268,26 @@ export default defineComponent({
         playBook,
         spotlight,
         storyService.activeStory,
-      )
-        .startOfSession()
-        .finally(async () => {
-          garbageHelper.startOfSession();
-          buildStory(currentStoryID.value);
-        });
+      ).storyData(storyService, storyService.activeStory, currentFrame);
+      if (resultStoryData) {
+        console.log('StoryData is set', resultStoryData);
+        await PlayBookBuild(
+          threeSvc,
+          storyService,
+          zoneService,
+          taggingService,
+          playBook,
+          spotlight,
+          storyService.activeStory,
+        )
+          .startOfSession()
+          .finally(async () => {
+            garbageHelper.startOfSession();
+            buildStory(currentStoryID.value);
+          });
+      } else {
+        console.log('No storyData set..');
+      }
     };
 
     const timing = () => {
@@ -314,16 +337,6 @@ export default defineComponent({
     };
 
     const buildStory = async (_currenStoryId: string) => {
-      PlayBookBuild(
-        threeSvc,
-        storyService,
-        zoneService,
-        taggingService,
-        playBook,
-        spotlight,
-        storyService.activeStory,
-      ).storyData(storyService, storyService.activeStory, currentFrame);
-
       audio = AudioHelper(threeSvc).setAudioTrack(storyService.activeStory, currentFrame);
       if (audio == null) {
         timing();
@@ -502,8 +515,6 @@ export default defineComponent({
       subtitleService = new SubtitleService();
       threeSvc.ClearScene();
       setup();
-      const imageCube = await SchemaCube().CreateImageCubeAsync({position: new Vector3(0,0,0),params: {width: 2, height: 4,color: Colors().green, url: 'https://api-uat.collectie.gent/storage/v1/download/e4f9d05a580c058a1e653c07f41b96b1-13250$01.JPG'}} as CubeSchema)
-      // threeSvc.AddToScene(imageCube,Tags.Testing)
       threeSvc.Animate();
     });
     return { viewport, videoElement, subtitles };

@@ -57,16 +57,13 @@ const PlayBookBuild = (
     storyService: StoryService,
     activeStory: Entity,
     frameIndex: number,
-  ) => Promise<{
-    storyData: Array<StoryData> | null;
-    endOfSession: true | false;
-  }>;
+  ) => Promise<Array<StoryData> | null>;
   startOfSession: () => Promise<true | false>;
   setSelectedStory: () => Promise<void>;
 } => {
 
   const logBuild = (_buildName: string) => {
-    if(Development().showBuildLogs()){
+    if (Development().showBuildLogs()) {
       console.log(`PLAYBOOK BUILD | ${_buildName}`)
     }
   }
@@ -82,7 +79,7 @@ const PlayBookBuild = (
           activeStory,
           activeFrameIndex,
         );
-        if(audio != null)
+        if (audio != null)
           audio.play();
       },
       useFrame(threeService).getLastAssetRelationMetadata(activeStory, activeFrameIndex)
@@ -194,17 +191,13 @@ const PlayBookBuild = (
   ) => {
     logBuild('storyData')
     let storyData = null
-    if(activeStory.frames && activeStory.frames[frameIndex]){
+    if (activeStory.frames && activeStory.frames[frameIndex]) {
       storyData = await storyService.updateSeenFramesOfStory(
         activeStory.id,
         activeStory.frames[frameIndex] as unknown as Frame,
       );
     }
-    
-    return {
-      storyData: storyData,
-      endOfSession: storyService.isEndOfSession(),
-    };
+    return storyData
   };
 
   const startOfSession = async () => {

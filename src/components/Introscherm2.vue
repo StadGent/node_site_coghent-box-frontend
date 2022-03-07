@@ -112,7 +112,7 @@ export default defineComponent({
 
     const stories = ref<Array<Entity>>([]);
 
-    const { refetch: updatedStories, loading } = useQuery(GetActiveBoxDocument);
+    const { refetch: updatedStories, loading } = useQuery(GetActiveBoxDocument, {}, {fetchPolicy: 'cache-and-network'});
 
     onMounted(() => {
       updatedStories()?.then((value) => {

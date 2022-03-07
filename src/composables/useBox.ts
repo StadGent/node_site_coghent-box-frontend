@@ -1,26 +1,17 @@
-import { Entity, Relation } from 'coghent-vue-3-component-library/lib/queries'
+import { StoryData } from '@/services/StoryService'
 
-
-export const getUnseenStories = (storyRelations: Array<Relation>) => {
-  const storiesToSee: Array<Relation> = []
-  for (const story of storyRelations) {
-    if (story.seen_frames && story.total_frames) {
-      if (story.seen_frames.length < story.total_frames) {
-        storiesToSee.push(story)
-      }
-    } else {
+export const getUnseenStories = (_storyData: Array<StoryData>) => {
+  const storiesToSee: Array<StoryData> = []
+  for (const story of _storyData) {
+    if (story.totalOfFrames > story.totalOfFramesSeen) {
       storiesToSee.push(story)
     }
   }
   return storiesToSee
 }
 
-export const getFirstStoryToSee = (storyRelations: Array<Relation>) => {
-  if (storyRelations.length > 0) {
-    return storyRelations[0]
+export const getFirstStoryToSee = (_storiesdata: Array<StoryData>) => {
+  if (_storiesdata.length > 0) {
+    return _storiesdata[0]
   }
-}
-
-export const getNextFrame = () => {
-
 }
