@@ -12,13 +12,17 @@ import 'coghent-vue-3-component-library/lib/index.css';
 import { router } from './router';
 import './style.css';
 import StoreFactory from './stores/StoreFactory';
+import { useIIIF } from 'coghent-vue-3-component-library';
 
 export let apolloClient: ApolloClient<NormalizedCacheObject>;
+export let iiiF: any
 
 async function main() {
   const configStore = StoreFactory.get(ConfigStore);
   const config = await fetch('../config.json').then((r) => r.json());
   configStore.setConfig(config);
+
+  iiiF = useIIIF(configStore.config.value.iiifLink)
 
   apolloClient = new ApolloClient({
     link: createHttpLink({ uri: config.graphQlLink || '/api/graphql' }),

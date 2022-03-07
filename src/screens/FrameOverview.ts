@@ -7,7 +7,7 @@ import SchemaCube, { CubeSchema } from '@/Three/schema.cube';
 import Layers from '@/Three/defaults.layers';
 import GroupHelper from '@/Three/helper.group';
 import { Group, Mesh, Vector3 } from 'three';
-import useIIIF from '@/composables/useIIIF';
+import { iiiF } from '@/main';
 
 const FrameOverview = (threeService: ThreeService): {
   addImage: (asset: Asset, scale: number, position: Vector3) => Promise<Mesh>;
@@ -16,7 +16,7 @@ const FrameOverview = (threeService: ThreeService): {
     schemas: Array<CubeSchema>;
   };
 } => {
-  const { generateUrl } = useIIIF()
+  const { generateUrl } = iiiF
 
   const addImage = async (asset: Asset, scale: number, position: Vector3) => {
     // const schema = CubeHelper().CreateSchema(position,useAsset(threeService).getImage(asset),new Vector3(3,2,0));
