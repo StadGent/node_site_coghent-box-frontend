@@ -16,6 +16,7 @@
     </section>
     <section>
       <the-masonry
+        v-bind:tiles="entityData"
         ref="masonry"
         :entities="entityData"
         :loading="loading"
@@ -24,8 +25,30 @@
         :show-load-more="false"
         :items-each-load="10"
         :useRouterNavigation="true"
+        :hasCustomImageOverlay="true"
         @navigateWithRouter="navigateToTouchtable"
-      />
+      >
+        <template #tile="entity">
+          <div
+            v-if="entity.seen"
+            :class="`
+              relative
+              top-4
+              left-4
+              flex
+              justify-center
+              items-center
+              rounded-full
+              w-14
+              h-14
+              bg-${storyColor}
+              text-text-white text-3xl
+            `"
+          >
+            <base-icon icon="check" class="stroke-current fill-current stroke-2" />
+          </div>
+        </template>
+      </the-masonry>
     </section>
   </section>
 </template>
@@ -34,14 +57,14 @@
   import { defineComponent, onMounted, onUpdated, ref, watch } from 'vue';
   import useIIIF from '@/composables/useIIIF';
   import { TheMasonry } from 'coghent-vue-3-component-library';
-  import { useBoxVisiter } from 'coghent-vue-3-component-library';
+  import { useBoxVisiter, BaseIcon } from 'coghent-vue-3-component-library';
   import { apolloClient } from '@/main';
   import { useRouter } from 'vue-router';
   import { Entity } from 'coghent-vue-3-component-library/lib/queries';
 
   export default defineComponent({
     name: 'StoryItem',
-    components: { TheMasonry },
+    components: { TheMasonry, BaseIcon },
     props: {
       storyName: {
         type: String,
@@ -79,10 +102,19 @@
         console.log(frame.id);
         const isFrameSeen = relation.seen_frames.find(
           (seenFrame: any) => seenFrame.id === 'entities/' + frame.id,
-        );
-        console.log(isFrameSeen);
+        )
+          ? true
+          : false;
+        console.log({ isFrameSeen });
         //Set variable on assets to indicate it has been seen
-        entityData.value.results = entityData.value.results.concat(frame.assets);
+        const frameAssets = frame.assets.map((asset: any) => {
+          const newAsset = { ...asset };
+          newAsset.seen = isFrameSeen ? true : false;
+          return newAsset;
+        });
+        entityData.value.results = entityData.value.results.concat(frameAssets);
+        console.log('hee');
+        console.log(entityData.value.results);
       });
 
       const navigateToTouchtable = (entity: Entity) => {
