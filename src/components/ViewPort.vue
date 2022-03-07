@@ -46,6 +46,8 @@ import Template from '@/Three/template.shapes';
 import { Entity } from 'coghent-vue-3-component-library/lib';
 import useStartOfSession from '@/Three/playbook.startOfSession';
 import Spot from '@/Three/shapes.spotlight';
+import SchemaCube, { CubeSchema } from '@/Three/schema.cube';
+import Colors from '@/Three/defaults.color';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -382,7 +384,7 @@ export default defineComponent({
         !taggingService.idAlreadyInList(storyService.activeStory.id),
       );
 
-      PlayBookBuild(
+      await PlayBookBuild(
         threeSvc,
         storyService,
         zoneService,
@@ -500,7 +502,8 @@ export default defineComponent({
       subtitleService = new SubtitleService();
       threeSvc.ClearScene();
       setup();
-
+      const imageCube = await SchemaCube().CreateImageCubeAsync({position: new Vector3(0,0,0),params: {width: 2, height: 4,color: Colors().green, url: 'https://api-uat.collectie.gent/storage/v1/download/e4f9d05a580c058a1e653c07f41b96b1-13250$01.JPG'}} as CubeSchema)
+      // threeSvc.AddToScene(imageCube,Tags.Testing)
       threeSvc.Animate();
     });
     return { viewport, videoElement, subtitles };

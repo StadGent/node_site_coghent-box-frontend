@@ -83,9 +83,12 @@ const useFrame = (_threeService: ThreeService): {
   const getAudioForFrame = (frame: Frame) => {
     let audioFiles: Array<string> = [];
     let audio = null;
-    audioFiles = [...frame.relationMetadata.filter(_data => _data.audioFile?.includes('download')).map(_item => _item.audioFile as string)];
-    if (audioFiles.length > 0 && audioFiles[0].includes('.mp3')) {
-      audio = audioFiles[0];
+    console.log({frame})
+    if (frame && frame.relationMetadata) {
+      audioFiles = [...frame.relationMetadata.filter(_data => _data.audioFile?.includes('download')).map(_item => _item.audioFile as string)];
+      if (audioFiles.length > 0 && audioFiles[0].includes('.mp3')) {
+        audio = audioFiles[0];
+      }
     }
     console.log({ audio });
     return audio;
@@ -93,7 +96,7 @@ const useFrame = (_threeService: ThreeService): {
 
   const getSubtitleForFrame = (frame: Frame) => {
     let subtitle = null;
-    if (frame.relationMetadata) {
+    if (frame && frame.relationMetadata) {
       const subtitles = frame.relationMetadata.filter(_item => _item.subtitleFile);
       if (subtitles.length > 0)
         subtitle = subtitles[0].subtitleFile;

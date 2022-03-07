@@ -2,7 +2,7 @@ import useAsset from '@/composables/useAsset';
 import { Asset, Frame, Story } from '@/models/GraphqlModel';
 import FrameOverview from '@/screens/FrameOverview';
 import ThreeService from '@/services/ThreeService';
-import { BoxBufferGeometry, Group, Mesh, MeshBasicMaterial, Object3D, Vector3 } from 'three';
+import { BoxBufferGeometry, Group, Mesh, MeshBasicMaterial, Object3D, Texture, Vector3 } from 'three';
 import Layers from './defaults.layers';
 import { PlayBookFunctions } from '@/composables/playbook';
 import { Frame as modelFrame } from '@/models/GraphqlModel';
@@ -30,16 +30,17 @@ const useFrameAssetOverview = (
     currentFrame: number,
     storyColor: number,
     timestamp: number,
-  ) => void;
+  ) => Promise<void>;
 } => {
   const group: Group = new Group();
   const positions: Array<Vector3> = [];
   let assets: Array<Asset> = [];
   let storyColor: number;
 
-  const displayAllAssets = (frame: modelFrame, timestamp: number) => {
+  const displayAllAssets = async (frame: modelFrame, timestamp: number) => {
     threeService.RemoveFromScene(group);
     const data: Record<number, Vector3> = {};
+    const images: Array<Mesh> = []
     for (const asset of assets) {
       const relationMetadata = useAsset(threeService).connectRelationMetadata(frame, asset);
       const position = new Vector3(0, 0, Layers.scene);
@@ -49,13 +50,18 @@ const useFrameAssetOverview = (
       }
       data[relationMetadata.timestamp_start] = position;
       positions.push(position);
+      const image = await FrameOverview(threeService).addImage(asset, relationMetadata.scale, position)
+      images.push(image)
       group.add(
-        FrameOverview(threeService).addImage(asset, relationMetadata.scale, position),
+        image
       );
     }
 
     playBook.addToPlayBook(
       async () => {
+        // for(const img of images){
+        //   threeService.AddToScene(img, Tags.Asset)
+        // }
         threeService.AddToScene(group, Tags.GroupOfAssets, ' Group of all the assets from the frame');
         await CustomAnimation().fadeInGroups([group], AnimationDefaults.values.opacityActive, AnimationDefaults.values.fadeStep);
       },
@@ -141,7 +147,7 @@ const useFrameAssetOverview = (
     threeService.AddGroupsToScene([metadataInfo], Tags.HighlightedMetadata, 'Metadata for image.');
   };
 
-  const create = (
+  const create = async (
     currentFrame: number,
     _storyColor: number,
     timestamp: number,
@@ -149,7 +155,7 @@ const useFrameAssetOverview = (
     assets = useAsset(threeService).getAssetsFromFrame(activeStory, currentFrame) as unknown as Array<Asset>;
     storyColor = _storyColor;
     if (assets.length > 0) {
-      displayAllAssets(activeStory.frames?.[currentFrame] as unknown as Frame, timestamp);
+      await displayAllAssets(activeStory.frames?.[currentFrame] as unknown as Frame, timestamp);
       group.children.forEach((asset, index) => {
         const relationMetadata = useAsset(threeService).connectRelationMetadata(
           activeStory.frames?.[currentFrame] as unknown as Frame,

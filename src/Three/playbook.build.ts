@@ -47,7 +47,7 @@ const PlayBookBuild = (
     currentFrameIndex: number,
     storyColor: number,
     garbageHelper: GarabageHelperForWall,
-  ) => void;
+  ) => Promise<void>;
   progressOfFrame: (frameIndex: number, color: number, currentTime: number, audioDuration: number, progressbar: Array<Group>) => Array<Group>;
   initialSpotLight: () => Mesh;
   endOfSession: () => Promise<void>;
@@ -103,13 +103,13 @@ const PlayBookBuild = (
     );
   };
 
-  const frameOverview = (
+  const frameOverview = async (
     currentFrameIndex: number,
     storyColor: number,
     garbageHelper: GarabageHelperForWall,
   ) => {
     logBuild('frameOverview')
-    useFrameAssetOverview(
+    await useFrameAssetOverview(
       threeService,
       zoneService,
       activeStory,
