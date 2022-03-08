@@ -46,6 +46,7 @@ import Template from '@/Three/template.shapes';
 import { Entity } from 'coghent-vue-3-component-library/lib';
 import useStartOfSession from '@/Three/playbook.startOfSession';
 import Spot from '@/Three/shapes.spotlight';
+import StateService, { FlowState } from '@/services/StateService';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -65,6 +66,10 @@ export default defineComponent({
     },
     storyService: {
       type: StoryService,
+      required: true,
+    },
+    stateService: {
+      type: StateService,
       required: true,
     },
     showPauseOverview: {
@@ -114,6 +119,7 @@ export default defineComponent({
           !storyDataOfSelected.storySeen &&
           storyDataOfSelected.totalOfFrames > storyDataOfSelected.totalOfFramesSeen
         ) {
+          props.stateService.changeState(FlowState.storySelected);
           chooseStory.value = false;
           console.log('You selected sensor', _storySelected.id);
           storyData = stories.value;
@@ -189,6 +195,7 @@ export default defineComponent({
         storyService.activeStory,
       ).setSelectedStory();
       if (props.showPauseOverview) {
+        props.stateService.changeState(FlowState.storyOverview);
         garbageHelper.newStorySelectedWithNoActive();
         audioHelper = AudioHelper(threeSvc);
       } else {
@@ -249,6 +256,7 @@ export default defineComponent({
       );
       threeSvc.AddToScene(spotlight, Tags.Spotlight, 'InitialSpotlight');
       useStartOfSession(threeSvc, zoneService, spotlight).showScanImage();
+      props.stateService.changeState(FlowState.welcome);
     };
 
     const setData = async () => {
@@ -271,6 +279,7 @@ export default defineComponent({
       ).storyData(storyService, storyService.activeStory, currentFrame);
       if (resultStoryData) {
         console.log('StoryData is set', resultStoryData);
+        props.stateService.changeState(FlowState.countdownToFrame);
         await PlayBookBuild(
           threeSvc,
           storyService,
@@ -291,6 +300,7 @@ export default defineComponent({
     };
 
     const timing = () => {
+      props.stateService.changeState(FlowState.framePlaying);
       console.log('| MASTER playbook: ', playBook.getPlayBookActions());
       let currentFunction = 0;
       let currentSubtitle = 1;
@@ -337,6 +347,7 @@ export default defineComponent({
     };
 
     const buildStory = async (_currenStoryId: string) => {
+      props.stateService.changeState(FlowState.buildFrame);
       audio = AudioHelper(threeSvc).setAudioTrack(storyService.activeStory, currentFrame);
       if (audio == null) {
         timing();
@@ -438,6 +449,7 @@ export default defineComponent({
           showProgressOfFrame = false;
           storyService.setStoryColor();
           if (storyService.isEndOfSession()) {
+            props.stateService.changeState(FlowState.endCountdown);
             emit('restartSession', true);
             garbageHelper.endOfSessionScreen();
             PlayBookBuild(
@@ -454,6 +466,7 @@ export default defineComponent({
                 setup();
               });
           } else {
+            props.stateService.changeState(FlowState.storyOverview);
             emit('resetSelectedStory', {
               topic: 'sensors/0/present',
               id: 0,

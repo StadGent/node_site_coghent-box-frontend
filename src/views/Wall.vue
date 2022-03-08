@@ -8,6 +8,7 @@
     :stories="stories"
     :storySelected="storySelected"
     :storyService="storyService"
+    :stateService="stateService"
     @restartSession="restartSession"
     @resetSelectedStory="resetSelectedStory"
     :showPauseOverview="showPauseOverview"
@@ -20,6 +21,7 @@ import ViewPort from '@/components/ViewPort.vue';
 import { useQuery } from '@vue/apollo-composable';
 import mqtt from '@/components/mqtt.vue';
 import StoryService from '@/services/StoryService';
+import StateService, { FlowState } from '@/services/StateService';
 import { SensorObject } from '@/composables/common';
 import { GetActiveBoxDocument, RelationType } from 'coghent-vue-3-component-library';
 import { useBoxVisiter } from 'coghent-vue-3-component-library';
@@ -32,6 +34,7 @@ export default defineComponent({
   components: { ViewPort },
 
   setup() {
+    const stateService = new StateService(FlowState.welcome);
     let stories = ref<Array<any>>();
     const storySelected = ref<string>(
       JSON.stringify({ topic: 'sensors/1/present', id: 1, msg: true } as SensorObject),
@@ -180,6 +183,7 @@ export default defineComponent({
       inputValue,
       getCode,
       showPauseOverview,
+      stateService,
     };
   },
 });

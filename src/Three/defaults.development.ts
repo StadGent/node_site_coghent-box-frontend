@@ -5,6 +5,7 @@ const Development = (): {
   showMoveLogs: () => true | false;
   showSubtitleLogs: () => true | false;
   showBuildLogs: () => true | false;
+  stateLogs: () => true | false;
 } => {
   const showZonesInOverview = () => false;
   const showDevTimeLogs = () => false;
@@ -12,6 +13,7 @@ const Development = (): {
   const showMoveLogs = () => false;
   const showSubtitleLogs = () => false;
   const showBuildLogs = () => false;
+  const stateLogs = () => true;
 
   return {
     showZonesInOverview,
@@ -20,6 +22,7 @@ const Development = (): {
     showMoveLogs,
     showSubtitleLogs,
     showBuildLogs,
+    stateLogs,
   }
 }
 
