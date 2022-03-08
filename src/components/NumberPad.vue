@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, onMounted, ref, watch } from 'vue';
+  import { defineComponent, onMounted, PropType, ref, watch } from 'vue';
   import { BaseIcon } from 'coghent-vue-3-component-library';
   import { useRouter } from 'vue-router';
 
@@ -34,7 +34,7 @@
     components: { BaseIcon },
     props: {
       keys: {
-        type: Array,
+        type: Array as PropType<Key[]>,
         required: false,
         default: () => [
           { type: 'number', value: '7' },

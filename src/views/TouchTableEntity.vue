@@ -1,5 +1,6 @@
 <template>
   <div class="touchtable">
+    <basket-overlay :basketItems="basketItems" />
     <shutdown-modal :code="code" />
     <IIIF-modal :imageUrl="IIIFImageUrl" />
     <touch-header :basketAmount="basketItems.length" />
@@ -62,6 +63,7 @@
     startAsset,
     useBoxVisiter,
   } from 'coghent-vue-3-component-library';
+  import BasketOverlay from '@/components/BasketOverlay.vue';
   import TouchHeader from '@/components/TouchHeader.vue';
   import ShutdownModal from '@/components/ShutdownModal.vue';
   import RelationBrowser from '@/components/RelationBrowser.vue';
@@ -88,6 +90,7 @@
       BaseButton,
       ShutdownModal,
       IIIFModal,
+      BasketOverlay,
     },
     setup: () => {
       const route = useRoute();
@@ -121,7 +124,7 @@
       const subRelations = ref<SecondaryRelation[]>([]);
       const entity = ref<any>();
       const headEntityId = ref<string>();
-      const basketItems = ref<Array<any>>([]);
+      const basketItems = ref<Array<Relation>>([]);
       const IIIFImageUrl = ref<string>();
       let fabricService: FabricService | undefined = undefined;
       const { openIIIFModal, IIIFModalState } = useIIIFModal();

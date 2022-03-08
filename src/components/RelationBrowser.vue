@@ -1,55 +1,65 @@
 <template>
-<div class="relation_browser_container no-scrollbar" id="browser">
-    <FilterTag v-for="(item, index) in relations" :key="index" :filter="item" :isSelected="index == selectedTagIndex ? true : false" :icon="'check'" :small="false" :loading="loading" @click="selectTag(index)"/>
-</div>
+  <div class="relation_browser_container no-scrollbar" id="browser">
+    <FilterTag
+      v-for="(item, index) in relations"
+      :key="index"
+      :filter="item"
+      :isSelected="index == selectedTagIndex ? true : false"
+      :icon="'check'"
+      :small="false"
+      :loading="loading"
+      @click="selectTag(index)"
+    />
+  </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref, watch } from 'vue';
-import { fabricdefaults } from '@/services/Fabric/defaults.fabric';
-import { FilterTag} from 'coghent-vue-3-component-library'
+  import { defineComponent, onMounted, PropType, ref, watch } from 'vue';
+  import { fabricdefaults } from '@/services/Fabric/defaults.fabric';
+  import { FilterTag } from 'coghent-vue-3-component-library';
+  import { Relation } from 'coghent-vue-3-component-library/lib/queries';
 
-export default defineComponent({
-  name: 'RelationBrowser',
-  components: {
-      FilterTag
-  },
-  props: {
-    relations: {
-      type: Array,
-      required: true,
+  export default defineComponent({
+    name: 'RelationBrowser',
+    components: {
+      FilterTag,
     },
-    loading: {
+    props: {
+      relations: {
+        type: Array as PropType<Relation[]>,
+        required: true,
+      },
+      loading: {
         type: Boolean,
         required: false,
         default: false,
-    }
-  },
-  emits: ['selected'],
-  setup: (props, {emit}) => {
-      const selectedTagIndex = ref<number>()
+      },
+    },
+    emits: ['selected'],
+    setup: (props, { emit }) => {
+      const selectedTagIndex = ref<number>();
       const root = document.documentElement;
-      root.style.setProperty('--browser_height', fabricdefaults.canvas.relationBrowser.height.toString() + 'px');
+      root.style.setProperty(
+        '--browser_height',
+        fabricdefaults.canvas.relationBrowser.height.toString() + 'px',
+      );
 
       const selectTag = (tagIndex: number) => {
-          if (selectedTagIndex.value == tagIndex){
-              selectedTagIndex.value = undefined
-          }
-          else{
-              selectedTagIndex.value = tagIndex
-          }
-          emit('selected', [selectedTagIndex.value])
-      }
+        if (selectedTagIndex.value == tagIndex) {
+          selectedTagIndex.value = undefined;
+        } else {
+          selectedTagIndex.value = tagIndex;
+        }
+        emit('selected', [selectedTagIndex.value]);
+      };
 
-      return {selectTag,
-      selectedTagIndex,
-      }
-  },
-});
+      return { selectTag, selectedTagIndex };
+    },
+  });
 </script>
 
 <style scoped>
-.relation_browser_container{
+  .relation_browser_container {
     display: flex;
     position: relative;
     bottom: 0;
@@ -59,14 +69,14 @@ export default defineComponent({
     background-color: white;
     overflow: auto;
     white-space: nowrap;
-}
+  }
 
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 </style>

@@ -96,16 +96,13 @@
         (relation: any) => relation.type === 'stories',
       );
       const router = useRouter();
-      console.log(relation);
 
       props.storyEntities.forEach((frame: any) => {
-        console.log(frame.id);
         const isFrameSeen = relation.seen_frames.find(
           (seenFrame: any) => seenFrame.id === 'entities/' + frame.id,
         )
           ? true
           : false;
-        console.log({ isFrameSeen });
         //Set variable on assets to indicate it has been seen
         const frameAssets = frame.assets.map((asset: any) => {
           const newAsset = { ...asset };
@@ -113,8 +110,6 @@
           return newAsset;
         });
         entityData.value.results = entityData.value.results.concat(frameAssets);
-        console.log('hee');
-        console.log(entityData.value.results);
       });
 
       const navigateToTouchtable = (entity: Entity) => {

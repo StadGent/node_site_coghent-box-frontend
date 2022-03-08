@@ -1,7 +1,7 @@
 <template>
-  <nav class="p-10 header">
+  <nav class="p-10 header bg-neutral-0">
     <div class="spacer"></div>
-    <div class="">
+    <div class="cursor-pointer" @click="openBasketOverlay">
       <h1 class="font-bold text-6xl w-full pr-auto">
         Mijn verhalenbox ({{ basketAmount }})
       </h1>
@@ -32,6 +32,7 @@
   import { baseIcon, BaseButton } from 'coghent-vue-3-component-library';
   import { fabricdefaults } from '@/services/Fabric/defaults.fabric';
   import { useShutdownModal } from '@/components/ShutdownModal.vue';
+  import { useBasketOverlay } from '@/components/BasketOverlay.vue';
   import { useRouter } from 'vue-router';
 
   export default defineComponent({
@@ -49,6 +50,7 @@
     },
     setup: (props) => {
       const { openShutdownModal, closeShutdownModal } = useShutdownModal();
+      const { closeBasketOverlay, openBasketOverlay } = useBasketOverlay();
       const router = useRouter();
 
       const root = document.documentElement;
@@ -64,6 +66,7 @@
       return {
         openShutdownModal,
         goToStoriesPage,
+        openBasketOverlay,
       };
     },
   });
@@ -71,6 +74,8 @@
 
 <style scoped>
   .header {
+    position: relative;
+    top: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
