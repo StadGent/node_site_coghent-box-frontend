@@ -15,6 +15,7 @@ import * as d3 from 'd3';
 import { Ref } from 'vue';
 import TaggingService, { Tags } from './TaggingService';
 import ZoomHelper from '@/Three/helper.zoom';
+import Development from '@/Three/defaults.development';
 
 type State = {
   width: number;
@@ -97,11 +98,17 @@ export default class ThreeService {
   }
 
   AddToScene(item: any, tag: Tags, context?: string, id?: string) {
+    if(Development().sceneLogs() && context){
+      console.log('Add to scene |', context)
+    }
     this.taggingService.tag(tag, item, context, id);
     this.state.scene.add(item);
   }
 
   AddGroupsToScene(groups: Array<Group>, tag: Tags, context?: string, id?: string) {
+    if(Development().sceneLogs() && context){
+      console.log('Add group to scene |', context)
+    }
     this.taggingService.tag(tag, groups, context, id);
     groups.map((group) => {
       this.state.scene.add(group);

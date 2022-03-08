@@ -75,7 +75,6 @@ export default class StoryService {
       } as any)
       storyToUpdate['storySeen'] = this.IHaveSeenTheStory(currentStoryId);
     }
-    console.log('this.StoryData UPDATED', this.storyData)
     return this.storyData;
   }
 
@@ -152,6 +151,7 @@ export default class StoryService {
       const matches = storyDataOfVisiter.filter(_visiterData => _visiterData.storyId == data.storyId)
       if (matches[0]) {
         if (matches[0].storySeen) {
+          console.log('story exists and color set to grey')
           matches[0].storyColor = Colors().grey
         }
         Object.assign(data, matches[0])

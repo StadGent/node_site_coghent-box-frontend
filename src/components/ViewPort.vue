@@ -11,7 +11,7 @@ import { Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
 import { Entity as _Entity, Frame } from '@/models/GraphqlModel';
 
 import ThreeService from '@/services/ThreeService';
-import StoryService from '@/services/StoryService';
+import StoryService, { StoryData } from '@/services/StoryService';
 import ZoneService from '@/services/ZoneService';
 import TextService from '@/services/TextService';
 import TaggingService, { Tags } from '@/services/TaggingService';
@@ -112,16 +112,18 @@ export default defineComponent({
 
     let subtitles = ref<string>('');
 
+    const initState = () => {
+      threeSvc.ClearScene();
+      playBook.clearPlaybook(true);
+      taggingService.clearTaggedObjects();
+      setup();
+    };
+
     watch(
       () => props.currentState,
       (value) => {
-        console.log('state is updated', value);
         garbageHelper.pauseScreen();
-        threeSvc.ClearScene();
-        taggingService.clearTaggedObjects();
-        console.log('scene', threeSvc.state.scene)
-        console.log('taggedObjects', taggingService.taggedObjects)
-        setup();
+        initState();
       },
     );
 
@@ -129,10 +131,14 @@ export default defineComponent({
       () => props.storySelected,
       async (value) => {
         const _storySelected = JSON.parse(value) as SensorObject;
-        const storyDataOfSelected = storyService.getStoryData()[_storySelected.id - 1];
+        let storyDataOfSelected: StoryData | null = null;
+        if (storyService) {
+          storyDataOfSelected = storyService.getStoryData()[_storySelected.id - 1];
+        }
         if (
           chooseStory.value &&
           _storySelected.id != 0 &&
+          storyDataOfSelected &&
           !storyDataOfSelected.storySeen &&
           storyDataOfSelected.totalOfFrames > storyDataOfSelected.totalOfFramesSeen
         ) {
@@ -159,7 +165,6 @@ export default defineComponent({
     watch(
       () => props.storyService,
       (value) => {
-        console.log('story service updated', value);
         if (value) {
           storyService = value;
           if (!props.showPauseOverview) {
@@ -300,6 +305,7 @@ export default defineComponent({
       ).storyData(storyService, storyService.activeStory, currentFrame);
       if (resultStoryData) {
         console.log('StoryData is set', resultStoryData);
+        currentStoryID.value = storyService.activeStoryData.storyId;
         props.stateService.changeState(FlowState.countdownToFrame);
         await PlayBookBuild(
           threeSvc,
@@ -470,7 +476,6 @@ export default defineComponent({
           storyService.setStoryColor();
           if (storyService.isEndOfSession()) {
             props.stateService.changeState(FlowState.endCountdown);
-            emit('restartSession', true);
             garbageHelper.endOfSessionScreen();
             PlayBookBuild(
               threeSvc,
@@ -483,6 +488,7 @@ export default defineComponent({
             )
               .endOfSession()
               .then((_start) => {
+                emit('restartSession', true);
                 setup();
               });
           } else {
@@ -548,7 +554,7 @@ export default defineComponent({
       garbageHelper = WallGarbageHelper(threeSvc, taggingService);
       subtitleService = new SubtitleService();
       threeSvc.ClearScene();
-      setup();
+      initState();
       threeSvc.Animate();
     });
     return { viewport, videoElement, subtitles };

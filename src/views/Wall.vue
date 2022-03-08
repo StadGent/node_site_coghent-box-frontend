@@ -61,29 +61,28 @@ export default defineComponent({
     });
 
     watch(visitercode, async (value) => {
-      console.log('visitercode value', value)
+      console.log('visitercode value', value);
       if (canScanTicket.value) {
         const storyRelations = (await useBoxVisiter(apolloClient).getRelationsByType(
           visitercode.value,
           RelationType.Stories,
         )) as Array<Relation>;
-        console.log({storyRelations})
 
         const tmpStoryService = createTempStoryService(storyRelations);
-        console.log('created tmp storyservice', tmpStoryService)
 
         const storiesToSee = getUnseenStories(
           storyRelations.map((_relation) =>
             tmpStoryService.getStoryDataOfStory(_relation.key.replace('entities/', '')),
           ),
         );
-        if (storiesToSee.length > 0) {
+        if (storiesToSee.length != 0) {
           const storyToSet = getFirstStoryToSee(storiesToSee);
           if (storyToSet) {
             tmpStoryService.setActiveStory(storyToSet.storyId);
             storyService.value = tmpStoryService;
           }
         } else {
+          console.log('no stories to see going to overview');
           const storiesSeen = storyRelations.map((_rel) =>
             _rel.key.replace('entities/', ''),
           ) as Array<string>;
@@ -115,8 +114,6 @@ export default defineComponent({
     };
 
     const restartSession = async (start: boolean) => {
-      console.log({ start });
-      console.log('Restart session');
       canScanTicket.value = start;
     };
 
@@ -125,20 +122,22 @@ export default defineComponent({
         stateService.getCurrentState() != FlowState[1] &&
         stateService.getCurrentState() != FlowState[2] &&
         stateService.getCurrentState() != FlowState[3] &&
-        stateService.getCurrentState() != FlowState[4]
+        stateService.getCurrentState() != FlowState[4] &&
+        stateService.getCurrentState() != FlowState[6]
       ) {
         canScanTicket.value = true;
         currentState.value = stateService.getCurrentState();
         storyService.value = null;
         const visiterByCode = await useBoxVisiter(apolloClient).getByCode(String(code));
-        visitercode.value = '';
+        visitercode.value = null;
         console.log('visiter', visiter);
         if (visiterByCode != null) {
-          console.log('visitercode set', code);
           visitercode.value = String(code);
-          console.log('visiter old', visiter.value)
           visiter.value = visiterByCode;
         }
+      } else {
+        stateService.changeState(FlowState.storyOverview);
+        currentState.value = stateService.getCurrentState();
       }
     };
 
