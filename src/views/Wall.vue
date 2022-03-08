@@ -9,6 +9,7 @@
     :storySelected="storySelected"
     :storyService="storyService"
     :stateService="stateService"
+    :currentState="currentState"
     @restartSession="restartSession"
     @resetSelectedStory="resetSelectedStory"
     :showPauseOverview="showPauseOverview"
@@ -39,10 +40,11 @@ export default defineComponent({
     const storySelected = ref<string>(
       JSON.stringify({ topic: 'sensors/1/present', id: 1, msg: true } as SensorObject),
     );
-    const storyService = ref<StoryService>();
+    const storyService = ref<StoryService | null>();
     const visitercode = ref<string | null>(null);
     const visiter = ref<any | null>(null);
     const inputValue = ref<string>('');
+    const currentState = ref<string>(FlowState[0]);
     const showPauseOverview = ref<boolean>(false);
     const canScanTicket = ref<boolean>(false);
     const { getByCode, getRelationsByType } = useBoxVisiter(apolloClient);
@@ -59,13 +61,16 @@ export default defineComponent({
     });
 
     watch(visitercode, async (value) => {
+      console.log('visitercode value', value)
       if (canScanTicket.value) {
         const storyRelations = (await useBoxVisiter(apolloClient).getRelationsByType(
           visitercode.value,
           RelationType.Stories,
         )) as Array<Relation>;
+        console.log({storyRelations})
 
         const tmpStoryService = createTempStoryService(storyRelations);
+        console.log('created tmp storyservice', tmpStoryService)
 
         const storiesToSee = getUnseenStories(
           storyRelations.map((_relation) =>
@@ -89,6 +94,7 @@ export default defineComponent({
             }
           });
           if (storyToSetActive) {
+            stateService.changeState(FlowState.storyOverview);
             tmpStoryService.setActiveStory(storyToSetActive);
             showPauseOverview.value = true;
             storyService.value = tmpStoryService;
@@ -115,11 +121,24 @@ export default defineComponent({
     };
 
     const getCode = async (code: string) => {
-      const visiterByCode = await useBoxVisiter(apolloClient).getByCode(String(code));
-      console.log('visiter', visiter);
-      if (visiterByCode != null) {
-        visitercode.value = String(code);
-        visiter.value = visiterByCode;
+      if (
+        stateService.getCurrentState() != FlowState[1] &&
+        stateService.getCurrentState() != FlowState[2] &&
+        stateService.getCurrentState() != FlowState[3] &&
+        stateService.getCurrentState() != FlowState[4]
+      ) {
+        canScanTicket.value = true;
+        currentState.value = stateService.getCurrentState();
+        storyService.value = null;
+        const visiterByCode = await useBoxVisiter(apolloClient).getByCode(String(code));
+        visitercode.value = '';
+        console.log('visiter', visiter);
+        if (visiterByCode != null) {
+          console.log('visitercode set', code);
+          visitercode.value = String(code);
+          console.log('visiter old', visiter.value)
+          visiter.value = visiterByCode;
+        }
       }
     };
 
@@ -184,6 +203,7 @@ export default defineComponent({
       getCode,
       showPauseOverview,
       stateService,
+      currentState,
     };
   },
 });

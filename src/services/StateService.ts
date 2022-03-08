@@ -8,7 +8,6 @@ export enum FlowState {
   framePlaying,
   storyOverview,
   endCountdown,
-  end
 }
 
 class StateService {
@@ -30,9 +29,6 @@ class StateService {
   }
 
   getCurrentState() {
-    if (Development().stateLogs()) {
-      console.log('Flow state current | ', this.currentState)
-    }
     return this.currentState
   }
 

@@ -65,7 +65,7 @@ export default defineComponent({
       } as SensorObject),
     },
     storyService: {
-      type: StoryService,
+      type: StoryService || null,
       required: true,
     },
     stateService: {
@@ -75,6 +75,10 @@ export default defineComponent({
     showPauseOverview: {
       type: Boolean,
       default: false,
+    },
+    currentState: {
+      type: String,
+      default: FlowState[0],
     },
   },
   emits: ['restartSession', 'resetSelectedStory'],
@@ -107,6 +111,19 @@ export default defineComponent({
     let spotlight: Mesh;
 
     let subtitles = ref<string>('');
+
+    watch(
+      () => props.currentState,
+      (value) => {
+        console.log('state is updated', value);
+        garbageHelper.pauseScreen();
+        threeSvc.ClearScene();
+        taggingService.clearTaggedObjects();
+        console.log('scene', threeSvc.state.scene)
+        console.log('taggedObjects', taggingService.taggedObjects)
+        setup();
+      },
+    );
 
     watch(
       () => props.storySelected,
@@ -142,27 +159,31 @@ export default defineComponent({
     watch(
       () => props.storyService,
       (value) => {
-        storyService = value;
-        if (!props.showPauseOverview) {
-          setData();
-        } else {
-          emit('resetSelectedStory', {
-            topic: 'sensors/0/present',
-            id: 0,
-            msg: true,
-          } as SensorObject);
-          garbageHelper.startOfSession();
-          storyService.setStoryPausedPositions(zoneService.zonesInnerToOuter);
-          PlayBookBuild(
-            threeSvc,
-            storyService,
-            zoneService,
-            taggingService,
-            playBook,
-            spotlight,
-            {} as Entity,
-          ).storyPausedWithNoActiveStory();
-          chooseStory.value = true;
+        console.log('story service updated', value);
+        if (value) {
+          storyService = value;
+          if (!props.showPauseOverview) {
+            setData();
+          } else {
+            props.stateService.changeState(FlowState.storyOverview);
+            emit('resetSelectedStory', {
+              topic: 'sensors/0/present',
+              id: 0,
+              msg: true,
+            } as SensorObject);
+            garbageHelper.startOfSession();
+            storyService.setStoryPausedPositions(zoneService.zonesInnerToOuter);
+            PlayBookBuild(
+              threeSvc,
+              storyService,
+              zoneService,
+              taggingService,
+              playBook,
+              spotlight,
+              {} as Entity,
+            ).storyPausedWithNoActiveStory();
+            chooseStory.value = true;
+          }
         }
       },
     );
@@ -301,7 +322,6 @@ export default defineComponent({
 
     const timing = () => {
       props.stateService.changeState(FlowState.framePlaying);
-      console.log('| MASTER playbook: ', playBook.getPlayBookActions());
       let currentFunction = 0;
       let currentSubtitle = 1;
       let timingCount = 0;

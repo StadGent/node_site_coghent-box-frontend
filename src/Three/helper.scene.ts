@@ -47,12 +47,12 @@ const SceneHelper = (_threeService: ThreeService, _storyService: StoryService): 
       storyId,
     );
 
-  await addFrameProgressDotsToScene(storyCircle.progress.dots, storyId, _storyService.getStoryDataOfStory(storyId).totalOfFramesSeen, true);
+    await addFrameProgressDotsToScene(storyCircle.progress.dots, storyId, _storyService.getStoryDataOfStory(storyId).totalOfFramesSeen, true);
   };
 
   const addPauseScreenObjectsToScene = async (_objects: PauseScreenObjects, _sceneZone: Zone) => {
     _threeService.AddToScene(_objects.banner, Tags.PauseScreenBanner);
-    await MoveObject().startMoving(_objects.banner, new Vector3(0,-(_sceneZone.height / 2) + Measurements().pauseScreen.bannerHeight / 2,Layers.background));
+    await MoveObject().startMoving(_objects.banner, new Vector3(0, -(_sceneZone.height / 2) + Measurements().pauseScreen.bannerHeight / 2, Layers.background));
     _threeService.AddGroupsToScene(_objects.text, Tags.PauseScreenCenterText);
     for (const _item in _objects.storyCircles) {
       await addStoryCircleToScene(_item, _objects.storyCircles[_item], false);
@@ -61,19 +61,24 @@ const SceneHelper = (_threeService: ThreeService, _storyService: StoryService): 
 
   const addFrameProgressDotsToScene = async (_dots: Array<DotWithinDotObjects>, _storyId: string, _progress: number, _animation: boolean) => {
     for (let index = 0;index < _progress;index++) {
-      _threeService.AddToScene(_dots[index].dot, Tags.StoryCircleFrameDot, 'Dot to show the frames in the story.', _storyId);
-      if (_animation) {
-        _dots[index].dot.material.opacity = 0;
-        await CustomAnimation().fadeIn(_dots[index].dot, 1, 0.1);
-      }
-      if (index + 1 == _progress  && _storyService.storyIsActive(_storyId)) {
-        _threeService.AddToScene(_dots[index].innerDot, Tags.StoryCircleFrameInnerDot, 'Innerdot to show the frames in the story.', _storyId);
+      if (_dots[index]) {
+        _threeService.AddToScene(_dots[index].dot, Tags.StoryCircleFrameDot, 'Dot to show the frames in the story.', _storyId);
         if (_animation) {
-          _dots[index].innerDot.material.opacity = 0;
-          await CustomAnimation().fadeIn(_dots[index].innerDot, 1, 0.1);
+          _dots[index].dot.material.opacity = 0;
+          await CustomAnimation().fadeIn(_dots[index].dot, 1, 0.1);
         }
+        if (index + 1 == _progress && _storyService.storyIsActive(_storyId)) {
+          _threeService.AddToScene(_dots[index].innerDot, Tags.StoryCircleFrameInnerDot, 'Innerdot to show the frames in the story.', _storyId);
+          if (_animation) {
+            _dots[index].innerDot.material.opacity = 0;
+            await CustomAnimation().fadeIn(_dots[index].innerDot, 1, 0.1);
+          }
+        }
+        await Common().awaitTimeout(AnimationDefaults.timing.fadeIn);
+      } else {
+        console.info('WARN | Missing dot for frame progress')
       }
-      await Common().awaitTimeout(AnimationDefaults.timing.fadeIn);
+
     }
   };
 

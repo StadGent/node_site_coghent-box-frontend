@@ -48,7 +48,6 @@ export default class ThreeService {
     _defaultvalues: ThreeDefaults,
     _taggingService: TaggingService,
   ) {
-    console.log('init three service')
     this.state = initState;
     this.element = _element;
     this.defaultvalues = _defaultvalues;
