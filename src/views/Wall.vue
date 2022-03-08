@@ -95,8 +95,8 @@ export default defineComponent({
           if (storyToSetActive) {
             stateService.changeState(FlowState.storyOverview);
             tmpStoryService.setActiveStory(storyToSetActive);
-            showPauseOverview.value = true;
-            storyService.value = tmpStoryService;
+            showPauseOverview.value = true;  
+            storyService.value = tmpStoryService;          
           }
         }
         canScanTicket.value = false;

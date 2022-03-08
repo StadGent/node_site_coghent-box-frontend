@@ -74,15 +74,14 @@ const useFrameAssetOverview = (
     spotlight: Mesh,
   ) => {
     garbageHelper.highlightedAsset();
-
+    const spotlightScale = useAsset(threeService).getAssetSpotlightScale(asset as unknown as Mesh<BoxBufferGeometry, any>, scale)
     CustomAnimation().shrink(asset as unknown as Mesh<any, MeshBasicMaterial>, scale, AnimationDefaults.values.scaleStep);
     await Common().awaitTimeout(250);
-    await CustomAnimation().shrink(spotlight as unknown as Mesh<any, MeshBasicMaterial>, scale + (Measurements().spotLight.spaceAroundObject * 2), AnimationDefaults.values.scaleStep);
+    await CustomAnimation().shrink(spotlight as unknown as Mesh<any, MeshBasicMaterial>, spotlightScale, AnimationDefaults.values.scaleStep);
     await Common().awaitTimeout(150);
     await Promise.all([
       MoveObject().startMoving(asset, positions[currentAsset]),
       MoveObject().startMoving(spotlight, positions[currentAsset]),
-      // spotlight.position.set(positions[currentAsset].x, positions[currentAsset].y, positions[currentAsset].z),
     ]);
   };
 
