@@ -373,96 +373,101 @@ export default defineComponent({
     };
 
     const buildStory = async (_currenStoryId: string) => {
-      props.stateService.changeState(FlowState.buildFrame);
-      audio = AudioHelper(threeSvc).setAudioTrack(storyService.activeStory, currentFrame);
-      if (audio == null) {
-        timing();
-      }
+      if (props.stateService.getCurrentState() != FlowState[4]) {
+        props.stateService.changeState(FlowState.buildFrame);
+        audio = AudioHelper(threeSvc).setAudioTrack(
+          storyService.activeStory,
+          currentFrame,
+        );
+        if (audio == null) {
+          timing();
+        }
 
-      const subtitleLink = useFrame(threeSvc).getSubtitleForFrame(
-        storyService.activeStory.frames?.[currentFrame] as unknown as Frame,
-      );
-      // TODO: await or not await for subtitles?
-      subtitleService.downloadSRTFile(subtitleLink as string);
+        const subtitleLink = useFrame(threeSvc).getSubtitleForFrame(
+          storyService.activeStory.frames?.[currentFrame] as unknown as Frame,
+        );
+        // TODO: await or not await for subtitles?
+        subtitleService.downloadSRTFile(subtitleLink as string);
 
-      let progress: Array<Group> = [];
+        let progress: Array<Group> = [];
 
-      if (audio != null) {
-        audio.ontimeupdate = () => {
-          if (audio && showProgressOfFrame) {
-            progress = PlayBookBuild(
-              threeSvc,
-              storyService,
-              zoneService,
-              taggingService,
-              framePlaybook,
-              spotlight,
-              storyService.activeStory,
-            ).progressOfFrame(
-              currentFrame,
-              storyService.getStoryColor(storyService.activeStory.id),
-              audio.currentTime,
-              audioDuration,
-              progress,
+        if (audio != null) {
+          audio.ontimeupdate = () => {
+            if (audio && showProgressOfFrame) {
+              progress = PlayBookBuild(
+                threeSvc,
+                storyService,
+                zoneService,
+                taggingService,
+                framePlaybook,
+                spotlight,
+                storyService.activeStory,
+              ).progressOfFrame(
+                currentFrame,
+                storyService.getStoryColor(storyService.activeStory.id),
+                audio.currentTime,
+                audioDuration,
+                progress,
+              );
+            }
+          };
+          audio.onloadedmetadata = () => {
+            if (audio) {
+              audioDuration = audio.duration;
+              // REVIEW:maybe duplicate
+              // setAfterFrameScreen();
+              audio.play();
+              timing();
+            }
+          };
+        }
+
+        const framePlaybook = PlayBook();
+
+        PlayBookBuild(
+          threeSvc,
+          storyService,
+          zoneService,
+          taggingService,
+          framePlaybook,
+          spotlight,
+          storyService.activeStory,
+        ).storyCircle(
+          currentFrame,
+          storyService.getStoryColor(storyService.activeStory.id),
+          !taggingService.idAlreadyInList(storyService.activeStory.id),
+        );
+
+        await PlayBookBuild(
+          threeSvc,
+          storyService,
+          zoneService,
+          taggingService,
+          framePlaybook,
+          spotlight,
+          storyService.activeStory,
+        ).frameOverview(
+          currentFrame,
+          storyService.getStoryColor(storyService.activeStory.id),
+          garbageHelper,
+        );
+        playBook.mergeActionsWithPlaybook(framePlaybook.getSortedPlayBookActions());
+
+        playBook.addToPlayBook(
+          () => {
+            MoveObject().startMoving(spotlight, zoneService.middleZoneCenter);
+            CustomAnimation().shrink(
+              spotlight as Mesh<any, MeshBasicMaterial>,
+              Measurements().storyCircle.radius,
+              AnimationDefaults.values.scaleStep,
             );
-          }
-        };
-        audio.onloadedmetadata = () => {
-          if (audio) {
-            audioDuration = audio.duration;
-            // REVIEW:maybe duplicate
-            // setAfterFrameScreen();
-            audio.play();
-            timing();
-          }
-        };
+            3;
+          },
+          playBook.lastAction().time + Timing.delayToPauseScreen,
+          'Move the spotlight to the center of the screen until the frame ends',
+        );
+        setAfterFrameScreen();
       }
-
-      const framePlaybook = PlayBook();
-
-      PlayBookBuild(
-        threeSvc,
-        storyService,
-        zoneService,
-        taggingService,
-        framePlaybook,
-        spotlight,
-        storyService.activeStory,
-      ).storyCircle(
-        currentFrame,
-        storyService.getStoryColor(storyService.activeStory.id),
-        !taggingService.idAlreadyInList(storyService.activeStory.id),
-      );
-
-      await PlayBookBuild(
-        threeSvc,
-        storyService,
-        zoneService,
-        taggingService,
-        framePlaybook,
-        spotlight,
-        storyService.activeStory,
-      ).frameOverview(
-        currentFrame,
-        storyService.getStoryColor(storyService.activeStory.id),
-        garbageHelper,
-      );
-      playBook.mergeActionsWithPlaybook(framePlaybook.getSortedPlayBookActions());
-
-      playBook.addToPlayBook(
-        () => {
-          MoveObject().startMoving(spotlight, zoneService.middleZoneCenter);
-          CustomAnimation().shrink(
-            spotlight as Mesh<any, MeshBasicMaterial>,
-            Measurements().storyCircle.radius,
-            AnimationDefaults.values.scaleStep,
-          );
-          3;
-        },
-        playBook.lastAction().time + Timing.delayToPauseScreen,
-        'Move the spotlight to the center of the screen until the frame ends',
-      );
-      setAfterFrameScreen();
     };
 
     const setAfterFrameScreen = () => {
