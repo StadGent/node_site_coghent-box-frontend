@@ -136,7 +136,7 @@ export default class StoryService {
   }
 
   fillUpDataSources() {
-    if (this.stories.length > 0) {
+    if (this.stories && this.stories.length > 0) {
       this.stories.map((story, index) => {
         this.addStoryIdToStoryIds(story);
         this.storyData.push(this.createStoryDataObject(story, index));

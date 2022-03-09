@@ -57,17 +57,19 @@ export default defineComponent({
 
     onResult((_stories) => {
       stories.value = _stories.data.ActiveBox.results;
+      console.log('stories',stories.value)
       canScanTicket.value = true;
     });
 
     watch(visitercode, async (value) => {
       console.log('visitercode value', value);
+      console.log('can scan ticket', canScanTicket.value)
       if (canScanTicket.value) {
         const storyRelations = (await useBoxVisiter(apolloClient).getRelationsByType(
           visitercode.value,
           RelationType.Stories,
         )) as Array<Relation>;
-
+"71619587"
         const tmpStoryService = createTempStoryService(storyRelations);
 
         const storiesToSee = getUnseenStories(
@@ -134,6 +136,7 @@ export default defineComponent({
         if (visiterByCode != null) {
           visitercode.value = String(code);
           visiter.value = visiterByCode;
+          console.log('code set')
         }
       } else {
         stateService.changeState(FlowState.storyOverview);

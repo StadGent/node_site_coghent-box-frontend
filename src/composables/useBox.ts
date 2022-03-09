@@ -3,7 +3,11 @@ import { StoryData } from '@/services/StoryService'
 export const getUnseenStories = (_storyData: Array<StoryData>) => {
   const storiesToSee: Array<StoryData> = []
   for (const story of _storyData) {
-    if (story.totalOfFrames > story.totalOfFramesSeen) {
+    let totalOfFrames = 0
+    if(story.totalOfFrames ){
+      totalOfFrames = story.totalOfFrames
+    }
+    if (totalOfFrames > story.totalOfFramesSeen) {
       storiesToSee.push(story)
     }
   }
