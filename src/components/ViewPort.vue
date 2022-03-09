@@ -555,6 +555,7 @@ export default defineComponent({
       subtitleService = new SubtitleService();
       threeSvc.ClearScene();
       initState();
+      Tools().displayZones(threeSvc, zoneService.zones);
       threeSvc.Animate();
     });
     return { viewport, videoElement, subtitles };
@@ -580,6 +581,7 @@ export default defineComponent({
 
 .viewport {
   position: relative;
+  overflow: hidden;
 }
 
 .viewport::before {
