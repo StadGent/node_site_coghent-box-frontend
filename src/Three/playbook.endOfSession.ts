@@ -15,7 +15,6 @@ const useEndOfSession = (
   const create = async () => {
     threeService.AddGroupsToScene(EndOfSession(zoneService).create(), Tags.EndOfSession, 'The endOfSession screen.');
     await TimerCountdown(threeService).start(Timing.endOfSession.countdown,Positions().timerCountdown())
-    alert()
     Promise.resolve();
   };
 
