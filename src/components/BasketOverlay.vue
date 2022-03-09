@@ -2,7 +2,8 @@
   <base-overlay :overlayState="BasketOverlayState.state">
     <section class="w-full">
       <the-masonry
-        :entities="{ results: basketEntities }"
+        v-if="basketEntities.length == basketItems.length"
+        :entities="undefined"
         :loading="loadingBasketItem"
         :generateUrl="generateUrl"
         :noImageUrl="noImageUrl"
@@ -32,6 +33,9 @@
     RelationType,
   } from 'coghent-vue-3-component-library/lib/queries';
   import useIIIF from '@/composables/useIIIF';
+  import { useBoxVisiter } from 'coghent-vue-3-component-library';
+  import { apolloClient } from '@/main';
+  import { getBoxVisitEntitiesById } from '@/services/Fabric/helper.boxvisit';
 
   export type OverlayState = 'show' | 'hide' | 'loading';
 
@@ -79,41 +83,15 @@
     setup(props) {
       const { closeBasketOverlay, openBasketOverlay, BasketOverlayState } =
         useBasketOverlay();
-      const basketEntities = ref<Entity[]>([]);
       const { generateUrl, noImageUrl } = useIIIF();
+      console.log(props.basketItems.map((item: Relation) => item.key));
 
-      const {
-        result: basketItemResult,
-        onResult: onBasketItemResult,
-        loading: loadingBasketItem,
-        refetch: refetchBasketItem,
-      } = useQuery(GetEntityByIdDocument, {
-        id: '',
-      });
-
-      props.basketItems.forEach((basketItem: Relation) => {
-        refetchBasketItem({ id: basketItem.key.replace('entities/', '') });
-      });
-
-      onBasketItemResult((queryResult) => {
-        if (
-          queryResult?.data?.Entity &&
-          !basketEntities?.value?.find(
-            (basketEntity: Entity) => basketEntity?.id == queryResult?.data?.Entity?.id,
-          )
-        ) {
-          const newBasketEntity: Entity = queryResult.data.Entity;
-          basketEntities.value.push(newBasketEntity);
-        }
-        console.log({ basketEntities });
-      });
+      getBoxVisitEntitiesById(props.basketItems.map((item: Relation) => item.key));
 
       return {
         closeBasketOverlay,
         openBasketOverlay,
         BasketOverlayState,
-        basketEntities,
-        loadingBasketItem,
         generateUrl,
         noImageUrl,
       };

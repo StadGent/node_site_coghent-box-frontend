@@ -33,8 +33,8 @@
         <story-item
           v-for="(storyAsset, index) in activeBoxResult.ActiveBox.results"
           :key="storyAsset.id"
+          :story="storyAsset"
           :story-number="index + 1"
-          :story-name="storyAsset.title[0].value"
           :story-entities="storyAsset.frames"
           :story-color="colors[index]"
           :loading="loadingActiveBoxResult"

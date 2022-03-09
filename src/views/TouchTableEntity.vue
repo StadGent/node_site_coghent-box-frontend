@@ -68,7 +68,11 @@
   import ShutdownModal from '@/components/ShutdownModal.vue';
   import RelationBrowser from '@/components/RelationBrowser.vue';
   import { fabricdefaults } from '../services/Fabric/defaults.fabric';
-  import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
+  import {
+    Relation,
+    Entity,
+    RelationsResults,
+  } from 'coghent-vue-3-component-library/lib/queries';
   import IIIFModal, { useIIIFModal } from '@/components/IIIFModal.vue';
   import { router } from '@/router';
   import { IIIFImageUrlHelper } from '../services/Fabric/helper.fabric';
@@ -160,7 +164,6 @@
         () => {
           console.log('Refetch entity');
           // refetch({ id: asString(route.params.entityID) });
-          window.sessionStorage.setItem('historyEntity', JSON.stringify(entity.value));
           mutateHistory();
           router.go(0);
         },
@@ -247,7 +250,7 @@
         fabricService?.highlightRelatedFrames(filterIndex, relationsArray.value);
       };
 
-      onEntityResult((queryResult: any) => {
+      onEntityResult((queryResult) => {
         if (queryResult.data) {
           console.log('new canvas');
           fabricService = undefined;
@@ -258,8 +261,6 @@
           getRelations(queryResult.data.Entity);
           headEntityId.value = queryResult.data.Entity.id;
           entity.value = queryResult.data.Entity;
-          console.log('generate bar');
-          console.log(getTouchTableHistory());
 
           if (startAsset.value && boxVisiter.value) {
             const startEntity = startAsset.value;
@@ -276,7 +277,7 @@
         }
       });
 
-      onRelationResult((relationResult) => {
+      onRelationResult((relationResult: any) => {
         console.log('Relation result');
         if (relationResult.data && fabricService) {
           const relationEntities = relationResult.data.Entities?.results;
@@ -335,10 +336,6 @@
           );
         }
       });
-
-      if (!boxVisiter.value) {
-        router.push('/touchtable/start');
-      }
 
       return {
         entity,

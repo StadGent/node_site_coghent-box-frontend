@@ -10,7 +10,7 @@
       </div>
       <div>
         <h2 :class="`text-5xl font-bold text-${storyColor}`">
-          {{ storyName }}
+          {{ story.title[0].value }}
         </h2>
       </div>
     </section>
@@ -66,8 +66,8 @@
     name: 'StoryItem',
     components: { TheMasonry, BaseIcon },
     props: {
-      storyName: {
-        type: String,
+      story: {
+        type: Object,
         required: true,
       },
       storyNumber: {
@@ -91,7 +91,7 @@
       const { generateUrl, noImageUrl } = useIIIF();
       const masonry = ref<any>(null);
       const entityData = ref({ results: [] });
-      const { boxVisiter, setStartAsset } = useBoxVisiter(apolloClient);
+      const { boxVisiter, setStartAsset, setSelectedStory } = useBoxVisiter(apolloClient);
       const relation = boxVisiter.value.relations.find(
         (relation: any) => relation.type === 'stories',
       );
@@ -115,6 +115,11 @@
       const navigateToTouchtable = (entity: Entity) => {
         setStartAsset(entity);
         router.push('/touchtable/' + entity.id);
+        setSelectedStory({
+          id: props.story.id,
+          color: props.storyColor,
+          title: props.story.title[0].value,
+        });
       };
 
       return {
