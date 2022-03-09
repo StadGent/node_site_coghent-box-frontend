@@ -129,7 +129,7 @@ const useFrameAssetOverview = (
     );
     const collections = useAsset(threeService).getCollections(assets[currentAsset]);
     const title = useAsset(threeService).getTitle(assets[currentAsset]);
-    const metadataInfo = useAsset(threeService).addMetadata(
+    const metadataInfo = await useAsset(threeService).addMetadata(
       asset,
       storyColor,
       `${title} ${collections[0] ? `, (${collections[0].value}0` : ''}`,

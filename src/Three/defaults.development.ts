@@ -8,12 +8,12 @@ const Development = (): {
   stateLogs: () => true | false;
   sceneLogs: () => true | false;
 } => {
-  const showZonesInOverview = () => false;
+  const showZonesInOverview = () => true;
   const showDevTimeLogs = () => false;
   const showGarbageLogs = () => false;
   const showMoveLogs = () => false;
   const showSubtitleLogs = () => false;
-  const showBuildLogs = () => false;
+  const showBuildLogs = () => true;
   const stateLogs = () => false;
   const sceneLogs = () => false;
 

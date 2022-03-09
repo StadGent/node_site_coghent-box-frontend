@@ -83,7 +83,7 @@ const CustomAnimation = (): {
     const ring = CountDownCircle(_position, 2, _radius, _thickness);
     _threeService.AddToScene(ring, _tags[0]);
       let progress = 0;
-      const countdownNumber = TimerCountdown(_threeService).createNumber(_count.toString(), new Vector3(_position.x + _textCorrection.x, _position.y + _textCorrection.y, Layers.scene), _fontSize);
+      const countdownNumber = await TimerCountdown(_threeService).createNumber(_count.toString(), new Vector3(_position.x + _textCorrection.x, _position.y + _textCorrection.y, Layers.scene), _fontSize);
       _threeService.AddToScene(countdownNumber, _tags[1])
       while (progress <= 1) {
         const ring_progress = CountDownCircle(_position, progress, _radius, _thickness, Colors().white);

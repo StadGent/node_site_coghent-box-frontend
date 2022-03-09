@@ -37,7 +37,7 @@ const useAsset = (
     object: Mesh<BoxBufferGeometry, any>,
     color: number,
     text: string,
-  ) => Group;
+  ) => Promise<Group>;
   getAssetsFromFrame: (activeStory: Entity, frame: number) => Array<Entity>;
   connectRelationMetadata: (
     parent: Frame | Story,
@@ -112,18 +112,18 @@ const useAsset = (
     await CustomAnimation().grow(assetImageCube, scale, AnimationDefaults.values.scaleStep);
   };
 
-  const addMetadata = (
+  const addMetadata = async (
     object: Mesh<BoxBufferGeometry, any>,
     color: number,
     text: string,
   ) => {
-    const metadataInfo = MetadataLabel(
+    const metadataInfo = (await MetadataLabel(
       new Vector3(
         object.position.x,
         object.position.y + ((object.geometry.parameters.height / 2) * object.scale.x) + 0.6,
         Layers.scene + Layers.fraction
       )
-    ).create(text, color).metadata;
+    ).create(text, color)).metadata;
     return metadataInfo;
   };
 

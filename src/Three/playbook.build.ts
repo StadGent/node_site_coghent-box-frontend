@@ -169,7 +169,7 @@ const PlayBookBuild = (
       ),
       storyService.activeStoryData,
     );
-    await SceneHelper(threeService, storyService).addPauseScreenObjectsToScene(StoryPaused(taggingService, zoneService, storyService).Create(inactiveStories), zoneService.sceneZone());
+    await SceneHelper(threeService, storyService).addPauseScreenObjectsToScene(await StoryPaused(taggingService, zoneService, storyService).Create(inactiveStories), zoneService.sceneZone());
     await MoveObject().startMoving(spotlight, new Vector3(0.01, -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight, Layers.scene));
 
     await CustomAnimation().fadeOut(taggingService.getByTag(Tags.ActiveStoryCircleShade)[0].object, -1, AnimationDefaults.values.fadeStep);
@@ -180,7 +180,7 @@ const PlayBookBuild = (
   const storyPausedWithNoActiveStory = async () => {
     logBuild('storyPausedWithNoActiveStory')
     CustomAnimation().grow(spotlight as Mesh<any, MeshBasicMaterial>, Measurements().pauseScreen.spotLightRadius, AnimationDefaults.values.scaleStep);
-    await SceneHelper(threeService, storyService).addPauseScreenObjectsToScene(StoryPaused(taggingService, zoneService, storyService).Create(storyService.getStoryData()), zoneService.sceneZone());
+    await SceneHelper(threeService, storyService).addPauseScreenObjectsToScene(await StoryPaused(taggingService, zoneService, storyService).Create(storyService.getStoryData()), zoneService.sceneZone());
     await MoveObject().startMoving(spotlight, new Vector3(0.01, -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight, Layers.scene));
   };
 

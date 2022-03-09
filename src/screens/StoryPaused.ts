@@ -28,11 +28,11 @@ export type PauseScreenObjects = {
 
 
 const StoryPaused = (taggingService: TaggingService, zoneService: ZoneService, _storyService: StoryService): {
-  Create: (_storyData: Array<StoryData>) => PauseScreenObjects;
+  Create: (_storyData: Array<StoryData>) => Promise<PauseScreenObjects>;
 } => {
   const bannerTopPosition = -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight;
   const bannerCenterPosition = -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight / 2;
-  const storyCircle = (_storyData:StoryData, story: Entity, position: Vector3, storyColor: number) => {
+  const storyCircle = (_storyData: StoryData, story: Entity, position: Vector3, storyColor: number) => {
     const titleCircle = StoryCircle(_storyService).Create(
       _storyData,
       useStory(_storyService).title(story),
@@ -42,9 +42,9 @@ const StoryPaused = (taggingService: TaggingService, zoneService: ZoneService, _
     return titleCircle;
   };
 
-  const storyEndText = () => {
+  const storyEndText = async () => {
     const groups: Array<Group> = [];
-    const text = TextHelper().CreateTextFromRecord(
+    const text = await TextHelper().CreateTextFromRecord(
       HelperText().EndOfStory(new Vector3(-1.4, bannerCenterPosition, 0)),
       Colors().white,
     );
@@ -68,20 +68,20 @@ const StoryPaused = (taggingService: TaggingService, zoneService: ZoneService, _
     } as CubeSchema);
   };
 
-  const Create = (_storyData: Array<StoryData>) => {
+  const Create = async (_storyData: Array<StoryData>) => {
     const storyCircles: Record<string, StoryCircleObjects> = {};
 
-    _storyData.forEach(_data => {
-      storyCircles[_data.storyId] = storyCircle(
+    for (const _data of _storyData) {
+      storyCircles[_data.storyId] = await storyCircle(
         _data,
         useStory(_storyService).getStory(_data.storyId),
-        new Vector3(_data.pausedPosition.x, bannerTopPosition,_data.pausedPosition.z),
+        new Vector3(_data.pausedPosition.x, bannerTopPosition, _data.pausedPosition.z),
         _data.storyColor,
       )
-    });
+    }
 
     return {
-      text: storyEndText(),
+      text: await storyEndText(),
       banner: blackBanner(),
       storyCircles: storyCircles,
     };

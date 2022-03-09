@@ -1,6 +1,6 @@
 <template>
-  <label :v-if="visitercode == null" for="">
-    <input type="text" v-model="inputValue" /><button @click="getCode(inputValue)">
+  <label class="absolute left-0 top-0" :v-if="visitercode == null" for="">
+    <input class="z-50 relative" type="text" v-model="inputValue" /><button class="z-50 relative" @click="getCode(inputValue)">
       Submit
     </button>
   </label>

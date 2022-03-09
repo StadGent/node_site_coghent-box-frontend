@@ -9,16 +9,16 @@ import { CubeParams } from './schema.cube';
 import { FontParams } from './schema.text';
 
 type TimeObjects = {
-  minutesOne: Mesh,
-  minutesTwo: Mesh,
-  secondsOne: Mesh,
-  secondsTwo: Mesh,
-  semiColon: Mesh,
+  minutesOne: Promise<Mesh>,
+  minutesTwo: Promise<Mesh>,
+  secondsOne: Promise<Mesh>,
+  secondsTwo: Promise<Mesh>,
+  semiColon:  Promise<Mesh>,
 }
 
 const TimerCountdown = (_threeService: ThreeService): {
   start: (_timeInMiliseconds: number, _position: Vector3) => Promise<void>;
-  createNumber: (_time: string, _position: Vector3, _size: number) => Mesh<BufferGeometry,any>
+  createNumber: (_time: string, _position: Vector3, _size: number) => Promise<Mesh<BufferGeometry,any>>
 } => {
 
   const addZeroIfTimeIsUnderTen = (_time: number) => {
@@ -40,8 +40,8 @@ const TimerCountdown = (_threeService: ThreeService): {
     return letters;
   }
 
-  const createNumber = (_time: string, _position: Vector3, _size: number) => {
-    return TextHelper().CreateText(
+  const createNumber = async (_time: string, _position: Vector3, _size: number) => {
+    return await TextHelper().CreateText(
       _time,
       _position,
       { width: 1, height: 1, } as CubeParams,
@@ -59,19 +59,19 @@ const TimerCountdown = (_threeService: ThreeService): {
     return devideStringInSingleParts(addZeroIfTimeIsUnderTen(seconds));
   }
 
-  const create = (_position: Vector3, _currentTime: number) => {
-    const minutesOne = createNumber(getMinutes(_currentTime)[0], _position, Measurements().text.size.veryBig)
-    const minutesTwo = createNumber(getMinutes(_currentTime)[1], _position, Measurements().text.size.veryBig)
+  const create = async (_position: Vector3, _currentTime: number) => {
+    const minutesOne = await createNumber(getMinutes(_currentTime)[0], _position, Measurements().text.size.veryBig)
+    const minutesTwo = await createNumber(getMinutes(_currentTime)[1], _position, Measurements().text.size.veryBig)
 
     minutesTwo.position.setX(_position.x - Measurements().text.size.veryBig);
     minutesOne.position.setX(minutesTwo.position.x - Measurements().text.size.veryBig + 0.2);
-    const secondsOne = createNumber(getSeconds(_currentTime)[0], _position,Measurements().text.size.veryBig)
-    const secondsTwo = createNumber(getSeconds(_currentTime)[1], _position,Measurements().text.size.veryBig)
+    const secondsOne = await createNumber(getSeconds(_currentTime)[0], _position,Measurements().text.size.veryBig)
+    const secondsTwo = await createNumber(getSeconds(_currentTime)[1], _position,Measurements().text.size.veryBig)
 
-    secondsOne.position.setX(_position.x + Measurements().text.size.veryBig / 2 - 0.2);
-    secondsTwo.position.setX(secondsOne.position.x + Measurements().text.size.veryBig - 0.2);
+    ;(await secondsOne).position.setX(_position.x + Measurements().text.size.veryBig / 2 - 0.2);
+    (await secondsTwo).position.setX((await secondsOne).position.x + Measurements().text.size.veryBig - 0.2);
 
-    const semiColon = createNumber(':', _position, Measurements().text.size.veryBig);
+    const semiColon = await createNumber(':', _position, Measurements().text.size.veryBig);
 
     if ((Math.floor((_currentTime / 1000) % 60) + 1) % 10 == 0) {
       _threeService.AddToScene(secondsOne, Tags.Countdown, 'EndOfSession countdown timer');
@@ -84,7 +84,7 @@ const TimerCountdown = (_threeService: ThreeService): {
       secondsOne: secondsOne,
       secondsTwo: secondsTwo,
       semiColon: semiColon,
-    } as TimeObjects;
+    } as unknown as TimeObjects;
   };
 
   const updateTime = (_objects: TimeObjects, _currentTime: number, _initial: boolean) => {
@@ -102,7 +102,7 @@ const TimerCountdown = (_threeService: ThreeService): {
     let currentTime = _timeInMiliseconds;
     let initial = true;
     do {
-      const times = create(_position, currentTime);
+      const times = await create(_position, currentTime);
       if(initial){
         updateTime(times, currentTime, initial);
         initial = false;

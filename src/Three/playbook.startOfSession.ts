@@ -5,7 +5,7 @@ import ScanQR from '@/screens/ScanQR';
 import { Tags } from '@/services/TaggingService';
 import ThreeService from '@/services/ThreeService';
 import ZoneService from '@/services/ZoneService';
-import { Mesh, MeshBasicMaterial, Vector3 } from 'three';
+import { Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
 import AnimationDefaults from './defaults.animation';
 import Layers from './defaults.layers';
 import Measurements from './defaults.measurements';
@@ -16,7 +16,7 @@ const useStartOfSession = (
   zoneService: ZoneService,
   spotlight: Mesh,
 ): {
-  showScanImage: () => void
+  showScanImage: () => Promise<Array<Group>>
   create: () => Promise<true | false>;
 } => {
   const setSpotlightOnPosition = () => {
@@ -33,9 +33,9 @@ const useStartOfSession = (
     );
   };
 
-  const showScanImage = () => {
+  const showScanImage = async () => {
     setSpotlightOnPosition();
-    const scanText = ScanQR(
+    const scanText = await ScanQR(
       new Vector3(
         zoneService.zoneCenters[0].x,
         zoneService.zoneCenters[0].y - 1,

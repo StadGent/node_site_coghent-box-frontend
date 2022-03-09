@@ -41,9 +41,9 @@ const StoryCircle = (_storyService: StoryService): {
     title: string,
     circleSchema: CircleSchema,
     iconUrl: string,
-  ) => StoryCircleObjects;
+  ) => Promise<StoryCircleObjects>;
   shadedCircle: (schema: CircleSchema) => Mesh<CircleGeometry, MeshBasicMaterial>;
-  title: (title: string, position: Vector3, color: number) => Mesh<BufferGeometry, any>;
+  title: (title: string, position: Vector3, color: number) => Promise<Mesh<BufferGeometry, any>>;
   progressOfFrames: (_position: Vector3, _color: number, _storyData: StoryData) => PauseProgressbarObjects;
 } => {
   const main = (schema: CircleSchema) => {
@@ -70,8 +70,8 @@ const StoryCircle = (_storyService: StoryService): {
     return SchemaCube().CreateImageCube(schema);
   };
 
-  const title = (title: string, position: Vector3, color: number) => {
-    const storyTitle = TextHelper().CreateText(
+  const title = async (title: string, position: Vector3, color: number) => {
+    const storyTitle = await TextHelper().CreateText(
       title,
       position,
       {
@@ -94,7 +94,7 @@ const StoryCircle = (_storyService: StoryService): {
       } as CircleSchema);
   }
 
-  const Create = (
+  const Create =  async (
     storyData: StoryData,
     storyTitle: string,
     circleSchema: CircleSchema,
@@ -109,7 +109,7 @@ const StoryCircle = (_storyService: StoryService): {
       storyData,
     );
     const storyText =
-      title(
+      await title(
         storyTitle,
         new Vector3(
           templateLayers.title.x - Measurements().storyCircle.correctionText,

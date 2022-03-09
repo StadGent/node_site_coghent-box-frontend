@@ -10,7 +10,7 @@ import GroupHelper from '@/Three/helper.group';
 import Images from '@/Three/defaults.images';
 
 const ScanQR = (position: Vector3): {
-  create: () => Array<Group>;
+  create: () => Promise<Array<Group>>;
 } => {
 
   const arrow = () => {
@@ -18,9 +18,9 @@ const ScanQR = (position: Vector3): {
     return cube;
   }
   
-  const create = () => {
+  const create = async () => {
     const groups: Array<Group> = [];
-    const textWithIcon = TextHelper().displayTextFromRecordWithIcon(HelperText().scanYourTicket(position),Colors().white,Images.startOfSession.scanQrCode,position,new Vector3(2,3,0));
+    const textWithIcon = await TextHelper().displayTextFromRecordWithIcon(HelperText().scanYourTicket(position),Colors().white,Images.startOfSession.scanQrCode,position,new Vector3(2,3,0));
     const direction = arrow();
     GroupHelper().AddObjectsTogroups(textWithIcon, groups);
     GroupHelper().AddObjectsTogroups([direction], groups);

@@ -20,7 +20,7 @@ export type TextSchema = {
 };
 
 const SchemaText = (): {
-  LoadText: (schema: TextSchema, opacity: number) => Mesh;
+  LoadText: (schema: TextSchema, opacity: number) => Promise<Mesh>;
 } => {
   const loader = new FontLoader();
   const CreateTextBox = (params: CubeParams, position: Vector3) => {
@@ -50,7 +50,7 @@ const SchemaText = (): {
     return geometry;
   };
 
-  const LoadText = (schema: TextSchema, opacity: number) => {
+  const LoadText = async (schema: TextSchema, opacity: number) => {
     const txtBox = CreateTextBox(
       {
         height: schema.textBoxParams.height,
@@ -60,6 +60,9 @@ const SchemaText = (): {
       schema.position,
     );
     let txt_msh : unknown;
+    const loaded = await loader.loadAsync(schema.fontParams.path)
+
+    //FIXME:
     loader.load(schema.fontParams.path, function (font: any) {
       const txtGeometry = CreateTextGeometry(schema.text, schema.fontParams.size, font);
       const txt_mat = new MeshBasicMaterial({

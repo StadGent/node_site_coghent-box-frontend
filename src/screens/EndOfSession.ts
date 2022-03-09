@@ -13,19 +13,19 @@ import Measurements from '@/Three/defaults.measurements';
 const EndOfSession = (
   zoneService: ZoneService,
 ): {
-  scanTicket: () => Array<Group>;
-  goToTouchtable: () => Array<Group>;
-  goOnline: () => Array<Group>;
-  create: () => Array<Group>;
+  scanTicket: () => Promise<Array<Group>>;
+  goToTouchtable: () => Promise<Array<Group>>;
+  goOnline: () => Promise<Array<Group>>;
+  create: () => Promise<Array<Group>>;
 } => {
-  const scanTicket = () => {
+  const scanTicket = async () => {
     const groups: Array<Group> = [];
     GroupHelper().AddObjectsTogroups(
       [Spot().create(zoneService.zoneCenters[0], Measurements().spotLight.radius)],
       groups,
     );
     GroupHelper().AddObjectsTogroups(
-      TextHelper().displayTextFromRecordWithIcon(
+      await TextHelper().displayTextFromRecordWithIcon(
         HelperText().scanYourTicketAgain(new Vector3(zoneService.zoneCenters[0].x - 1.5,zoneService.zoneCenters[0].y,zoneService.zoneCenters[0].z)),
         Colors().white,
         Images.endOfSession['scanQrCode'],
@@ -36,10 +36,10 @@ const EndOfSession = (
     );
     return groups;
   };
-  const goToTouchtable = () => {
+  const goToTouchtable = async () => {
     const groups: Array<Group> = [];
     GroupHelper().AddObjectsTogroups(
-      TextHelper().displayTextFromRecordWithIcon(
+      await TextHelper().displayTextFromRecordWithIcon(
         HelperText().WalkToTouchtable(new Vector3(-1.5,0,0)),
         Colors().white,
         Images.endOfSession['touchtable'],
@@ -50,14 +50,14 @@ const EndOfSession = (
     );
     return groups;
   };
-  const goOnline = () => {
+  const goOnline = async () => {
     const groups: Array<Group> = [];
     GroupHelper().AddObjectsTogroups(
       [Spot().create(new Vector3(zoneService.zoneCenters[zoneService.zoneCenters.length - 1].x, zoneService.zoneCenters[zoneService.zoneCenters.length - 1].y, zoneService.zoneCenters[zoneService.zoneCenters.length - 1].z), Measurements().spotLight.radius)],
       groups,
     );
     GroupHelper().AddObjectsTogroups(
-      TextHelper().displayTextFromRecordWithIcon(
+      await TextHelper().displayTextFromRecordWithIcon(
         HelperText().goToWebPortal(new Vector3(zoneService.zoneCenters[zoneService.zoneCenters.length - 1].x - 2, zoneService.zoneCenters[zoneService.zoneCenters.length - 1].y, zoneService.zoneCenters[zoneService.zoneCenters.length - 1].z)),
         Colors().white,
         Images.endOfSession['webPortal'],
@@ -80,11 +80,11 @@ const EndOfSession = (
     return text;
   };
 
-  const create = () => {
+  const create = async () => {
     const groups: Array<Group> = [];
-    GroupHelper().AddObjectsTogroups(scanTicket(), groups);
-    GroupHelper().AddObjectsTogroups(goToTouchtable(), groups);
-    GroupHelper().AddObjectsTogroups(goOnline(), groups);
+    GroupHelper().AddObjectsTogroups(await scanTicket(), groups);
+    GroupHelper().AddObjectsTogroups(await goToTouchtable(), groups);
+    GroupHelper().AddObjectsTogroups(await goOnline(), groups);
     GroupHelper().AddObjectsTogroups(
       [
         orOption(new Vector3(zoneService.zoneCenters[1].x, zoneService.zoneCenters[1].y - 1, zoneService.zoneCenters[1].z)),
