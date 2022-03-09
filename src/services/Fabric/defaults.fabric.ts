@@ -51,6 +51,7 @@ type FabricDefaults = {
       };
     };
     infoBar: {
+      height: number;
       startFrame: {
         text: {
           position: {
@@ -116,10 +117,10 @@ type FabricDefaults = {
 const fabricdefaults: FabricDefaults = {
   canvas: {
     header: {
-      height: 160,
+      height: 100,
     },
     relationBrowser: {
-      height: 100,
+      height: 80,
       selectedRelationBorder: {
         color: '#02A77F',
         stroke: 10,
@@ -130,17 +131,17 @@ const fabricdefaults: FabricDefaults = {
     },
     relationLimit: 4,
     dimensions: {
-      width: 3840,
-      height: 1900,
+      width: 1920,
+      height: 900,
     },
     selectedImage: {
       canvasPosition: {
-        left: 3840 / 2,
-        top: 1900 - 50,
+        left: 1920 / 2,
+        top: 880 - 50,
       },
       scale: {
-        scaleX: 0.4,
-        scaleY: 0.4,
+        scaleX: 0.25,
+        scaleY: 0.25,
       },
       controls: {
         bl: false,
@@ -164,11 +165,12 @@ const fabricdefaults: FabricDefaults = {
       },
     },
     infoBar: {
+      height: 400,
       startFrame: {
         text: {
           position: {
-            x: 3840 / 2 - 300,
-            y: 1900 - 300,
+            x: 1920 / 2 - 300,
+            y: 880 - 300,
           },
           origin: {
             originX: 'right',
@@ -178,12 +180,12 @@ const fabricdefaults: FabricDefaults = {
           fontFamily: 'Avenir',
         },
         position: {
-          top: 1900 - 50,
-          left: 3840 / 2 - 300,
+          top: 1920 - 50,
+          left: 1080 / 2 - 300,
         },
         scale: {
-          scaleX: 0.3,
-          scaleY: 0.3,
+          scaleX: 0.2,
+          scaleY: 0.2,
         },
         origin: {
           originX: 'right',
@@ -193,8 +195,8 @@ const fabricdefaults: FabricDefaults = {
       historyFrame: {
         text: {
           position: {
-            x: 3840 / 2 + 300,
-            y: 1900 - 300,
+            x: 1920 / 2 + 300,
+            y: 880 - 300,
           },
           origin: {
             originX: 'left',
@@ -204,12 +206,12 @@ const fabricdefaults: FabricDefaults = {
           fontFamily: 'Avenir',
         },
         position: {
-          top: 1900 - 50,
-          left: 3840 / 2 + 300,
+          top: 880 - 50,
+          left: 1920 / 2 + 300,
         },
         scale: {
-          scaleX: 0.3,
-          scaleY: 0.3,
+          scaleX: 0.2,
+          scaleY: 0.2,
         },
         origin: {
           originX: 'left',
@@ -220,21 +222,23 @@ const fabricdefaults: FabricDefaults = {
     secondaryImage: {
       positions: {
         xAxis: [
-          3840 / 7,
-          (3840 / 7) * 2,
-          (3840 / 7) * 3,
-          (3840 / 7) * 4,
-          (3840 / 7) * 5,
-          (3840 / 7) * 6,
-          (3840 / 7) * 7,
+          1920 / 6,
+          (1920 / 6) * 2,
+          (1920 / 6) * 3,
+          (1920 / 6) * 4,
+          (1920 / 6) * 5,
+          (1920 / 6) * 6,
         ],
-        yAxis: [1900 / 6 - 300, 1900 / 6, (1900 / 6) * 2, (1900 / 6) * 3, (1900 / 6) * 4],
-        blockedPositions: [{ xIndex: 2, yIndex: 4 }],
+        yAxis: [-100, 0, 250, 400],
+        blockedPositions: [
+          { xIndex: 3, yIndex: 3 },
+          { xIndex: 2, yIndex: 3 },
+        ],
         range: 1,
       },
       scale: {
-        scaleX: 0.3,
-        scaleY: 0.3,
+        scaleX: 0.2,
+        scaleY: 0.2,
       },
     },
   },

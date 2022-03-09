@@ -2,7 +2,7 @@
   <section class="py-24">
     <section class="flex items-center">
       <div
-        :class="`flex justify-center items-center mr-12 h-52 w-52 z-40 rounded-full bg-${storyColor} shadow-${storyColor}`"
+        :class="`flex justify-center items-center mr-12 h-48 w-48 z-40 rounded-full bg-${storyColor} shadow-${storyColor}`"
       >
         <p class="font-bold text-7xl text-text-white">
           {{ storyNumber }}

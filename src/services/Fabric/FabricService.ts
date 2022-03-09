@@ -99,7 +99,7 @@ export default class FabricService {
 
     const backgroundRect = new fabric.Rect({
       width: fabricdefaults.canvas.dimensions.width,
-      height: 400,
+      height: fabricdefaults.canvas.infoBar.height,
       originX: 'left',
       originY: 'bottom',
       top: fabricdefaults.canvas.dimensions.height,

@@ -1,13 +1,13 @@
 <template>
   <div v-if="boxVisiter">
     <shutdown-modal :code="boxVisiter.code" />
-    <nav class="px-24 py-10 flex justify-between items-center">
+    <nav class="px-24 py-8 flex justify-between items-center">
       <div class="">
-        <h1 class="text-5xl font-bold">Ontdek alle verhalen</h1>
+        <h1 class="text-4xl font-bold">Ontdek alle verhalen</h1>
       </div>
       <div class="flex">
         <base-button
-          class="shadow mr-8 text-3xl"
+          class="shadow mr-8 text-xl"
           custom-style="touchtable-white-round"
           custom-icon="door"
           :icon-shown="true"
@@ -15,7 +15,7 @@
           @click="openShutdownModal"
         />
         <base-button
-          class="shadow text-3xl"
+          class="shadow text-xl"
           custom-style="touchtable-white-round"
           text="?"
           :icon-shown="false"

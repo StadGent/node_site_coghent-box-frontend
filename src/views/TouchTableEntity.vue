@@ -1,6 +1,6 @@
 <template>
   <div class="touchtable">
-    <basket-overlay :basketItems="basketItems" />
+    <!-- <basket-overlay :basketItems="basketItems" /> -->
     <shutdown-modal :code="code" />
     <IIIF-modal :imageUrl="IIIFImageUrl" />
     <touch-header :basketAmount="basketItems.length" />
@@ -14,14 +14,14 @@
       class="infocard"
       v-if="entity"
     >
-      <h2 class="font-bold text-6xl mb-12">{{ entity.title[0].value }}</h2>
-      <p class="text-4xl mb-12" v-if="entity.description[0].value">
+      <h2 class="font-bold text-4xl mb-12">{{ entity.title[0].value }}</h2>
+      <p class="text-xl mb-12" v-if="entity.description[0].value">
         {{ entity.description[0].value }}
       </p>
-      <p class="text-4xl mb-12" v-else>This item does not have a description</p>
+      <p class="text-xl mb-12" v-else>This item does not have a description</p>
       <div class="flex w-full flex-wrap justify-center items-center mt-12">
         <base-button
-          class="text-3xl"
+          class="text-xl"
           customStyle="touchtable-black"
           customIcon="zoomIn"
           :iconShown="true"
@@ -29,7 +29,7 @@
           @click="showPictureModal"
         />
         <base-button
-          class="text-3xl"
+          class="text-xl"
           customStyle="touchtable-purple"
           customIcon="archiveDrawer"
           :iconShown="true"
@@ -94,7 +94,7 @@
       BaseButton,
       ShutdownModal,
       IIIFModal,
-      BasketOverlay,
+      // BasketOverlay,
     },
     setup: () => {
       const route = useRoute();
@@ -360,16 +360,16 @@
     height: 100%;
   }
   .touchtable {
-    width: 3840px;
-    height: 2160px;
+    width: 1920px;
+    height: 1080px;
   }
   .infocard {
     position: absolute;
     top: 100px;
     left: 100px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-    width: 800px;
-    height: calc(2160px - 300px);
+    width: 400px;
+    height: calc(1080px - 300px);
   }
   #canvas {
     background-color: #e5e5e5;
