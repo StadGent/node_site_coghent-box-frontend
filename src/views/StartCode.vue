@@ -39,6 +39,7 @@
   import { useQuery, useMutation } from '@vue/apollo-composable';
   import { useBoxVisiter } from 'coghent-vue-3-component-library';
   import { apolloClient } from '@/main';
+  import { BoxVisiter } from '@/models/GraphqlModel';
 
   export default defineComponent({
     name: 'StartCode',
@@ -53,7 +54,6 @@
       const maxAmountOfNumbers = 8;
       const code = ref<Array<any>>([]);
       const router = useRouter();
-      const startId: string = 'f42792cd-4e59-4dae-8fd0-3997ab4a0ca7';
       const { getByCode } = useBoxVisiter(apolloClient);
 
       const updateCode = (value: any) => {
@@ -68,8 +68,9 @@
         code.value = ['5', '2', '3', '8', '9', '9', '3', '2'];
         const resolvedBoxVisit = getByCode(code.value.join(''));
         resolvedBoxVisit.then((boxVisit: any) => {
-          window.sessionStorage.setItem('startId', startId);
-          router.push('/touchtable/stories');
+          if (boxVisit) {
+            router.push('/touchtable/stories');
+          }
         });
         resolvedBoxVisit.catch(() => {
           code.value = [];
@@ -79,7 +80,7 @@
 
       checkCode();
 
-      return { startId, updateCode, maxAmountOfNumbers, code, checkCode };
+      return { updateCode, maxAmountOfNumbers, code, checkCode };
     },
   });
 </script>
