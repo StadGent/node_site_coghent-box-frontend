@@ -65,7 +65,6 @@
       };
 
       const checkCode = () => {
-        // code.value = ['5', '2', '3', '8', '9', '9', '3', '2'];
         const resolvedBoxVisit = getByCode(code.value.join(''));
         resolvedBoxVisit.then((boxVisit: any) => {
           if (boxVisit) {
@@ -77,8 +76,6 @@
           showWrongCodeMessage();
         });
       };
-
-      // checkCode();
 
       return { updateCode, maxAmountOfNumbers, code, checkCode };
     },
