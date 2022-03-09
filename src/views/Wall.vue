@@ -14,7 +14,7 @@
     @resetSelectedStory="resetSelectedStory"
     :showPauseOverview="showPauseOverview"
   />
-  <!-- <mqtt @selectStory="setSelectStory" /> -->
+  <mqtt @selectStory="setSelectStory" />
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch } from 'vue';
@@ -32,7 +32,7 @@ import { getFirstStoryToSee, getUnseenStories } from '@/composables/useBox';
 
 export default defineComponent({
   name: 'Wall',
-  components: { ViewPort },
+  components: { ViewPort, mqtt },
 
   setup() {
     const stateService = new StateService(FlowState.welcome);
@@ -146,7 +146,7 @@ export default defineComponent({
 
     window.onkeydown = async (key: KeyboardEvent) => {
       switch (key.code) {
-        case 'Digit1':
+        case 'Digit1' || '97':
           console.log('pressed 1');
           storySelected.value = JSON.stringify({
             topic: 'sensors/1/present',
@@ -154,7 +154,7 @@ export default defineComponent({
             msg: true,
           } as SensorObject);
           break;
-        case 'Digit2':
+        case 'Digit2' || '98':
           console.log('pressed 2');
           storySelected.value = JSON.stringify({
             topic: 'sensors/2/present',
@@ -162,7 +162,7 @@ export default defineComponent({
             msg: true,
           } as SensorObject);
           break;
-        case 'Digit3':
+        case 'Digit3' || '99':
           console.log('pressed 3');
           storySelected.value = JSON.stringify({
             topic: 'sensors/3/present',
@@ -170,7 +170,7 @@ export default defineComponent({
             msg: true,
           } as SensorObject);
           break;
-        case 'Digit4':
+        case 'Digit4' || '100':
           console.log('pressed 4');
           storySelected.value = JSON.stringify({
             topic: 'sensors/4/present',
@@ -178,7 +178,7 @@ export default defineComponent({
             msg: true,
           } as SensorObject);
           break;
-        case 'Digit5':
+        case 'Digit5' || '101':
           console.log('pressed 5');
           break;
       }

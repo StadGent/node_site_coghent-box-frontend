@@ -22,7 +22,7 @@ async function main() {
   const config = await fetch('../config.json').then((r) => r.json());
   configStore.setConfig(config);
 
-  iiiF = useIIIF(configStore.config.value.iiifLink)
+  iiiF = useIIIF('https://api-uat.collectie.gent/iiif/image')
 
   apolloClient = new ApolloClient({
     link: createHttpLink({ uri: config.graphQlLink || '/api/graphql' }),
