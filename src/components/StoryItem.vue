@@ -2,7 +2,7 @@
   <section class="py-24">
     <section class="flex items-center">
       <div
-        :class="`flex justify-center items-center mr-12 h-52 w-52 -mb-12 z-40 rounded-full bg-${storyColor} shadow-${storyColor}`"
+        :class="`flex justify-center items-center mr-12 h-52 w-52 z-40 rounded-full bg-${storyColor} shadow-${storyColor}`"
       >
         <p class="font-bold text-7xl text-text-white">
           {{ storyNumber }}
@@ -55,12 +55,12 @@
 
 <script lang="ts">
   import { defineComponent, onMounted, onUpdated, ref, watch } from 'vue';
-  import useIIIF from '@/composables/useIIIF';
   import { TheMasonry } from 'coghent-vue-3-component-library';
   import { useBoxVisiter, BaseIcon } from 'coghent-vue-3-component-library';
   import { apolloClient } from '@/main';
   import { useRouter } from 'vue-router';
   import { Entity } from 'coghent-vue-3-component-library/lib/queries';
+  import { iiiF } from '@/main';
 
   export default defineComponent({
     name: 'StoryItem',
@@ -88,7 +88,7 @@
       },
     },
     setup(props) {
-      const { generateUrl, noImageUrl } = useIIIF();
+      const { generateUrl, noImageUrl } = iiiF;
       const masonry = ref<any>(null);
       const entityData = ref({ results: [] });
       const { boxVisiter, setStartAsset, setSelectedStory } = useBoxVisiter(apolloClient);
