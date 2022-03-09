@@ -53,7 +53,7 @@ export default class ThreeService {
     this.element = _element;
     this.defaultvalues = _defaultvalues;
     this.taggingService = _taggingService;
-    this.SetViewPort(_defaultvalues.viewport, window.innerHeight);
+    this.SetViewPort(5760, 1080);
     this.InitializeRenderer();
     this.InitializeCamera();
     this.cachedTextures = []
