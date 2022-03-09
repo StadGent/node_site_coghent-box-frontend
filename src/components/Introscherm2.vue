@@ -35,7 +35,7 @@
     >
       <p class="text-3xl p-2">Welk verhaal wil je graag verder ontdekken?</p>
       <p class="font-bold text-3xl">Maak hier je keuze:</p>
-      <div class="flex flex-col-4 mt-12 justify-center flex-wrap gap-12">
+      <div class="flex flex-col-4 mt-12 flex-wrap justify-evenly	">
         <svg
           v-if="loading"
           class="animate-spin -ml-1 mr-3 h-10 w-10 text-white"

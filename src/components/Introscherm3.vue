@@ -3,6 +3,7 @@
     class="
       flex
       grid-cols-1
+      h-screen
       w-screen
       text-center
       justify-center
