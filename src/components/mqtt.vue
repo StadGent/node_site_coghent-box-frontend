@@ -7,7 +7,8 @@ export default defineComponent({
   emits: ['selectStory'],
   setup(props, {emit}) {
     const { host, port, endpoint, ...options } = {
-      host: 'mqtt.inuits.local',
+      host: 'localhost',
+      // host: 'mqtt.inuits.local',
       port: 9001,
       endpoint: '/mqtt',
       clean: true,
