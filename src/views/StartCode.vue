@@ -4,7 +4,7 @@
       :large="true"
       background-color="bg-accent-yellow"
       rounds-color="bg-touchtable-dark"
-      class="w-1/2 lg:w-1/4"
+      class="w-1/2"
     >
       <section class="w-full">
         <number-display
@@ -65,6 +65,7 @@
       };
 
       const checkCode = () => {
+        // code.value = ['5', '2', '3', '8', '9', '9', '3', '2'];
         const resolvedBoxVisit = getByCode(code.value.join(''));
         resolvedBoxVisit.then((boxVisit: any) => {
           if (boxVisit) {
@@ -76,6 +77,8 @@
           showWrongCodeMessage();
         });
       };
+
+      // checkCode();
 
       return { updateCode, maxAmountOfNumbers, code, checkCode };
     },
