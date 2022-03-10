@@ -1,5 +1,8 @@
 <template>
-  <div ref="viewport" class="viewport" />
+  <div
+    ref="viewport"
+    class="viewport"
+  />
   <div class="subtitles">
     <p>{{ subtitles }}</p>
   </div>

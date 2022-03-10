@@ -16,16 +16,16 @@
     </section>
     <section>
       <the-masonry
-        v-bind:tiles="entityData"
         ref="masonry"
+        :tiles="entityData"
         :entities="entityData"
         :loading="loading"
         :generate-url="generateUrl"
         :no-image-url="noImageUrl"
         :show-load-more="false"
         :items-each-load="10"
-        :useRouterNavigation="true"
-        :hasCustomImageOverlay="true"
+        :use-router-navigation="true"
+        :has-custom-image-overlay="true"
         @navigateWithRouter="navigateToTouchtable"
       >
         <template #tile="entity">
@@ -45,7 +45,10 @@
               text-text-white text-3xl
             `"
           >
-            <base-icon icon="check" class="stroke-current fill-current stroke-2" />
+            <base-icon
+              icon="check"
+              class="stroke-current fill-current stroke-2"
+            />
           </div>
         </template>
       </the-masonry>

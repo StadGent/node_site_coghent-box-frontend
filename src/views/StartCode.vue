@@ -12,7 +12,10 @@
           :max-amount-of-characters="maxAmountOfNumbers"
           class="mb-12"
         />
-        <number-pad @code="updateCode" @codeComplete="checkCode" />
+        <number-pad
+          @code="updateCode"
+          @codeComplete="checkCode"
+        />
       </section>
       <section class="flex justify-center items-center w-full mt-12">
         <base-button

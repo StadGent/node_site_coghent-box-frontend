@@ -1,10 +1,13 @@
 <template>
-  <div class="relation_browser_container no-scrollbar" id="browser">
+  <div
+    id="browser"
+    class="relation_browser_container no-scrollbar"
+  >
     <FilterTag
       v-for="(item, index) in relations"
       :key="index"
       :filter="item"
-      :isSelected="index == selectedTagIndex ? true : false"
+      :is-selected="index == selectedTagIndex ? true : false"
       :icon="'check'"
       :small="false"
       :loading="loading"

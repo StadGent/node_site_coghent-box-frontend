@@ -7,7 +7,9 @@
         :class="key.type == 'number' || key.type == 'icon' ? keyStyles : spacerStyles"
         @click="addCharacterToResultArray(key)"
       >
-        <p v-if="key.type == 'number'">{{ key.value }}</p>
+        <p v-if="key.type == 'number'">
+          {{ key.value }}
+        </p>
         <base-icon
           v-if="key.type == 'icon'"
           :icon="key.value"

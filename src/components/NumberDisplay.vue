@@ -2,9 +2,17 @@
   <section
     class="flex justify-center items-Center text-text-white w-full font-bold text-3xl"
   >
-    <div v-for="index in maxAmountOfCharacters" :key="index" class="p-3">
-      <p v-if="code[index - 1]">{{ code[index - 1] }}</p>
-      <p v-else>.</p>
+    <div
+      v-for="index in maxAmountOfCharacters"
+      :key="index"
+      class="p-3"
+    >
+      <p v-if="code[index - 1]">
+        {{ code[index - 1] }}
+      </p>
+      <p v-else>
+        .
+      </p>
     </div>
   </section>
 </template>

@@ -1,5 +1,9 @@
 <template>
-  <canvas id="canvas" :width="bodyWidth" height="800" />
+  <canvas
+    id="canvas"
+    :width="bodyWidth"
+    height="800"
+  />
 </template>
 
 <script lang="ts">

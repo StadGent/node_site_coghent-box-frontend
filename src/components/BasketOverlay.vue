@@ -1,20 +1,22 @@
 <template>
-  <base-overlay :overlayState="BasketOverlayState.state">
+  <base-overlay :overlay-state="BasketOverlayState.state">
     <section class="w-full">
       <the-masonry
         v-if="basketEntities.length == basketItems.length"
         :entities="undefined"
         :loading="loadingBasketItem"
-        :generateUrl="generateUrl"
-        :noImageUrl="noImageUrl"
-        :showLoadMore="false"
+        :generate-url="generateUrl"
+        :no-image-url="noImageUrl"
+        :show-load-more="false"
       />
     </section>
     <section
       class="w-full flex justify-center items-center p-12 font-bold cursor-pointer"
       @click="closeBasketOverlay"
     >
-      <h2 class="text-6xl">Sluiten</h2>
+      <h2 class="text-6xl">
+        Sluiten
+      </h2>
     </section>
   </base-overlay>
 </template>

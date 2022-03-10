@@ -2,8 +2,8 @@
   <BaseModal
     :scroll="false"
     :modal-state="ShutdownModalState.state"
-    @hide-modal="closeShutdownModal"
     class="w-1/2"
+    @hide-modal="closeShutdownModal"
   >
     <section class="flex flex-wrap justify-center items-center w-full p-24">
       <section class="w-full">
@@ -11,23 +11,26 @@
           Ben je zeker dat je wil afsluiten?
         </h1>
         <p class="text-3xl text-center">
-          Wanneer je afsluit blijven alle beelden die in je verhalenbox zitten bewaard.<br />
+          Wanneer je afsluit blijven alle beelden die in je verhalenbox zitten bewaard.<br>
           Je kan deze thuis raadplegen via de website met jouw persoonlijke code:
         </p>
-        <box-visit-code :code="code" class="my-12" />
+        <box-visit-code
+          :code="code"
+          class="my-12"
+        />
       </section>
       <section class="flex justify-center items-center pt-48">
         <base-button
           class="shadow mr-8"
-          customStyle="touchtable-white-round"
-          :iconShown="true"
+          custom-style="touchtable-white-round"
+          :icon-shown="true"
           text="Ja, sessie afsluiten"
           @click="goToCodeScreen"
         />
         <base-button
           class="shadow"
-          customStyle="touchtable-green-round"
-          :iconShown="false"
+          custom-style="touchtable-green-round"
+          :icon-shown="false"
           text="Nee, terug naar het archief"
         />
       </section>

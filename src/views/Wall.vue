@@ -1,6 +1,15 @@
 <template>
-  <label class="absolute left-0 top-0" :v-if="visitercode == null" for="">
-    <input v-model="inputValue" class="z-50 relative" type="text" autofocus />
+  <label
+    class="absolute left-0 top-0"
+    :v-if="visitercode == null"
+    for=""
+  >
+    <input
+      v-model="inputValue"
+      class="z-50 relative"
+      type="text"
+      autofocus
+    >
   </label>
   <ViewPort
     :stories="stories"

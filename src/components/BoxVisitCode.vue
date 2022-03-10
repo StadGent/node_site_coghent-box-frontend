@@ -1,9 +1,13 @@
 <template>
-<section class="flex w-full justify-center align-center text-3xl font-bold">
-    <div v-for="(number, index) in codeNumberArray" :key="index" class="p-6 number-container mx-3 flex justify-center items-center rounded-xl">
-        <p>{{number}}</p>
+  <section class="flex w-full justify-center align-center text-3xl font-bold">
+    <div
+      v-for="(number, index) in codeNumberArray"
+      :key="index"
+      class="p-6 number-container mx-3 flex justify-center items-center rounded-xl"
+    >
+      <p>{{ number }}</p>
     </div>
-</section>
+  </section>
 </template>
 
 <script lang="ts">

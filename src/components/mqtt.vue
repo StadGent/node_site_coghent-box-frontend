@@ -3,7 +3,7 @@ import { defineComponent, onMounted } from 'vue';
 import mqtt, { IClientSubscribeOptions } from 'mqtt';
 
 export default defineComponent({
-  name: 'mqtt',
+  name: 'Mqtt',
   emits: ['selectStory'],
   setup(props, {emit}) {
     const { host, port, endpoint, ...options } = {

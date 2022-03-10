@@ -1,25 +1,31 @@
 <template>
   <nav class="p-10 header bg-neutral-0">
-    <div class="spacer"></div>
-    <div class="cursor-pointer" @click="openBasketOverlay">
+    <div class="spacer" />
+    <div
+      class="cursor-pointer"
+      @click="openBasketOverlay"
+    >
       <h1 class="font-bold text-4xl w-full pr-auto">
         Mijn verhalenbox ({{ basketAmount }})
       </h1>
-      <base-icon icon="downwardArrows" class="w-10 h-10 text-text-black" />
+      <base-icon
+        icon="downwardArrows"
+        class="w-10 h-10 text-text-black"
+      />
     </div>
     <div class="flex">
       <base-button
         class="shadow mr-8 text-xl"
-        customStyle="touchtable-green-round"
-        :iconShown="false"
+        custom-style="touchtable-green-round"
+        :icon-shown="false"
         text="Overzicht alle verhalen"
         @click="goToStoriesPage"
       />
       <base-button
         class="shadow text-xl"
-        customStyle="touchtable-white-round"
-        customIcon="door"
-        :iconShown="true"
+        custom-style="touchtable-white-round"
+        custom-icon="door"
+        :icon-shown="true"
         text="Afsluiten"
         @click="openShutdownModal"
       />

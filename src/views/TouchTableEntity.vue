@@ -2,37 +2,50 @@
   <div class="touchtable">
     <!-- <basket-overlay :basketItems="basketItems" /> -->
     <shutdown-modal :code="code" />
-    <IIIF-modal :imageUrl="IIIFImageUrl" />
-    <touch-header :basketAmount="basketItems.length" />
+    <IIIF-modal :image-url="IIIFImageUrl" />
+    <touch-header :basket-amount="basketItems.length" />
     <div id="canvas-container">
-      <canvas id="canvas" class="touchcanvas" />
+      <canvas
+        id="canvas"
+        class="touchcanvas"
+      />
     </div>
     <CardComponent
-      :sideStrip="true"
-      :large="true"
-      :reverseColors="true"
-      class="infocard"
       v-if="entity"
+      :side-strip="true"
+      :large="true"
+      :reverse-colors="true"
+      class="infocard"
     >
-      <h2 class="font-bold text-4xl mb-12">{{ entity.title[0].value }}</h2>
-      <p class="text-xl mb-12" v-if="entity.description[0].value">
+      <h2 class="font-bold text-4xl mb-12">
+        {{ entity.title[0].value }}
+      </h2>
+      <p
+        v-if="entity.description[0].value"
+        class="text-xl mb-12"
+      >
         {{ entity.description[0].value }}
       </p>
-      <p class="text-xl mb-12" v-else>This item does not have a description</p>
+      <p
+        v-else
+        class="text-xl mb-12"
+      >
+        This item does not have a description
+      </p>
       <div class="flex w-full flex-wrap justify-center items-center mt-12">
         <base-button
           class="text-xl"
-          customStyle="touchtable-black"
-          customIcon="zoomIn"
-          :iconShown="true"
+          custom-style="touchtable-black"
+          custom-icon="zoomIn"
+          :icon-shown="true"
           text="Afbeelding vergroten"
           @click="showPictureModal"
         />
         <base-button
           class="text-xl"
-          customStyle="touchtable-purple"
-          customIcon="archiveDrawer"
-          :iconShown="true"
+          custom-style="touchtable-purple"
+          custom-icon="archiveDrawer"
+          :icon-shown="true"
           text="Aan verhalenbox toevoegen"
           @click="addToBasket"
         />

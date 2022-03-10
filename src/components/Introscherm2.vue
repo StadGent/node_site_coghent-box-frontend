@@ -2,21 +2,25 @@
   <div class="flex justify-center flex-wrap h-screen w-screen bg-background-light">
     <CardComponent
       :large="true"
-      :backgroundColor="`bg-accent-yellow`"
-      :ringColor="'ring-accent-yellow'"
+      :background-color="`bg-accent-yellow`"
+      :ring-color="'ring-accent-yellow'"
       class="z-10"
     >
       <div class="flex justify-center font-bold text-center text-4xl my-20">
         <h1>
-          Welkom in het <br />
+          Welkom in het <br>
           erfgoed paviljoen!
         </h1>
       </div>
     </CardComponent>
-    <img class="fixed mt-32 z-0 w-full" src="/images_entrance/intro2.svg" alt="" />
+    <img
+      class="fixed mt-32 z-0 w-full"
+      src="/images_entrance/intro2.svg"
+      alt=""
+    >
     <p class="text-3xl z-10 mt-48 px-8 py-4 w-full h-48 text-center text-lg font-normal">
-      Je kan hier grasduinen in de <br />
-      erfgoedcollectie van stad Gent. Laat je <br />
+      Je kan hier grasduinen in de <br>
+      erfgoedcollectie van stad Gent. Laat je <br>
       meenemen op een reis door de tijd...
     </p>
     <div
@@ -33,8 +37,12 @@
         bg-background-medium
       "
     >
-      <p class="text-3xl p-2">Welk verhaal wil je graag verder ontdekken?</p>
-      <p class="font-bold text-3xl">Maak hier je keuze:</p>
+      <p class="text-3xl p-2">
+        Welk verhaal wil je graag verder ontdekken?
+      </p>
+      <p class="font-bold text-3xl">
+        Maak hier je keuze:
+      </p>
       <div class="flex flex-col-4 mt-12 flex-wrap justify-evenly	">
         <svg
           v-if="loading"
@@ -50,23 +58,23 @@
             r="10"
             stroke="currentColor"
             stroke-width="4"
-          ></circle>
+          />
           <path
             class="opacity-75"
             fill="currentColor"
             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-          ></path>
+          />
         </svg>
         <div
           v-for="(item, index) in stories"
-          @click="nextStep(item, index)"
           :key="index"
           class="flex flex-col items-center"
+          @click="nextStep(item, index)"
         >
           <div
             :class="
               colors[index] +
-              ' circle text-white flex justify-center items-center font-bold text-5xl'
+                ' circle text-white flex justify-center items-center font-bold text-5xl'
             "
           >
             {{ index + 1 }}

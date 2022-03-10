@@ -2,8 +2,8 @@
   <input
     type="text"
     :value="value"
-    @input="onChange"
     :placeholder="[[ placeholder ]]"
+    @input="onChange"
   >
 </template>
 
