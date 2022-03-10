@@ -14,6 +14,7 @@ const Defaults = (): {
   maxFrames: () => number;
   countdown: () => number;
   fontPath: () => string;
+  showplayHeadWhenNoAudio: () => true | false;
   circlePoints: () => Array<CirclePoint>;
   Circle: () => CircleSchema;
   ImageCube: () => CubeSchema;
@@ -26,10 +27,12 @@ const Defaults = (): {
   const screenZonePadding = () => 2;
   const boundaryPadding = () => 1;
 
-  const maxFrames = () => 2;
+  const maxFrames = () => 1;
   const countdown = () => 3;
 
   const fontPath = () => '/Fonts/myFont.json';
+
+  const showplayHeadWhenNoAudio = () => true
 
   const circlePoints = () => {
     return [
@@ -89,6 +92,7 @@ const Defaults = (): {
     maxFrames,
     countdown,
     fontPath,
+    showplayHeadWhenNoAudio,
     circlePoints,
     Circle,
     ImageCube,

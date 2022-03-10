@@ -6,52 +6,50 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, PropType, Ref, ref, watch } from "vue";
-import { Group, Mesh, MeshBasicMaterial, Vector3 } from "three";
-import { Entity as _Entity, Frame } from "@/models/GraphqlModel";
+import { defineComponent, onMounted, PropType, Ref, ref, watch } from 'vue';
+import { Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
+import { Entity as _Entity, Frame } from '@/models/GraphqlModel';
 
-import ThreeService from "@/services/ThreeService";
-import StoryService, { StoryData } from "@/services/StoryService";
-import ZoneService from "@/services/ZoneService";
-import TextService from "@/services/TextService";
-import TaggingService, { Tags } from "@/services/TaggingService";
-import SubtitleService from "@/services/SubtitleService";
+import ThreeService from '@/services/ThreeService';
+import StoryService, { StoryData } from '@/services/StoryService';
+import ZoneService from '@/services/ZoneService';
+import TextService from '@/services/TextService';
+import TaggingService, { Tags } from '@/services/TaggingService';
+import SubtitleService from '@/services/SubtitleService';
 
-import Tools from "@/Three/helper.tools";
-import AudioHelper, { AudioHelperFunctions } from "@/Three/helper.audio";
-import VideoHelper from "@/Three/helper.video";
-import WallGarbageHelper, {
-  GarabageHelperForWall,
-} from "@/Three/helper.wall.garbage";
-import SceneHelper from "@/Three/helper.scene";
+import Tools from '@/Three/helper.tools';
+import AudioHelper, { AudioHelperFunctions } from '@/Three/helper.audio';
+import VideoHelper from '@/Three/helper.video';
+import WallGarbageHelper, { GarabageHelperForWall } from '@/Three/helper.wall.garbage';
+import SceneHelper from '@/Three/helper.scene';
 
-import TestSingleComponent from "@/Three/test.components";
+import TestSingleComponent from '@/Three/test.components';
 
-import Defaults from "@/Three/defaults.config";
-import Measurements from "@/Three/defaults.measurements";
-import { threeDefaultsWall } from "@/Three/defaults.three";
-import AnimationDefaults from "@/Three/defaults.animation";
-import Timing from "@/Three/defaults.timing";
-import Development from "@/Three/defaults.development";
+import Defaults from '@/Three/defaults.config';
+import Measurements from '@/Three/defaults.measurements';
+import { threeDefaultsWall } from '@/Three/defaults.three';
+import AnimationDefaults from '@/Three/defaults.animation';
+import Timing from '@/Three/defaults.timing';
+import Development from '@/Three/defaults.development';
 
-import PlayBookBuild from "@/Three/playbook.build";
+import PlayBookBuild from '@/Three/playbook.build';
 
-import PlayBook from "@/composables/playbook";
-import useStory from "@/composables/useStory";
-import MoveObject from "@/composables/moveObject";
-import CustomAnimation from "@/composables/animation";
-import { SensorObject } from "@/composables/common";
-import useFrame from "@/composables/useFrame";
+import PlayBook from '@/composables/playbook';
+import useStory from '@/composables/useStory';
+import MoveObject from '@/composables/moveObject';
+import CustomAnimation from '@/composables/animation';
+import { SensorObject } from '@/composables/common';
+import useFrame from '@/composables/useFrame';
 
-import PauseProgressbar from "@/Three/shapes.pauseProgressbar";
-import Template from "@/Three/template.shapes";
-import { Entity } from "coghent-vue-3-component-library/lib";
-import useStartOfSession from "@/Three/playbook.startOfSession";
-import Spot from "@/Three/shapes.spotlight";
-import StateService, { FlowState } from "@/services/StateService";
+import PauseProgressbar from '@/Three/shapes.pauseProgressbar';
+import Template from '@/Three/template.shapes';
+import { Entity } from 'coghent-vue-3-component-library/lib';
+import useStartOfSession from '@/Three/playbook.startOfSession';
+import Spot from '@/Three/shapes.spotlight';
+import StateService, { FlowState } from '@/services/StateService';
 
 export default defineComponent({
-  name: "ViewPort",
+  name: 'ViewPort',
   props: {
     stories: {
       type: Array as PropType<Array<Entity>>,
@@ -61,7 +59,7 @@ export default defineComponent({
       type: String,
       required: true,
       default: JSON.stringify({
-        topic: "sensors/1/present",
+        topic: 'sensors/1/present',
         id: 1,
         msg: true,
       } as SensorObject),
@@ -83,12 +81,12 @@ export default defineComponent({
       default: FlowState[0],
     },
   },
-  emits: ["restartSession", "resetSelectedStory"],
+  emits: ['restartSession', 'resetSelectedStory'],
   setup(props, { emit }) {
     let storySelected = JSON.parse(props.storySelected) as SensorObject;
     const viewport = ref(null);
     const stories = ref(props.stories);
-    const currentStoryID = ref<string>("");
+    const currentStoryID = ref<string>('');
     const chooseStory = ref<boolean>(false);
     const videoElement = ref<HTMLVideoElement>();
 
@@ -112,7 +110,7 @@ export default defineComponent({
     let storyData: Array<Entity> = [];
     let spotlight: Mesh;
 
-    let subtitles = ref<string>("");
+    let subtitles = ref<string>('');
 
     const initState = () => {
       threeSvc.ClearScene();
@@ -126,7 +124,7 @@ export default defineComponent({
       (value) => {
         garbageHelper.pauseScreen();
         initState();
-      }
+      },
     );
 
     watch(
@@ -135,20 +133,18 @@ export default defineComponent({
         const _storySelected = JSON.parse(value) as SensorObject;
         let storyDataOfSelected: StoryData | null = null;
         if (storyService) {
-          storyDataOfSelected =
-            storyService.getStoryData()[_storySelected.id - 1];
+          storyDataOfSelected = storyService.getStoryData()[_storySelected.id - 1];
         }
         if (
           chooseStory.value &&
           _storySelected.id != 0 &&
           storyDataOfSelected &&
           !storyDataOfSelected.storySeen &&
-          storyDataOfSelected.totalOfFrames >
-            storyDataOfSelected.totalOfFramesSeen
+          storyDataOfSelected.totalOfFrames > storyDataOfSelected.totalOfFramesSeen
         ) {
           props.stateService.changeState(FlowState.storySelected);
           chooseStory.value = false;
-          console.log("You selected sensor", _storySelected.id);
+          console.log('You selected sensor', _storySelected.id);
           storyData = stories.value;
 
           await startCountdownForSelectedStory(_storySelected.id - 1, 3);
@@ -156,7 +152,7 @@ export default defineComponent({
           await startCountdownForSelectedStory(_storySelected.id - 1, 1);
           await setNewStoryWhenSelected(_storySelected.id - 1);
         }
-      }
+      },
     );
 
     watch(
@@ -164,7 +160,7 @@ export default defineComponent({
       (value) => {
         stories.value = value;
         // playStartVideo();
-      }
+      },
     );
     watch(
       () => props.storyService,
@@ -175,8 +171,8 @@ export default defineComponent({
             setData();
           } else {
             props.stateService.changeState(FlowState.storyOverview);
-            emit("resetSelectedStory", {
-              topic: "sensors/0/present",
+            emit('resetSelectedStory', {
+              topic: 'sensors/0/present',
               id: 0,
               msg: true,
             } as SensorObject);
@@ -189,19 +185,17 @@ export default defineComponent({
               taggingService,
               playBook,
               spotlight,
-              {} as Entity
+              {} as Entity,
             ).storyPausedWithNoActiveStory();
             chooseStory.value = true;
           }
         }
-      }
+      },
     );
 
     const setNewStoryWhenSelected = async (_storySelected: number) => {
       chooseStory.value = false;
-      const _storyData = storyService.getStoryDataOfStory(
-        storyData[_storySelected].id
-      );
+      const _storyData = storyService.getStoryDataOfStory(storyData[_storySelected].id);
       const next = storyService.setNextFrameForStory(_storyData.storyId);
       currentFrame = next.frame;
       storyService.setActiveStory(storyData[_storySelected].id);
@@ -214,7 +208,7 @@ export default defineComponent({
         taggingService,
         playBook,
         spotlight,
-        storyService.activeStory
+        storyService.activeStory,
       ).storyData(storyService, storyService.activeStory, currentFrame);
 
       await PlayBookBuild(
@@ -224,7 +218,7 @@ export default defineComponent({
         taggingService,
         playBook,
         spotlight,
-        storyService.activeStory
+        storyService.activeStory,
       ).setSelectedStory();
       if (props.showPauseOverview) {
         props.stateService.changeState(FlowState.storyOverview);
@@ -238,38 +232,31 @@ export default defineComponent({
         Template().storyCircleLayers(zoneService.middleZoneCenter).progressDots,
         Measurements().storyCircle.progressRadius,
         storyService.activeStoryData.totalOfFrames,
-        storyService.activeStoryData.storyColor
+        storyService.activeStoryData.storyColor,
       );
       await SceneHelper(threeSvc, storyService).addFrameProgressDotsToScene(
         progressDots,
         storyService.activeStoryData.storyId,
         storyService.activeStoryData.totalOfFramesSeen,
-        true
+        true,
       );
-      taggingService.retag(
-        Tags.StoryCircleFrameDot,
-        Tags.ActiveStoryCircleFrameDot
-      );
+      taggingService.retag(Tags.StoryCircleFrameDot, Tags.ActiveStoryCircleFrameDot);
       taggingService.retag(
         Tags.StoryCircleFrameInnerDot,
-        Tags.ActiveStoryCircleFrameInnerDot
+        Tags.ActiveStoryCircleFrameInnerDot,
       );
       // BUG introduction?
       const groupOfAssetsTags = taggingService.getByTag(Tags.GroupOfAssets);
-      if (
-        groupOfAssetsTags &&
-        groupOfAssetsTags[0] &&
-        groupOfAssetsTags[0].object
-      ) {
-        console.log("assets on screen", groupOfAssetsTags[0].object);
+      if (groupOfAssetsTags && groupOfAssetsTags[0] && groupOfAssetsTags[0].object) {
+        console.log('assets on screen', groupOfAssetsTags[0].object);
         await CustomAnimation().fadeOutGroups(
           [groupOfAssetsTags[0].object],
           0,
-          AnimationDefaults.values.fadeStep
+          AnimationDefaults.values.fadeStep,
         );
         threeSvc.RemoveFromScene(groupOfAssetsTags[0].object);
       } else {
-        console.log("no assets found");
+        console.log('no assets found');
       }
 
       //
@@ -279,16 +266,15 @@ export default defineComponent({
 
     const startCountdownForSelectedStory = async (
       _storySelected: number,
-      _count: number
+      _count: number,
     ) => {
-      const pausePosition =
-        storyService.getStoryData()[_storySelected].pausedPosition;
+      const pausePosition = storyService.getStoryData()[_storySelected].pausedPosition;
       await CustomAnimation().singleCircularCountdown(
         threeSvc,
         new Vector3(
           pausePosition.x,
           -(zoneService.sceneZone().height / 2) + 1,
-          pausePosition.z
+          pausePosition.z,
         ),
         0.3,
         0.1,
@@ -299,7 +285,7 @@ export default defineComponent({
         ],
         new Vector3(-0.12, -0.15, 0),
         Measurements().text.size.small,
-        _count
+        _count,
       );
     };
 
@@ -308,9 +294,9 @@ export default defineComponent({
 
       spotlight = Spot().create(
         zoneService.middleZoneCenter,
-        Measurements().storyCircle.radius
+        Measurements().storyCircle.radius,
       );
-      threeSvc.AddToScene(spotlight, Tags.Spotlight, "InitialSpotlight");
+      threeSvc.AddToScene(spotlight, Tags.Spotlight, 'InitialSpotlight');
       useStartOfSession(threeSvc, zoneService, spotlight).showScanImage();
       props.stateService.changeState(FlowState.welcome);
     };
@@ -320,9 +306,7 @@ export default defineComponent({
       storyData = storyService.stories;
       showProgressOfFrame = false;
       audio = null;
-      const next = storyService.setNextFrameForStory(
-        storyService.activeStory.id
-      );
+      const next = storyService.setNextFrameForStory(storyService.activeStory.id);
       currentFrame = next.frame;
       clearInterval(interval);
       // here
@@ -338,10 +322,10 @@ export default defineComponent({
         taggingService,
         playBook,
         spotlight,
-        storyService.activeStory
+        storyService.activeStory,
       ).storyData(storyService, storyService.activeStory, currentFrame);
       if (resultStoryData) {
-        console.log("StoryData is set", resultStoryData);
+        console.log('StoryData is set', resultStoryData);
         currentStoryID.value = storyService.activeStoryData.storyId;
         props.stateService.changeState(FlowState.countdownToFrame);
         await PlayBookBuild(
@@ -351,7 +335,7 @@ export default defineComponent({
           taggingService,
           playBook,
           spotlight,
-          storyService.activeStory
+          storyService.activeStory,
         )
           .startOfSession()
           .finally(async () => {
@@ -359,7 +343,7 @@ export default defineComponent({
             buildStory(currentStoryID.value);
           });
       } else {
-        console.log("No storyData set..");
+        console.log('No storyData set..');
       }
     };
 
@@ -368,6 +352,9 @@ export default defineComponent({
       let currentFunction = 0;
       let currentSubtitle = 1;
       let timingCount = 0;
+      //belowfor progress without audio
+      //
+      let progress: Array<Group> = [];
       interval = setInterval(async () => {
         ++timingCount;
         showProgressOfFrame = true;
@@ -375,7 +362,7 @@ export default defineComponent({
           const subtitleParams = subtitleService.getSubtitleForTime(
             audio.currentTime,
             subtitleService.subtitles,
-            currentSubtitle
+            currentSubtitle,
           );
           subtitles.value = `${subtitleParams.subtitle}`;
           currentSubtitle = subtitleParams.index;
@@ -383,21 +370,31 @@ export default defineComponent({
         let time = timingCount;
         if (audio != null && !isNaN(audio.duration)) {
           time = audio.currentTime;
+        } else if (Defaults().showplayHeadWhenNoAudio()) {
+          progress = PlayBookBuild(
+            threeSvc,
+            storyService,
+            zoneService,
+            taggingService,
+            playBook,
+            spotlight,
+            storyService.activeStory,
+          ).progressOfFrame(
+            currentFrame,
+            storyService.getStoryColor(storyService.activeStory.id),
+            timingCount,
+            playBook.lastAction().time + Timing.delayForNext,
+            progress,
+          );
         }
-
         if (
-          audioHelper.DoEvent(
-            time,
-            playBook.getPlayBookActions()[currentFunction].time
-          )
+          audioHelper.DoEvent(time, playBook.getPlayBookActions()[currentFunction].time)
         ) {
           if (Development().showDevTimeLogs()) {
             console.log(
               `| timingCount: ${timingCount}\n| Time: ${
                 playBook.getPlayBookActions()[currentFunction].time
-              } \n| Context: ${
-                playBook.getPlayBookActions()[currentFunction].context
-              }`
+              } \n| Context: ${playBook.getPlayBookActions()[currentFunction].context}`,
             );
           }
           playBook.getPlayBookActions()[currentFunction].func();
@@ -405,7 +402,7 @@ export default defineComponent({
         }
         if (currentFunction > playBook.getPlayBookActions().length - 1) {
           console.log(`| timing: reset interval & timeCount`);
-          subtitles.value = "";
+          subtitles.value = '';
           currentFunction = 0;
           clearInterval(interval);
           timingCount = 0;
@@ -419,14 +416,14 @@ export default defineComponent({
         props.stateService.changeState(FlowState.buildFrame);
         audio = AudioHelper(threeSvc).setAudioTrack(
           storyService.activeStory,
-          currentFrame
+          currentFrame,
         );
         if (audio == null) {
           timing();
         }
 
         const subtitleLink = useFrame(threeSvc).getSubtitleForFrame(
-          storyService.activeStory.frames?.[currentFrame] as unknown as Frame
+          storyService.activeStory.frames?.[currentFrame] as unknown as Frame,
         );
         // TODO: await or not await for subtitles?
         subtitleService.downloadSRTFile(subtitleLink as string);
@@ -443,13 +440,13 @@ export default defineComponent({
                 taggingService,
                 framePlaybook,
                 spotlight,
-                storyService.activeStory
+                storyService.activeStory,
               ).progressOfFrame(
                 currentFrame,
                 storyService.getStoryColor(storyService.activeStory.id),
                 audio.currentTime,
                 audioDuration,
-                progress
+                progress,
               );
             }
           };
@@ -473,11 +470,11 @@ export default defineComponent({
           taggingService,
           framePlaybook,
           spotlight,
-          storyService.activeStory
+          storyService.activeStory,
         ).storyCircle(
           currentFrame,
           storyService.getStoryColor(storyService.activeStory.id),
-          !taggingService.idAlreadyInList(storyService.activeStory.id)
+          !taggingService.idAlreadyInList(storyService.activeStory.id),
         );
 
         await PlayBookBuild(
@@ -487,15 +484,13 @@ export default defineComponent({
           taggingService,
           framePlaybook,
           spotlight,
-          storyService.activeStory
+          storyService.activeStory,
         ).frameOverview(
           currentFrame,
           storyService.getStoryColor(storyService.activeStory.id),
-          garbageHelper
+          garbageHelper,
         );
-        playBook.mergeActionsWithPlaybook(
-          framePlaybook.getSortedPlayBookActions()
-        );
+        playBook.mergeActionsWithPlaybook(framePlaybook.getSortedPlayBookActions());
 
         playBook.addToPlayBook(
           () => {
@@ -503,15 +498,16 @@ export default defineComponent({
             CustomAnimation().shrink(
               spotlight as Mesh<any, MeshBasicMaterial>,
               Measurements().storyCircle.radius,
-              AnimationDefaults.values.scaleStep
+              AnimationDefaults.values.scaleStep,
             );
             3;
           },
-          playBook.lastAction().time + Timing.delayToPauseScreen,
-          "Move the spotlight to the center of the screen until the frame ends"
+          playBook.lastAction().time + 1,
+          'Move the spotlight to the center of the screen until the frame ends',
         );
         setAfterFrameScreen();
       }
+      console.log('MASTER playbook', playBook.getPlayBookActions());
     };
 
     const setAfterFrameScreen = () => {
@@ -524,6 +520,7 @@ export default defineComponent({
           showProgressOfFrame = false;
           storyService.setStoryColor();
           if (storyService.isEndOfSession()) {
+            emit('restartSession', true);
             props.stateService.changeState(FlowState.endCountdown);
             garbageHelper.endOfSessionScreen();
             PlayBookBuild(
@@ -533,26 +530,25 @@ export default defineComponent({
               taggingService,
               playBook,
               spotlight,
-              storyService.activeStory
+              storyService.activeStory,
             )
               .endOfSession()
               .then((_start) => {
-                emit("restartSession", true);
                 setup();
               });
           } else {
             props.stateService.changeState(FlowState.storyOverview);
-            emit("resetSelectedStory", {
-              topic: "sensors/0/present",
+            emit('resetSelectedStory', {
+              topic: 'sensors/0/present',
               id: 0,
               msg: true,
             } as SensorObject);
-            emit("restartSession", true);
+            emit('restartSession', true);
             garbageHelper.pauseScreen();
             spotlight.scale.set(
               Measurements().storyCircle.outerCircle,
               Measurements().storyCircle.outerCircle,
-              Measurements().storyCircle.outerCircle
+              Measurements().storyCircle.outerCircle,
             );
             PlayBookBuild(
               threeSvc,
@@ -561,15 +557,15 @@ export default defineComponent({
               taggingService,
               playBook,
               spotlight,
-              storyService.activeStory
+              storyService.activeStory,
             ).storyPaused();
             chooseStory.value = true;
           }
         },
         audio && isNaN(audio.duration)
-          ? playBook.lastAction().time + 1
-          : audioDuration,
-        `Update storyData & show endOfSessions screen or the storyOverview`
+          ? audioDuration
+          : playBook.lastAction().time + Timing.delayForNext,
+        `Update storyData & show endOfSessions screen or the storyOverview`,
       );
     };
 
@@ -581,16 +577,16 @@ export default defineComponent({
 
     const playStartVideo = () => {
       const videoSrc =
-        "https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4";
+        'https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4';
       const videoCube = VideoHelper().videoElementAsCube(
         videoElement as Ref<HTMLVideoElement>,
         videoSrc,
-        new Vector3(8, 8, 0)
+        new Vector3(8, 8, 0),
       );
-      threeSvc.AddToScene(videoCube, Tags.Video, "Test of the video cube");
+      threeSvc.AddToScene(videoCube, Tags.Video, 'Test of the video cube');
       videoElement.value?.play();
       setTimeout(() => {
-        console.log("currenttime", videoElement.value?.currentTime);
+        console.log('currenttime', videoElement.value?.currentTime);
         videoCube.position.set(0, 0, 0);
       }, 7000);
     };
@@ -600,7 +596,7 @@ export default defineComponent({
       textService = new TextService(threeSvc);
       zoneService = new ZoneService(
         threeSvc.state.sceneDimensions,
-        Defaults().screenZones()
+        Defaults().screenZones(),
       );
       garbageHelper = WallGarbageHelper(threeSvc, taggingService);
       subtitleService = new SubtitleService();
@@ -636,9 +632,9 @@ export default defineComponent({
 }
 
 .viewport::before {
-  content: "";
+  content: '';
   background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
-    url("/background.png");
+    url('/background.png');
   background-color: #000000;
   position: absolute;
   left: 0;
