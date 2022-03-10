@@ -165,7 +165,8 @@ export default class StoryService {
     const matches = this.storyData.filter(_data => _data.storyId == _storyId)
     if (matches.length > 0) {
       const match = matches[0]
-      nextFrame = match.totalOfFramesSeen
+      nextFrame = Object.keys(match.seenFrames).length
+      // nextFrame = match.totalOfFramesSeen
     }
     return {
       storyId: nextStory,

@@ -20,7 +20,8 @@ const Timing: Timings = {
     videoDelay: 3000,
   },
   endOfSession:{
-    countdown: 30000,
+    // countdown: 30000,
+    countdown: 2000,
   },
   delayToPauseScreen: 2,
   moveObject: {

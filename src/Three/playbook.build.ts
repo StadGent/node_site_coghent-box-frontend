@@ -46,7 +46,7 @@ const PlayBookBuild = (
     currentFrameIndex: number,
     storyColor: number,
     canAddToSCene: boolean,
-  ) => void;
+  ) => Promise<void>;
   frameOverview: (
     currentFrameIndex: number,
     storyColor: number,
