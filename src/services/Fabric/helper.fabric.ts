@@ -2,6 +2,7 @@ import { fabricdefaults } from './defaults.fabric';
 import { Coordinate, Scale, Position } from './FabricService';
 import { fabric } from 'fabric';
 import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
+import { iiiF } from '@/main';
 
 const underlineHelper = (mainImage: any) => {
   const imageCoordinates: Array<Coordinate> = mainImage.getCoords();
@@ -37,8 +38,11 @@ const availablePositionsInRangeHelper = (
   );
 
   positionsInRange.forEach((position: Position) => {
+    const blockedPositions =
+      fabricdefaults.canvas.secondaryImage.positions.blockedPositions;
     if (
-      fabricdefaults.canvas.secondaryImage.positions.blockedPositions.find(
+      blockedPositions.length &&
+      blockedPositions.find(
         (blockedPosition: Position) =>
           blockedPosition.xIndex == position.xIndex &&
           blockedPosition.yIndex == position.yIndex,
@@ -186,28 +190,26 @@ const canvasTextHelper = (
     fontFamily: fontFamily,
     fontWeight: fontWeight,
     hoverCursor: 'default',
+    selectable: false,
   });
   lockObjectMovementHelper(textbox);
   return textbox;
 };
 
 const ImageUrlHelper = (entities: Array<any> | any) => {
+  const { generateUrl, noImageUrl } = iiiF;
   const imageUrls: Array<any> = [];
   if (entities instanceof Array) {
     entities.forEach((entity: any) => {
       if (entity.primary_mediafile || entity.mediafiles[0].filename) {
         const image = entity.primary_mediafile || entity.mediafiles[0].filename;
-        imageUrls.push(
-          `https://api-uat.collectie.gent/iiif/image/iiif/3/${image}/full/1000,/0/default.jpg`,
-        );
+        imageUrls.push(generateUrl(image, 'full', '', 150));
       }
     });
   } else {
     if (entities.primary_mediafile || entities.mediafiles[0].filename) {
       const image = entities.primary_mediafile || entities.mediafiles[0].filename;
-      imageUrls.push(
-        `https://api-uat.collectie.gent/iiif/image/iiif/3/${image}/full/1000,/0/default.jpg`,
-      );
+      imageUrls.push(generateUrl(image, 'full', '', 150));
     }
   }
   return imageUrls;

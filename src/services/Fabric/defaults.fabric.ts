@@ -123,7 +123,7 @@ const fabricdefaults: FabricDefaults = {
       height: 80,
       selectedRelationBorder: {
         color: '#02A77F',
-        stroke: 10,
+        stroke: 5,
       },
       selectedRelationLine: {
         color: '#B65099',
@@ -137,11 +137,11 @@ const fabricdefaults: FabricDefaults = {
     selectedImage: {
       canvasPosition: {
         left: 1920 / 2,
-        top: 880 - 50,
+        top: 880 - 10,
       },
       scale: {
-        scaleX: 0.25,
-        scaleY: 0.25,
+        scaleX: 1,
+        scaleY: 1,
       },
       controls: {
         bl: false,
@@ -165,27 +165,27 @@ const fabricdefaults: FabricDefaults = {
       },
     },
     infoBar: {
-      height: 400,
+      height: 300,
       startFrame: {
         text: {
           position: {
             x: 1920 / 2 - 300,
-            y: 880 - 300,
+            y: 880 - 200,
           },
           origin: {
             originX: 'right',
             originY: 'bottom',
           },
-          fontSize: 24,
+          fontSize: 20,
           fontFamily: 'Avenir',
         },
         position: {
-          top: 1920 - 50,
-          left: 1080 / 2 - 300,
+          top: 880 - 10,
+          left: 1920 / 2 - 250,
         },
         scale: {
-          scaleX: 0.2,
-          scaleY: 0.2,
+          scaleX: 1,
+          scaleY: 1,
         },
         origin: {
           originX: 'right',
@@ -196,22 +196,22 @@ const fabricdefaults: FabricDefaults = {
         text: {
           position: {
             x: 1920 / 2 + 300,
-            y: 880 - 300,
+            y: 880 - 200,
           },
           origin: {
             originX: 'left',
             originY: 'bottom',
           },
-          fontSize: 24,
+          fontSize: 20,
           fontFamily: 'Avenir',
         },
         position: {
-          top: 880 - 50,
-          left: 1920 / 2 + 300,
+          top: 880 - 10,
+          left: 1920 / 2 + 250,
         },
         scale: {
-          scaleX: 0.2,
-          scaleY: 0.2,
+          scaleX: 1,
+          scaleY: 1,
         },
         origin: {
           originX: 'left',
@@ -229,16 +229,13 @@ const fabricdefaults: FabricDefaults = {
           (1920 / 6) * 5,
           (1920 / 6) * 6,
         ],
-        yAxis: [-100, 0, 250, 400],
-        blockedPositions: [
-          { xIndex: 3, yIndex: 3 },
-          { xIndex: 2, yIndex: 3 },
-        ],
+        yAxis: [-100, 100, 300, 500],
+        blockedPositions: [{ yIndex: 3, xIndex: 3 }],
         range: 1,
       },
       scale: {
-        scaleX: 0.2,
-        scaleY: 0.2,
+        scaleX: 1.1,
+        scaleY: 1.1,
       },
     },
   },

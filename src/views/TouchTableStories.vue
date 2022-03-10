@@ -3,9 +3,7 @@
     <shutdown-modal :code="boxVisiter.code" />
     <nav class="px-24 py-8 flex justify-between items-center">
       <div class="">
-        <h1 class="text-4xl font-bold">
-          Ontdek alle verhalen
-        </h1>
+        <h1 class="text-4xl font-bold">Ontdek alle verhalen</h1>
       </div>
       <div class="flex">
         <base-button
@@ -28,8 +26,9 @@
       <div
         v-if="
           !loadingActiveBoxResult &&
-            activeBoxResult.ActiveBox &&
-            activeBoxResult.ActiveBox.results
+          activeBoxResult &&
+          activeBoxResult.ActiveBox &&
+          activeBoxResult.ActiveBox.results
         "
       >
         <story-item
@@ -42,10 +41,7 @@
           :loading="loadingActiveBoxResult"
         />
       </div>
-      <div
-        v-else
-        class="w-screen h-screen flex justify-center align-center"
-      >
+      <div v-else class="w-screen h-screen flex justify-center align-center">
         <svg
           class="animate-spin -ml-1 mr-3 text-white"
           xmlns="http://www.w3.org/2000/svg"
@@ -78,9 +74,7 @@
   import {
     baseIcon,
     BaseButton,
-    BoxVisiter,
     boxVisiter,
-    useBoxVisiter,
     GetStoryByIdDocument,
     GetActiveBoxDocument,
     GetEntityByIdDocument,

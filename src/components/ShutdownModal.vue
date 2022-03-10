@@ -32,6 +32,7 @@
           custom-style="touchtable-green-round"
           :icon-shown="false"
           text="Nee, terug naar het archief"
+          @click="goToStoriesScreen"
         />
       </section>
     </section>
@@ -101,10 +102,16 @@
         router.push('/touchtable/start');
       };
 
+      const goToStoriesScreen = () => {
+        closeShutdownModal();
+        router.push('/touchtable/stories');
+      };
+
       return {
         ShutdownModalState,
         closeShutdownModal,
         goToCodeScreen,
+        goToStoriesScreen,
       };
     },
   });

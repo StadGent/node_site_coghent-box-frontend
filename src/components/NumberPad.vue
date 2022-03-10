@@ -31,6 +31,37 @@
     backKey?: boolean;
   };
 
+  export type CodeState = Array<string>;
+
+  export type NumberPadType = {
+    state: CodeState;
+  };
+
+  const NumberPadState = ref<NumberPadType>({
+    state: [],
+  });
+
+  export const useNumberPad = () => {
+    const updateNumberPad = (NumberPadInput: string) => {
+      NumberPadState.value.state.push(NumberPadInput);
+    };
+
+    const resetNumberPad = () => {
+      NumberPadState.value.state = [];
+    };
+
+    const undoNumberPad = () => {
+      NumberPadState.value.state.pop();
+    };
+
+    return {
+      updateNumberPad,
+      NumberPadState,
+      resetNumberPad,
+      undoNumberPad,
+    };
+  };
+
   export default defineComponent({
     name: 'NumberPad',
     components: { BaseIcon },
@@ -64,30 +95,21 @@
         default: 8,
       },
     },
-    emits: ['code', 'codeComplete'],
+    emits: ['codeComplete'],
     setup: (props, { emit }) => {
-      const valueArray = ref<Array<any>>([]);
+      const { updateNumberPad, undoNumberPad, resetNumberPad, NumberPadState } =
+        useNumberPad();
       const containerStyles: string = `grid grid-cols-${props.columns} w-1/2`;
       const spacerStyles: string = '';
       const keyStyles: string =
         'flex justify-center items-center bg-background-light p-5 m-5 text-3xl font-bold rounded-md cursor-pointer select-none w-24 h-24';
 
-      const resetCode = () => {
-        valueArray.value = [];
-      };
-
       const addCharacterToResultArray = (key: Key) => {
         if (key.backKey) {
-          valueArray.value.pop();
-          emit('code', valueArray.value);
+          undoNumberPad();
         } else {
-          if (valueArray.value.length < props.maxAmountOfCharacters - 1) {
-            valueArray.value.push(key.value);
-            emit('code', valueArray.value);
-          } else if ((valueArray.value.length = props.maxAmountOfCharacters - 1)) {
-            valueArray.value.push(key.value);
-            emit('codeComplete', true);
-            resetCode();
+          if (NumberPadState.value.state.length <= props.maxAmountOfCharacters - 1) {
+            updateNumberPad(key.value);
           }
         }
       };

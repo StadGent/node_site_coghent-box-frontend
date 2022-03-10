@@ -79,7 +79,7 @@ export default class FabricService {
       image.originY = fabricdefaults.canvas.selectedImage.origin.originY;
       image.positionIndexes = {
         xIndex: fabricdefaults.canvas.secondaryImage.positions.blockedPositions[0].xIndex,
-        yIndex: fabricdefaults.canvas.secondaryImage.positions.blockedPositions[0].xIndex,
+        yIndex: fabricdefaults.canvas.secondaryImage.positions.blockedPositions[0].yIndex,
       };
       lockObjectMovementHelper(image);
       image.hoverCursor = 'pointer';
@@ -107,6 +107,7 @@ export default class FabricService {
       fill: '#F0EDE6',
       objectType: 'infoContainer',
       hoverCursor: 'default',
+      selectable: false,
     });
     lockObjectMovementHelper(backgroundRect);
     this.state.canvas.add(backgroundRect);

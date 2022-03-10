@@ -1,5 +1,5 @@
 <template>
-  <section class="py-24">
+  <section class="pb-24">
     <section class="flex items-center">
       <div
         :class="`flex justify-center items-center mr-12 h-48 w-48 z-40 rounded-full bg-${storyColor} shadow-${storyColor}`"

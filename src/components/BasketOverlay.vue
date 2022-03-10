@@ -14,9 +14,7 @@
       class="w-full flex justify-center items-center p-12 font-bold cursor-pointer"
       @click="closeBasketOverlay"
     >
-      <h2 class="text-6xl">
-        Sluiten
-      </h2>
+      <h2 class="text-6xl">Sluiten</h2>
     </section>
   </base-overlay>
 </template>
@@ -34,10 +32,10 @@
     Entity,
     RelationType,
   } from 'coghent-vue-3-component-library/lib/queries';
-  import useIIIF from '@/composables/useIIIF';
   import { useBoxVisiter } from 'coghent-vue-3-component-library';
   import { apolloClient } from '@/main';
-  import { getBoxVisitEntitiesById } from '@/services/Fabric/helper.boxvisit';
+  import { getBoxVisitEntityById } from '@/services/Fabric/helper.boxvisit';
+  import { iiiF } from '@/main';
 
   export type OverlayState = 'show' | 'hide' | 'loading';
 
@@ -85,10 +83,19 @@
     setup(props) {
       const { closeBasketOverlay, openBasketOverlay, BasketOverlayState } =
         useBasketOverlay();
-      const { generateUrl, noImageUrl } = useIIIF();
-      console.log(props.basketItems.map((item: Relation) => item.key));
+      const { generateUrl, noImageUrl } = iiiF;
+      const basketEntityIds: string[] = props.basketItems.map((item: Relation) =>
+        item.key.replace('entities/', ''),
+      );
+      const basketEntities = ref<Entity[]>([]);
+      console.log({ basketEntityIds });
 
-      getBoxVisitEntitiesById(props.basketItems.map((item: Relation) => item.key));
+      basketEntityIds.forEach((basketEntityId: string) => {
+        const basketEntity = getBoxVisitEntityById(basketEntityId);
+        console.log({ basketEntity });
+      });
+
+      console.log(basketEntities);
 
       return {
         closeBasketOverlay,

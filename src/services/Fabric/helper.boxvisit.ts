@@ -7,7 +7,7 @@ import { useQuery, useMutation } from '@vue/apollo-composable';
 import { Entity } from 'coghent-vue-3-component-library/lib/queries';
 import { Asset, Frame } from '@/models/GraphqlModel';
 
-const getBoxVisitEntitiesById = (idArray: Array<String>) => {
+const getBoxVisitEntityById = (id: string) => {
   const { result: activeBoxResult, loading: loadingActiveBoxResult } =
     useQuery(GetActiveBoxDocument);
 
@@ -15,19 +15,12 @@ const getBoxVisitEntitiesById = (idArray: Array<String>) => {
     (result: Entity) => result.id == selectedStory.value.id,
   );
 
-  const boxVisitEntities: Entity[] = [];
-  idArray.forEach((id: String) => {
-    story.frames?.forEach((frame: any) => {
-      const entity: Entity = frame.assets.find((asset: Asset) => asset.id == id);
-      boxVisitEntities.push(entity);
-    });
+  story.frames?.forEach((frame: any) => {
+    const entity: Entity = frame.assets.find((asset: Asset) => asset.id == id);
+    if (entity) {
+      return entity as Entity;
+    }
   });
-
-  console.log({ boxVisitEntities });
-  console.log({ story });
-  console.log({ selectedStory });
-
-  return boxVisitEntities as Array<Entity>;
 };
 
-export { getBoxVisitEntitiesById };
+export { getBoxVisitEntityById };

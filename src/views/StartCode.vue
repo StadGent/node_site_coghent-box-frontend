@@ -8,14 +8,11 @@
     >
       <section class="w-full">
         <number-display
-          :code="code"
+          :code="NumberPadState.state"
           :max-amount-of-characters="maxAmountOfNumbers"
           class="mb-12"
         />
-        <number-pad
-          @code="updateCode"
-          @codeComplete="checkCode"
-        />
+        <number-pad />
       </section>
       <section class="flex justify-center items-center w-full mt-12">
         <base-button
@@ -36,7 +33,7 @@
     GetBoxVisiterByCodeDocument,
     BaseButton,
   } from 'coghent-vue-3-component-library';
-  import NumberPad from '@/components/NumberPad.vue';
+  import NumberPad, { useNumberPad } from '@/components/NumberPad.vue';
   import NumberDisplay from '@/components/NumberDisplay.vue';
   import { useRouter } from 'vue-router';
   import { useQuery, useMutation } from '@vue/apollo-composable';
@@ -54,36 +51,42 @@
     },
     props: {},
     setup: (props) => {
+      const { updateNumberPad, undoNumberPad, resetNumberPad, NumberPadState } =
+        useNumberPad();
       const maxAmountOfNumbers = 8;
-      const code = ref<Array<any>>([]);
       const router = useRouter();
       const { getByCode } = useBoxVisiter(apolloClient);
-
-      const updateCode = (value: any) => {
-        code.value = value;
-      };
 
       const showWrongCodeMessage = () => {
         alert('Wrong code');
       };
 
+      watch(
+        () => NumberPadState.value.state.length,
+        () => {
+          if (NumberPadState.value.state.length == maxAmountOfNumbers) {
+            checkCode();
+          }
+        },
+      );
+
       const checkCode = () => {
-        // code.value = ['5', '2', '3', '8', '9', '9', '3', '2'];
-        const resolvedBoxVisit = getByCode(code.value.join(''));
+        let code: string = NumberPadState.value.state.join('');
+        code = '52389932';
+        const resolvedBoxVisit = getByCode(code);
         resolvedBoxVisit.then((boxVisit: any) => {
           if (boxVisit) {
             router.push('/touchtable/stories');
+          } else {
+            showWrongCodeMessage();
+            resetNumberPad();
           }
-        });
-        resolvedBoxVisit.catch(() => {
-          code.value = [];
-          showWrongCodeMessage();
         });
       };
 
-      // checkCode();
+      checkCode();
 
-      return { updateCode, maxAmountOfNumbers, code, checkCode };
+      return { NumberPadState, maxAmountOfNumbers, checkCode };
     },
   });
 </script>

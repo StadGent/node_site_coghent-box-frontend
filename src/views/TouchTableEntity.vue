@@ -103,6 +103,18 @@
       const route = useRoute();
       const id = asString(route.params['entityID']);
       const code = ref<string>(boxVisiter.value.code);
+      const relationStringArray = ref<string[]>([]);
+      const relationsLabelArray = ref<string[]>([]);
+      const relationsArray = ref<Relation[]>([]);
+      const subRelations = ref<SecondaryRelation[]>([]);
+      const entity = ref<any>();
+      const headEntityId = ref<string>();
+      const basketItems = ref<Array<Relation>>([]);
+      const IIIFImageUrl = ref<string>();
+      let fabricService: FabricService | undefined = undefined;
+      const { openIIIFModal, IIIFModalState } = useIIIFModal();
+      const { getTouchTableHistory } = useBoxVisiter(apolloClient);
+
       const {
         result,
         onResult: onEntityResult,
@@ -125,17 +137,6 @@
         AddAssetToBoxVisiterDocument,
         { variables: { code: code.value, assetId: id, type: 'visited' } },
       );
-      const relationStringArray = ref<string[]>([]);
-      const relationsLabelArray = ref<string[]>([]);
-      const relationsArray = ref<Relation[]>([]);
-      const subRelations = ref<SecondaryRelation[]>([]);
-      const entity = ref<any>();
-      const headEntityId = ref<string>();
-      const basketItems = ref<Array<Relation>>([]);
-      const IIIFImageUrl = ref<string>();
-      let fabricService: FabricService | undefined = undefined;
-      const { openIIIFModal, IIIFModalState } = useIIIFModal();
-      const { getTouchTableHistory } = useBoxVisiter(apolloClient);
 
       const {
         result: relationResult,
@@ -166,9 +167,9 @@
         () => route.params.entityID,
         () => {
           console.log('Refetch entity');
-          // refetch({ id: asString(route.params.entityID) });
+          refetch({ id: asString(route.params.entityID) });
           mutateHistory();
-          router.go(0);
+          // router.go(0);
         },
       );
 
@@ -369,9 +370,9 @@
   .infocard {
     position: absolute;
     top: 100px;
-    left: 100px;
+    left: 25px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-    width: 400px;
+    width: 425px;
     height: calc(1080px - 250px);
   }
   #canvas {
