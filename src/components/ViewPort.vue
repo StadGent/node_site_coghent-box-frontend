@@ -237,7 +237,7 @@
         await SceneHelper(threeSvc, storyService).addFrameProgressDotsToScene(
           progressDots,
           storyService.activeStoryData.storyId,
-          storyService.activeStoryData.totalOfFramesSeen + 1,
+          storyService.activeStoryData.totalOfFramesSeen,
           true,
         );
         taggingService.retag(Tags.StoryCircleFrameDot, Tags.ActiveStoryCircleFrameDot);
