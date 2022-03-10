@@ -22,12 +22,12 @@ const Defaults = (): {
   EndCircle: () => Mesh<CircleGeometry, MeshBasicMaterial>;
 } => {
   const pixelInMeter = () => 0.003;
-  const screenZones = () => 5;
+  const screenZones = () => 6;
   const zonePadding = () => 2;
   const screenZonePadding = () => 2;
   const boundaryPadding = () => 1;
 
-  const maxFrames = () => 1;
+  const maxFrames = () => 2;
   const countdown = () => 3;
 
   const fontPath = () => '/Fonts/myFont.json';

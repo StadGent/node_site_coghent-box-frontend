@@ -47,6 +47,7 @@ import { Entity } from 'coghent-vue-3-component-library/lib';
 import useStartOfSession from '@/Three/playbook.startOfSession';
 import Spot from '@/Three/shapes.spotlight';
 import StateService, { FlowState } from '@/services/StateService';
+import Layers from '@/Three/defaults.layers';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -293,7 +294,7 @@ export default defineComponent({
       threeSvc.ClearScene();
 
       spotlight = Spot().create(
-        zoneService.middleZoneCenter,
+        zoneService.zones[0].center,
         Measurements().storyCircle.radius,
       );
       threeSvc.AddToScene(spotlight, Tags.Spotlight, 'InitialSpotlight');
@@ -383,7 +384,7 @@ export default defineComponent({
             currentFrame,
             storyService.getStoryColor(storyService.activeStory.id),
             timingCount,
-            playBook.lastAction().time + Timing.delayForNext,
+            playBook.lastAction().time,
             progress,
           );
         }
@@ -502,7 +503,7 @@ export default defineComponent({
             );
             3;
           },
-          playBook.lastAction().time + 1,
+          playBook.lastAction().time + 2,
           'Move the spotlight to the center of the screen until the frame ends',
         );
         setAfterFrameScreen();
@@ -562,9 +563,8 @@ export default defineComponent({
             chooseStory.value = true;
           }
         },
-        audio && isNaN(audio.duration)
-          ? audioDuration
-          : playBook.lastAction().time + Timing.delayForNext,
+        !audio?playBook.lastAction().time + Timing.delayForNext + 3: audioDuration
+          ,
         `Update storyData & show endOfSessions screen or the storyOverview`,
       );
     };
@@ -602,7 +602,6 @@ export default defineComponent({
       subtitleService = new SubtitleService();
       threeSvc.ClearScene();
       initState();
-      // Tools().displayZones(threeSvc, zoneService.zones);
       threeSvc.Animate();
     });
     return { viewport, videoElement, subtitles };

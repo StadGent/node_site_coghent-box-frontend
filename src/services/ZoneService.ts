@@ -23,7 +23,7 @@ export default class ZoneService {
     this.screen = _screen;
     this.zones = this.createZones(_zones);
     this.zoneCenters = this.centerOfZones();
-    this.middleZoneCenter = this.zoneCenters[(this.zoneCenters.length - 1) / 2];
+    this.middleZoneCenter = new Vector3(0,0, Layers.scene);
     this.zonesInnerToOuter = this.orderZoneCentersFromInnerToOuterPosition();
   }
 
@@ -45,10 +45,10 @@ export default class ZoneService {
     for (let index = 1;index < this.zoneCenters.length;index++) {
       if (index % 2 === 0) {
         positionOfIndex += index;
-        zones.push(this.zoneCenters[positionOfIndex]);
+        zones.push(this.zones[positionOfIndex].start);
       } else if (Math.abs(index % 2) == 1) {
         positionOfIndex -= index;
-        zones.push(this.zoneCenters[positionOfIndex]);
+        zones.push(this.zones[positionOfIndex].start);
       }
     }
     return zones;
