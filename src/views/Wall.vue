@@ -133,8 +133,8 @@
           stateService.getCurrentState() === FlowState[0]
         ) {
           getCode(value);
-          inputValue.value = '';
         }
+        inputValue.value = '';
       });
 
       const getCode = async (code: string) => {

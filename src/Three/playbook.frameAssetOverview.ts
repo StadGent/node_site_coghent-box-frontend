@@ -2,7 +2,15 @@ import useAsset from '@/composables/useAsset';
 import { Asset, Frame, Story } from '@/models/GraphqlModel';
 import FrameOverview from '@/screens/FrameOverview';
 import ThreeService from '@/services/ThreeService';
-import { BoxBufferGeometry, Group, Mesh, MeshBasicMaterial, Object3D, Texture, Vector3 } from 'three';
+import {
+  BoxBufferGeometry,
+  Group,
+  Mesh,
+  MeshBasicMaterial,
+  Object3D,
+  Texture,
+  Vector3,
+} from 'three';
 import Layers from './defaults.layers';
 import { PlayBookFunctions } from '@/composables/playbook';
 import { Frame as modelFrame } from '@/models/GraphqlModel';
@@ -26,11 +34,7 @@ const useFrameAssetOverview = (
   spotlight: Mesh,
   garbageHelper: GarabageHelperForWall,
 ): {
-  create: (
-    currentFrame: number,
-    storyColor: number,
-    timestamp: number,
-  ) => Promise<void>;
+  create: (currentFrame: number, storyColor: number, timestamp: number) => Promise<void>;
 } => {
   const group: Group = new Group();
   const positions: Array<Vector3> = [];
@@ -40,9 +44,12 @@ const useFrameAssetOverview = (
   const displayAllAssets = async (frame: modelFrame, timestamp: number) => {
     threeService.RemoveFromScene(group);
     const data: Record<number, Vector3> = {};
-    const images: Array<Mesh> = []
+    const images: Array<Mesh> = [];
     for (const asset of assets) {
-      const relationMetadata = useAsset(threeService).connectRelationMetadata(frame, asset);
+      const relationMetadata = useAsset(threeService).connectRelationMetadata(
+        frame,
+        asset,
+      );
       const position = new Vector3(0, 0, Layers.scene);
       if (relationMetadata?.position != null || undefined) {
         position.x = relationMetadata.position.x;
@@ -50,17 +57,27 @@ const useFrameAssetOverview = (
       }
       data[relationMetadata.timestamp_start] = position;
       positions.push(position);
-      const image = await FrameOverview(threeService).addImage(asset, relationMetadata.scale, position)
-      images.push(image)
-      group.add(
-        image
+      const image = await FrameOverview(threeService).addImage(
+        asset,
+        relationMetadata.scale,
+        position,
       );
+      images.push(image);
+      group.add(image);
     }
 
     playBook.addToPlayBook(
       async () => {
-        threeService.AddToScene(group, Tags.GroupOfAssets, ' Group of all the assets from the frame');
-        await CustomAnimation().fadeInGroups([group], AnimationDefaults.values.opacityActive, AnimationDefaults.values.fadeStep);
+        threeService.AddToScene(
+          group,
+          Tags.GroupOfAssets,
+          ' Group of all the assets from the frame',
+        );
+        await CustomAnimation().fadeInGroups(
+          [group],
+          AnimationDefaults.values.opacityActive,
+          AnimationDefaults.values.fadeStep,
+        );
       },
       timestamp,
       `Add all assets to scene.`,
@@ -74,10 +91,21 @@ const useFrameAssetOverview = (
     spotlight: Mesh,
   ) => {
     garbageHelper.highlightedAsset();
-    const spotlightScale = useAsset(threeService).getAssetSpotlightScale(asset as unknown as Mesh<BoxBufferGeometry, any>, scale)
-    CustomAnimation().shrink(asset as unknown as Mesh<any, MeshBasicMaterial>, scale, AnimationDefaults.values.scaleStep);
+    const spotlightScale = useAsset(threeService).getAssetSpotlightScale(
+      asset as unknown as Mesh<BoxBufferGeometry, any>,
+      scale,
+    );
+    CustomAnimation().shrink(
+      asset as unknown as Mesh<any, MeshBasicMaterial>,
+      scale,
+      AnimationDefaults.values.scaleStep,
+    );
     await Common().awaitTimeout(250);
-    await CustomAnimation().shrink(spotlight as unknown as Mesh<any, MeshBasicMaterial>, spotlightScale, AnimationDefaults.values.scaleStep);
+    await CustomAnimation().shrink(
+      spotlight as unknown as Mesh<any, MeshBasicMaterial>,
+      spotlightScale,
+      AnimationDefaults.values.scaleStep,
+    );
     await Common().awaitTimeout(150);
     await Promise.all([
       MoveObject().startMoving(asset, positions[currentAsset]),
@@ -125,7 +153,7 @@ const useFrameAssetOverview = (
       asset as Mesh<BoxBufferGeometry, any>,
       zoomSettings.zoomPosition,
       zoomSettings.scale,
-      spotlight
+      spotlight,
     );
     const collections = useAsset(threeService).getCollections(assets[currentAsset]);
     const title = useAsset(threeService).getTitle(assets[currentAsset]);
@@ -134,18 +162,24 @@ const useFrameAssetOverview = (
       storyColor,
       `${title} ${collections[0] ? `, (${collections[0].value}0` : ''}`,
     );
-    threeService.AddGroupsToScene([metadataInfo], Tags.HighlightedMetadata, 'Metadata for image.');
+    threeService.AddGroupsToScene(
+      [metadataInfo],
+      Tags.HighlightedMetadata,
+      'Metadata for image.',
+    );
   };
 
-  const create = async (
-    currentFrame: number,
-    _storyColor: number,
-    timestamp: number,
-  ) => {
-    assets = useAsset(threeService).getAssetsFromFrame(activeStory, currentFrame) as unknown as Array<Asset>;
+  const create = async (currentFrame: number, _storyColor: number, timestamp: number) => {
+    assets = useAsset(threeService).getAssetsFromFrame(
+      activeStory,
+      currentFrame,
+    ) as unknown as Array<Asset>;
     storyColor = _storyColor;
     if (assets.length > 0) {
-      await displayAllAssets(activeStory.frames?.[currentFrame] as unknown as Frame, timestamp);
+      await displayAllAssets(
+        activeStory.frames?.[currentFrame] as unknown as Frame,
+        timestamp,
+      );
       group.children.forEach((asset, index) => {
         const relationMetadata = useAsset(threeService).connectRelationMetadata(
           activeStory.frames?.[currentFrame] as unknown as Frame,
@@ -155,17 +189,17 @@ const useFrameAssetOverview = (
           playBook.addToPlayBook(
             async () => {
               if (Development().showZonesInOverview()) {
-                Tools().displayZones(threeService, zoneService.zones);
+                // Tools().displayZones(threeService, zoneService.zones);
               }
               await setAssetsInactive(asset as Mesh<BoxBufferGeometry, any>);
-              await CustomAnimation()
-                .grow(
-                  spotlight as Mesh<any,
-                    MeshBasicMaterial>,
-                  useAsset(threeService).getAssetSpotlightScale(
-                    asset as Mesh<BoxBufferGeometry, any>,
-                    relationMetadata.scale),
-                  AnimationDefaults.values.scaleStep);
+              await CustomAnimation().grow(
+                spotlight as Mesh<any, MeshBasicMaterial>,
+                useAsset(threeService).getAssetSpotlightScale(
+                  asset as Mesh<BoxBufferGeometry, any>,
+                  relationMetadata.scale,
+                ),
+                AnimationDefaults.values.scaleStep,
+              );
               await useAsset(threeService).moveSpotlightToAsset(
                 spotlight,
                 asset as Mesh<BoxBufferGeometry, any>,
@@ -179,10 +213,7 @@ const useFrameAssetOverview = (
         if (relationMetadata.timestamp_zoom) {
           playBook.addToPlayBook(
             async () => {
-              await zoomAndHighlightAsset(
-                asset as Mesh<BoxBufferGeometry, any>,
-                index,
-              );
+              await zoomAndHighlightAsset(asset as Mesh<BoxBufferGeometry, any>, index);
             },
             relationMetadata.timestamp_zoom,
             `Zoom and highlight asset + set other assets inactive`,

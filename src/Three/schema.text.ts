@@ -1,5 +1,5 @@
 import { Mesh, MeshBasicMaterial, BoxBufferGeometry, Vector3 } from 'three';
-import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
+import { Font, FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 import ChapeHelper from './helper.chape';
 import { CubeParams } from './schema.cube';
@@ -18,6 +18,8 @@ export type TextSchema = {
   fontParams: FontParams;
   textBoxParams: CubeParams;
 };
+
+let globalFont: Font;
 
 const SchemaText = (): {
   LoadText: (schema: TextSchema, opacity: number) => Promise<Mesh>;
@@ -59,24 +61,22 @@ const SchemaText = (): {
       },
       schema.position,
     );
-    let txt_msh : unknown;
-    const loaded = await loader.loadAsync(schema.fontParams.path)
+    if (!globalFont) globalFont = await loader.loadAsync(schema.fontParams.path);
 
-    //FIXME:
-    loader.load(schema.fontParams.path, function (font: any) {
-      const txtGeometry = CreateTextGeometry(schema.text, schema.fontParams.size, font);
-      const txt_mat = new MeshBasicMaterial({
-        color: schema.fontParams.color,
-        transparent: true,
-        opacity: opacity,
-      });
-      txt_mat.transparent = true;
-      txt_mat.opacity = opacity;
-      txt_mat.color.convertSRGBToLinear();
-      const txt_mesh = new Mesh(txtGeometry, txt_mat);
-      txt_msh = txt_mesh;
-      txtBox.add(txt_mesh);
+    const txtGeometry = CreateTextGeometry(
+      schema.text,
+      schema.fontParams.size,
+      globalFont,
+    );
+    const txt_mat = new MeshBasicMaterial({
+      color: schema.fontParams.color,
+      transparent: true,
+      opacity: opacity,
     });
+    txt_mat.transparent = true;
+    txt_mat.opacity = opacity;
+    txt_mat.color.convertSRGBToLinear();
+    txtBox.add(new Mesh(txtGeometry, txt_mat));
     return txtBox;
   };
 

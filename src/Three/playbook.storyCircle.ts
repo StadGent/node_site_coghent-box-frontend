@@ -52,11 +52,18 @@ const useStoryCircle = (
   ) => {
     if (canAddToSCene) {
       const storyCircle = await titleCircle(position, storyColor, currentFrame + 1);
-
+      console.log(`log Jeroen: ${_storyService.activeStoryData.storyId}`);
+      console.dir(_storyService.activeStoryData);
       playBook.addToPlayBook(
         async () => {
-          await SceneHelper(threeService, _storyService).addStoryCircleToScene(_storyService.activeStoryData.storyId, storyCircle, true);
-          TaggingHelper(_taggingService).tagStorycircleAsActiveStoryCircle(_storyService.activeStoryData.storyId);
+          await SceneHelper(threeService, _storyService).addStoryCircleToScene(
+            _storyService.activeStoryData.storyId,
+            storyCircle,
+            true,
+          );
+          TaggingHelper(_taggingService).tagStorycircleAsActiveStoryCircle(
+            _storyService.activeStoryData.storyId,
+          );
         },
         timestamp,
         `Add full storyCircle to the scene.`,
