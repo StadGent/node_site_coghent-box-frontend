@@ -1,15 +1,12 @@
 <template>
-  <label
-    class="absolute left-0 top-0"
-    :v-if="visitercode == null"
-    for=""
-  >
+  <label class="absolute left-0 top-0" :v-if="visitercode == null" for="">
     <input
+      ref="qrInput"
       v-model="inputValue"
       class="z-50 relative"
       type="text"
       autofocus
-    >
+    />
   </label>
   <ViewPort
     :stories="stories"
@@ -40,7 +37,6 @@
   export default defineComponent({
     name: 'Wall',
     components: { ViewPort, mqtt },
-
     setup() {
       const stateService = new StateService(FlowState.welcome);
       let stories = ref<Array<any>>();
@@ -55,6 +51,10 @@
       const showPauseOverview = ref<boolean>(false);
       const canScanTicket = ref<boolean>(false);
       const { getByCode, getRelationsByType } = useBoxVisiter(apolloClient);
+      const qrInput = ref<any>(null);
+      window.addEventListener('focus', () => {
+        if (qrInput.value) qrInput.value.focus();
+      });
 
       const { onResult, fetchMore } = useQuery(
         GetActiveBoxDocument,
@@ -127,7 +127,11 @@
       };
 
       watch(inputValue, (value: string) => {
-        if (canScanTicket.value && value.length === 8) {
+        if (
+          canScanTicket.value &&
+          value.length === 8 &&
+          stateService.getCurrentState() === FlowState[0]
+        ) {
           getCode(value);
           inputValue.value = '';
         }
@@ -213,6 +217,7 @@
       };
 
       return {
+        qrInput,
         stories,
         storySelected,
         setSelectStory,
