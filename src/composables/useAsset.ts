@@ -106,7 +106,7 @@ const useAsset = (
     }
     assetImageCube.material.opacity = 1;
     assetImageCube.position.set(position.x, position.y, position.z);
-    assetImageCube.position.z = Layers.scene + Layers.fraction;
+    assetImageCube.position.z = Layers.presentation;
     await moveSpotlightToAsset(spotlight, assetImageCube, scale);
     await Common().awaitTimeout(200);
     await CustomAnimation().grow(assetImageCube, scale, AnimationDefaults.values.scaleStep);
@@ -121,7 +121,7 @@ const useAsset = (
       new Vector3(
         object.position.x,
         object.position.y + ((object.geometry.parameters.height / 2) * object.scale.x) + 0.6,
-        Layers.scene + Layers.fraction
+        Layers.presentation
       )
     ).create(text, color)).metadata;
     return metadataInfo;
