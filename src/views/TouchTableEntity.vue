@@ -5,33 +5,23 @@
     <IIIF-modal :image-url="IIIFImageUrl" />
     <touch-header :basket-amount="basketItems.length" />
     <div id="canvas-container">
-      <canvas
-        id="canvas"
-        class="touchcanvas"
-      />
+      <canvas id="canvas" class="touchcanvas" />
     </div>
     <CardComponent
       v-if="entity"
       :side-strip="true"
       :large="true"
-      :reverse-colors="true"
+      :reverseColors="true"
+      :scroll="true"
       class="infocard"
     >
       <h2 class="font-bold text-4xl mb-12">
         {{ entity.title[0].value }}
       </h2>
-      <p
-        v-if="entity.description[0].value"
-        class="text-xl mb-12"
-      >
+      <p v-if="entity.description[0].value" class="text-xl mb-12">
         {{ entity.description[0].value }}
       </p>
-      <p
-        v-else
-        class="text-xl mb-12"
-      >
-        This item does not have a description
-      </p>
+      <p class="text-xl mb-12" v-else>Dit item heeft geen beschrijving</p>
       <div class="flex w-full flex-wrap justify-center items-center mt-12">
         <base-button
           class="text-xl"
@@ -382,7 +372,7 @@
     left: 100px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     width: 400px;
-    height: calc(1080px - 300px);
+    height: calc(1080px - 250px);
   }
   #canvas {
     background-color: #e5e5e5;
