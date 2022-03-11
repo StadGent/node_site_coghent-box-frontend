@@ -10,7 +10,7 @@ export default defineComponent({
       host: 'localhost',
       // host: 'mqtt.inuits.local',
       port: 9001,
-      endpoint: '/mqtt',
+      endpoint: '',
       clean: true,
       connectTimeout: 4000,
       reconnectPeriod: 4000,
@@ -22,7 +22,7 @@ export default defineComponent({
     const connectUrl = `ws://${host}:${port}${endpoint}`;
     let client: mqtt.MqttClient;
     let subscription: IClientSubscribeOptions = {
-      qos: 0,
+      qos: 2,
     };
 
     client = mqtt.connect(connectUrl, options);
@@ -47,8 +47,13 @@ export default defineComponent({
       });
 
       client.on('message', (_topic, message) => {
+        console.log('topic',_topic)
+        console.log('message',message.toString())
         emit('selectStory', {topic:_topic ,id: filterSensorOutOfTopic(_topic), msg: JSON.parse(message.toString())});
       });
+      client.on('reconnect', () => {
+        doSubscribe('sensors/+/#')
+      })
     };
 
     const filterSensorOutOfTopic = (_topic: string) => {
