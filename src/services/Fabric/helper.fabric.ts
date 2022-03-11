@@ -1,4 +1,5 @@
 import { fabricdefaults } from './defaults.fabric';
+import { changeLineColorHelper } from './helper.lines';
 import { Coordinate, Scale, Position } from './FabricService';
 import { fabric } from 'fabric';
 import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
@@ -216,9 +217,10 @@ const ImageUrlHelper = (entities: Array<any> | any) => {
 };
 
 const IIIFImageUrlHelper = (entity: any): string => {
+  const { generateInfoUrl } = iiiF;
   const filename = entity.primary_mediafile || entity.mediafiles[0].filename;
 
-  return `https://api-uat.collectie.gent/iiif/image/iiif/3/${filename}/info.json`;
+  return generateInfoUrl(filename);
 };
 
 const frameBorderHighlightHelper = (frame: any, highlight: boolean) => {
@@ -230,29 +232,16 @@ const frameBorderHighlightHelper = (frame: any, highlight: boolean) => {
     : 0;
 };
 
-const relationHighlightHelper = (
-  frame: any,
-  highlight: boolean,
-  canvasObjects: Array<any>,
-  selectedFrame: any,
-) => {
-  const relationLines = canvasObjects.filter((canvasObject: any) =>
-    objectIsTypeHelper('line', canvasObject),
-  );
-  relationLines.forEach((relationLine: any) => {
-    if (highlight) {
-      const lineEndObject = canvasObjects.find(
-        (canvasObject: any) => canvasObject.id == relationLine.toId,
-      );
-      if (relationLine.fromId == selectedFrame.id && lineEndObject.id == frame.id) {
-        relationLine.stroke =
-          fabricdefaults.canvas.relationBrowser.selectedRelationLine.color;
-        relationLine.fill =
-          fabricdefaults.canvas.relationBrowser.selectedRelationLine.color;
-      }
-    } else {
-      relationLine.stroke = 'black';
-      relationLine.fill = 'black';
+const relationHighlightHelper = (relation: any) => {
+  changeLineColorHelper(relation, '#b65099');
+  relation.opacity = 1;
+};
+
+const unHighlightCanvasObjectsHelper = (canvasObjects: Array<any>) => {
+  canvasObjects.forEach((canvasObject: any) => {
+    objectOpacityHelper(canvasObject, 1);
+    if (objectIsTypeHelper('frame', canvasObject)) {
+      frameBorderHighlightHelper(canvasObject, false);
     }
   });
 };
@@ -295,4 +284,5 @@ export {
   getObjectsByObjectTypeHelper,
   moveObjectOnZAxisHelper,
   IIIFImageUrlHelper,
+  unHighlightCanvasObjectsHelper,
 };

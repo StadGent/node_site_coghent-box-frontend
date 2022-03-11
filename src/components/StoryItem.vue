@@ -14,7 +14,7 @@
         </h2>
       </div>
     </section>
-    <section>
+    <section v-if="storyEntities.length">
       <the-masonry
         ref="masonry"
         :tiles="entityData"
@@ -45,13 +45,13 @@
               text-text-white text-3xl
             `"
           >
-            <base-icon
-              icon="check"
-              class="stroke-current fill-current stroke-2"
-            />
+            <base-icon icon="check" class="stroke-current fill-current stroke-2" />
           </div>
         </template>
       </the-masonry>
+    </section>
+    <section v-else class="py-24">
+      <h3 class="text-xl font-bold">Dit verhaal heeft nog geen assets</h3>
     </section>
   </section>
 </template>

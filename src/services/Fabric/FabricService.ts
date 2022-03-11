@@ -17,6 +17,7 @@ import {
   canvasTextHelper,
   getObjectsByObjectTypeHelper,
   moveObjectOnZAxisHelper,
+  unHighlightCanvasObjectsHelper,
 } from './helper.fabric';
 import { router } from '@/router';
 import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
@@ -239,7 +240,7 @@ export default class FabricService {
         }
       });
     });
-    Promise.resolve();
+    return Promise.resolve();
   }
 
   setMainImageOnClick() {
@@ -264,6 +265,51 @@ export default class FabricService {
     this.state.selectedImage = undefined;
   }
 
+  highlightRelatedFrames(selectedFilterIndex: number, relations: Array<Relation>) {
+    const relation: Relation = relations[selectedFilterIndex];
+
+    const canvasObjects: Array<any> = this.state.canvas.getObjects();
+    const canvasFrames: Array<any> = getObjectsByObjectTypeHelper(canvasObjects, 'frame');
+
+    unHighlightCanvasObjectsHelper(this.state.canvas.getObjects());
+
+    if (relation) {
+      canvasFrames.forEach((canvasFrame: any) => {
+        const relationOnFrame: Boolean = canvasFrame.entity.relations.find(
+          (canvasRelation: Relation) => canvasRelation.key == relation.key,
+        )
+          ? true
+          : false;
+        if (relationOnFrame && canvasFrame.id != this.state.selectedImage.id) {
+          frameBorderHighlightHelper(canvasFrame, true);
+        } else if (canvasFrame.id != this.state.selectedImage.id) {
+          objectOpacityHelper(canvasFrame, 0.4);
+        }
+      });
+      const canvasRelations: Array<any> = getObjectsByObjectTypeHelper(
+        canvasObjects,
+        'line',
+      );
+      canvasRelations.forEach((canvasRelation: any) => {
+        const endFrame: any = getFrameByEntityIdHelper(
+          canvasRelation.toId,
+          canvasObjects,
+        );
+        const relationOnEndFrame: Boolean = endFrame.entity.relations.find(
+          (endFrameRelation: any) => endFrameRelation.key == relation.key,
+        )
+          ? true
+          : false;
+        if (relationOnEndFrame) {
+          relationHighlightHelper(canvasRelation);
+        } else {
+          objectOpacityHelper(canvasRelation, 0.2);
+        }
+      });
+    }
+    this.state.canvas.renderAll();
+  }
+
   generateRelationOnFrameAdd() {
     this.state.canvas.on('object:added', (newObject: any) => {
       if (
@@ -281,42 +327,6 @@ export default class FabricService {
     });
   }
 
-  highlightRelatedFrames(selectedFilterIndex: number, relations: Array<Relation>) {
-    const relation: Relation = relations[selectedFilterIndex];
-
-    const canvasObjects: Array<any> = this.state.canvas.getObjects();
-    const canvasFrames: Array<any> = canvasObjects.filter((object: any) =>
-      objectIsTypeHelper('frame', object),
-    );
-
-    canvasFrames.forEach((canvasFrame: any) => {
-      objectOpacityHelper(canvasFrame, 1);
-      frameBorderHighlightHelper(canvasFrame, false);
-    });
-
-    if (relation) {
-      canvasFrames.forEach((canvasFrame: any) => {
-        if (
-          canvasFrame.entity.relations.find(
-            (canvasRelation: Relation) => canvasRelation.key == relation.key,
-          ) &&
-          canvasFrame.id != this.state.selectedImage.id
-        ) {
-          frameBorderHighlightHelper(canvasFrame, true);
-          relationHighlightHelper(
-            canvasFrame,
-            true,
-            this.state.canvas.getObjects(),
-            this.state.selectedImage,
-          );
-        } else if (canvasFrame.id != this.state.selectedImage.id) {
-          objectOpacityHelper(canvasFrame, 0.4);
-        }
-      });
-    }
-    this.state.canvas.renderAll();
-  }
-
   generateRelationBetweenFrames(frame1: any, frame2: any) {
     console.log('Generating relation');
     if (frame1 && frame2) {
@@ -327,7 +337,6 @@ export default class FabricService {
         frame2.getCenterPoint().y,
       ];
       const relation = new fabric.Line(line, {
-        fill: 'black',
         stroke: 'black',
         strokeWidth: 3,
         selectable: false,

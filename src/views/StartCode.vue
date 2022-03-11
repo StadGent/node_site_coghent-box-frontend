@@ -72,7 +72,7 @@
 
       const checkCode = () => {
         let code: string = NumberPadState.value.state.join('');
-        // code = '52389932';
+        code = '52389932';
         const resolvedBoxVisit = getByCode(code);
         resolvedBoxVisit.then((boxVisit: any) => {
           if (boxVisit) {
@@ -84,7 +84,7 @@
         });
       };
 
-      // checkCode();
+      checkCode();
 
       return { NumberPadState, maxAmountOfNumbers, checkCode };
     },
