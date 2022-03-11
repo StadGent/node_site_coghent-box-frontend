@@ -14,13 +14,13 @@ const ScanQR = (position: Vector3): {
 } => {
 
   const arrow = () => {
-    const cube = SchemaCube().CreateImageCube({position: new Vector3(position.x + 2.5, position.y + 4, position.z),params: {height: 1, width: 2, url: Images.startOfSession.arrow, color: Colors().pink} as CubeParams} as CubeSchema); 
+    const cube = SchemaCube().CreateImageCube({position: new Vector3(position.x + 2.5, position.y + 200, position.z),params: {height: 100, width: 200, url: Images.startOfSession.arrow, color: Colors().pink} as CubeParams} as CubeSchema); 
     return cube;
   }
   
   const create = async () => {
     const groups: Array<Group> = [];
-    const textWithIcon = await TextHelper().displayTextFromRecordWithIcon(HelperText().scanYourTicket(position),Colors().white,Images.startOfSession.scanQrCode,position,new Vector3(2,3,0));
+    const textWithIcon = await TextHelper().displayTextFromRecordWithIcon(HelperText().scanYourTicket(position),Colors().white,Images.startOfSession.scanQrCode,new Vector3(position.x , position.y - 180, position.z),new Vector3(200,300,0));
     const direction = arrow();
     GroupHelper().AddObjectsTogroups(textWithIcon, groups);
     GroupHelper().AddObjectsTogroups([direction], groups);

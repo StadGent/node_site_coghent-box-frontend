@@ -38,7 +38,7 @@ const useStartOfSession = (
     const scanText = await ScanQR(
       new Vector3(
         zoneService.zoneCenters[0].x,
-        zoneService.zoneCenters[0].y - 1,
+        zoneService.zoneCenters[0].y ,
         zoneService.zoneCenters[0].z,
       ),
     ).create();
@@ -59,7 +59,7 @@ const useStartOfSession = (
         Tags.StartOfSessionCountdownNumber,
         Tags.StartOfSessionProgressRing,
       ],
-      new Vector3(-0.5,-0.5,0),
+      new Vector3(-50,-50,0),
       Measurements().text.size.veryBig
     );
     await CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>, Measurements().storyCircle.radius, AnimationDefaults.values.scaleStep);

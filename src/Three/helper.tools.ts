@@ -51,7 +51,7 @@ const Tools = (): {
       new Vector3(
         position.x,
         position.y,
-        2,
+        position.z,
       ),
       0.2,
       color || Colors().lightBlue,

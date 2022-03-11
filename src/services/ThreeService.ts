@@ -10,6 +10,7 @@ import {
   MathUtils,
   Color,
   Texture,
+  OrthographicCamera,
 } from 'three';
 import * as d3 from 'd3';
 import { Ref } from 'vue';
@@ -60,10 +61,8 @@ export default class ThreeService {
   }
 
   private calculateDimensionsOfScene() {
-    const vFOV = MathUtils.degToRad(this.defaultvalues.camera.fov);
-    const height = 2 * Math.tan(vFOV / 2) * this.defaultvalues.camera.distance; //
-    const width = height * (this.state.width / this.state.height);
-    this.state.sceneDimensions = new Vector3(width, height, 0);
+    const vFOV = MathUtils.degToRad(0 );
+    this.state.sceneDimensions = new Vector3(this.state.width, this.state.height, 6);
   }
 
   SetViewPort(width: number, height: number) {
@@ -74,6 +73,7 @@ export default class ThreeService {
     )[0].style.width = `${width.toString()}px`;
     this.calculateDimensionsOfScene();
   }
+
   InitializeRenderer() {
     this.state.renderer = new WebGLRenderer({
       alpha: true,
@@ -88,17 +88,19 @@ export default class ThreeService {
   }
 
   InitializeCamera() {
-    this.state.camera = new PerspectiveCamera(
-      this.defaultvalues.camera.fov,
-      this.state.width / this.state.height,
-      this.defaultvalues.camera.near,
-      this.defaultvalues.camera.far,
+    const aspect = this.state.width /this.state.height
+    this.state.camera = new OrthographicCamera(
+      -aspect*this.state.height/2 ,
+      aspect*this.state.height/2 ,
+      this.state.height/2,
+      -this.state.height/2,
+      -0.5,
+      3
     );
-    this.state.camera.position.z = this.defaultvalues.camera.distance;
   }
 
   AddToScene(item: any, tag: Tags, context?: string, id?: string) {
-    if(Development().sceneLogs() && context){
+    if (Development().sceneLogs() && context) {
       console.log('Add to scene |', context)
     }
     this.taggingService.tag(tag, item, context, id);
@@ -106,7 +108,7 @@ export default class ThreeService {
   }
 
   AddGroupsToScene(groups: Array<Group>, tag: Tags, context?: string, id?: string) {
-    if(Development().sceneLogs() && context){
+    if (Development().sceneLogs() && context) {
       console.log('Add group to scene |', context)
     }
     this.taggingService.tag(tag, groups, context, id);

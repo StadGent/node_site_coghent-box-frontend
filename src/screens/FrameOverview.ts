@@ -19,8 +19,7 @@ const FrameOverview = (threeService: ThreeService): {
   const { generateUrl } = iiiF
 
   const addImage = async (asset: Asset, scale: number, position: Vector3) => {
-    // const schema = CubeHelper().CreateSchema(position,useAsset(threeService).getImage(asset),new Vector3(3,2,0));
-    const schema = CubeHelper().CreateSchema(position, useAsset(threeService).getImage(asset), new Vector3(Common().pixelsToMeters(asset.mediafiles[0]?.mediainfo.width), Common().pixelsToMeters(asset.mediafiles[0]?.mediainfo.height), 0));
+    const schema = CubeHelper().CreateSchema(position, useAsset(threeService).getImage(asset), new Vector3(asset.mediafiles[0]?.mediainfo.width,asset.mediafiles[0]?.mediainfo.height, 0));
 
     const filename = Common().getFilenameFromStorageLink(schema.params.url as string, 'download/')
     schema.params.url = generateUrl(filename, 'full', 'max')

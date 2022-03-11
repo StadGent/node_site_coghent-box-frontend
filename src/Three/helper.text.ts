@@ -56,7 +56,7 @@ const TextHelper = (): {
         position: words[key] as Vector3,
         fontParams: {
           color: color || DefaultColors().green,
-          size: 0.3,
+          size: 30,
           path: '/Fonts/myFont.json',
         },
         textBoxParams: {

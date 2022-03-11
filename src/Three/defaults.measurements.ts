@@ -49,49 +49,49 @@ const Measurements = (): {
   startOfSession: StartOfSessionScreenParams;
 } => {
   const storyCircle = {
-    radius: 2.5,
-    progressRadius: 3,
-    outerCircle: 3.8,
+    radius: 200,
+    progressRadius: 250,
+    outerCircle: 320,
     opacityShadedCircle: 0.4,
     correctionText: 1.5,
   };
 
   const progressBar = {
-    radius: 2.5,
-    thickness: 0.16,
-    dotRadius: 0.4,
-    activeDotRadius: 0.15,
-    seenDotRadius: 0.25,
+    radius: 300,
+    thickness: 16,
+    dotRadius: 40,
+    activeDotRadius: 15,
+    seenDotRadius: 25,
     opacity: 0.95,
   };
 
   const spotLight = {
-    radius: 5.5,
+    radius: 350,
     spaceAroundObject: 1.8,
     opacity: 0.5,
   };
 
   const pauseScreen = {
-    bannerHeight: 5.5,
+    bannerHeight: 550,
     bannerOpacity: 1,
     bannerColor: Colors().black,
-    spotLightRadius: 5.5,
+    spotLightRadius: 350,
   };
 
   const text = {
     size: {
-      smaller: 0.2,
-      small: 0.3,
-      medium: 0.4,
-      big: 0.5,
-      veryBig: 1.2,
+      smaller: 20,
+      small: 30,
+      medium: 40,
+      big: 50,
+      veryBig: 120,
     },
     paddingAround: 0.4,
   };
 
   const startOfSession = {
-    countdownCircleRadius: 3,
-    countdownCircleThickness: 0.15,
+    countdownCircleRadius: 300,
+    countdownCircleThickness: 15,
   };
 
   return {

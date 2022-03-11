@@ -16,6 +16,7 @@ const Common = (): {
   setScale: (_object: Mesh, scale: number) => void;
   setPosition: (_object: Mesh, _position: Vector3) => void;
   getFilenameFromStorageLink: (_storageAPILink: string, _download: string) => string
+  fillStringToIdealLength: (_title: string) => string
 } => {
   const FilterOutIdAfterSlash = (str: string) => {
     const index = (str.indexOf('/') as number) + 1;
@@ -28,7 +29,8 @@ const Common = (): {
   };
 
   const pixelsToMeters = (pixels: number) => {
-    return pixels * Defaults().pixelInMeter();
+    return pixels 
+    // return pixels * Defaults().pixelInMeter();
   };
 
   const firstIsBiggest = (first: number, second: number) => {
@@ -55,6 +57,51 @@ const Common = (): {
     return filename
   }
 
+  const fillStringToIdealLength = (_title: string) => {
+    let theString = _title
+    const idealString = 'Antropomorfe vaas in aardewerk ';
+    if (_title.length < idealString.length) {
+      // console.log(idealString.length);
+      const strginArray = _title.split('');
+      // console.log(strginArray);
+      const halfOfstring = Math.floor(strginArray.length / 2);
+      // console.log(halfOfstring);
+      const halfstringArray = strginArray.splice(halfOfstring);
+      // console.log(halfstringArray);
+      const lengthidealstringHalf = idealString.length / 2;
+      const half = []
+      for (let index = 0;index < lengthidealstringHalf - halfOfstring + 1;index++) {
+        if (halfstringArray[index]) {
+          half[index] = halfstringArray[index];
+        } else {
+          half[index] = ' ';
+        }
+      }
+      const sechalf = []
+      const halfstringArrayBegin = strginArray.splice(0, halfOfstring).reverse();
+      // console.log(halfstringArrayBegin);
+      for (let index = 0;index < lengthidealstringHalf - halfOfstring + 1;index++) {
+        if (halfstringArrayBegin[index]) {
+          sechalf[index] = halfstringArrayBegin[index];
+        } else {
+          sechalf[index] = ' ';
+        }
+      }
+      // console.log(half.join(''))
+
+      // console.log(sechalf.reverse().join(''))
+      const firstHalf = sechalf.reverse()
+      // console.log({ firstHalf })
+      const secondHalf = half
+      const newString = [...sechalf.reverse(), ...secondHalf]
+      // console.log(newString.join(''))
+      theString = newString.join('')
+    }
+    return theString
+
+  }
+
+
   return {
     FilterOutIdAfterSlash,
     RemoveEntersFromString,
@@ -64,6 +111,7 @@ const Common = (): {
     setScale,
     setPosition,
     getFilenameFromStorageLink,
+    fillStringToIdealLength
   };
 };
 

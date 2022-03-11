@@ -28,8 +28,8 @@ const AnimationDefaults: AnimationDefault = {
     opacityActive: 0.9,
     opacityInactive: 0.7,
     fadeStep: 0.04,
-    scaleStep: 0.1,
-    scaleReducer: 0.2,
+    scaleStep: 10,
+    scaleReducer: 20,
     zoomOfAsset: 1.5,
   }
 

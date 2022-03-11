@@ -36,7 +36,7 @@ const TestSingleComponent = (): {
     return SchemaCube().CreateCube({ position: _position, params: { color: Colors().green, width: _dimensions.x, height: _dimensions.y, opacity: 1 } as CubeParams } as CubeSchema);
   };
   const testImageCube = (_position: Vector3) => {
-    return SchemaCube().CreateImageCube({ position: _position, params: { url: 'https://images.unsplash.com/photo-1453728013993-6d66e9c9123a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2370&q=80', color: Colors().green, width: 5, height: 7, opacity: 1 } as CubeParams } as CubeSchema);
+    return SchemaCube().CreateImageCube({ position: _position, params: { url: 'https://images.unsplash.com/photo-1453728013993-6d66e9c9123a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2370&q=80', color: Colors().green, width: 5700, height: 1000, opacity: 1 } as CubeParams } as CubeSchema);
   };
 
   const testText = async (_position: Vector3) => {

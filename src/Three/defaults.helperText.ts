@@ -47,8 +47,8 @@ const HelperText = (): {
   };
   const scanYourTicket = (position: Vector3) => {
     return {
-      'Scan je ticket in de zuil': new Vector3(position.x , position.y + 2, 0),
-      'om te gaan': new Vector3(position.x + 1, position.y + 1.5, 0),
+      'Scan je ticket in de zuil': new Vector3(position.x -220 , position.y + 50, 0),
+      'om te gaan': new Vector3(position.x - 100, position.y, 0),
     };
   };
 

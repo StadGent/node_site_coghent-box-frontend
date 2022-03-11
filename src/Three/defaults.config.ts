@@ -23,7 +23,7 @@ const Defaults = (): {
 } => {
   const pixelInMeter = () => 0.003;
   const screenZones = () => 6;
-  const zonePadding = () => 2;
+  const zonePadding = () => 10;
   const screenZonePadding = () => 2;
   const boundaryPadding = () => 1;
 
