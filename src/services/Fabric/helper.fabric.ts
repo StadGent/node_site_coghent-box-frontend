@@ -246,6 +246,16 @@ const unHighlightCanvasObjectsHelper = (canvasObjects: Array<any>) => {
   });
 };
 
+const isRelationOnFrameHelper = (frame: any, relation: any): Boolean => {
+  const relationOnFrame: Boolean = frame.entity.relations.find(
+    (canvasRelation: Relation) => canvasRelation.key == relation.key,
+  )
+    ? true
+    : false;
+
+  return relationOnFrame;
+};
+
 const objectOpacityHelper = (canvasObject: any, opacity: number) => {
   canvasObject.opacity = opacity;
 };
@@ -285,4 +295,5 @@ export {
   moveObjectOnZAxisHelper,
   IIIFImageUrlHelper,
   unHighlightCanvasObjectsHelper,
+  isRelationOnFrameHelper,
 };

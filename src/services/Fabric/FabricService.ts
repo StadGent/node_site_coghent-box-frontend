@@ -18,6 +18,7 @@ import {
   getObjectsByObjectTypeHelper,
   moveObjectOnZAxisHelper,
   unHighlightCanvasObjectsHelper,
+  isRelationOnFrameHelper,
 } from './helper.fabric';
 import { router } from '@/router';
 import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
@@ -272,14 +273,9 @@ export default class FabricService {
     const canvasFrames: Array<any> = getObjectsByObjectTypeHelper(canvasObjects, 'frame');
 
     unHighlightCanvasObjectsHelper(this.state.canvas.getObjects());
-
     if (relation) {
       canvasFrames.forEach((canvasFrame: any) => {
-        const relationOnFrame: Boolean = canvasFrame.entity.relations.find(
-          (canvasRelation: Relation) => canvasRelation.key == relation.key,
-        )
-          ? true
-          : false;
+        const relationOnFrame: Boolean = isRelationOnFrameHelper(canvasFrame, relation);
         if (relationOnFrame && canvasFrame.id != this.state.selectedImage.id) {
           frameBorderHighlightHelper(canvasFrame, true);
         } else if (canvasFrame.id != this.state.selectedImage.id) {
@@ -295,11 +291,7 @@ export default class FabricService {
           canvasRelation.toId,
           canvasObjects,
         );
-        const relationOnEndFrame: Boolean = endFrame.entity.relations.find(
-          (endFrameRelation: any) => endFrameRelation.key == relation.key,
-        )
-          ? true
-          : false;
+        const relationOnEndFrame: Boolean = isRelationOnFrameHelper(endFrame, relation);
         if (relationOnEndFrame) {
           relationHighlightHelper(canvasRelation);
         } else {
