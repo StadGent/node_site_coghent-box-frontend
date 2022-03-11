@@ -17,14 +17,14 @@ import PauseProgressbar, { PauseProgressbarObjects } from './shapes.pauseProgres
 const TestSingleComponent = (): {
   testCube: (_position: Vector3, _dimensions: Vector3) => Mesh<BoxGeometry, MeshBasicMaterial>;
   testImageCube: (_position: Vector3) => Mesh<BoxGeometry, MeshBasicMaterial>;
-  testText: (_position: Vector3) => Mesh<BufferGeometry, any>;
+  testText: (_position: Vector3) => Promise<Mesh<BufferGeometry, any>>;
   horizontalProgressbar: Array<Group>;
   circularProgressbar: Mesh<BufferGeometry, Material | Material[]>;
   circularProgressbarActiveSegments: (position: Vector3) => {
     object: Group[];
     dotSchemas: CircleSchema[];
   };
-  endOfStoryText: (position: Vector3) => Group;
+  endOfStoryText: (position: Vector3) => Promise<Group>;
   metadataLabel: (position: Vector3, text: string) => Group;
   metadataLabelWithConnection: (position: Vector3, text: string) => Array<Group>;
   pauseStoryCircleProgress: (_position: Vector3) => PauseProgressbarObjects;
@@ -39,8 +39,8 @@ const TestSingleComponent = (): {
     return SchemaCube().CreateImageCube({ position: _position, params: { url: 'https://images.unsplash.com/photo-1453728013993-6d66e9c9123a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2370&q=80', color: Colors().green, width: 5, height: 7, opacity: 1 } as CubeParams } as CubeSchema);
   };
 
-  const testText = (_position: Vector3) => {
-    return TextHelper().CreateText(
+  const testText = async (_position: Vector3) => {
+    return await TextHelper().CreateText(
       '3',
       _position,
       {
@@ -57,8 +57,8 @@ const TestSingleComponent = (): {
 
   const circularProgressbarActiveSegments = (position: Vector3) => CircularProgressBar().createActiveSegment(position, Measurements().storyCircle.radius, 3, 3, Colors().yellow);
 
-  const endOfStoryText = (position: Vector3) => {
-    const text = TextHelper().CreateTextFromRecord(
+  const endOfStoryText = async (position: Vector3) => {
+    const text = await TextHelper().CreateTextFromRecord(
       HelperText().EndOfStory(position),
       Colors().black,
     );
@@ -66,12 +66,13 @@ const TestSingleComponent = (): {
   };
 
   const metadataLabel = (position: Vector3, text: string) => {
-    return MetadataLabel(position).create(text, Colors().green).metadata;
+    // return MetadataLabel(position).create(text, Colors().green).metadata;
+    return '' as any
   };
 
   const metadataLabelWithConnection = (position: Vector3, text: string) => {
     const groups: Array<Group> = [];
-    GroupHelper().AddObjectsTogroups([MetadataLabel(position).create(text, Colors().green).metadata, MetadataLabel(position).create(text, Colors().green).connection], groups)
+    // GroupHelper().AddObjectsTogroups([MetadataLabel(position).create(text, Colors().green).metadata, MetadataLabel(position).create(text, Colors().green).connection], groups)
     return groups;
   };
 
