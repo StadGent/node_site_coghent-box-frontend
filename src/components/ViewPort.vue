@@ -320,7 +320,7 @@ export default defineComponent({
       _count: number,
     ) => {
       const pausePosition = storyService.getStoryData()[_storySelected].pausedPosition;
-      await CustomAnimation().singleCircularCountdown(
+      await CustomAnimation().circularLoader(
         threeSvc,
         new Vector3(
           pausePosition.x,
@@ -332,12 +332,8 @@ export default defineComponent({
         10,
         [
           Tags.SmallCountdownRing,
-          Tags.SmallCountdowndownNumber,
           Tags.SmallCountdownProgressRing,
         ],
-        new Vector3(-12, -15, 0),
-        Measurements().text.size.small,
-        _count,
       );
     };
 

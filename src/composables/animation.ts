@@ -17,6 +17,7 @@ const CustomAnimation = (): {
   shrink: (object: Mesh<any, MeshBasicMaterial>, scaleTo: number, step: number) => Promise<void>;
   circularCountdown: (_threeService: ThreeService, _position: Vector3, _radius: number, _thickness: number, _tags: Array<Tags>, _textCorrection: Vector3, _fontSize: number) => Promise<void>
   singleCircularCountdown: (_threeService: ThreeService, _position: Vector3, _radius: number, _thickness: number, _tags: Array<Tags>, _textCorrection: Vector3, _fontSize: number, _count: number) => Promise<void>
+  circularLoader: (_threeService: ThreeService, _position: Vector3, _radius: number, _thickness: number, _tags: Array<Tags>) => Promise<void>
 } => {
 
   const fadeOut = async (object: Mesh<any, MeshBasicMaterial>, fadeTo: number, step: number) => {
@@ -96,6 +97,20 @@ const CustomAnimation = (): {
     _threeService.RemoveFromScene(ring);
     Promise.resolve();
   }
+  const circularLoader = async (_threeService: ThreeService, _position: Vector3, _radius: number, _thickness: number, _tags: Array<Tags>) => {
+    const ring = CountDownCircle(_position, 2, _radius, _thickness);
+    _threeService.AddToScene(ring, _tags[0]);
+      let progress = 0;
+      while (progress <= 1) {
+        const ring_progress = CountDownCircle(_position, progress, _radius, _thickness, Colors().white);
+        _threeService.AddToScene(ring_progress, _tags[2]);
+        await Common().awaitTimeout(27);
+        progress += 0.027;
+        _threeService.RemoveFromScene(ring_progress);
+      }
+    _threeService.RemoveFromScene(ring);
+    Promise.resolve();
+  }
 
   return {
     fadeOut,
@@ -105,7 +120,8 @@ const CustomAnimation = (): {
     grow,
     shrink,
     circularCountdown,
-    singleCircularCountdown
+    singleCircularCountdown,
+    circularLoader
   }
 };
 
