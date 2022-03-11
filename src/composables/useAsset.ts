@@ -101,15 +101,17 @@ const useAsset = (
     scale: number,
     spotlight: Mesh,
   ) => {
+    console.log('scale in zoom', scale)
     if (scale > 1) {
       scale = 1;
     }
     assetImageCube.material.opacity = 1;
     assetImageCube.position.set(position.x, position.y, position.z);
-    assetImageCube.position.z = Layers.presentation;
+    assetImageCube.position.z =  position.z + Layers.fraction;
     await moveSpotlightToAsset(spotlight, assetImageCube, scale);
     await Common().awaitTimeout(200);
-    await CustomAnimation().grow(assetImageCube, scale, AnimationDefaults.values.scaleStep);
+    // await CustomAnimation().grow(assetImageCube, scale, AnimationDefaults.values.scaleStep);
+    assetImageCube.scale.set(scale,scale,scale)
   };
 
   const addMetadata = async (
@@ -117,6 +119,8 @@ const useAsset = (
     color: number,
     text: string,
   ) => {
+    console.log(text)
+    console.log('added with spaces', Common().fillStringToIdealLength(text))
     const metadataInfo = (await MetadataLabel(
       new Vector3(
         object.position.x,

@@ -25,6 +25,7 @@ import Measurements from './defaults.measurements';
 import Development from './defaults.development';
 import MoveObject from '@/composables/moveObject';
 import { Entity } from 'coghent-vue-3-component-library/lib';
+import Colors from './defaults.color';
 
 const useFrameAssetOverview = (
   threeService: ThreeService,
@@ -51,6 +52,7 @@ const useFrameAssetOverview = (
         asset,
       );
       const position = new Vector3(0, 0, Layers.scene);
+      console.log({relationMetadata})
       if (relationMetadata?.position != null || undefined) {
         position.x = relationMetadata.position.x;
         position.y = relationMetadata.position.y;
@@ -95,11 +97,12 @@ const useFrameAssetOverview = (
       asset as unknown as Mesh<BoxBufferGeometry, any>,
       scale,
     );
-    CustomAnimation().shrink(
-      asset as unknown as Mesh<any, MeshBasicMaterial>,
-      scale,
-      AnimationDefaults.values.scaleStep,
-    );
+    // CustomAnimation().shrink(
+    //   asset as unknown as Mesh<any, MeshBasicMaterial>,
+    //   scale,
+    //   AnimationDefaults.values.scaleStep,
+    // );
+    asset.scale.set(scale,scale,scale)
     await Common().awaitTimeout(250);
     await CustomAnimation().shrink(
       spotlight as unknown as Mesh<any, MeshBasicMaterial>,
@@ -122,25 +125,30 @@ const useFrameAssetOverview = (
 
   const calculateZoomSettingsOfAsset = (asset: Mesh<BoxBufferGeometry, any>) => {
     const inZone = zoneService.objectIsInZone(asset);
-
+    Tools().dotOnPosition(threeService,inZone.center, Colors().yellow)
+    Tools().dotOnPosition(threeService,inZone.start, Colors().lightBlue)
+    Tools().dotOnPosition(threeService,inZone.end, Colors().pink)
     let scale: number;
-    if (
-      Common().firstIsBiggest(
-        asset.geometry.parameters.height,
-        asset.geometry.parameters.width,
-      )
-    ) {
-      scale = zoneService.zoneDimensions.y / asset.geometry.parameters.height;
+    console.log('aset scale', asset.scale);
+    
+ 
+    // if (
+    //   Common().firstIsBiggest(
+    //     asset.geometry.parameters.height,
+    //     asset.geometry.parameters.width,
+    //   )
+    // ) {
+      scale =  asset.geometry.parameters.height / zoneService.zoneDimensions.y;
       while (scale * asset.geometry.parameters.width > zoneService.zoneDimensions.x) {
-        scale -= 0.05;
+        scale -= 0.01;
       }
-    } else {
-      scale = zoneService.zoneDimensions.x / asset.geometry.parameters.width;
-      while (scale * asset.geometry.parameters.height > zoneService.zoneDimensions.y) {
-        scale -= 0.05;
-      }
-    }
-    scale = scale - AnimationDefaults.values.scaleReducer;
+    // } else {
+    //   scale = zoneService.zoneDimensions.x / asset.geometry.parameters.width;
+    //   while (scale * asset.geometry.parameters.height > zoneService.zoneDimensions.y) {
+    //     scale -= 0.05;
+    //   }
+    // }
+    // scale = scale - AnimationDefaults.values.scaleReducer;
     return { scale: scale, zoomPosition: inZone.center };
   };
 
@@ -149,6 +157,7 @@ const useFrameAssetOverview = (
     currentAsset: number,
   ) => {
     const zoomSettings = calculateZoomSettingsOfAsset(asset);
+    console.log({zoomSettings})
     await useAsset(threeService).zoom(
       asset as Mesh<BoxBufferGeometry, any>,
       zoomSettings.zoomPosition,
