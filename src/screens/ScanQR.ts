@@ -30,6 +30,7 @@ const ScanQR = (
       .yoyo(true)
       .easing(TWEEN.Easing.Cubic.InOut)
       .start();
+
     return cube;
   };
 

@@ -9,29 +9,44 @@ import GroupHelper from '@/Three/helper.group';
 import { Group, Mesh, Vector3 } from 'three';
 import { iiiF } from '@/main';
 
-const FrameOverview = (threeService: ThreeService): {
+const FrameOverview = (
+  threeService: ThreeService,
+): {
   addImage: (asset: Asset, scale: number, position: Vector3) => Promise<Mesh>;
   create: (assets: Record<string, string>) => {
     groups: Array<Group>;
     schemas: Array<CubeSchema>;
   };
 } => {
-  const { generateUrl } = iiiF
+  const { generateUrl } = iiiF;
 
   const addImage = async (asset: Asset, scale: number, position: Vector3) => {
-    const schema = CubeHelper().CreateSchema(position, useAsset(threeService).getImage(asset), new Vector3(asset.mediafiles[0]?.mediainfo.width,asset.mediafiles[0]?.mediainfo.height, 0));
+    const schema = CubeHelper().CreateSchema(
+      position,
+      useAsset(threeService).getImage(asset),
+      new Vector3(
+        asset.mediafiles[0]?.mediainfo.width,
+        asset.mediafiles[0]?.mediainfo.height,
+        0,
+      ),
+    );
 
-    const filename = Common().getFilenameFromStorageLink(schema.params.url as string, 'download/')
-    schema.params.url = generateUrl(filename, 'full', 'max')
+    const filename = Common().getFilenameFromStorageLink(
+      schema.params.url as string,
+      'download/',
+    );
+    schema.params.url = generateUrl(filename, 'full', 'max');
 
-    const cube = await SchemaCube().CreateImageCubeAsync(schema, threeService.cachedTextures);
+    const cube = await SchemaCube().CreateImageCubeAsync(
+      schema,
+      threeService.cachedTextures,
+    );
     cube.scale.set(scale, scale, 0);
-    cube.material.opacity = 0;
+    cube.material.opacity = 1;
     return cube;
   };
 
   const createImageCubes = (assets: Record<string, string>) => {
-
     const cubes: Array<Mesh> = [];
     const schemas: Array<CubeSchema> = [];
     let pos = -15;

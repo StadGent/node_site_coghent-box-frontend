@@ -21,22 +21,36 @@ import Defaults from '@/Three/defaults.config';
 import { Entity } from 'coghent-vue-3-component-library/lib';
 
 export type PauseScreenObjects = {
-  text: Array<Group>,
-  banner: Mesh<BoxGeometry, MeshBasicMaterial>,
-  storyCircles: Record<string, StoryCircleObjects>,
-}
+  text: Array<Group>;
+  banner: Mesh<BoxGeometry, MeshBasicMaterial>;
+  storyCircles: Record<string, StoryCircleObjects>;
+};
 
-
-const StoryPaused = (taggingService: TaggingService, zoneService: ZoneService, _storyService: StoryService): {
+const StoryPaused = (
+  taggingService: TaggingService,
+  zoneService: ZoneService,
+  _storyService: StoryService,
+): {
   Create: (_storyData: Array<StoryData>) => Promise<PauseScreenObjects>;
 } => {
-  const bannerTopPosition = -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight;
-  const bannerCenterPosition = -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight / 2;
-  const storyCircle = (_storyData: StoryData, story: Entity, position: Vector3, storyColor: number) => {
+  const bannerTopPosition =
+    -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight;
+  const bannerCenterPosition =
+    -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight / 2;
+  const storyCircle = (
+    _storyData: StoryData,
+    story: Entity,
+    position: Vector3,
+    storyColor: number,
+  ) => {
     const titleCircle = StoryCircle(_storyService).Create(
       _storyData,
       useStory(_storyService).title(story),
-      CircleHelper().CreateSchema(position, Measurements().storyCircle.radius, storyColor),
+      CircleHelper().CreateSchema(
+        position,
+        Measurements().storyCircle.radius,
+        storyColor,
+      ),
       Images.story.defaultIcon,
     );
     return titleCircle;
@@ -45,26 +59,34 @@ const StoryPaused = (taggingService: TaggingService, zoneService: ZoneService, _
   const storyEndText = async () => {
     const groups: Array<Group> = [];
     const text = await TextHelper().CreateTextFromRecord(
-      HelperText().EndOfStory(new Vector3(-1.4, bannerCenterPosition, 0)),
+      HelperText().EndOfStory(new Vector3(-140, bannerCenterPosition, 0)),
       Colors().white,
     );
-    const manSchema = CubeHelper().CreateSchema(new Vector3(0, bannerTopPosition + 2, 0), Images.pauseScreen.man, new Vector3(5, 2.5, 0));
+    const manSchema = CubeHelper().CreateSchema(
+      new Vector3(0, bannerTopPosition + 2, 0),
+      Images.pauseScreen.man,
+      new Vector3(500, 250, 0),
+    );
     const man = SchemaCube().CreateImageCube(manSchema);
     GroupHelper().AddObjectsTogroups(text, groups);
     GroupHelper().AddObjectsTogroups([man], groups);
-    taggingService.tag(Tags.PauseScreenCenterText, groups, `Text displayed on the pause screen where all the stories are shown.`)
+    taggingService.tag(
+      Tags.PauseScreenCenterText,
+      groups,
+      `Text displayed on the pause screen where all the stories are shown.`,
+    );
     return groups;
   };
 
   const blackBanner = () => {
     return schemaCube().CreateCube({
-      position: new Vector3(0, bannerCenterPosition , Layers.background),
+      position: new Vector3(0, bannerCenterPosition, Layers.background),
       params: {
         width: zoneService.sceneZone().width + 3,
         height: Measurements().pauseScreen.bannerHeight,
         color: Measurements().pauseScreen.bannerColor,
-        opacity: Measurements().pauseScreen.bannerOpacity
-      }
+        opacity: Measurements().pauseScreen.bannerOpacity,
+      },
     } as CubeSchema);
   };
 
@@ -77,7 +99,7 @@ const StoryPaused = (taggingService: TaggingService, zoneService: ZoneService, _
         useStory(_storyService).getStory(_data.storyId),
         new Vector3(_data.pausedPosition.x, bannerTopPosition, _data.pausedPosition.z),
         _data.storyColor,
-      )
+      );
     }
 
     return {

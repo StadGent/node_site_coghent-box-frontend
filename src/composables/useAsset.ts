@@ -3,7 +3,14 @@ import { Asset, ComponentMetadata, Frame, Story } from '@/models/GraphqlModel';
 import ThreeService from '@/services/ThreeService';
 import Layers from '@/Three/defaults.layers';
 import Measurements from '@/Three/defaults.measurements';
-import { BoxBufferGeometry, Mesh, Vector3, Group, BoxGeometry, MeshBasicMaterial } from 'three';
+import {
+  BoxBufferGeometry,
+  Mesh,
+  Vector3,
+  Group,
+  BoxGeometry,
+  MeshBasicMaterial,
+} from 'three';
 import MoveObject from './moveObject';
 import CustomAnimation from './animation';
 import AnimationDefaults from '@/Three/defaults.animation';
@@ -12,6 +19,7 @@ import Common from './common';
 import Spot from '@/Three/shapes.spotlight';
 import { Tags } from '@/services/TaggingService';
 import { Entity } from 'coghent-vue-3-component-library/lib';
+const TWEEN = require('@tweenjs/tween.js');
 
 const useAsset = (
   threeService: ThreeService,
@@ -59,15 +67,22 @@ const useAsset = (
     //   : '';
   };
 
-  const getAssetSpotlightScale = (_asset: Mesh<BoxBufferGeometry, any>, _scale: number) => {
+  const getAssetSpotlightScale = (
+    _asset: Mesh<BoxBufferGeometry, any>,
+    _scale: number,
+  ) => {
     let scale = 1;
     if (_asset.geometry.parameters.height > _asset.geometry.parameters.width) {
-      scale = (_asset.geometry.parameters.height / 2) * _scale + Measurements().spotLight.spaceAroundObject;
+      scale =
+        (_asset.geometry.parameters.height / 2) * _scale +
+        Measurements().spotLight.spaceAroundObject;
     } else {
-      scale = (_asset.geometry.parameters.width / 2) * _scale + Measurements().spotLight.spaceAroundObject
+      scale =
+        (_asset.geometry.parameters.width / 2) * _scale +
+        Measurements().spotLight.spaceAroundObject;
     }
     return scale;
-  }
+  };
 
   const moveSpotlightToAsset = async (
     spotlight: Mesh,
@@ -79,17 +94,33 @@ const useAsset = (
     if (widest) {
       const scaleForSpotlight = getAssetSpotlightScale(asset, scale);
       if (scaleForSpotlight > scale) {
-        CustomAnimation().grow(spotlight as Mesh<any, MeshBasicMaterial>, scaleForSpotlight, AnimationDefaults.values.scaleStep);
+        CustomAnimation().grow(
+          spotlight as Mesh<any, MeshBasicMaterial>,
+          scaleForSpotlight,
+          AnimationDefaults.values.scaleStep,
+        );
       } else {
-        CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>, scaleForSpotlight, AnimationDefaults.values.scaleStep);
+        CustomAnimation().shrink(
+          spotlight as Mesh<any, MeshBasicMaterial>,
+          scaleForSpotlight,
+          AnimationDefaults.values.scaleStep,
+        );
       }
       await MoveObject().startMoving(spotlight, asset.position);
     } else if (!widest) {
       const scaleForSpotlight = getAssetSpotlightScale(asset, scale);
       if (scaleForSpotlight > scale) {
-        CustomAnimation().grow(spotlight as Mesh<any, MeshBasicMaterial>, scaleForSpotlight, AnimationDefaults.values.scaleStep);
+        CustomAnimation().grow(
+          spotlight as Mesh<any, MeshBasicMaterial>,
+          scaleForSpotlight,
+          AnimationDefaults.values.scaleStep,
+        );
       } else {
-        CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>, scaleForSpotlight, AnimationDefaults.values.scaleStep);
+        CustomAnimation().shrink(
+          spotlight as Mesh<any, MeshBasicMaterial>,
+          scaleForSpotlight,
+          AnimationDefaults.values.scaleStep,
+        );
       }
       await MoveObject().startMoving(spotlight, asset.position);
     }
@@ -101,17 +132,32 @@ const useAsset = (
     scale: number,
     spotlight: Mesh,
   ) => {
-    console.log('scale in zoom', scale)
+    console.log('scale in zoom', scale);
     if (scale > 1) {
       scale = 1;
     }
     assetImageCube.material.opacity = 1;
-    assetImageCube.position.set(position.x, position.y, position.z);
-    assetImageCube.position.z =  position.z + Layers.fraction;
-    await moveSpotlightToAsset(spotlight, assetImageCube, scale);
-    await Common().awaitTimeout(200);
-    // await CustomAnimation().grow(assetImageCube, scale, AnimationDefaults.values.scaleStep);
-    assetImageCube.scale.set(scale,scale,scale)
+    new TWEEN.Tween(assetImageCube.position)
+      .to(
+        {
+          x: position.x,
+          y: position.y,
+          z: position.z + Layers.fraction,
+        },
+        1000,
+      )
+      .easing(TWEEN.Easing.Cubic.InOut)
+      .start();
+    moveSpotlightToAsset(spotlight, assetImageCube, scale);
+    const newScale = {
+      x: scale,
+      y: scale,
+      z: scale,
+    };
+    new TWEEN.Tween(assetImageCube.scale)
+      .to(newScale, 1000)
+      .easing(TWEEN.Easing.Cubic.InOut)
+      .start();
   };
 
   const addMetadata = async (
@@ -119,24 +165,36 @@ const useAsset = (
     color: number,
     text: string,
   ) => {
-    console.log(text)
-    console.log('added with spaces', Common().fillStringToIdealLength(text))
-    const metadataInfo = (await MetadataLabel(
-      new Vector3(
-        object.position.x,
-        object.position.y + ((object.geometry.parameters.height / 2) * object.scale.x) + 0.6,
-        Layers.presentation
-      )
-    ).create(text, color)).metadata;
+    console.log(text);
+    console.log('added with spaces', Common().fillStringToIdealLength(text));
+    const metadataInfo = (
+      await MetadataLabel(
+        new Vector3(
+          object.position.x,
+          object.position.y +
+            (object.geometry.parameters.height / 2) * object.scale.x +
+            0.6,
+          Layers.presentation,
+        ),
+      ).create(text, color)
+    ).metadata;
     return metadataInfo;
   };
 
   const setInactive = async (assetImageCube: Mesh<BoxBufferGeometry, any>) => {
-    await CustomAnimation().fadeOut(assetImageCube, AnimationDefaults.values.opacityInactive, AnimationDefaults.values.fadeStep);
+    await CustomAnimation().fadeOut(
+      assetImageCube,
+      AnimationDefaults.values.opacityInactive,
+      AnimationDefaults.values.fadeStep,
+    );
   };
 
   const setActive = async (assetImageCube: Mesh<BoxBufferGeometry, any>) => {
-    await CustomAnimation().fadeIn(assetImageCube, AnimationDefaults.values.opacityActive, AnimationDefaults.values.fadeStep);
+    await CustomAnimation().fadeIn(
+      assetImageCube,
+      AnimationDefaults.values.opacityActive,
+      AnimationDefaults.values.fadeStep,
+    );
   };
 
   const getAssetsFromFrame = (activeStory: Entity, frame: number) => {

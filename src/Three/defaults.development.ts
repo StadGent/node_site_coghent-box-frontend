@@ -9,7 +9,7 @@ const Development = (): {
   sceneLogs: () => true | false;
 } => {
   const showZonesInOverview = () => true;
-  const showDevTimeLogs = () => false;
+  const showDevTimeLogs = () => true;
   const showGarbageLogs = () => false;
   const showMoveLogs = () => false;
   const showSubtitleLogs = () => false;
@@ -26,7 +26,7 @@ const Development = (): {
     showBuildLogs,
     stateLogs,
     sceneLogs,
-  }
-}
+  };
+};
 
 export default Development;

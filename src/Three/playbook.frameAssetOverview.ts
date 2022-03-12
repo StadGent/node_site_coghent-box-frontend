@@ -26,6 +26,8 @@ import Development from './defaults.development';
 import MoveObject from '@/composables/moveObject';
 import { Entity } from 'coghent-vue-3-component-library/lib';
 import Colors from './defaults.color';
+import { tweenPromise } from './helper.tweenPromise';
+const TWEEN = require('@tweenjs/tween.js');
 
 const useFrameAssetOverview = (
   threeService: ThreeService,
@@ -46,44 +48,52 @@ const useFrameAssetOverview = (
     threeService.RemoveFromScene(group);
     const data: Record<number, Vector3> = {};
     const images: Array<Mesh> = [];
-    for (const asset of assets) {
+    const scaleTo: Array<number> = [];
+    for (const [i, asset] of assets.entries()) {
       const relationMetadata = useAsset(threeService).connectRelationMetadata(
         frame,
         asset,
       );
       const position = new Vector3(0, 0, Layers.scene);
-      console.log({relationMetadata})
+      console.log({ relationMetadata });
       if (relationMetadata?.position != null || undefined) {
         position.x = relationMetadata.position.x;
         position.y = relationMetadata.position.y;
       }
       data[relationMetadata.timestamp_start] = position;
       positions.push(position);
-      const image = await FrameOverview(threeService).addImage(
-        asset,
-        relationMetadata.scale,
-        position,
-      );
+      const image = await FrameOverview(threeService).addImage(asset, 0, position);
+      scaleTo[i] = relationMetadata.scale;
       images.push(image);
       group.add(image);
     }
 
-    playBook.addToPlayBook(
-      async () => {
-        threeService.AddToScene(
-          group,
-          Tags.GroupOfAssets,
-          ' Group of all the assets from the frame',
-        );
-        await CustomAnimation().fadeInGroups(
-          [group],
-          AnimationDefaults.values.opacityActive,
-          AnimationDefaults.values.fadeStep,
-        );
-      },
-      timestamp,
-      `Add all assets to scene.`,
+    threeService.AddToScene(
+      group,
+      Tags.GroupOfAssets,
+      ' Group of all the assets from the frame',
     );
+    await Common().awaitTimeout(1000);
+    for (const [i, _child] of group.children.entries()) {
+      console.log('loop group');
+      const _mesh = _child as Mesh<any, MeshBasicMaterial>;
+      _mesh.scale.set(0, 0, 0);
+      _mesh.material.opacity = 0.9;
+      const tween = new TWEEN.Tween(_mesh.scale)
+        .to(
+          {
+            x: scaleTo[i],
+            y: scaleTo[i],
+            z: 0,
+          },
+          1000,
+        )
+        .yoyo(true)
+        .easing(TWEEN.Easing.Cubic.InOut)
+        .start();
+
+      await tweenPromise(tween);
+    }
   };
 
   const resetImage = async (
@@ -97,12 +107,11 @@ const useFrameAssetOverview = (
       asset as unknown as Mesh<BoxBufferGeometry, any>,
       scale,
     );
-    // CustomAnimation().shrink(
-    //   asset as unknown as Mesh<any, MeshBasicMaterial>,
-    //   scale,
-    //   AnimationDefaults.values.scaleStep,
-    // );
-    asset.scale.set(scale,scale,scale)
+    CustomAnimation().shrink(
+      asset as unknown as Mesh<any, MeshBasicMaterial>,
+      scale,
+      AnimationDefaults.values.scaleStep,
+    );
     await Common().awaitTimeout(250);
     await CustomAnimation().shrink(
       spotlight as unknown as Mesh<any, MeshBasicMaterial>,
@@ -125,23 +134,22 @@ const useFrameAssetOverview = (
 
   const calculateZoomSettingsOfAsset = (asset: Mesh<BoxBufferGeometry, any>) => {
     const inZone = zoneService.objectIsInZone(asset);
-    Tools().dotOnPosition(threeService,inZone.center, Colors().yellow)
-    Tools().dotOnPosition(threeService,inZone.start, Colors().lightBlue)
-    Tools().dotOnPosition(threeService,inZone.end, Colors().pink)
+    Tools().dotOnPosition(threeService, inZone.center, Colors().yellow);
+    Tools().dotOnPosition(threeService, inZone.start, Colors().lightBlue);
+    Tools().dotOnPosition(threeService, inZone.end, Colors().pink);
     let scale: number;
     console.log('aset scale', asset.scale);
-    
- 
+
     // if (
     //   Common().firstIsBiggest(
     //     asset.geometry.parameters.height,
     //     asset.geometry.parameters.width,
     //   )
     // ) {
-      scale =  asset.geometry.parameters.height / zoneService.zoneDimensions.y;
-      while (scale * asset.geometry.parameters.width > zoneService.zoneDimensions.x) {
-        scale -= 0.01;
-      }
+    scale = asset.geometry.parameters.height / zoneService.zoneDimensions.y;
+    while (scale * asset.geometry.parameters.width > zoneService.zoneDimensions.x) {
+      scale -= 0.01;
+    }
     // } else {
     //   scale = zoneService.zoneDimensions.x / asset.geometry.parameters.width;
     //   while (scale * asset.geometry.parameters.height > zoneService.zoneDimensions.y) {
@@ -157,7 +165,7 @@ const useFrameAssetOverview = (
     currentAsset: number,
   ) => {
     const zoomSettings = calculateZoomSettingsOfAsset(asset);
-    console.log({zoomSettings})
+    console.log({ zoomSettings });
     await useAsset(threeService).zoom(
       asset as Mesh<BoxBufferGeometry, any>,
       zoomSettings.zoomPosition,

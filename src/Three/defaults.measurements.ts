@@ -2,7 +2,7 @@ import Colors from './defaults.color';
 import { StoryCircleParams } from './section.storyCircle';
 import { SpotLightParams } from './shapes.spotlight';
 
-type GenericCircleObject ={
+type GenericCircleObject = {
   radius: number;
 };
 
@@ -10,10 +10,10 @@ type ProgressbarParams = {
   radius: number;
   thickness: number;
   dotRadius: number;
-  activeDotRadius: number,
-  seenDotRadius: number,
+  activeDotRadius: number;
+  seenDotRadius: number;
   opacity: number;
-}
+};
 
 type Textsize = {
   smaller: number;
@@ -23,7 +23,7 @@ type Textsize = {
   veryBig: number;
 };
 
-type TextParams ={
+type TextParams = {
   size: Textsize;
   paddingAround: number;
 };
@@ -101,7 +101,7 @@ const Measurements = (): {
     pauseScreen,
     text,
     startOfSession,
-  }
+  };
 };
 
 export default Measurements;
