@@ -4,7 +4,6 @@ import SchemaCircle from './schema.circle';
 import Colors from './defaults.color';
 import Layers from './defaults.layers';
 import Measurements from './defaults.measurements';
-import schemaCube, { CubeSchema } from './schema.cube';
 const TWEEN = require('@tweenjs/tween.js');
 
 export type SpotLightParams = {
@@ -33,15 +32,7 @@ const Spot = (): SpotlightFunctions => {
       ),
       true,
     );
-    const cube = schemaCube().CreateCube({
-      position: new Vector3(0, 0, Layers.background),
-      params: {
-        width: 2000,
-        height: Measurements().pauseScreen.bannerHeight,
-        color: Measurements().pauseScreen.bannerColor,
-        opacity: Measurements().pauseScreen.bannerOpacity,
-      },
-    } as CubeSchema);
+
     move(startPosition, radius);
     return spotlight;
   };
