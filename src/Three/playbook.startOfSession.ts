@@ -10,17 +10,22 @@ import AnimationDefaults from './defaults.animation';
 import Layers from './defaults.layers';
 import Measurements from './defaults.measurements';
 import Timing from './defaults.timing';
+const TWEEN = require('@tweenjs/tween.js');
 
 const useStartOfSession = (
   threeService: ThreeService,
   zoneService: ZoneService,
   spotlight: Mesh,
 ): {
-  showScanImage: () => Promise<Array<Group>>
+  showScanImage: () => Promise<Array<Group>>;
   create: () => Promise<true | false>;
 } => {
   const setSpotlightOnPosition = () => {
-    threeService.AddToScene(spotlight, Tags.Spotlight, 'Spotlight for the start of the session.');
+    threeService.AddToScene(
+      spotlight,
+      Tags.Spotlight,
+      'Spotlight for the start of the session.',
+    );
     spotlight.scale.set(
       Measurements().spotLight.radius,
       Measurements().spotLight.radius,
@@ -38,14 +43,18 @@ const useStartOfSession = (
     const scanText = await ScanQR(
       new Vector3(
         zoneService.zoneCenters[0].x,
-        zoneService.zoneCenters[0].y ,
+        zoneService.zoneCenters[0].y,
         zoneService.zoneCenters[0].z,
       ),
     ).create();
-    threeService.AddGroupsToScene(scanText, Tags.startSessionText, 'Scan your ticket text.');
+    threeService.AddGroupsToScene(
+      scanText,
+      Tags.startSessionText,
+      'Scan your ticket text.',
+    );
+
     return scanText;
   };
-
 
   const create = async () => {
     await MoveObject().startMoving(spotlight, new Vector3(0, 0, Layers.scene));
@@ -59,10 +68,9 @@ const useStartOfSession = (
         Tags.StartOfSessionCountdownNumber,
         Tags.StartOfSessionProgressRing,
       ],
-      new Vector3(-50,-50,0),
-      Measurements().text.size.veryBig
+      new Vector3(-50, -50, 0),
+      Measurements().text.size.veryBig,
     );
-    await CustomAnimation().shrink(spotlight as Mesh<any, MeshBasicMaterial>, Measurements().storyCircle.radius, AnimationDefaults.values.scaleStep);
     return true;
   };
 

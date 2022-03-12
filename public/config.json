@@ -1,7 +1,7 @@
 {
-"graphQlLink": "/api/graphql",
-"printerService": "http://0.0.0.0:8080",
-"userEditUrl": "https://accounts.inuits.io/auth/admin/master/console/#/realms/dams/users/",
-"lazyLoad": "https://data-uat.collectie.gent/lazy-loading.svg",
-"iiifLink": "https://api-uat.collectie.gent/iiif/image"
+  "graphQlLink": "http://localhost:4002/api/graphql",
+  "printerService": "http://0.0.0.0:8080",
+  "userEditUrl": "https://accounts.inuits.io/auth/admin/master/console/#/realms/dams/users/",
+  "lazyLoad": "https://data-uat.collectie.gent/lazy-loading.svg",
+  "iiifLink": "https://api-uat.collectie.gent/iiif/image"
 }

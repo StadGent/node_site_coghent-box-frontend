@@ -17,6 +17,7 @@ import { Ref } from 'vue';
 import TaggingService, { Tags } from './TaggingService';
 import ZoomHelper from '@/Three/helper.zoom';
 import Development from '@/Three/defaults.development';
+const TWEEN = require('@tweenjs/tween.js');
 
 type State = {
   width: number;
@@ -57,11 +58,11 @@ export default class ThreeService {
     this.SetViewPort(5760, 1080);
     this.InitializeRenderer();
     this.InitializeCamera();
-    this.cachedTextures = []
+    this.cachedTextures = [];
   }
 
   private calculateDimensionsOfScene() {
-    const vFOV = MathUtils.degToRad(0 );
+    const vFOV = MathUtils.degToRad(0);
     this.state.sceneDimensions = new Vector3(this.state.width, this.state.height, 6);
   }
 
@@ -88,20 +89,20 @@ export default class ThreeService {
   }
 
   InitializeCamera() {
-    const aspect = this.state.width /this.state.height
+    const aspect = this.state.width / this.state.height;
     this.state.camera = new OrthographicCamera(
-      -aspect*this.state.height/2 ,
-      aspect*this.state.height/2 ,
-      this.state.height/2,
-      -this.state.height/2,
+      (-aspect * this.state.height) / 2,
+      (aspect * this.state.height) / 2,
+      this.state.height / 2,
+      -this.state.height / 2,
       -0.5,
-      3
+      3,
     );
   }
 
   AddToScene(item: any, tag: Tags, context?: string, id?: string) {
     if (Development().sceneLogs() && context) {
-      console.log('Add to scene |', context)
+      console.log('Add to scene |', context);
     }
     this.taggingService.tag(tag, item, context, id);
     this.state.scene.add(item);
@@ -109,7 +110,7 @@ export default class ThreeService {
 
   AddGroupsToScene(groups: Array<Group>, tag: Tags, context?: string, id?: string) {
     if (Development().sceneLogs() && context) {
-      console.log('Add group to scene |', context)
+      console.log('Add group to scene |', context);
     }
     this.taggingService.tag(tag, groups, context, id);
     groups.map((group) => {
@@ -154,6 +155,8 @@ export default class ThreeService {
     requestAnimationFrame(() => {
       this.Animate();
     });
+    TWEEN.update();
+
     this.state.renderer.render(this.state.scene, this.state.camera);
   }
 }
