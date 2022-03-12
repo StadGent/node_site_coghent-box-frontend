@@ -148,7 +148,7 @@ const PlayBookBuild = (
     taggingService.removeAllTagsFrom(Tags.FrameProgressbar);
     threeService.RemoveGroupsFromScene(progressbar);
     progressbar = HorizontalProgressBar().create(
-      new Vector3(0, -7, Layers.scene),
+      new Vector3(0, -450, Layers.scene),
       Object.values(assetsWithTimestampStart),
       audioDuration,
       currentTime,
