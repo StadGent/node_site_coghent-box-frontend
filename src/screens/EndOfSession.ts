@@ -28,8 +28,8 @@ const EndOfSession = (
       await TextHelper().displayTextFromRecordWithIcon(
         HelperText().scanYourTicketAgain(
           new Vector3(
-            zoneService.zoneCenters[0].x - 1.5,
-            zoneService.zoneCenters[0].y,
+            zoneService.zoneCenters[0].x - 150,
+            zoneService.zoneCenters[0].y + 50,
             zoneService.zoneCenters[0].z,
           ),
         ),
@@ -37,10 +37,10 @@ const EndOfSession = (
         Images.endOfSession['scanQrCode'],
         new Vector3(
           zoneService.zoneCenters[0].x - 1.5,
-          zoneService.zoneCenters[0].y - 1.5,
+          zoneService.zoneCenters[0].y - 150,
           zoneService.zoneCenters[0].z,
         ),
-        new Vector3(2, 3, 0),
+        new Vector3(200, 300, 0),
       ),
       groups,
     );
@@ -50,15 +50,15 @@ const EndOfSession = (
     const groups: Array<Group> = [];
     GroupHelper().AddObjectsTogroups(
       await TextHelper().displayTextFromRecordWithIcon(
-        HelperText().WalkToTouchtable(new Vector3(-1.5, 0, 0)),
+        HelperText().WalkToTouchtable(new Vector3(-150, 50, 0)),
         Colors().white,
         Images.endOfSession['touchtable'],
         new Vector3(
-          zoneService.middleZoneCenter.x - 1,
-          zoneService.middleZoneCenter.y - 2.5,
+          zoneService.middleZoneCenter.x - 100,
+          zoneService.middleZoneCenter.y - 200,
           zoneService.middleZoneCenter.z,
         ),
-        new Vector3(5, 4, 0),
+        new Vector3(400, 300, 0),
       ),
       groups,
     );
@@ -83,19 +83,19 @@ const EndOfSession = (
       await TextHelper().displayTextFromRecordWithIcon(
         HelperText().goToWebPortal(
           new Vector3(
-            zoneService.zoneCenters[zoneService.zoneCenters.length - 1].x - 2,
-            zoneService.zoneCenters[zoneService.zoneCenters.length - 1].y,
+            zoneService.zoneCenters[zoneService.zoneCenters.length - 1].x - 200,
+            zoneService.zoneCenters[zoneService.zoneCenters.length - 1].y ,
             zoneService.zoneCenters[zoneService.zoneCenters.length - 1].z,
           ),
         ),
         Colors().white,
         Images.endOfSession['webPortal'],
         new Vector3(
-          zoneService.zoneCenters[zoneService.zoneCenters.length - 1].x - 1,
-          zoneService.zoneCenters[zoneService.zoneCenters.length - 1].y - 2.5,
+          zoneService.zoneCenters[zoneService.zoneCenters.length - 1].x - 100,
+          zoneService.zoneCenters[zoneService.zoneCenters.length - 1].y - 200,
           zoneService.zoneCenters[zoneService.zoneCenters.length - 1].z,
         ),
-        new Vector3(4, 4, 0),
+        new Vector3(300, 300, 0),
       ),
       groups,
     );
@@ -120,15 +120,15 @@ const EndOfSession = (
     GroupHelper().AddObjectsTogroups(await goOnline(), groups);
     const or1 = await orOption(
       new Vector3(
-        zoneService.zoneCenters[1].x,
-        zoneService.zoneCenters[1].y - 1,
+        zoneService.zoneCenters[1].x - 120,
+        zoneService.zoneCenters[1].y - 50,
         zoneService.zoneCenters[1].z,
       ),
     );
     const or2 = await orOption(
       new Vector3(
-        zoneService.zoneCenters[zoneService.zoneCenters.length - 2].x + 1,
-        zoneService.zoneCenters[zoneService.zoneCenters.length - 2].y - 1,
+        zoneService.zoneCenters[zoneService.zoneCenters.length - 2].x - 120,
+        zoneService.zoneCenters[zoneService.zoneCenters.length - 2].y - 50,
         zoneService.zoneCenters[zoneService.zoneCenters.length - 2].z,
       ),
     );

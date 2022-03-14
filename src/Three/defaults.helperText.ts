@@ -45,8 +45,8 @@ const HelperText = (): {
   const WalkToTouchtable = (position: Vector3) => {
     return {
       'Ga de collectie': new Vector3(position.x, position.y + 100, 0),
-      'verder ontdekken': new Vector3(position.x, position.y + 50, 0),
-      'aan de tafel': new Vector3(position.x, position.y, 0),
+      'verder ontdekken': new Vector3(position.x - 20, position.y + 50, 0),
+      'aan de tafel': new Vector3(position.x + 35, position.y, 0),
     } as Record<string, Vector3>;
   };
   const scanYourTicket = (position: Vector3) => {
