@@ -469,10 +469,6 @@
         if (props.stateService.getCurrentState() != FlowState[4]) {
           props.stateService.changeState(FlowState.buildFrame);
 
-          // if (audio == null) {
-          //   timing();
-          // }
-
           const subtitleLink = useFrame(threeSvc).getSubtitleForFrame(
             storyService.activeStory.frames?.[currentFrame] as unknown as Frame,
           );
@@ -531,7 +527,11 @@
             storyService.activeStory,
             currentFrame,
           );
-          if (audio === null) setAfterFrameScreen();
+          if (audio === null) {
+            setAfterFrameScreen();
+            spotlightBackground.material.opacity = Measurements().spotLight.opacity;
+            timing();
+          }
           if (audio != null) {
             audio.ontimeupdate = () => {
               if (audio && showProgressOfFrame) {
