@@ -1,5 +1,5 @@
 <template>
-  <div class="touchtable" :key="componentKey">
+  <div class="touchtable">
     <!-- <basket-overlay :basketItems="basketItems" /> -->
     <shutdown-modal :code="code" />
     <IIIF-modal :image-url="IIIFImageUrl" />
@@ -102,7 +102,6 @@
     setup: () => {
       const route = useRoute();
       const id = asString(route.params['entityID']);
-      const componentKey = ref<number>(0);
       const code = ref<string>(boxVisiter.value.code);
       const relationStringArray = ref<string[]>([]);
       const relationsLabelArray = ref<string[]>([]);
@@ -169,15 +168,10 @@
         () => {
           console.log('Refetch entity');
           refetch({ id: asString(route.params.entityID) });
-          forceRerender();
           mutateHistory();
           // router.go(0);
         },
       );
-
-      const forceRerender = () => {
-        componentKey.value += 1;
-      };
 
       watch(
         () => entity.value,
@@ -256,7 +250,6 @@
       };
 
       const highlightSelectedFilter = (filterIndex: number) => {
-        console.log(relationsArray.value);
         fabricService?.highlightRelatedFrames(filterIndex, relationsArray.value);
       };
 
@@ -279,7 +272,8 @@
             if (startEntity) {
               fabricService?.generateInfoBar(
                 startEntity,
-                historyEntity ? historyEntity : undefined,
+                // TODO: get entity instead of relation
+                historyEntity.mediafiles ? historyEntity : undefined,
               );
             }
           }
@@ -360,7 +354,6 @@
         code,
         showPictureModal,
         IIIFImageUrl,
-        componentKey,
       };
     },
   });

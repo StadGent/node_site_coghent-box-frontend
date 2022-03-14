@@ -71,28 +71,32 @@ export default class FabricService {
   }
 
   generateMainImageFrame(entity: Entity) {
-    const image = ImageUrlHelper(entity)[0];
-    const frame = new fabric.Image.fromURL(image, (image: any) => {
-      image.top = fabricdefaults.canvas.selectedImage.canvasPosition.top;
-      image.left = fabricdefaults.canvas.selectedImage.canvasPosition.left;
-      image.scaleX = fabricdefaults.canvas.selectedImage.scale.scaleX;
-      image.scaleY = fabricdefaults.canvas.selectedImage.scale.scaleY;
-      image.originX = fabricdefaults.canvas.selectedImage.origin.originX;
-      image.originY = fabricdefaults.canvas.selectedImage.origin.originY;
-      image.positionIndexes = {
-        xIndex: fabricdefaults.canvas.secondaryImage.positions.blockedPositions[0].xIndex,
-        yIndex: fabricdefaults.canvas.secondaryImage.positions.blockedPositions[0].yIndex,
-      };
-      lockObjectMovementHelper(image);
-      image.hoverCursor = 'pointer';
-      image.objectType = 'frame';
-      image.setCoords();
-      image.id = entity.id;
-      image.entity = entity;
-      this.state.canvas.add(image);
-      this.state.selectedImage = image;
-      const underline = underlineHelper(image);
-      this.state.canvas.add(underline);
+    ImageUrlHelper(entity).then((images: string[]) => {
+      const image = images[0];
+      const frame = new fabric.Image.fromURL(image, (image: any) => {
+        image.top = fabricdefaults.canvas.selectedImage.canvasPosition.top;
+        image.left = fabricdefaults.canvas.selectedImage.canvasPosition.left;
+        image.scaleX = fabricdefaults.canvas.selectedImage.scale.scaleX;
+        image.scaleY = fabricdefaults.canvas.selectedImage.scale.scaleY;
+        image.originX = fabricdefaults.canvas.selectedImage.origin.originX;
+        image.originY = fabricdefaults.canvas.selectedImage.origin.originY;
+        image.positionIndexes = {
+          xIndex:
+            fabricdefaults.canvas.secondaryImage.positions.blockedPositions[0].xIndex,
+          yIndex:
+            fabricdefaults.canvas.secondaryImage.positions.blockedPositions[0].yIndex,
+        };
+        lockObjectMovementHelper(image);
+        image.hoverCursor = 'pointer';
+        image.objectType = 'frame';
+        image.setCoords();
+        image.id = entity.id;
+        image.entity = entity;
+        this.state.canvas.add(image);
+        this.state.selectedImage = image;
+        const underline = underlineHelper(image);
+        this.state.canvas.add(underline);
+      });
     });
   }
 
@@ -114,22 +118,23 @@ export default class FabricService {
     lockObjectMovementHelper(backgroundRect);
     this.state.canvas.add(backgroundRect);
 
-    const startImage = ImageUrlHelper(startEntity)[0];
-    const startFrame = new fabric.Image.fromURL(startImage, (image: any) => {
-      image.top = fabricdefaults.canvas.infoBar.startFrame.position.top;
-      image.left = fabricdefaults.canvas.infoBar.startFrame.position.left;
-      image.scaleX = fabricdefaults.canvas.infoBar.startFrame.scale.scaleX;
-      image.scaleY = fabricdefaults.canvas.infoBar.startFrame.scale.scaleY;
-      image.originX = fabricdefaults.canvas.infoBar.startFrame.origin.originX;
-      image.originY = fabricdefaults.canvas.infoBar.startFrame.origin.originY;
-      image.objectType = 'startFrame';
-      image.hoverCursor = 'pointer';
-      image.setCoords();
-      image.entity = startEntity;
-      lockObjectMovementHelper(image);
-      this.state.canvas.add(image);
+    ImageUrlHelper(startEntity).then((imageArray: string[]) => {
+      const startImage: string = imageArray[0];
+      const startFrame = new fabric.Image.fromURL(startImage, (image: any) => {
+        image.top = fabricdefaults.canvas.infoBar.startFrame.position.top;
+        image.left = fabricdefaults.canvas.infoBar.startFrame.position.left;
+        image.scaleX = fabricdefaults.canvas.infoBar.startFrame.scale.scaleX;
+        image.scaleY = fabricdefaults.canvas.infoBar.startFrame.scale.scaleY;
+        image.originX = fabricdefaults.canvas.infoBar.startFrame.origin.originX;
+        image.originY = fabricdefaults.canvas.infoBar.startFrame.origin.originY;
+        image.objectType = 'startFrame';
+        image.hoverCursor = 'pointer';
+        image.setCoords();
+        image.entity = startEntity;
+        lockObjectMovementHelper(image);
+        this.state.canvas.add(image);
+      });
     });
-    console.log({ startFrame });
     const startText = canvasTextHelper(
       fabricdefaults.canvas.infoBar.startFrame.text.position,
       'Start afbeelding',
@@ -141,20 +146,22 @@ export default class FabricService {
     this.state.canvas.add(startText);
 
     if (historyEntity) {
-      const historyImage = ImageUrlHelper(historyEntity)[0];
-      const historyFrame = new fabric.Image.fromURL(historyImage, (image: any) => {
-        image.top = fabricdefaults.canvas.infoBar.historyFrame.position.top;
-        image.left = fabricdefaults.canvas.infoBar.historyFrame.position.left;
-        image.scaleX = fabricdefaults.canvas.infoBar.historyFrame.scale.scaleX;
-        image.scaleY = fabricdefaults.canvas.infoBar.historyFrame.scale.scaleY;
-        image.originX = fabricdefaults.canvas.infoBar.historyFrame.origin.originX;
-        image.originY = fabricdefaults.canvas.infoBar.historyFrame.origin.originY;
-        image.objectType = 'historyFrame';
-        image.hoverCursor = 'pointer';
-        image.setCoords();
-        image.entity = historyEntity;
-        lockObjectMovementHelper(image);
-        this.state.canvas.add(image);
+      ImageUrlHelper(historyEntity).then((imageArray: string[]) => {
+        const historyImage: string = imageArray[0];
+        const historyFrame = new fabric.Image.fromURL(historyImage, (image: any) => {
+          image.top = fabricdefaults.canvas.infoBar.historyFrame.position.top;
+          image.left = fabricdefaults.canvas.infoBar.historyFrame.position.left;
+          image.scaleX = fabricdefaults.canvas.infoBar.historyFrame.scale.scaleX;
+          image.scaleY = fabricdefaults.canvas.infoBar.historyFrame.scale.scaleY;
+          image.originX = fabricdefaults.canvas.infoBar.historyFrame.origin.originX;
+          image.originY = fabricdefaults.canvas.infoBar.historyFrame.origin.originY;
+          image.objectType = 'historyFrame';
+          image.hoverCursor = 'pointer';
+          image.setCoords();
+          image.entity = historyEntity;
+          lockObjectMovementHelper(image);
+          this.state.canvas.add(image);
+        });
       });
 
       const historyText = canvasTextHelper(
@@ -190,58 +197,59 @@ export default class FabricService {
     }
 
     // Frame object
-    const images: Array<string> = ImageUrlHelper(entities);
-    images.forEach((image, index) => {
-      const frame = new fabric.Image.fromURL(image, (image: any) => {
-        const randomNumber = getRandomNumberInRangeHelper(
-          0,
-          closeAvailablePositions.length - 1,
-        );
-        image.positionNumber = randomNumber;
-        image.scaleX = fabricdefaults.canvas.secondaryImage.scale.scaleX;
-        image.scaleY = fabricdefaults.canvas.secondaryImage.scale.scaleY;
-        image.top =
-          fabricdefaults.canvas.secondaryImage.positions.yAxis[
-            closeAvailablePositions[randomNumber].yIndex
-          ];
-        image.left =
-          fabricdefaults.canvas.secondaryImage.positions.xAxis[
-            closeAvailablePositions[randomNumber].xIndex
-          ];
-        image.positionIndexes = {
-          xIndex: closeAvailablePositions[randomNumber].xIndex,
-          yIndex: closeAvailablePositions[randomNumber].yIndex,
-        };
-        image.hoverCursor = 'pointer';
-        image.id = entities[index].id;
-        image.entity = entities[index];
-        image.setCoords();
-        image.relationOriginId = subRelationOriginEntityId;
-        image.objectType = 'frame';
-        lockObjectMovementHelper(image);
-        if (!isDuplicateFrameHelper(image, this.state.canvas.getObjects())) {
-          // Add to canvas and remove position from list
-          this.state.canvas.add(image);
-          closeAvailablePositions = closeAvailablePositions.filter(
-            (pos: any) => pos != closeAvailablePositions[randomNumber],
+    ImageUrlHelper(entities).then((images: string[]) => {
+      images.forEach((image, index) => {
+        const frame = new fabric.Image.fromURL(image, (image: any) => {
+          const randomNumber = getRandomNumberInRangeHelper(
+            0,
+            closeAvailablePositions.length - 1,
           );
+          image.positionNumber = randomNumber;
+          image.scaleX = fabricdefaults.canvas.secondaryImage.scale.scaleX;
+          image.scaleY = fabricdefaults.canvas.secondaryImage.scale.scaleY;
+          image.top =
+            fabricdefaults.canvas.secondaryImage.positions.yAxis[
+              closeAvailablePositions[randomNumber].yIndex
+            ];
+          image.left =
+            fabricdefaults.canvas.secondaryImage.positions.xAxis[
+              closeAvailablePositions[randomNumber].xIndex
+            ];
+          image.positionIndexes = {
+            xIndex: closeAvailablePositions[randomNumber].xIndex,
+            yIndex: closeAvailablePositions[randomNumber].yIndex,
+          };
+          image.hoverCursor = 'pointer';
+          image.id = entities[index].id;
+          image.entity = entities[index];
+          image.setCoords();
+          image.relationOriginId = subRelationOriginEntityId;
+          image.objectType = 'frame';
+          lockObjectMovementHelper(image);
+          if (!isDuplicateFrameHelper(image, this.state.canvas.getObjects())) {
+            // Add to canvas and remove position from list
+            this.state.canvas.add(image);
+            closeAvailablePositions = closeAvailablePositions.filter(
+              (pos: any) => pos != closeAvailablePositions[randomNumber],
+            );
 
-          this.state.takenPositions.push(image.positionIndexes);
-        } else {
-          // Generate relation instead of frame
-          const existingFrame = getFrameByEntityIdHelper(
-            image.id,
-            this.state.canvas.getObjects(),
-          );
-          const relationOriginFrame = getFrameByEntityIdHelper(
-            image.relationOriginId,
-            this.state.canvas.getObjects(),
-          );
-          this.generateRelationBetweenFrames(existingFrame, relationOriginFrame);
-        }
+            this.state.takenPositions.push(image.positionIndexes);
+          } else {
+            // Generate relation instead of frame
+            const existingFrame = getFrameByEntityIdHelper(
+              image.id,
+              this.state.canvas.getObjects(),
+            );
+            const relationOriginFrame = getFrameByEntityIdHelper(
+              image.relationOriginId,
+              this.state.canvas.getObjects(),
+            );
+            this.generateRelationBetweenFrames(existingFrame, relationOriginFrame);
+          }
+        });
       });
+      return Promise.resolve();
     });
-    return Promise.resolve();
   }
 
   setMainImageOnClick() {

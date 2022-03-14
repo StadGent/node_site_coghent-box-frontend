@@ -4,6 +4,7 @@ import { Coordinate, Scale, Position } from './FabricService';
 import { fabric } from 'fabric';
 import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
 import { iiiF } from '@/main';
+import { Light } from 'three';
 
 const underlineHelper = (mainImage: any) => {
   const imageCoordinates: Array<Coordinate> = mainImage.getCoords();
@@ -77,6 +78,9 @@ const availablePositionsInRangeHelper = (
 };
 
 const indexedPositionsInRangeHelper = (indexedPosition: Position, range: number) => {
+  if (!indexedPosition) {
+    console.log('heeeeeeeee');
+  }
   const indexedPositions: Position[] = [];
 
   const startY: number = Math.max(0, indexedPosition.yIndex - range);
@@ -197,23 +201,28 @@ const canvasTextHelper = (
   return textbox;
 };
 
-const ImageUrlHelper = (entities: Array<any> | any) => {
-  const { generateUrl, noImageUrl } = iiiF;
-  const imageUrls: Array<any> = [];
-  if (entities instanceof Array) {
-    entities.forEach((entity: any) => {
-      if (entity.primary_mediafile || entity.mediafiles[0].filename) {
-        const image = entity.primary_mediafile || entity.mediafiles[0].filename;
+const ImageUrlHelper = (entities: Array<any> | any): Promise<string[]> => {
+  try {
+    const { generateUrl, noImageUrl } = iiiF;
+    const imageUrls: Array<string> = [];
+    if (entities instanceof Array) {
+      entities.forEach((entity: any) => {
+        if (entity.primary_mediafile || entity.mediafiles[0].filename) {
+          const image = entity.primary_mediafile || entity.mediafiles[0].filename;
+          imageUrls.push(generateUrl(image, 'full', '', 150));
+        }
+      });
+    } else {
+      if (entities.primary_mediafile || entities.mediafiles[0].filename) {
+        const image = entities.primary_mediafile || entities.mediafiles[0].filename;
         imageUrls.push(generateUrl(image, 'full', '', 150));
       }
-    });
-  } else {
-    if (entities.primary_mediafile || entities.mediafiles[0].filename) {
-      const image = entities.primary_mediafile || entities.mediafiles[0].filename;
-      imageUrls.push(generateUrl(image, 'full', '', 150));
     }
+    return Promise.resolve(imageUrls as Array<string>);
+  } catch (e) {
+    console.warn(`Image url could not be constructed: ${e}`);
+    return Promise.reject(e);
   }
-  return imageUrls;
 };
 
 const IIIFImageUrlHelper = (entity: any): string => {
