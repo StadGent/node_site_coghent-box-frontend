@@ -1,29 +1,44 @@
 import MoveObject from '@/composables/moveObject';
 import { StoryData } from '@/services/StoryService';
 import TaggingService from '@/services/TaggingService';
-import { Vector3 } from 'three';
+import { text } from 'd3';
+import { Vector3, Box3, Mesh } from 'three';
 import TaggingHelper from './helper.tagging';
 import Template from './template.shapes';
 
-const MoveHelper = (_taggingService: TaggingService): {
+const MoveHelper = (
+  _taggingService: TaggingService,
+): {
   activeStoryCircle: (_position: Vector3, _storyData: StoryData) => Promise<void>;
 } => {
-
   const activeStoryCircle = async (_position: Vector3, _storyData: StoryData) => {
     const templateLayers = Template().storyCircleLayers(_position);
     const objects = TaggingHelper(_taggingService).getActiveStoryCircle();
-    const storyCirclePositions = Template().storyCirclePositions(_position, _storyData.totalOfFrames);
-
-    MoveObject().startMoving(objects.text, new Vector3(templateLayers.title.x - 1.5, templateLayers.title.y, templateLayers.title.z));
+    const storyCirclePositions = Template().storyCirclePositions(
+      _position,
+      _storyData.totalOfFrames,
+    );
+    const textSize = getSizeStoryText(objects.text);
+    MoveObject().startMoving(
+      objects.text,
+      new Vector3(
+        templateLayers.title.x - textSize.x / 2,
+        templateLayers.title.y - textSize.y / 2,
+        templateLayers.title.z,
+      ),
+    );
     MoveObject().startMoving(objects.basic, templateLayers.centerCircle);
     for (const _child of objects.progress.ring[0].children) {
       const index = objects.progress.ring[0].children.indexOf(_child);
       if (index != objects.progress.ring[0].children.length - 1) {
-        MoveObject().startMoving(_child,
+        MoveObject().startMoving(
+          _child,
           new Vector3(
             storyCirclePositions.frameDots[index].x,
             storyCirclePositions.frameDots[index].y,
-            _position.z));
+            _position.z,
+          ),
+        );
       }
     }
     MoveObject().startMoving(
@@ -31,28 +46,48 @@ const MoveHelper = (_taggingService: TaggingService): {
       new Vector3(
         templateLayers.progressCircle.x,
         templateLayers.progressCircle.y,
-        _position.z)
+        _position.z,
+      ),
     );
     MoveObject().startMoving(objects.shade, templateLayers.shadedCircle);
     objects.progress.dots.forEach((_dot, index) => {
-      MoveObject().startMoving(_dot.dot,
+      MoveObject().startMoving(
+        _dot.dot,
         new Vector3(
           storyCirclePositions.frameDots[index].x,
           storyCirclePositions.frameDots[index].y,
-          _position.z)
+          _position.z,
+        ),
       );
       if (_dot.innerDot) {
-        MoveObject().startMoving(_dot.innerDot,
+        MoveObject().startMoving(
+          _dot.innerDot,
           new Vector3(
             storyCirclePositions.frameDots[index].x,
             storyCirclePositions.frameDots[index].y,
-            _position.z)
+            _position.z,
+          ),
         );
       }
     });
   };
 
-  return { activeStoryCircle }
+  return { activeStoryCircle };
+};
+
+const getSizeStoryText = (storyText: Mesh) => {
+  const box = new Box3().setFromObject(storyText);
+  console.log(`Log jeroen box size text:`);
+  console.dir(box.getSize(new Vector3()));
+  const textSize = box.getSize(new Vector3());
+
+  return textSize;
+};
+
+export const centerStoryText = (storyText: Mesh) => {
+  const textSize = getSizeStoryText(storyText);
+  storyText.position.x = storyText.position.x - textSize.x / 2;
+  storyText.position.y = storyText.position.y - textSize.y / 2;
 };
 
 export default MoveHelper;

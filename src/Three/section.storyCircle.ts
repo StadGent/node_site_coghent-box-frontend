@@ -3,13 +3,22 @@ import SchemaCube, { CubeParams } from '@/Three/schema.cube';
 import DefaultColors from '@/Three/defaults.color';
 import TextHelper from '@/Three/helper.text';
 import { FontParams } from '@/Three/schema.text';
-import { BufferGeometry, CircleGeometry, Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
+import {
+  BufferGeometry,
+  CircleGeometry,
+  Group,
+  Mesh,
+  MeshBasicMaterial,
+  Vector3,
+  Box3,
+} from 'three';
 import CubeHelper from './helper.cube';
 import Colors from '@/Three/defaults.color';
 import Measurements from './defaults.measurements';
 import StoryService, { StoryData } from '@/services/StoryService';
 import PauseProgressbar, { PauseProgressbarObjects } from './shapes.pauseProgressbar';
 import Template from './template.shapes';
+import { centerStoryText } from './helper.move';
 
 export type StoryCircleParams = {
   radius: number;
@@ -21,10 +30,10 @@ export type StoryCircleParams = {
 
 export type StoryCircleObjects = {
   full?: Array<Group>;
-  basic: Mesh<CircleGeometry, MeshBasicMaterial>,
-  shade?: Mesh<CircleGeometry, MeshBasicMaterial>,
-  progress: PauseProgressbarObjects,
-  text: Mesh<BufferGeometry, any>,
+  basic: Mesh<CircleGeometry, MeshBasicMaterial>;
+  shade?: Mesh<CircleGeometry, MeshBasicMaterial>;
+  progress: PauseProgressbarObjects;
+  text: Mesh<BufferGeometry, any>;
 };
 
 export type LayersStoryCircle = {
@@ -35,7 +44,9 @@ export type LayersStoryCircle = {
   progressDots: Vector3;
 };
 
-const StoryCircle = (_storyService: StoryService): {
+const StoryCircle = (
+  _storyService: StoryService,
+): {
   Create: (
     storyData: StoryData,
     title: string,
@@ -43,8 +54,16 @@ const StoryCircle = (_storyService: StoryService): {
     iconUrl: string,
   ) => Promise<StoryCircleObjects>;
   shadedCircle: (schema: CircleSchema) => Mesh<CircleGeometry, MeshBasicMaterial>;
-  title: (title: string, position: Vector3, color: number) => Promise<Mesh<BufferGeometry, any>>;
-  progressOfFrames: (_position: Vector3, _color: number, _storyData: StoryData) => PauseProgressbarObjects;
+  title: (
+    title: string,
+    position: Vector3,
+    color: number,
+  ) => Promise<Mesh<BufferGeometry, any>>;
+  progressOfFrames: (
+    _position: Vector3,
+    _color: number,
+    _storyData: StoryData,
+  ) => PauseProgressbarObjects;
 } => {
   const main = (schema: CircleSchema) => {
     return SchemaCircle().CreateCircle(
@@ -53,15 +72,17 @@ const StoryCircle = (_storyService: StoryService): {
         params: {
           color: schema.params.color,
           opacity: 1,
-          radius: Measurements().storyCircle.radius
-        } as CircleParams
-      } as CircleSchema, false);
+          radius: Measurements().storyCircle.radius,
+        } as CircleParams,
+      } as CircleSchema,
+      false,
+    );
   };
   const shadedCircle = (schema: CircleSchema) => {
     schema.params.radius = Measurements().storyCircle.outerCircle;
     schema.params.color = schema.params.color || Colors().green;
     schema.params.opacity = Measurements().storyCircle.opacityShadedCircle;
-    schema.position =  Template().storyCircleLayers(schema.position).shadedCircle;
+    schema.position = Template().storyCircleLayers(schema.position).shadedCircle;
     return SchemaCircle().CreateCircle(schema, true);
   };
 
@@ -83,18 +104,21 @@ const StoryCircle = (_storyService: StoryService): {
     return storyTitle;
   };
 
-  const progressOfFrames = (_position: Vector3, _color: number, _storyData: StoryData) => {
-    return PauseProgressbar(_storyData).create(
-      {
-        position: _position,
-        params: {
-          radius: Measurements().storyCircle.progressRadius,
-          color: _color,
-        } as CircleParams
-      } as CircleSchema);
-  }
+  const progressOfFrames = (
+    _position: Vector3,
+    _color: number,
+    _storyData: StoryData,
+  ) => {
+    return PauseProgressbar(_storyData).create({
+      position: _position,
+      params: {
+        radius: Measurements().storyCircle.progressRadius,
+        color: _color,
+      } as CircleParams,
+    } as CircleSchema);
+  };
 
-  const Create =  async (
+  const Create = async (
     storyData: StoryData,
     storyTitle: string,
     circleSchema: CircleSchema,
@@ -108,16 +132,13 @@ const StoryCircle = (_storyService: StoryService): {
       circleSchema.params.color || Colors().white,
       storyData,
     );
-    const storyText =
-      await title(
-        storyTitle,
-        new Vector3(
-          templateLayers.title.x - Measurements().storyCircle.correctionText,
-          templateLayers.title.y,
-          templateLayers.title.z,
-        ),
-        circleSchema.params.color || DefaultColors().green,
-      );
+    const storyText = await title(
+      storyTitle,
+      new Vector3(templateLayers.title.x, templateLayers.title.y, templateLayers.title.z),
+      circleSchema.params.color || DefaultColors().green,
+    );
+
+    centerStoryText(storyText);
 
     return {
       basic: basicCircle,
