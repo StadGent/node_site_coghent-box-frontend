@@ -91,7 +91,7 @@ const StoryCircle = (
     const titles = title.split('\n');
     const group = new Group();
     let prevSize: Vector3 = new Vector3(0, 0, 0);
-    for (const title of titles) {
+    for (const title of titles.reverse()) {
       const storyTitle = await TextHelper().CreateText(
         title,
         new Vector3(
@@ -105,6 +105,7 @@ const StoryCircle = (
         } as CubeParams,
         { size: Measurements().text.size.small } as FontParams,
       );
+      // centerStoryText(storyTitle, false);
       prevSize = getSizeStoryText(storyTitle);
       group.add(storyTitle);
     }

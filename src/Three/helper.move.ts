@@ -84,10 +84,10 @@ export const getSizeStoryText = (storyText: Mesh | Group) => {
   return textSize;
 };
 
-export const centerStoryText = (storyText: Mesh | Group) => {
+export const centerStoryText = (storyText: Mesh | Group, onlyX: boolean = false) => {
   const textSize = getSizeStoryText(storyText);
   storyText.position.x = storyText.position.x - textSize.x / 2;
-  storyText.position.y = storyText.position.y - textSize.y / 2;
+  if (!onlyX) storyText.position.y = storyText.position.y - textSize.y / 2;
 };
 
 export default MoveHelper;
