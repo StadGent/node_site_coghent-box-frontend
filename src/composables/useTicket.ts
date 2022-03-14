@@ -7,8 +7,7 @@ const useTicket = (): {
 } => {
   const configStore = StoreFactory.get(ConfigStore);
   const print = async (_body: string) => {
-    const response = await axios.post(`http://localhost:8080/print`, JSON.parse(_body));
-    // const response = await axios.post(`${configStore.config.value.printerService}/print`, JSON.parse(_body))
+    const response = await axios.post(`${configStore.config.value.printerService}/print`, JSON.parse(_body))
     console.log('print response', response);
     return response;
   };
