@@ -18,7 +18,7 @@ import Measurements from './defaults.measurements';
 import StoryService, { StoryData } from '@/services/StoryService';
 import PauseProgressbar, { PauseProgressbarObjects } from './shapes.pauseProgressbar';
 import Template from './template.shapes';
-import { centerStoryText } from './helper.move';
+import { centerStoryText, getSizeStoryText } from './helper.move';
 
 export type StoryCircleParams = {
   radius: number;
@@ -33,7 +33,7 @@ export type StoryCircleObjects = {
   basic: Mesh<CircleGeometry, MeshBasicMaterial>;
   shade?: Mesh<CircleGeometry, MeshBasicMaterial>;
   progress: PauseProgressbarObjects;
-  text: Mesh<BufferGeometry, any>;
+  text: Group;
 };
 
 export type LayersStoryCircle = {
@@ -54,11 +54,7 @@ const StoryCircle = (
     iconUrl: string,
   ) => Promise<StoryCircleObjects>;
   shadedCircle: (schema: CircleSchema) => Mesh<CircleGeometry, MeshBasicMaterial>;
-  title: (
-    title: string,
-    position: Vector3,
-    color: number,
-  ) => Promise<Mesh<BufferGeometry, any>>;
+  title: (title: string, position: Vector3, color: number) => Promise<Group>;
   progressOfFrames: (
     _position: Vector3,
     _color: number,
@@ -92,16 +88,29 @@ const StoryCircle = (
   };
 
   const title = async (title: string, position: Vector3, color: number) => {
-    const storyTitle = await TextHelper().CreateText(
-      title,
-      position,
-      {
-        color: color,
-        width: 0,
-      } as CubeParams,
-      { size: Measurements().text.size.small } as FontParams,
-    );
-    return storyTitle;
+    const titles = title.split('\n');
+    const group = new Group();
+    let prevSize: Vector3 = new Vector3(0, 0, 0);
+    for (const title of titles) {
+      const storyTitle = await TextHelper().CreateText(
+        title,
+        new Vector3(
+          position.x,
+          position.y + prevSize.y === 0 ? 0 : prevSize.y + 10,
+          position.z,
+        ),
+        {
+          color: color,
+          width: 0,
+        } as CubeParams,
+        { size: Measurements().text.size.small } as FontParams,
+      );
+      prevSize = getSizeStoryText(storyTitle);
+      group.add(storyTitle);
+    }
+    centerStoryText(group);
+
+    return group;
   };
 
   const progressOfFrames = (
@@ -137,8 +146,6 @@ const StoryCircle = (
       new Vector3(templateLayers.title.x, templateLayers.title.y, templateLayers.title.z),
       circleSchema.params.color || DefaultColors().green,
     );
-
-    centerStoryText(storyText);
 
     return {
       basic: basicCircle,

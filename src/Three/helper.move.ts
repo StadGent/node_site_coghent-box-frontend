@@ -2,7 +2,7 @@ import MoveObject from '@/composables/moveObject';
 import { StoryData } from '@/services/StoryService';
 import TaggingService from '@/services/TaggingService';
 import { text } from 'd3';
-import { Vector3, Box3, Mesh } from 'three';
+import { Vector3, Box3, Mesh, Group } from 'three';
 import TaggingHelper from './helper.tagging';
 import Template from './template.shapes';
 
@@ -75,7 +75,7 @@ const MoveHelper = (
   return { activeStoryCircle };
 };
 
-const getSizeStoryText = (storyText: Mesh) => {
+export const getSizeStoryText = (storyText: Mesh | Group) => {
   const box = new Box3().setFromObject(storyText);
   console.log(`Log jeroen box size text:`);
   console.dir(box.getSize(new Vector3()));
@@ -84,7 +84,7 @@ const getSizeStoryText = (storyText: Mesh) => {
   return textSize;
 };
 
-export const centerStoryText = (storyText: Mesh) => {
+export const centerStoryText = (storyText: Mesh | Group) => {
   const textSize = getSizeStoryText(storyText);
   storyText.position.x = storyText.position.x - textSize.x / 2;
   storyText.position.y = storyText.position.y - textSize.y / 2;
