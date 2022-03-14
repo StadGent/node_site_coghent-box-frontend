@@ -14,7 +14,7 @@ const ScanQR = (
 } => {
   const arrow = () => {
     const cube = SchemaCube().CreateImageCube({
-      position: new Vector3(position.x + 2.5, position.y + 200, position.z),
+      position: new Vector3(position.x + 2.5, position.y + 200, -1),
       params: {
         height: 100,
         width: 200,
@@ -22,7 +22,7 @@ const ScanQR = (
         color: Colors().pink,
       } as CubeParams,
     } as CubeSchema);
-    const targetPosition = new Vector3(position.x - 5, position.y + 200, position.z);
+    const targetPosition = new Vector3(position.x - 5, position.y + 200, -1);
 
     new TWEEN.Tween(cube.position)
       .to(targetPosition)
@@ -40,7 +40,7 @@ const ScanQR = (
       HelperText().scanYourTicket(position),
       Colors().white,
       Images.startOfSession.scanQrCode,
-      new Vector3(position.x, position.y - 180, position.z),
+      new Vector3(position.x, position.y - 180, -1),
       new Vector3(200, 300, 0),
     );
     const direction = arrow();

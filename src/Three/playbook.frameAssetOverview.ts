@@ -54,7 +54,7 @@ const useFrameAssetOverview = (
         frame,
         asset,
       );
-      const position = new Vector3(0, 0, Layers.scene);
+      const position = new Vector3(0, 0, -1);
       console.log({ relationMetadata });
       if (relationMetadata?.position != null || undefined) {
         position.x = relationMetadata.position.x;
@@ -84,7 +84,7 @@ const useFrameAssetOverview = (
           {
             x: scaleTo[i],
             y: scaleTo[i],
-            z: 0,
+            z: -1,
           },
           1000,
         )

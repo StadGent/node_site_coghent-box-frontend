@@ -106,7 +106,10 @@ const useAsset = (
           AnimationDefaults.values.scaleStep,
         );
       }
-      await MoveObject().startMoving(spotlight, asset.position);
+      await MoveObject().startMoving(
+        spotlight,
+        new Vector3(asset.position.x, asset.position.y, 0),
+      );
     } else if (!widest) {
       const scaleForSpotlight = getAssetSpotlightScale(asset, scale);
       if (scaleForSpotlight > scale) {
@@ -122,7 +125,10 @@ const useAsset = (
           AnimationDefaults.values.scaleStep,
         );
       }
-      await MoveObject().startMoving(spotlight, asset.position);
+      await MoveObject().startMoving(
+        spotlight,
+        new Vector3(asset.position.x, asset.position.y, 0),
+      );
     }
   };
 
@@ -168,15 +174,7 @@ const useAsset = (
     console.log(text);
     console.log('added with spaces', Common().fillStringToIdealLength(text));
     const metadataInfo = (
-      await MetadataLabel(
-        new Vector3(
-          object.position.x,
-          object.position.y +
-            (object.geometry.parameters.height / 2) * object.scale.x +
-            0.6,
-          Layers.presentation,
-        ),
-      ).create(text, color)
+      await MetadataLabel(new Vector3(object.position.x, -500, 1)).create(text, color)
     ).metadata;
     return metadataInfo;
   };
