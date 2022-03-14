@@ -121,7 +121,10 @@ const useFrameAssetOverview = (
     await Common().awaitTimeout(150);
     await Promise.all([
       MoveObject().startMoving(asset, positions[currentAsset]),
-      MoveObject().startMoving(spotlight, positions[currentAsset]),
+      MoveObject().startMoving(
+        spotlight,
+        new Vector3(positions[currentAsset].x, positions[currentAsset].y, 0),
+      ),
     ]);
   };
 
