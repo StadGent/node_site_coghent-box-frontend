@@ -19,7 +19,7 @@ import Common from './common';
 import Spot from '@/Three/shapes.spotlight';
 import { Tags } from '@/services/TaggingService';
 import { Entity } from 'coghent-vue-3-component-library/lib';
-const TWEEN = require('@tweenjs/tween.js');
+import TWEEN from '@tweenjs/tween.js';
 
 const useAsset = (
   threeService: ThreeService,

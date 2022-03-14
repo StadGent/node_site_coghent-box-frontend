@@ -52,7 +52,6 @@ const useStoryCircle = (
   ) => {
     if (canAddToSCene) {
       const storyCircle = await titleCircle(position, storyColor, currentFrame + 1);
-      console.dir(_storyService.activeStoryData);
 
       await SceneHelper(threeService, _storyService).addStoryCircleToScene(
         _storyService.activeStoryData.storyId,

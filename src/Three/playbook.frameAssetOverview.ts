@@ -27,7 +27,7 @@ import MoveObject from '@/composables/moveObject';
 import { Entity } from 'coghent-vue-3-component-library/lib';
 import Colors from './defaults.color';
 import { tweenPromise } from './helper.tweenPromise';
-const TWEEN = require('@tweenjs/tween.js');
+import TWEEN from '@tweenjs/tween.js';
 
 const useFrameAssetOverview = (
   threeService: ThreeService,

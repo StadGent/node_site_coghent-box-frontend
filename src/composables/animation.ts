@@ -8,7 +8,7 @@ import CountDownCircle from '@/Three/shapes.countdownCircle';
 import TimerCountdown from '@/Three/shapes.timer';
 import { Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
 import Common from './common';
-const TWEEN = require('@tweenjs/tween.js');
+import TWEEN from '@tweenjs/tween.js';
 
 const CustomAnimation = (): {
   fadeOut: (

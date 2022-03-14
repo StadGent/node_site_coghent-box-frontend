@@ -17,7 +17,7 @@ import { Ref } from 'vue';
 import TaggingService, { Tags } from './TaggingService';
 import ZoomHelper from '@/Three/helper.zoom';
 import Development from '@/Three/defaults.development';
-const TWEEN = require('@tweenjs/tween.js');
+import TWEEN from '@tweenjs/tween.js';
 
 type State = {
   width: number;

@@ -6,7 +6,7 @@ import Layers from './defaults.layers';
 import Measurements from './defaults.measurements';
 import BaseChapes from './shapes.base';
 import schemaCube, { CubeSchema } from './schema.cube';
-const TWEEN = require('@tweenjs/tween.js');
+import TWEEN from '@tweenjs/tween.js';
 
 export type SpotLightParams = {
   radius: number;

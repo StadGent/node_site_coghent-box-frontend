@@ -1,6 +1,6 @@
 import { tweenPromise } from '@/Three/helper.tweenPromise';
 import { Group, Mesh, Vector3 } from 'three';
-const TWEEN = require('@tweenjs/tween.js');
+import TWEEN from '@tweenjs/tween.js';
 
 const MoveObject = (): {
   startMoving: (object: any, toPosition: Vector3) => Promise<unknown>;

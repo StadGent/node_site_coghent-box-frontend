@@ -10,7 +10,6 @@ import AnimationDefaults from './defaults.animation';
 import Layers from './defaults.layers';
 import Measurements from './defaults.measurements';
 import Timing from './defaults.timing';
-const TWEEN = require('@tweenjs/tween.js');
 
 const useStartOfSession = (
   threeService: ThreeService,

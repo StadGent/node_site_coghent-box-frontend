@@ -5,7 +5,7 @@ import Colors from '@/Three/defaults.color';
 import SchemaCube, { CubeParams, CubeSchema } from '@/Three/schema.cube';
 import GroupHelper from '@/Three/helper.group';
 import Images from '@/Three/defaults.images';
-const TWEEN = require('@tweenjs/tween.js');
+import TWEEN from '@tweenjs/tween.js';
 
 const ScanQR = (
   position: Vector3,
