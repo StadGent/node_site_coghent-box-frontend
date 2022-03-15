@@ -111,7 +111,7 @@
       const headEntityId = ref<string>();
       const basketItems = ref<Array<Relation>>([]);
       const IIIFImageUrl = ref<string>();
-      let fabricService: FabricService | undefined = undefined;
+      let fabricService = ref<FabricService | undefined>(undefined);
       const { openIIIFModal, IIIFModalState } = useIIIFModal();
       const { getTouchTableHistory } = useBoxVisiter(apolloClient);
 
@@ -199,7 +199,7 @@
         () => subRelations.value.length,
         () => {
           subRelations.value.forEach((relation: SecondaryRelation) => {
-            fabricService?.generateSecondaryImageFrames(
+            fabricService.value?.generateSecondaryImageFrames(
               relation.relatedEntities,
               relation.originId,
             );
@@ -250,16 +250,16 @@
       };
 
       const highlightSelectedFilter = (filterIndex: number) => {
-        fabricService?.highlightRelatedFrames(filterIndex, relationsArray.value);
+        fabricService.value?.highlightRelatedFrames(filterIndex, relationsArray.value);
       };
 
       onEntityResult((queryResult) => {
         if (queryResult.data) {
           console.log('new canvas');
-          fabricService = undefined;
-          fabricService = new FabricService();
+          fabricService.value = undefined;
+          fabricService.value = new FabricService();
 
-          fabricService.generateMainImageFrame(queryResult.data.Entity);
+          fabricService.value.generateMainImageFrame(queryResult.data.Entity);
 
           getRelations(queryResult.data.Entity);
           headEntityId.value = queryResult.data.Entity.id;
@@ -270,7 +270,7 @@
             const historyEntity = getTouchTableHistory()[0];
             console.log({ historyEntity });
             if (startEntity) {
-              fabricService?.generateInfoBar(
+              fabricService.value?.generateInfoBar(
                 startEntity,
                 // TODO: get entity instead of relation
                 historyEntity.mediafiles ? historyEntity : undefined,
@@ -284,12 +284,12 @@
 
       onRelationResult((relationResult: any) => {
         console.log('Relation result');
-        if (relationResult.data && fabricService) {
+        if (relationResult.data && fabricService.value) {
           const relationEntities = relationResult.data.Entities?.results;
           const filteredRelationEntities = relationEntities.filter(
             (ent: Entity) => ent.id != entity.value.id,
           );
-          fabricService
+          fabricService.value
             .generateSecondaryImageFrames(filteredRelationEntities, id)
             .then(() => {
               filteredRelationEntities.forEach((entity: any) => {

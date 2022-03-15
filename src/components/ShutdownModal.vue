@@ -11,13 +11,10 @@
           Ben je zeker dat je wil afsluiten?
         </h1>
         <p class="text-3xl text-center">
-          Wanneer je afsluit blijven alle beelden die in je verhalenbox zitten bewaard.<br>
+          Wanneer je afsluit blijven alle beelden die in je verhalenbox zitten bewaard.<br />
           Je kan deze thuis raadplegen via de website met jouw persoonlijke code:
         </p>
-        <box-visit-code
-          :code="code"
-          class="my-12"
-        />
+        <box-visit-code :code="code" class="my-12" />
       </section>
       <section class="flex justify-center items-center pt-48">
         <base-button
@@ -41,8 +38,9 @@
 
 <script lang="ts">
   import { defineComponent, onMounted, ref, watch } from 'vue';
-  import { BaseModal, BaseButton } from 'coghent-vue-3-component-library';
+  import { BaseModal, BaseButton, useBoxVisiter } from 'coghent-vue-3-component-library';
   import BoxVisitCode from '@/components/BoxVisitCode.vue';
+  import { apolloClient } from '@/main';
   import { useRoute, useRouter } from 'vue-router';
 
   export type ModalState = 'show' | 'hide' | 'loading';
@@ -95,10 +93,12 @@
     setup: (props) => {
       const { openShutdownModal, closeShutdownModal, ShutdownModalState } =
         useShutdownModal();
+      const { resetBoxVisiter } = useBoxVisiter(apolloClient);
       const router = useRouter();
 
       const goToCodeScreen = () => {
         closeShutdownModal();
+        resetBoxVisiter();
         router.push('/touchtable/start');
       };
 
