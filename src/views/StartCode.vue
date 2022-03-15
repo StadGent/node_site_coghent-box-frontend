@@ -36,7 +36,7 @@
   import NumberPad, { useNumberPad } from '@/components/NumberPad.vue';
   import NumberDisplay from '@/components/NumberDisplay.vue';
   import { useRouter } from 'vue-router';
-  import { useQuery, useMutation } from '@vue/apollo-composable';
+  import { useQuery, useMutation, provideApolloClient } from '@vue/apollo-composable';
   import { useBoxVisiter } from 'coghent-vue-3-component-library';
   import { apolloClient } from '@/main';
   import { BoxVisiter } from '@/models/GraphqlModel';
@@ -55,7 +55,6 @@
         useNumberPad();
       const maxAmountOfNumbers = 8;
       const router = useRouter();
-      const { getByCode } = useBoxVisiter(apolloClient);
 
       const showWrongCodeMessage = () => {
         alert('Wrong code');
@@ -72,7 +71,8 @@
 
       const checkCode = () => {
         let code: string = NumberPadState.value.state.join('');
-        code = '52389932';
+        // code = '52389932';
+        const { getByCode } = useBoxVisiter(apolloClient);
         const resolvedBoxVisit = getByCode(code);
         resolvedBoxVisit.then((boxVisit: any) => {
           if (boxVisit) {
@@ -84,7 +84,7 @@
         });
       };
 
-      checkCode();
+      // checkCode();
 
       return { NumberPadState, maxAmountOfNumbers, checkCode };
     },
