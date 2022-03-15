@@ -624,21 +624,21 @@
         buildStory(currentStoryID.value);
       };
 
-      const playStartVideo = () => {
-        const videoSrc =
-          'https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4';
-        const videoCube = VideoHelper().videoElementAsCube(
-          videoElement as Ref<HTMLVideoElement>,
-          videoSrc,
-          new Vector3(8, 8, 0),
-        );
-        threeSvc.AddToScene(videoCube, Tags.Video, 'Test of the video cube');
-        videoElement.value?.play();
-        setTimeout(() => {
-          console.log('currenttime', videoElement.value?.currentTime);
-          videoCube.position.set(0, 0, 0);
-        }, 7000);
-      };
+      // const playStartVideo = () => {
+      //   const videoSrc =
+      //     'https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4';
+      //   const videoCube = VideoHelper().videoElementAsCube(
+      //     videoElement as Ref<HTMLVideoElement>,
+      //     videoSrc,
+      //     new Vector3(8, 8, 0),
+      //   );
+      //   threeSvc.AddToScene(videoCube, Tags.Video, 'Test of the video cube');
+      //   videoElement.value?.play();
+      //   setTimeout(() => {
+      //     console.log('currenttime', videoElement.value?.currentTime);
+      //     videoCube.position.set(0, 0, 0);
+      //   }, 7000);
+      // };
 
       onMounted(async () => {
         threeSvc = new ThreeService(viewport, threeDefaultsWall, taggingService);

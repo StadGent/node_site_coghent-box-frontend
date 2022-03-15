@@ -27,10 +27,7 @@ const TaggingHelper = (
           MeshBasicMaterial
         >)
       : undefined;
-    const text = _taggingService.getByTag(Tags.ActiveStoryCircleText)[0].object as Mesh<
-      BufferGeometry,
-      any
-    >;
+    const text = _taggingService.getByTag(Tags.ActiveStoryCircleText)[0].object as Group;
     const frameDots = _taggingService.getByTag(Tags.ActiveStoryCircleFrameDot);
     const frameInnerDots = _taggingService.getByTag(Tags.ActiveStoryCircleFrameInnerDot);
     const frameRing = _taggingService.getByTag(Tags.ActiveStoryCircleFrameRing)[0]
