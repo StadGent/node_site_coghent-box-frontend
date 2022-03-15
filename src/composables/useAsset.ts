@@ -146,7 +146,7 @@ const useAsset = (
         {
           x: position.x,
           y: position.y,
-          z: position.z,
+          z: -0.2,
         },
         1000,
       )
@@ -155,7 +155,7 @@ const useAsset = (
     const newScale = {
       x: scale,
       y: scale,
-      z: scale,
+      z: assetImageCube.scale.z,
     };
     new TWEEN.Tween(assetImageCube.scale)
       .to(newScale, 1000)
