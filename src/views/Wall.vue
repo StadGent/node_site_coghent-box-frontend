@@ -126,14 +126,16 @@
       };
 
       watch(inputValue, (value: string) => {
+        console.log(value);
         if (
           canScanTicket.value &&
           value.length === 8 &&
           stateService.getCurrentState() === FlowState[0]
         ) {
           getCode(value);
+          inputValue.value = '';
         }
-        inputValue.value = '';
+        // inputValue.value = '';
       });
 
       const getCode = async (code: string) => {
