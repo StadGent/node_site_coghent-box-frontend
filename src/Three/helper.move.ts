@@ -19,14 +19,20 @@ const MoveHelper = (
       _storyData.totalOfFrames,
     );
     const textSize = getSizeStoryText(objects.text);
-    MoveObject().startMoving(
-      objects.text,
-      new Vector3(
-        templateLayers.title.x - textSize.x / 2,
-        templateLayers.title.y - textSize.y / 2,
-        templateLayers.title.z,
-      ),
-    );
+
+    const xDelta = objects.basic.position.x - _position.x;
+    const yDelta = objects.basic.position.y - _position.y;
+    objects.text.children.forEach((text) => {
+      MoveObject().startMoving(
+        text,
+        new Vector3(
+          text.position.x - xDelta,
+          text.position.y - yDelta,
+          templateLayers.title.z,
+        ),
+      );
+    });
+
     MoveObject().startMoving(objects.basic, templateLayers.centerCircle);
     for (const _child of objects.progress.ring[0].children) {
       const index = objects.progress.ring[0].children.indexOf(_child);

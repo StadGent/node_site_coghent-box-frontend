@@ -103,11 +103,12 @@ const BaseChapes = (): {
 
   const DrawVideoCube = (video: HTMLVideoElement, format: Vector3) => {
     const texture = new VideoTexture(video);
+    texture.needsUpdate = true;
     const geometry = new BoxBufferGeometry(format.x, format.y, format.z);
     const material = new MeshBasicMaterial({
       map: texture,
     });
-    material.color.convertSRGBToLinear();
+    // material.color.convertSRGBToLinear();
     return new Mesh(geometry, material);
   };
 

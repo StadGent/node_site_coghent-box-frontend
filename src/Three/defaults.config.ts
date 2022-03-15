@@ -27,12 +27,12 @@ const Defaults = (): {
   const screenZonePadding = () => 2;
   const boundaryPadding = () => 1;
 
-  const maxFrames = () => 2;
+  const maxFrames = () => 5;
   const countdown = () => 3;
 
   const fontPath = () => '/Fonts/myFont.json';
 
-  const showplayHeadWhenNoAudio = () => true
+  const showplayHeadWhenNoAudio = () => true;
 
   const circlePoints = () => {
     return [

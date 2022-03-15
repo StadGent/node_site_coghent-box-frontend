@@ -28,6 +28,8 @@ import { Entity } from 'coghent-vue-3-component-library/lib';
 import Colors from './defaults.color';
 import { tweenPromise } from './helper.tweenPromise';
 import TWEEN from '@tweenjs/tween.js';
+import tempUrls from '@/temp-urls';
+import VideoHelper from './helper.video';
 
 const useFrameAssetOverview = (
   threeService: ThreeService,
@@ -44,7 +46,11 @@ const useFrameAssetOverview = (
   let assets: Array<Asset> = [];
   let storyColor: number;
 
-  const displayAllAssets = async (frame: modelFrame, timestamp: number) => {
+  const displayAllAssets = async (
+    frame: modelFrame,
+    timestamp: number,
+    currentFrame: number,
+  ) => {
     threeService.RemoveFromScene(group);
     const data: Record<number, Vector3> = {};
     const images: Array<Mesh> = [];
@@ -62,7 +68,22 @@ const useFrameAssetOverview = (
       }
       data[relationMetadata.timestamp_start] = position;
       positions.push(position);
-      const image = await FrameOverview(threeService).addImage(asset, 0, position);
+      //@ts-ignore
+      const isVideo = tempUrls[activeStory.id][currentFrame]?.videos[i];
+      let image;
+      if (isVideo) {
+        image = await VideoHelper().videoElementAsCube(
+          isVideo,
+          new Vector3(
+            asset.mediafiles[0]?.mediainfo.width,
+            asset.mediafiles[0]?.mediainfo.height,
+            0,
+          ),
+          position,
+        );
+      } else {
+        image = await FrameOverview(threeService).addImage(asset, 0, position);
+      }
       scaleTo[i] = relationMetadata.scale;
       images.push(image);
       group.add(image);
@@ -140,41 +161,32 @@ const useFrameAssetOverview = (
     Tools().dotOnPosition(threeService, inZone.center, Colors().yellow);
     Tools().dotOnPosition(threeService, inZone.start, Colors().lightBlue);
     Tools().dotOnPosition(threeService, inZone.end, Colors().pink);
-    let scale: number;
-    console.log('aset scale', asset.scale);
 
-    // if (
-    //   Common().firstIsBiggest(
-    //     asset.geometry.parameters.height,
-    //     asset.geometry.parameters.width,
-    //   )
-    // ) {
-    scale = asset.geometry.parameters.height / zoneService.zoneDimensions.y;
-    while (scale * asset.geometry.parameters.width > zoneService.zoneDimensions.x) {
-      scale -= 0.01;
+    let scale = 1000 / asset.geometry.parameters.height;
+
+    if (scale > 1) {
+      scale = 1;
     }
-    // } else {
-    //   scale = zoneService.zoneDimensions.x / asset.geometry.parameters.width;
-    //   while (scale * asset.geometry.parameters.height > zoneService.zoneDimensions.y) {
-    //     scale -= 0.05;
-    //   }
-    // }
-    // scale = scale - AnimationDefaults.values.scaleReducer;
+
     return { scale: scale, zoomPosition: inZone.center };
   };
 
   const zoomAndHighlightAsset = async (
     asset: Mesh<BoxBufferGeometry, any>,
     currentAsset: number,
+    isVideo: string | undefined = undefined,
   ) => {
     const zoomSettings = calculateZoomSettingsOfAsset(asset);
-    console.log({ zoomSettings });
     await useAsset(threeService).zoom(
       asset as Mesh<BoxBufferGeometry, any>,
       zoomSettings.zoomPosition,
       zoomSettings.scale,
       spotlight,
     );
+    if (isVideo) {
+      //@ts-ignore
+      document.getElementById(isVideo).play();
+    }
     const collections = useAsset(threeService).getCollections(assets[currentAsset]);
     const title = useAsset(threeService).getTitle(assets[currentAsset]);
     const metadataInfo = await useAsset(threeService).addMetadata(
@@ -199,6 +211,7 @@ const useFrameAssetOverview = (
       await displayAllAssets(
         activeStory.frames?.[currentFrame] as unknown as Frame,
         timestamp,
+        currentFrame,
       );
       group.children.forEach((asset, index) => {
         const relationMetadata = useAsset(threeService).connectRelationMetadata(
@@ -233,7 +246,13 @@ const useFrameAssetOverview = (
         if (relationMetadata.timestamp_zoom) {
           playBook.addToPlayBook(
             async () => {
-              await zoomAndHighlightAsset(asset as Mesh<BoxBufferGeometry, any>, index);
+              //@ts-ignore
+              const isVideo = tempUrls[activeStory.id][currentFrame]?.videos[index];
+              await zoomAndHighlightAsset(
+                asset as Mesh<BoxBufferGeometry, any>,
+                index,
+                isVideo,
+              );
             },
             relationMetadata.timestamp_zoom,
             `Zoom and highlight asset + set other assets inactive`,

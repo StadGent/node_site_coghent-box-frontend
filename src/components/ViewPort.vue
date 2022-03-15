@@ -7,16 +7,7 @@
 
 <script lang="ts">
   import { defineComponent, onMounted, PropType, Ref, ref, watch } from 'vue';
-  import {
-    BoxGeometry,
-    CircleGeometry,
-    Group,
-    Mesh,
-    MeshBasicMaterial,
-    MeshPhongMaterial,
-    Plane,
-    Vector3,
-  } from 'three';
+  import { BoxGeometry, Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
   import { Entity as _Entity, Frame } from '@/models/GraphqlModel';
 
   import ThreeService from '@/services/ThreeService';
@@ -338,17 +329,19 @@
         );
       };
 
-      const setup = async () => {
+      const setup = async (initial: boolean = true) => {
         threeSvc.ClearScene();
 
-        spotlight = Spot().create(
-          zoneService.zones[0].center,
-          Measurements().storyCircle.radius,
-        );
+        if (initial) {
+          spotlight = Spot().create(
+            zoneService.zones[0].center,
+            Measurements().storyCircle.radius,
+          );
 
-        spotlightBackground = Spot().spotLightBackground();
-        threeSvc.AddToScene(spotlight, Tags.Spotlight, 'InitialSpotlight');
-        threeSvc.AddToScene(spotlightBackground, Tags.Spotlight, 'InitialSpotlight');
+          spotlightBackground = Spot().spotLightBackground();
+          threeSvc.AddToScene(spotlight, Tags.Spotlight, 'InitialSpotlight');
+          threeSvc.AddToScene(spotlightBackground, Tags.Spotlight, 'InitialSpotlight');
+        }
 
         useStartOfSession(threeSvc, zoneService, spotlight).showScanImage();
         props.stateService.changeState(FlowState.welcome);

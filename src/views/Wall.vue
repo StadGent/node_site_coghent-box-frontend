@@ -193,7 +193,7 @@
           case 'Digit4' || '100':
             console.log('pressed 4');
             storySelected.value = JSON.stringify({
-              topic: 'sensors/4/instant',
+              topic: 'sensors/4/present',
               id: 4,
               msg: true,
             } as SensorObject);
@@ -222,7 +222,7 @@
               msg: true,
             } as SensorObject);
             break;
-          case 'Digit8' || '100':
+          case 'Digit8' || '104':
             console.log('pressed 8');
             storySelected.value = JSON.stringify({
               topic: 'sensors/4/instant',

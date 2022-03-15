@@ -88,48 +88,48 @@ const useAsset = (
     spotlight: Mesh,
     asset: Mesh<BoxBufferGeometry, any>,
     scale: number,
+    position?: Vector3,
   ) => {
     const widest = asset.geometry.parameters.width > asset.geometry.parameters.height;
-    setActive(asset);
-    if (widest) {
-      const scaleForSpotlight = getAssetSpotlightScale(asset, scale);
-      if (scaleForSpotlight > scale) {
-        CustomAnimation().grow(
-          spotlight as Mesh<any, MeshBasicMaterial>,
-          scaleForSpotlight,
-          AnimationDefaults.values.scaleStep,
-        );
-      } else {
-        CustomAnimation().shrink(
-          spotlight as Mesh<any, MeshBasicMaterial>,
-          scaleForSpotlight,
-          AnimationDefaults.values.scaleStep,
-        );
-      }
-      await MoveObject().startMoving(
-        spotlight,
-        new Vector3(asset.position.x, asset.position.y, 0),
-      );
-    } else if (!widest) {
-      const scaleForSpotlight = getAssetSpotlightScale(asset, scale);
-      if (scaleForSpotlight > scale) {
-        CustomAnimation().grow(
-          spotlight as Mesh<any, MeshBasicMaterial>,
-          scaleForSpotlight,
-          AnimationDefaults.values.scaleStep,
-        );
-      } else {
-        CustomAnimation().shrink(
-          spotlight as Mesh<any, MeshBasicMaterial>,
-          scaleForSpotlight,
-          AnimationDefaults.values.scaleStep,
-        );
-      }
-      await MoveObject().startMoving(
-        spotlight,
-        new Vector3(asset.position.x, asset.position.y, 0),
-      );
-    }
+    // if (widest) {
+    //   const scaleForSpotlight = getAssetSpotlightScale(asset, scale);
+    //   if (scaleForSpotlight > scale) {
+    //     CustomAnimation().grow(
+    //       spotlight as Mesh<any, MeshBasicMaterial>,
+    //       scaleForSpotlight,
+    //       AnimationDefaults.values.scaleStep,
+    //     );
+    //   } else {
+    //     CustomAnimation().shrink(
+    //       spotlight as Mesh<any, MeshBasicMaterial>,
+    //       scaleForSpotlight,
+    //       AnimationDefaults.values.scaleStep,
+    //     );
+    //   }
+    //   await MoveObject().startMoving(
+    //     spotlight,
+    //     new Vector3(asset.position.x, asset.position.y, 0),
+    //   );
+    // } else if (!widest) {
+    const scaleForSpotlight = getAssetSpotlightScale(asset, scale);
+    // if (scaleForSpotlight > scale) {
+    CustomAnimation().grow(
+      spotlight as Mesh<any, MeshBasicMaterial>,
+      scaleForSpotlight,
+      AnimationDefaults.values.scaleStep,
+    );
+    // } else {
+    //   CustomAnimation().shrink(
+    //     spotlight as Mesh<any, MeshBasicMaterial>,
+    //     scaleForSpotlight,
+    //     AnimationDefaults.values.scaleStep,
+    //   );
+    // }
+    await MoveObject().startMoving(
+      spotlight,
+      position ? position : new Vector3(asset.position.x, asset.position.y, 0),
+    );
+    // }
   };
 
   const zoom = async (
@@ -139,22 +139,19 @@ const useAsset = (
     spotlight: Mesh,
   ) => {
     console.log('scale in zoom', scale);
-    if (scale > 1) {
-      scale = 1;
-    }
+
     assetImageCube.material.opacity = 1;
-    new TWEEN.Tween(assetImageCube.position)
+    await new TWEEN.Tween(assetImageCube.position)
       .to(
         {
           x: position.x,
           y: position.y,
-          z: position.z + Layers.fraction,
+          z: position.z,
         },
         1000,
       )
       .easing(TWEEN.Easing.Cubic.InOut)
       .start();
-    moveSpotlightToAsset(spotlight, assetImageCube, scale);
     const newScale = {
       x: scale,
       y: scale,
@@ -164,6 +161,7 @@ const useAsset = (
       .to(newScale, 1000)
       .easing(TWEEN.Easing.Cubic.InOut)
       .start();
+    moveSpotlightToAsset(spotlight, assetImageCube, newScale.x, position);
   };
 
   const addMetadata = async (

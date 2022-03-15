@@ -214,14 +214,7 @@ const PlayBookBuild = (
       ),
       zoneService.sceneZone(),
     );
-    await MoveObject().startMoving(
-      spotlight,
-      new Vector3(
-        0.01,
-        -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight,
-        Layers.scene,
-      ),
-    );
+    await MoveObject().startMoving(spotlight, new Vector3(0, 0, spotlight.position.z));
 
     await CustomAnimation().fadeOut(
       taggingService.getByTag(Tags.ActiveStoryCircleShade)[0].object,
