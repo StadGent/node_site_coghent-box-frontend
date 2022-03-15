@@ -14,12 +14,12 @@
           text="Afsluiten"
           @click="openShutdownModal"
         />
-        <base-button
+        <!-- <base-button
           class="shadow text-xl"
           custom-style="touchtable-white-round"
           text="?"
           :icon-shown="false"
-        />
+        /> -->
       </div>
     </nav>
     <main class="bg-background-light h-auto min-h-screen p-24">
