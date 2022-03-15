@@ -127,13 +127,17 @@ export default defineComponent({
     };
 
     watch(inputValue, (value: string) => {
-      console.log(value);
+      let code = value
+      if(value.length > 8){
+        code = value.replace('https://data.collectie.gent/visit/','')
+      }
       if (
         canScanTicket.value &&
-        value.length === 8 &&
+        code.length === 8 &&
         stateService.getCurrentState() === FlowState[0]
       ) {
-        getCode(value);
+        console.log({code})
+        getCode(code);
         inputValue.value = '';
       }
       // inputValue.value = '';
