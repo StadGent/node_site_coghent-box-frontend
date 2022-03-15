@@ -166,74 +166,74 @@
       const resetSelectedStory = (_resetTo: SensorObject) =>
         (storySelected.value = JSON.stringify(_resetTo));
 
-      window.onkeydown = async (key: KeyboardEvent) => {
-        switch (key.code) {
-          case 'Digit1' || '97':
-            console.log('pressed 1');
-            storySelected.value = JSON.stringify({
-              topic: 'sensors/1/present',
-              id: 1,
-              msg: true,
-            } as SensorObject);
-            break;
-          case 'Digit2' || '98':
-            console.log('pressed 2');
-            storySelected.value = JSON.stringify({
-              topic: 'sensors/2/present',
-              id: 2,
-              msg: true,
-            } as SensorObject);
-            break;
-          case 'Digit3' || '99':
-            console.log('pressed 3');
-            storySelected.value = JSON.stringify({
-              topic: 'sensors/3/present',
-              id: 3,
-              msg: true,
-            } as SensorObject);
-            break;
-          case 'Digit4' || '100':
-            console.log('pressed 4');
-            storySelected.value = JSON.stringify({
-              topic: 'sensors/4/present',
-              id: 4,
-              msg: true,
-            } as SensorObject);
-            break;
-          case 'Digit5' || '101':
-            console.log('pressed 5');
-            storySelected.value = JSON.stringify({
-              topic: 'sensors/1/instant',
-              id: 1,
-              msg: true,
-            } as SensorObject);
-            break;
-          case 'Digit6' || '102':
-            console.log('pressed 6');
-            storySelected.value = JSON.stringify({
-              topic: 'sensors/2/instant',
-              id: 2,
-              msg: true,
-            } as SensorObject);
-            break;
-          case 'Digit7' || '103':
-            console.log('pressed 7');
-            storySelected.value = JSON.stringify({
-              topic: 'sensors/3/instant',
-              id: 3,
-              msg: true,
-            } as SensorObject);
-            break;
-          case 'Digit8' || '104':
-            console.log('pressed 8');
-            storySelected.value = JSON.stringify({
-              topic: 'sensors/4/instant',
-              id: 4,
-              msg: true,
-            } as SensorObject);
-            break;
-        }
-      };
+      // window.onkeydown = async (key: KeyboardEvent) => {
+      //   switch (key.code) {
+      //     case 'Digit1' || '97':
+      //       console.log('pressed 1');
+      //       storySelected.value = JSON.stringify({
+      //         topic: 'sensors/1/present',
+      //         id: 1,
+      //         msg: true,
+      //       } as SensorObject);
+      //       break;
+      //     case 'Digit2' || '98':
+      //       console.log('pressed 2');
+      //       storySelected.value = JSON.stringify({
+      //         topic: 'sensors/2/present',
+      //         id: 2,
+      //         msg: true,
+      //       } as SensorObject);
+      //       break;
+      //     case 'Digit3' || '99':
+      //       console.log('pressed 3');
+      //       storySelected.value = JSON.stringify({
+      //         topic: 'sensors/3/present',
+      //         id: 3,
+      //         msg: true,
+      //       } as SensorObject);
+      //       break;
+      //     case 'Digit4' || '100':
+      //       console.log('pressed 4');
+      //       storySelected.value = JSON.stringify({
+      //         topic: 'sensors/4/present',
+      //         id: 4,
+      //         msg: true,
+      //       } as SensorObject);
+      //       break;
+      //     case 'Digit5' || '101':
+      //       console.log('pressed 5');
+      //       storySelected.value = JSON.stringify({
+      //         topic: 'sensors/1/instant',
+      //         id: 1,
+      //         msg: true,
+      //       } as SensorObject);
+      //       break;
+      //     case 'Digit6' || '102':
+      //       console.log('pressed 6');
+      //       storySelected.value = JSON.stringify({
+      //         topic: 'sensors/2/instant',
+      //         id: 2,
+      //         msg: true,
+      //       } as SensorObject);
+      //       break;
+      //     case 'Digit7' || '103':
+      //       console.log('pressed 7');
+      //       storySelected.value = JSON.stringify({
+      //         topic: 'sensors/3/instant',
+      //         id: 3,
+      //         msg: true,
+      //       } as SensorObject);
+      //       break;
+      //     case 'Digit8' || '104':
+      //       console.log('pressed 8');
+      //       storySelected.value = JSON.stringify({
+      //         topic: 'sensors/4/instant',
+      //         id: 4,
+      //         msg: true,
+      //       } as SensorObject);
+      //       break;
+      //   }
+      // };
 
       const setSelectStory = (sensorValue: {
         topic: string;
