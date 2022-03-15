@@ -71,13 +71,8 @@
   import ShutdownModal from '@/components/ShutdownModal.vue';
   import RelationBrowser from '@/components/RelationBrowser.vue';
   import { fabricdefaults } from '../services/Fabric/defaults.fabric';
-  import {
-    Relation,
-    Entity,
-    RelationsResults,
-  } from 'coghent-vue-3-component-library/lib/queries';
+  import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
   import IIIFModal, { useIIIFModal } from '@/components/IIIFModal.vue';
-  import { router } from '@/router';
   import { IIIFImageUrlHelper } from '../services/Fabric/helper.fabric';
   import { apolloClient } from '@/main';
 
@@ -119,7 +114,7 @@
         result,
         onResult: onEntityResult,
         loading,
-        refetch,
+        refetch: refetchEntity,
       } = useQuery(GetTouchTableEntityByIdDocument, { id });
       const {
         result: basketResult,
@@ -167,7 +162,7 @@
         () => route.params.entityID,
         () => {
           console.log('Refetch entity');
-          refetch({ id: asString(route.params.entityID) });
+          refetchEntity({ id: asString(route.params.entityID) });
           mutateHistory();
           // router.go(0);
         },
