@@ -199,6 +199,12 @@ const PlayBookBuild = (
       Measurements().pauseScreen.spotLightRadius,
       AnimationDefaults.values.scaleStep,
     );
+    await CustomAnimation().fadeOut(
+      taggingService.getByTag(Tags.ActiveStoryCircleShade)[0].object,
+      -1,
+      AnimationDefaults.values.fadeStep,
+    );
+    taggingService.removeAllTagsFrom(Tags.ActiveStoryCircleShade);
     const inactiveStories = storyService.getDataOfInactiveStories();
     MoveHelper(taggingService).activeStoryCircle(
       new Vector3(
@@ -216,12 +222,6 @@ const PlayBookBuild = (
     );
     await MoveObject().startMoving(spotlight, new Vector3(0, 0, spotlight.position.z));
 
-    await CustomAnimation().fadeOut(
-      taggingService.getByTag(Tags.ActiveStoryCircleShade)[0].object,
-      -1,
-      AnimationDefaults.values.fadeStep,
-    );
-    taggingService.removeAllTagsFrom(Tags.ActiveStoryCircleShade);
     TaggingHelper(taggingService).tagActiveStorycircleAsStoryCircle();
   };
 
