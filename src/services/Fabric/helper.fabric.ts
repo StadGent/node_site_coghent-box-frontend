@@ -120,7 +120,7 @@ const changeFrameScaleHelper = (frame: any, scale: Scale) => {
   frame.scaleY = scale.scaleY;
 };
 
-const availablePositionHelper = () => {
+const initialAvailablePositionHelper = () => {
   const availablePositionArray: Array<Position> = [];
   fabricdefaults.canvas.secondaryImage.positions.xAxis.forEach((xPosition, xIndex) => {
     fabricdefaults.canvas.secondaryImage.positions.yAxis.forEach((yPosition, yIndex) => {
@@ -287,7 +287,7 @@ export {
   underlineHelper,
   changeFrameScaleHelper,
   ImageUrlHelper,
-  availablePositionHelper,
+  initialAvailablePositionHelper,
   getRandomNumberInRangeHelper,
   indexedPositionsInRangeHelper,
   isDuplicateFrameHelper,

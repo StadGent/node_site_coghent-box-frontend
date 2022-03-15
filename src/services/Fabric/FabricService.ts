@@ -3,7 +3,7 @@ import { fabricdefaults } from './defaults.fabric';
 import {
   underlineHelper,
   ImageUrlHelper,
-  availablePositionHelper,
+  initialAvailablePositionHelper,
   getRandomNumberInRangeHelper,
   isDuplicateFrameHelper,
   getFrameByEntityIdHelper,
@@ -53,7 +53,7 @@ export default class FabricService {
     this.state = {
       canvas: this.setupFabric(),
       selectedImage: undefined,
-      positions: availablePositionHelper(),
+      positions: initialAvailablePositionHelper(),
       takenPositions: [],
     };
     this.setMainImageOnClick();
@@ -263,6 +263,7 @@ export default class FabricService {
           selectedObject = selectedObject.target;
           console.log({ selectedObject });
           this.state.selectedImage = selectedObject.entity;
+          this.state.canvas.clear();
           router.push('/touchtable/' + selectedObject.entity.id);
         }
       }
