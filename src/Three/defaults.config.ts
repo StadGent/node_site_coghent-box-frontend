@@ -14,6 +14,7 @@ const Defaults = (): {
   maxFrames: () => number;
   countdown: () => number;
   fontPath: () => string;
+  keyboardSelect: () => true | false;
   showplayHeadWhenNoAudio: () => true | false;
   circlePoints: () => Array<CirclePoint>;
   Circle: () => CircleSchema;
@@ -32,6 +33,7 @@ const Defaults = (): {
 
   const fontPath = () => '/Fonts/myFont.json';
 
+  const keyboardSelect = () => false;
   const showplayHeadWhenNoAudio = () => true;
 
   const circlePoints = () => {
@@ -92,6 +94,7 @@ const Defaults = (): {
     maxFrames,
     countdown,
     fontPath,
+    keyboardSelect,
     showplayHeadWhenNoAudio,
     circlePoints,
     Circle,
