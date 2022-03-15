@@ -6,11 +6,11 @@ import TextHelper from './helper.text';
 const EndOfStoryText = (): {
   Create: (currentStory: string, name: string) => Group;
 } => {
-  const topText = () => {
+  const topText = async () => {
     const group = new Group();
     for (const key in DefaultsPauseState().topTextState1) {
       group.add(
-        TextHelper().CreateText(
+        await TextHelper().CreateText(
           key,
           DefaultsPauseState().topTextState1[key],
           DefaultsPauseState().textBoxSize(),

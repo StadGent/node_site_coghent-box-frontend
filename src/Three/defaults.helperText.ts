@@ -15,7 +15,7 @@ const HelperText = (): {
         position.y + 50,
         0,
       ),
-      'Maak een nieuwe keuze door op de': new Vector3(position.x - 2, position.y, 0),
+      'Maak een nieuwe keuze door op de': new Vector3(position.x - 200, position.y, 0),
       'bol te gaan staan.': new Vector3(position.x - 50, position.y - 50, 0),
     };
   };
