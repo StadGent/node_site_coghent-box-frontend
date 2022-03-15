@@ -102,11 +102,13 @@
 
       try {
         props.storyEntities.forEach((frame: any) => {
-          const isFrameSeen = relation.seen_frames.find(
-            (seenFrame: any) => seenFrame.id === 'entities/' + frame.id,
-          )
-            ? true
-            : false;
+          const isFrameSeen =
+            relation.seen_frames &&
+            relation.seen_frames.find(
+              (seenFrame: any) => seenFrame.id === 'entities/' + frame.id,
+            )
+              ? true
+              : false;
           //Set variable on assets to indicate it has been seen
           const frameAssets = frame.assets.map((asset: any) => {
             const newAsset = { ...asset };
