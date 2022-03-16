@@ -302,8 +302,6 @@
       onEntityResult((queryResult) => {
         console.log('Entity result');
         if (queryResult.data) {
-          console.log('new canvas');
-          fabricService.value = undefined;
           fabricService.value = new FabricService();
 
           fabricService.value.generateMainImageFrame(queryResult.data.Entity);
