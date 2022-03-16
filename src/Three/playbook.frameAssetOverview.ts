@@ -105,7 +105,7 @@ const useFrameAssetOverview = (
           {
             x: scaleTo[i],
             y: scaleTo[i],
-            z: -1,
+            z: 1,
           },
           1000,
         )
