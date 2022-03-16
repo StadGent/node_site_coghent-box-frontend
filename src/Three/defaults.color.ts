@@ -21,19 +21,19 @@ const Colors = (): {
 
   const story = () => {
     return [
+      lightBlue,
       pink,
       yellow,
       green,
-      lightBlue,
     ];
   };
 
   const storyCss = () => {
     return [
-      'bg-stories-pink',
       'bg-stories-yellow',
-      'bg-stories-green',
       'bg-stories-blue',
+      'bg-stories-pink',
+      'bg-stories-green',
     ];
   };
 
