@@ -17,6 +17,7 @@ const Common = (): {
   setPosition: (_object: Mesh, _position: Vector3) => void;
   getFilenameFromStorageLink: (_storageAPILink: string, _download: string) => string
   fillStringToIdealLength: (_title: string) => string
+  getCodeFromString: (_string: string) => string | null
 } => {
   const FilterOutIdAfterSlash = (str: string) => {
     const index = (str.indexOf('/') as number) + 1;
@@ -29,7 +30,7 @@ const Common = (): {
   };
 
   const pixelsToMeters = (pixels: number) => {
-    return pixels 
+    return pixels
     // return pixels * Defaults().pixelInMeter();
   };
 
@@ -101,6 +102,16 @@ const Common = (): {
 
   }
 
+  const getCodeFromString = (_string: string) => {
+    const regex: RegExp = new RegExp('[0-9]{8}');
+    let code: any = null
+    if (regex.test(_string)) {
+      const regexResult = regex.exec(_string)
+      if (regexResult) code = regexResult[0]
+    }
+    return code
+  }
+
 
   return {
     FilterOutIdAfterSlash,
@@ -111,7 +122,8 @@ const Common = (): {
     setScale,
     setPosition,
     getFilenameFromStorageLink,
-    fillStringToIdealLength
+    fillStringToIdealLength,
+    getCodeFromString
   };
 };
 

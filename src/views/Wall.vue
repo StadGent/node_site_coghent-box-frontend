@@ -27,7 +27,7 @@ import { useQuery } from '@vue/apollo-composable';
 import mqtt from '@/components/mqtt.vue';
 import StoryService from '@/services/StoryService';
 import StateService, { FlowState } from '@/services/StateService';
-import { SensorObject } from '@/composables/common';
+import Common, { SensorObject } from '@/composables/common';
 import { GetActiveBoxDocument, RelationType } from 'coghent-vue-3-component-library';
 import { useBoxVisiter } from 'coghent-vue-3-component-library';
 import { apolloClient } from '@/main';
@@ -127,12 +127,10 @@ export default defineComponent({
     };
 
     watch(inputValue, (value: string) => {
-      let code = value
-      if(value.length > 8){
-        code = value.replace('https://data.collectie.gent/visit/','')
-      }
+      let code = Common().getCodeFromString(value)
       if (
         canScanTicket.value &&
+        code && 
         code.length === 8 &&
         stateService.getCurrentState() === FlowState[0]
       ) {
