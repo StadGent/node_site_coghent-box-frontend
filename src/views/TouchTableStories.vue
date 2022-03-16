@@ -37,7 +37,7 @@
           :story="storyAsset"
           :story-number="index + 1"
           :story-entities="storyAsset.frames"
-          :story-color="colors[index]"
+          :story-color="colors[index].replace('bg-', '')"
           :loading="loadingActiveBoxResult"
         />
       </div>
@@ -84,6 +84,7 @@
   import StoryItem from '@/components/StoryItem.vue';
   import { useQuery, useMutation } from '@vue/apollo-composable';
   import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
+  import Colors from '@/Three/defaults.color';
 
   type StoryResult = {
     story: Entity;
@@ -103,7 +104,7 @@
       const stories = ref<Array<Relation>>([]);
       const storyResults = ref<Array<StoryResult>>([]);
       const storyAssets = ref<Array<any>>([]);
-      const colors = ['accent-green', 'accent-purple', 'accent-yellow', 'accent-blue'];
+      const colors = [...Colors().storyCss()];
       const router = useRouter();
 
       const { result: activeBoxResult, loading: loadingActiveBoxResult } =
