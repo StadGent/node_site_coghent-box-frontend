@@ -104,24 +104,26 @@
       );
       const router = useRouter();
 
+      const tempAssetArray: any[] = [];
       props.storyEntities.forEach((frame: any) => {
         try {
           const isFrameSeen =
             relation.seen_frames && relation.seen_frames.includes('entities/' + frame.id);
-          //Set variable on assets to indicate it has been seen
           const frameAssets = frame.assets.map((asset: any) => {
             const newAsset = { ...asset };
             newAsset.seen = isFrameSeen ? true : false;
             return newAsset;
           });
-          entityData.value.results.push(...entityData.value.results.concat(frameAssets));
+          tempAssetArray.push(...entityData.value.results.concat(frameAssets));
         } catch (e) {
           if (frame.assets) {
-            entityData.value.results.push(...frame.assets);
+            tempAssetArray.push(...frame.assets);
           }
           console.log(`Seen frames could not be shown: ${e}`);
         }
       });
+
+      entityData.value.results = tempAssetArray;
 
       const navigateToTouchtable = (entity: Entity) => {
         setStartAsset(entity);
