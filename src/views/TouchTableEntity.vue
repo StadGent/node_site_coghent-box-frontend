@@ -31,14 +31,14 @@
           text="Afbeelding vergroten"
           @click="showPictureModal"
         />
-        <base-button
+        <!-- <base-button
           class="text-xl"
           custom-style="touchtable-purple"
           custom-icon="archiveDrawer"
           :icon-shown="true"
           text="Aan verhalenbox toevoegen"
           @click="addToBasket"
-        />
+        /> -->
       </div>
     </CardComponent>
     <relationBrowser
