@@ -302,6 +302,10 @@
       onEntityResult((queryResult) => {
         console.log('Entity result');
         if (queryResult.data) {
+          if (fabricService.value) {
+            // Dispose canvas (kill it) before creating a new one and filling it up
+            fabricService.value.state.canvas.dispose();
+          }
           fabricService.value = new FabricService();
 
           fabricService.value.generateMainImageFrame(queryResult.data.Entity);

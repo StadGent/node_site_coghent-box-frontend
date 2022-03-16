@@ -263,7 +263,7 @@ export default class FabricService {
           selectedObject = selectedObject.target;
           console.log({ selectedObject });
           this.state.selectedImage = selectedObject.entity;
-          this.state.canvas.clear();
+          // this.state.canvas.dispose();
           router.push('/touchtable/' + selectedObject.entity.id);
         }
       }
