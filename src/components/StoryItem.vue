@@ -66,7 +66,7 @@
   import { iiiF } from '@/main';
 
   type EntityData = {
-    results: [];
+    results: any[];
   };
 
   export default defineComponent({
@@ -117,7 +117,7 @@
           entityData.value.results.push(...entityData.value.results.concat(frameAssets));
         } catch (e) {
           if (frame.assets) {
-            entityData.value.results += { ...frame.assets };
+            entityData.value.results.push(...frame.assets);
           }
           console.log(`Seen frames could not be shown: ${e}`);
         }
