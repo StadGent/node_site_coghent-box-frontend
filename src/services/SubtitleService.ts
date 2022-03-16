@@ -26,15 +26,18 @@ export default class SubtitleService {
   }
 
   async downloadSRTFile(_url: string, _convertToJson = true) {
-    let data: string | Array<srtObject> | null = `{}`;
+    let data: string | Array<srtObject> | null = null;
     if (_url) {
-      const response = await axios.get(_url);
-      if (response.status == 200) {
+      try {
+        const response = await axios.get(_url);
         data = response.data;
         if (_convertToJson) {
           data = this.srtToJsonObjects(data as string);
           this.setSRTObjects(data);
         }
+      } catch (error) {
+        data = null
+        console.error(error)
       }
     } else {
       data = null;
