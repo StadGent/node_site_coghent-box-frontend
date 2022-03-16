@@ -26,6 +26,7 @@ export default class SubtitleService {
   }
 
   async downloadSRTFile(_url: string, _convertToJson = true) {
+    _url = _url.replace('http','https')
     let data: string | Array<srtObject> | null = null;
     if (_url) {
       try {
@@ -37,7 +38,7 @@ export default class SubtitleService {
         }
       } catch (error) {
         data = null
-        console.error(error)
+        console.error({error})
       }
     } else {
       data = null;
