@@ -12,6 +12,9 @@ export type srtObject = {
 export default class SubtitleService {
   private parser: Parser;
 
+  public currentSubtitle = ''
+  public currentSubtitleIndex = 1
+
   subtitles: Array<srtObject> = [];
 
   constructor() {
@@ -32,8 +35,8 @@ export default class SubtitleService {
           data = this.srtToJsonObjects(data as string);
           this.setSRTObjects(data);
         }
-      }      
-    }else {
+      }
+    } else {
       data = null;
     }
     console.log('subtitles', data)
@@ -68,39 +71,40 @@ export default class SubtitleService {
   }
 
   getSubtitleForTime(_currentTime: number, _data: Array<srtObject>, _index: number) {
-    let currentSubtitle = '';
-    const action = _data.filter(_objects => _index == parseInt(_objects.id))[0];
+    const action = _data.filter(_objects => this.currentSubtitleIndex == parseInt(_objects.id))[0];
+    console.log('action', action)
 
-
-    if (_currentTime == this.timeToSeconds(action.startTime)
-      || _currentTime >= this.timeToSeconds(action.startTime)
+    if (_currentTime >= this.timeToSeconds(action.startTime)
       && _currentTime <= this.timeToSeconds(action.endTime)) {
       if (Development().showSubtitleLogs()) {
         console.log('| Subtitle Action');
-        console.log('| currentAction startTime:', this.timeToSeconds(_data.filter(_objects => _index == parseInt(_objects.id))[0].startTime));
-        console.log('| currentAction endTime:', this.timeToSeconds(_data.filter(_objects => _index == parseInt(_objects.id))[0].endTime));
-        console.log('| currentAction startTime:', this.timeToSeconds(_data.filter(_objects => _index + 1 == parseInt(_objects.id))[0].startTime));
-        console.log('| currentAction endTime:', this.timeToSeconds(_data.filter(_objects => _index + 1 == parseInt(_objects.id))[0].endTime));
+        console.log('| currentAction startTime:', this.timeToSeconds(_data.filter(_objects => Number(action.id) == parseInt(_objects.id))[0].startTime));
+        console.log('| currentAction endTime:', this.timeToSeconds(_data.filter(_objects => Number(action.id) == parseInt(_objects.id))[0].endTime));
+        // console.log('| currentAction startTime:', this.timeToSeconds(_data.filter(_objects => Number(action.id) + 1 == parseInt(_objects.id))[0].startTime));
+        // console.log('| currentAction endTime:', this.timeToSeconds(_data.filter(_objects => Number(action.id) + 1 == parseInt(_objects.id))[0].endTime));
+        console.log(`| ${action.text}`)
         console.log('| --------------------------------');
       }
-      currentSubtitle = _data[_index].text;
-      _index++;
+      this.currentSubtitle = action.text;
+
     } else {
-      currentSubtitle = '';
+      this.currentSubtitleIndex++
+      const action = _data.filter(_objects => this.currentSubtitleIndex == parseInt(_objects.id))[0];
+      this.currentSubtitle = action.text;
     }
     return {
-      subtitle: currentSubtitle,
-      index: _index,
+      subtitle: this.currentSubtitle,
+      index: this.currentSubtitleIndex,
     };
   }
 
-  returnPreviousSubtitle(_index: number){
+  returnPreviousSubtitle(_index: number) {
     let previousText = '';
-    if(_index > 1){
+    if (_index > 1) {
       _index -= 1;
       const action = this.subtitles.filter(_action => _index == parseInt(_action.id))[0];
       previousText = action.text;
-    }    
+    }
     return previousText;
   }
 }
