@@ -329,8 +329,6 @@
         }
       });
 
-      onRelationResult((queryResult: any) => {});
-
       onBasketResult((basketResult) => {
         if (basketResult.data) {
           basketItems.value = basketResult.data.BoxVisiterRelationsByType;

@@ -77,6 +77,7 @@
         resolvedBoxVisit.then((boxVisit: any) => {
           if (boxVisit) {
             router.push('/touchtable/stories');
+            resetNumberPad();
           } else {
             showWrongCodeMessage();
             resetNumberPad();
