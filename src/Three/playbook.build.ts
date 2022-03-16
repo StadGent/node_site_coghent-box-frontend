@@ -192,8 +192,12 @@ const PlayBookBuild = (
 
   const storyPaused = async () => {
     logBuild('storyPaused');
-    const assetsOnScreen = taggingService.getByTag(Tags.GroupOfAssets)[0].object as Group;
-    assetsOnScreen.position.setZ(Layers.background);
+    const resultOfTaggedAssets = taggingService.getByTag(Tags.GroupOfAssets)
+
+    if (resultOfTaggedAssets && resultOfTaggedAssets[0]) {
+      const assetsOnScreen = resultOfTaggedAssets[0].object as Group;
+      assetsOnScreen.position.setZ(Layers.background);
+    }
     CustomAnimation().grow(
       spotlight as Mesh<any, MeshBasicMaterial>,
       Measurements().pauseScreen.spotLightRadius,
@@ -296,11 +300,14 @@ const PlayBookBuild = (
       } as CircleSchema),
       Tags.ActiveStoryCircleShade,
     );
+    console.log('tagged objects before move of active story', taggingService.taggedObjects)
     await MoveHelper(taggingService).activeStoryCircle(
       zoneService.middleZoneCenter,
       storyService.activeStoryData,
     );
-    WallGarbageHelper(threeService, taggingService).removeActiveFrameDots();
+    console.log('tagged objects AFTER move of active story', taggingService.taggedObjects)
+
+    // WallGarbageHelper(threeService, taggingService).removeActiveFrameDots();
   };
 
   return {
