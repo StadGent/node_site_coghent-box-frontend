@@ -174,16 +174,67 @@
           if (entity.value) {
             console.log('refetch relations');
             console.log(entity.value);
-            refetchRelations({
-              limit: fabricdefaults.canvas.relationLimit,
-              skip: result ? 0 : 1,
-              searchValue: {
-                value: '',
-                isAsc: false,
-                relation_filter: relationStringArray.value,
-                randomize: false,
-                key: 'title',
-                has_mediafile: true,
+            fetchMoreRelations({
+              variables: {
+                limit: fabricdefaults.canvas.relationLimit,
+                skip: result ? 0 : 1,
+                searchValue: {
+                  value: '',
+                  isAsc: false,
+                  relation_filter: relationStringArray.value,
+                  randomize: false,
+                  key: 'title',
+                  has_mediafile: true,
+                },
+              },
+              updateQuery: (previousData, { fetchMoreResult: queryResult }) => {
+                console.log(queryResult);
+                console.log('Relation result');
+                if (queryResult.Entities && fabricService.value) {
+                  const relationEntities = queryResult.Entities?.results;
+                  const filteredRelationEntities = relationEntities.filter(
+                    (ent: Entity) => ent.id != entity.value.id,
+                  );
+                  fabricService.value
+                    .generateSecondaryImageFrames(
+                      filteredRelationEntities,
+                      entity.value.id,
+                    )
+                    .then(() => {
+                      filteredRelationEntities.forEach((entity: any) => {
+                        const entityRelations: Array<string> = [];
+
+                        getRelations(entity);
+
+                        entity.relations.forEach((relation: Relation) => {
+                          entityRelations.push(relation.key);
+                        });
+
+                        fetchMoreRelations({
+                          variables: {
+                            limit: fabricdefaults.canvas.relationLimit,
+                            skip: relationResult ? 0 : 1,
+                            searchValue: {
+                              value: '',
+                              isAsc: false,
+                              relation_filter: entityRelations,
+                              randomize: false,
+                              key: 'title',
+                              has_mediafile: true,
+                            },
+                          },
+                          updateQuery: (previousData, { fetchMoreResult }) => {
+                            console.log({ fetchMoreResult });
+                            const newRelation: SecondaryRelation = {
+                              originId: entity.id,
+                              relatedEntities: fetchMoreResult.Entities.results,
+                            };
+                            subRelations.value.push(newRelation);
+                          },
+                        });
+                      });
+                    });
+                }
               },
             });
           }
@@ -249,6 +300,7 @@
       };
 
       onEntityResult((queryResult) => {
+        console.log('Entity result');
         if (queryResult.data) {
           console.log('new canvas');
           fabricService.value = undefined;
@@ -277,51 +329,7 @@
         }
       });
 
-      onRelationResult((relationResult: any) => {
-        console.log('Relation result');
-        if (relationResult.data && fabricService.value) {
-          const relationEntities = relationResult.data.Entities?.results;
-          const filteredRelationEntities = relationEntities.filter(
-            (ent: Entity) => ent.id != entity.value.id,
-          );
-          fabricService.value
-            .generateSecondaryImageFrames(filteredRelationEntities, id)
-            .then(() => {
-              filteredRelationEntities.forEach((entity: any) => {
-                const entityRelations: Array<string> = [];
-
-                getRelations(entity);
-
-                entity.relations.forEach((relation: Relation) => {
-                  entityRelations.push(relation.key);
-                });
-
-                fetchMoreRelations({
-                  variables: {
-                    limit: fabricdefaults.canvas.relationLimit,
-                    skip: relationResult ? 0 : 1,
-                    searchValue: {
-                      value: '',
-                      isAsc: false,
-                      relation_filter: entityRelations,
-                      randomize: false,
-                      key: 'title',
-                      has_mediafile: true,
-                    },
-                  },
-                  updateQuery: (previousData, { fetchMoreResult }) => {
-                    console.log({ fetchMoreResult });
-                    const newRelation: SecondaryRelation = {
-                      originId: entity.id,
-                      relatedEntities: fetchMoreResult.Entities.results,
-                    };
-                    subRelations.value.push(newRelation);
-                  },
-                });
-              });
-            });
-        }
-      });
+      onRelationResult((queryResult: any) => {});
 
       onBasketResult((basketResult) => {
         if (basketResult.data) {

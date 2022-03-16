@@ -4,7 +4,6 @@ import { Coordinate, Scale, Position } from './FabricService';
 import { fabric } from 'fabric';
 import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
 import { iiiF } from '@/main';
-import { Light } from 'three';
 
 const underlineHelper = (mainImage: any) => {
   const imageCoordinates: Array<Coordinate> = mainImage.getCoords();
