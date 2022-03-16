@@ -65,6 +65,10 @@
   import { Entity } from 'coghent-vue-3-component-library/lib/queries';
   import { iiiF } from '@/main';
 
+  type EntityData = {
+    results: [];
+  };
+
   export default defineComponent({
     name: 'StoryItem',
     components: { TheMasonry, BaseIcon },
@@ -93,7 +97,7 @@
     setup(props) {
       const { generateUrl, noImageUrl } = iiiF;
       const masonry = ref<any>(null);
-      const entityData = ref({ results: [] });
+      const entityData = ref<EntityData>({ results: [] });
       const { boxVisiter, setStartAsset, setSelectedStory } = useBoxVisiter(apolloClient);
       const relation = boxVisiter.value.relations.find(
         (relation: any) => relation.type === 'stories',
@@ -112,7 +116,9 @@
           });
           entityData.value.results.push(...entityData.value.results.concat(frameAssets));
         } catch (e) {
-          entityData.value.results = frame.assets ? frame.assets : null;
+          if (frame.assets) {
+            entityData.value.results += { ...frame.assets };
+          }
           console.log(`Seen frames could not be shown: ${e}`);
         }
       });
