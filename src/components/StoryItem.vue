@@ -100,15 +100,10 @@
       );
       const router = useRouter();
 
-      try {
-        props.storyEntities.forEach((frame: any) => {
+      props.storyEntities.forEach((frame: any) => {
+        try {
           const isFrameSeen =
-            relation.seen_frames &&
-            relation.seen_frames.find(
-              (seenFrame: any) => seenFrame.id === 'entities/' + frame.id,
-            )
-              ? true
-              : false;
+            relation.seen_frames && relation.seen_frames.includes('entities/' + frame.id);
           //Set variable on assets to indicate it has been seen
           const frameAssets = frame.assets.map((asset: any) => {
             const newAsset = { ...asset };
@@ -116,10 +111,11 @@
             return newAsset;
           });
           entityData.value.results = entityData.value.results.concat(frameAssets);
-        });
-      } catch (e) {
-        console.log(`Seen frames could not be shown: ${e}`);
-      }
+        } catch (e) {
+          entityData.value.results = frame.assets;
+          console.log(`Seen frames could not be shown: ${e}`);
+        }
+      });
 
       const navigateToTouchtable = (entity: Entity) => {
         setStartAsset(entity);
