@@ -7,15 +7,17 @@ const Development = (): {
   showBuildLogs: () => true | false;
   stateLogs: () => true | false;
   sceneLogs: () => true | false;
+  showVisiterCodePopUp: () => true | false;
 } => {
   const showZonesInOverview = () => true;
   const showDevTimeLogs = () => true;
   const showGarbageLogs = () => false;
   const showMoveLogs = () => false;
-  const showSubtitleLogs = () => false;
+  const showSubtitleLogs = () => true;
   const showBuildLogs = () => true;
   const stateLogs = () => false;
   const sceneLogs = () => false;
+  const showVisiterCodePopUp = () => false;
 
   return {
     showZonesInOverview,
@@ -26,6 +28,7 @@ const Development = (): {
     showBuildLogs,
     stateLogs,
     sceneLogs,
+    showVisiterCodePopUp,
   };
 };
 

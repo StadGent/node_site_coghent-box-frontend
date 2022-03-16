@@ -130,15 +130,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from 'vue';
+import { defineComponent } from 'vue';
 import { useRouter } from 'vue-router';
 import { useBoxVisiter } from 'coghent-vue-3-component-library';
 
 import { apolloClient } from '@/main';
 import { useQuery } from '@vue/apollo-composable';
 import { PrintBoxTicketDocument } from 'coghent-vue-3-component-library';
-import { BoxVisiter } from 'coghent-vue-3-component-library';
 import useTicket from '@/composables/useTicket';
+import Development from '@/Three/defaults.development';
 
 export default defineComponent({
   name: 'Introscherm3',
@@ -158,7 +158,9 @@ export default defineComponent({
         if (currentVisiter.code) {
           printTicket();
         }
-        alert(visiter.code);
+        if(Development().showVisiterCodePopUp()){
+          alert(visiter.code);
+        }
       });
 
     const printTicket = async () => {
