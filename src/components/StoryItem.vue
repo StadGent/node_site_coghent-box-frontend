@@ -110,9 +110,9 @@
             newAsset.seen = isFrameSeen ? true : false;
             return newAsset;
           });
-          entityData.value.results = entityData.value.results.concat(frameAssets);
+          entityData.value.results.push(...entityData.value.results.concat(frameAssets));
         } catch (e) {
-          entityData.value.results = frame.assets;
+          entityData.value.results = frame.assets ? frame.assets : null;
           console.log(`Seen frames could not be shown: ${e}`);
         }
       });
