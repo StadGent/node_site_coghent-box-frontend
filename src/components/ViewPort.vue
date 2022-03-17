@@ -404,7 +404,7 @@ export default defineComponent({
       interval = setInterval(async () => {
         ++timingCount;
         showProgressOfFrame = true;
-        if (audio && subtitleService.subtitles.length > 0 && subtitleService.currentSubtitleIndex < subtitleService.subtitles.length) {
+        if (audio && subtitleService.subtitles && subtitleService.currentSubtitleIndex < subtitleService.subtitles.length) {
           const subtitleParams = subtitleService.getSubtitleForTime(
             audio.currentTime,
             subtitleService.subtitles,
@@ -451,8 +451,7 @@ export default defineComponent({
           currentFunction = 0;
           clearInterval(interval);
           timingCount = 0;
-          //FIXME:
-          // subtitleService.currentSubtitleIndex = 1
+          subtitleService.reset()
         }
       }, 1000);
       interval;

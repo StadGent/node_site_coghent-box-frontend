@@ -11,11 +11,12 @@ export type srtObject = {
 
 export default class SubtitleService {
   private parser: Parser;
+  private readonly defaultSrtIndex = 1
 
   public currentSubtitle = ''
   public currentSubtitleIndex = 1
 
-  subtitles: Array<srtObject> = [];
+  subtitles: Array<srtObject> | null = null;
 
   constructor() {
     this.parser = new SRT.default()
@@ -28,7 +29,9 @@ export default class SubtitleService {
   async downloadSRTFile(_url: string, _convertToJson = true) {
     let data: string | Array<srtObject> | null = null;
     if (_url) {
-      _url = _url.replace('http','https')
+      if (!_url.includes('https')) {
+        _url = _url.replace('http', 'https')
+      }
       try {
         const response = await axios.get(_url);
         data = response.data;
@@ -38,7 +41,7 @@ export default class SubtitleService {
         }
       } catch (error) {
         data = null
-        console.error({error})
+        console.error({ error })
       }
     } else {
       data = null;
@@ -76,17 +79,14 @@ export default class SubtitleService {
 
   getSubtitleForTime(_currentTime: number, _data: Array<srtObject>, _index: number) {
     const action = _data.filter(_objects => this.currentSubtitleIndex == parseInt(_objects.id))[0];
-    console.log('action', action)
 
     if (_currentTime >= this.timeToSeconds(action.startTime)
       && _currentTime <= this.timeToSeconds(action.endTime)) {
       if (Development().showSubtitleLogs()) {
-        console.log('| Subtitle Action');
+        console.log('| subtitle Action', action);
         console.log('| currentAction startTime:', this.timeToSeconds(_data.filter(_objects => Number(action.id) == parseInt(_objects.id))[0].startTime));
         console.log('| currentAction endTime:', this.timeToSeconds(_data.filter(_objects => Number(action.id) == parseInt(_objects.id))[0].endTime));
-        // console.log('| currentAction startTime:', this.timeToSeconds(_data.filter(_objects => Number(action.id) + 1 == parseInt(_objects.id))[0].startTime));
-        // console.log('| currentAction endTime:', this.timeToSeconds(_data.filter(_objects => Number(action.id) + 1 == parseInt(_objects.id))[0].endTime));
-        console.log(`| ${action.text}`)
+        console.log(`| text: ${action.text}`)
         console.log('| --------------------------------');
       }
       this.currentSubtitle = action.text;
@@ -104,11 +104,16 @@ export default class SubtitleService {
 
   returnPreviousSubtitle(_index: number) {
     let previousText = '';
-    if (_index > 1) {
+    if (_index > 1 && this.subtitles) {
       _index -= 1;
       const action = this.subtitles.filter(_action => _index == parseInt(_action.id))[0];
       previousText = action.text;
     }
     return previousText;
+  }
+
+  reset() {
+    this.subtitles = null
+    this.currentSubtitleIndex = this.defaultSrtIndex
   }
 }
