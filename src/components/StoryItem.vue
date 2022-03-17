@@ -23,7 +23,7 @@
         :generate-url="generateUrl"
         :no-image-url="noImageUrl"
         :show-load-more="false"
-        :items-each-load="10"
+        :items-each-load="entityData.length"
         :use-router-navigation="true"
         :has-custom-image-overlay="true"
         @navigateWithRouter="navigateToTouchtable"
