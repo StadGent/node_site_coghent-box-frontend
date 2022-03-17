@@ -109,7 +109,6 @@
       const IIIFImageUrl = ref<string>();
       let fabricService = ref<FabricService | undefined>(undefined);
       const { openIIIFModal, IIIFModalState } = useIIIFModal();
-      const { getTouchTableHistory } = useBoxVisiter(apolloClient);
 
       const {
         result,
