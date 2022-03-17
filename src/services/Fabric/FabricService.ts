@@ -63,6 +63,11 @@ export default class FabricService {
   }
 
   setupFabric() {
+    const canvasContainer = document.querySelector('.canvas-container');
+    console.log({ canvasContainer });
+    if (canvasContainer) {
+      canvasContainer.remove();
+    }
     const canvas = new fabric.Canvas('canvas');
     canvas.preserveObjectStacking = true; // keep z-index of selected objects
     canvas.selection = false; // no group selection

@@ -4,7 +4,7 @@
     <shutdown-modal :code="code" @disposeCanvas="disposeCanvas" />
     <IIIF-modal :image-url="IIIFImageUrl" />
     <touch-header :basket-amount="basketItems.length" />
-    <div>
+    <div id="my-canvas">
       <canvas id="canvas" class="touchcanvas" />
     </div>
     <CardComponent
