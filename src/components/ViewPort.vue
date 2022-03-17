@@ -663,7 +663,7 @@ export default defineComponent({
   width: 100%;
   height: 100px;
   position: fixed;
-  bottom: 200px;
+  bottom: 120px;
   display: flex;
   justify-content: center;
   align-items: center;
