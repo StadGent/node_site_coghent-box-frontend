@@ -205,7 +205,7 @@ const useFrameAssetOverview = (
       currentFrame,
     ) as unknown as Array<Asset>;
     storyColor = _storyColor;
-    if (assets.length > 0) {
+    if (assets && assets.length > 0) {
       await displayAllAssets(
         activeStory.frames?.[currentFrame] as unknown as Frame,
         timestamp,
@@ -268,6 +268,14 @@ const useFrameAssetOverview = (
             },
             relationMetadata.timestamp_end,
             `Reset image position of asset: ${assets[index].id} and spotlight.`,
+          );
+        } else {
+          playBook.addToPlayBook(
+            () => {
+              return
+            },
+            relationMetadata.timestamp_end,
+            `Timestamp added when image has no timestamp_zoom.`,
           );
         }
       });

@@ -23,7 +23,7 @@ const Timing: Timings = {
     // countdown: 30000,
     countdown: 2000,
   },
-  delayForNext: 2,
+  delayForNext: 1,
   moveObject: {
     refreshStep: 12,
     steps: 60,

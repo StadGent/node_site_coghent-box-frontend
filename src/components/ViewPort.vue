@@ -494,19 +494,6 @@ export default defineComponent({
 
         playBook.mergeActionsWithPlaybook(framePlaybook.getSortedPlayBookActions());
 
-        playBook.addToPlayBook(
-          () => {
-            MoveObject().startMoving(spotlight, zoneService.middleZoneCenter);
-            CustomAnimation().shrink(
-              spotlight as Mesh<any, MeshBasicMaterial>,
-              Measurements().storyCircle.radius,
-              AnimationDefaults.values.scaleStep,
-            );
-            3;
-          },
-          playBook.lastAction().time + 2,
-          'Move the spotlight to the center of the screen until the frame ends',
-        );
         audio = AudioHelper(threeSvc).setAudioTrack(
           storyService.activeStory,
           currentFrame,
@@ -552,10 +539,22 @@ export default defineComponent({
     const setAfterFrameScreen = () => {
       playBook.addToPlayBook(
         () => {
+          MoveObject().startMoving(spotlight, zoneService.middleZoneCenter);
+          CustomAnimation().shrink(
+            spotlight as Mesh<any, MeshBasicMaterial>,
+            Measurements().storyCircle.radius,
+            AnimationDefaults.values.scaleStep,
+          );
+          3;
+        },
+        playBook.lastAction().time + Timing.delayForNext,
+        'Move the spotlight to the center of the screen until the frame ends',
+      );
+      playBook.addToPlayBook(
+        () => {
           if (audio) {
             audio.pause();
           }
-
           showProgressOfFrame = false;
           storyService.setStoryColor();
           if (storyService.isEndOfSession()) {
@@ -601,12 +600,13 @@ export default defineComponent({
             chooseStory.value = true;
           }
         },
-        audio && !isNaN(audio.duration)
+        audio && !isNaN(audio.duration) && audio.duration > playBook.lastAction().time
           ? audioDuration
-          : playBook.lastAction().time + Timing.delayForNext + 3,
+          : playBook.lastAction().time + Timing.delayForNext,
         `Update storyData & show endOfSessions screen or the storyOverview`,
       );
       if (Development().showplayBookLogs()) {
+        console.log('Audio Duration', audio ? audio?.duration : null);
         console.log('MASTER playbook', playBook.getPlayBookActions());
       }
     };
