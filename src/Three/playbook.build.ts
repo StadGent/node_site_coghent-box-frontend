@@ -300,12 +300,10 @@ const PlayBookBuild = (
       } as CircleSchema),
       Tags.ActiveStoryCircleShade,
     );
-    console.log('tagged objects before move of active story', taggingService.taggedObjects)
     await MoveHelper(taggingService).activeStoryCircle(
       zoneService.middleZoneCenter,
       storyService.activeStoryData,
     );
-    console.log('tagged objects AFTER move of active story', taggingService.taggedObjects)
 
     WallGarbageHelper(threeService, taggingService).removeActiveFrameDots();
   };

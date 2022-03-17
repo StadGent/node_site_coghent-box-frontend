@@ -46,7 +46,7 @@ export default class SubtitleService {
     } else {
       data = null;
     }
-    console.log('subtitles', data)
+    if (Development().showSubtitleLogs()) console.log('subtitles', data)
     return data;
   }
 

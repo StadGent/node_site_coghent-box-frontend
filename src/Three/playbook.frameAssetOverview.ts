@@ -61,7 +61,6 @@ const useFrameAssetOverview = (
         asset,
       );
       const position = new Vector3(0, 0, -1);
-      console.log({ relationMetadata });
       if (relationMetadata?.position != null || undefined) {
         position.x = relationMetadata.position.x;
         position.y = relationMetadata.position.y;
@@ -96,7 +95,6 @@ const useFrameAssetOverview = (
     );
     await Common().awaitTimeout(1000);
     for (const [i, _child] of group.children.entries()) {
-      console.log('loop group');
       const _mesh = _child as Mesh<any, MeshBasicMaterial>;
       _mesh.scale.set(0, 0, 0);
       _mesh.material.opacity = 0.9;

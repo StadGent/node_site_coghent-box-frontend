@@ -190,13 +190,6 @@ export default defineComponent({
           if (counter.value <= -1) {
             console.log('end of counter');
           }
-
-          // props.stateService.changeState(FlowState.storySelected);
-          // chooseStory.value = false;
-          // console.log('You selected sensor', _storySelected.id);
-          // storyData = stories.value;
-
-          // await setNewStoryWhenSelected(_storySelected.id - 1);
         }
       },
     );
@@ -291,7 +284,6 @@ export default defineComponent({
         Tags.StoryCircleFrameInnerDot,
         Tags.ActiveStoryCircleFrameInnerDot,
       );
-      // BUG introduction?
       const groupOfAssetsTags = taggingService.getByTag(Tags.GroupOfAssets);
       if (groupOfAssetsTags && groupOfAssetsTags[0] && groupOfAssetsTags[0].object) {
         console.log('assets on screen', groupOfAssetsTags[0].object);
@@ -355,11 +347,7 @@ export default defineComponent({
       const next = storyService.setNextFrameForStory(storyService.activeStory.id);
       currentFrame = next.frame;
       clearInterval(interval);
-      // here
       playBook.clearPlaybook(true);
-      console.log(taggingService.taggedObjects);
-      // taggingService.clearTaggedObjects()
-      //
       storyService.setStoryPausedPositions(zoneService.zonesInnerToOuter);
       const resultStoryData = await PlayBookBuild(
         threeSvc,
@@ -371,7 +359,6 @@ export default defineComponent({
         storyService.activeStory,
       ).storyData(storyService, storyService.activeStory, currentFrame);
       if (resultStoryData) {
-        console.log('StoryData is set', resultStoryData);
         currentStoryID.value = storyService.activeStoryData.storyId;
         props.stateService.changeState(FlowState.countdownToFrame);
         await PlayBookBuild(
@@ -398,13 +385,16 @@ export default defineComponent({
       let currentFunction = 0;
       let currentSubtitle = 1;
       let timingCount = 0;
-      //belowfor progress without audio
-      //
+
       let progress: Array<Group> = [];
       interval = setInterval(async () => {
         ++timingCount;
         showProgressOfFrame = true;
-        if (audio && subtitleService.subtitles && subtitleService.currentSubtitleIndex < subtitleService.subtitles.length) {
+        if (
+          audio &&
+          subtitleService.subtitles &&
+          subtitleService.currentSubtitleIndex < subtitleService.subtitles.length
+        ) {
           const subtitleParams = subtitleService.getSubtitleForTime(
             audio.currentTime,
             subtitleService.subtitles,
@@ -446,12 +436,14 @@ export default defineComponent({
           currentFunction++;
         }
         if (currentFunction > playBook.getPlayBookActions().length - 1) {
-          console.log(`| timing: reset interval & timeCount`);
+          if (Development().showDevTimeLogs()) {
+            console.log(`| timing: reset interval & timeCount`);
+          }
           subtitles.value = '';
           currentFunction = 0;
           clearInterval(interval);
           timingCount = 0;
-          subtitleService.reset()
+          subtitleService.reset();
         }
       }, 1000);
       interval;
@@ -515,7 +507,6 @@ export default defineComponent({
           playBook.lastAction().time + 2,
           'Move the spotlight to the center of the screen until the frame ends',
         );
-        console.log('buildstory after playbook functions');
         audio = AudioHelper(threeSvc).setAudioTrack(
           storyService.activeStory,
           currentFrame,
@@ -615,7 +606,9 @@ export default defineComponent({
           : playBook.lastAction().time + Timing.delayForNext + 3,
         `Update storyData & show endOfSessions screen or the storyOverview`,
       );
-      console.log('MASTER playbook', playBook.getPlayBookActions());
+      if (Development().showplayBookLogs()) {
+        console.log('MASTER playbook', playBook.getPlayBookActions());
+      }
     };
 
     const resetStory = () => {
@@ -623,22 +616,6 @@ export default defineComponent({
       playBook.clearPlaybook(true);
       buildStory(currentStoryID.value);
     };
-
-    // const playStartVideo = () => {
-    //   const videoSrc =
-    //     'https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4';
-    //   const videoCube = VideoHelper().videoElementAsCube(
-    //     videoElement as Ref<HTMLVideoElement>,
-    //     videoSrc,
-    //     new Vector3(8, 8, 0),
-    //   );
-    //   threeSvc.AddToScene(videoCube, Tags.Video, 'Test of the video cube');
-    //   videoElement.value?.play();
-    //   setTimeout(() => {
-    //     console.log('currenttime', videoElement.value?.currentTime);
-    //     videoCube.position.set(0, 0, 0);
-    //   }, 7000);
-    // };
 
     onMounted(async () => {
       threeSvc = new ThreeService(viewport, threeDefaultsWall, taggingService);

@@ -138,8 +138,6 @@ const useAsset = (
     scale: number,
     spotlight: Mesh,
   ) => {
-    console.log('scale in zoom', scale);
-
     assetImageCube.material.opacity = 1;
     await new TWEEN.Tween(assetImageCube.position)
       .to(
@@ -169,8 +167,6 @@ const useAsset = (
     color: number,
     text: string,
   ) => {
-    console.log(text);
-    console.log('added with spaces', Common().fillStringToIdealLength(text));
     const metadataInfo = (
       await MetadataLabel(new Vector3(object.position.x, -500, 1)).create(text, color)
     ).metadata;

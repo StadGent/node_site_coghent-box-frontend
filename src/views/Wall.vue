@@ -70,8 +70,6 @@ export default defineComponent({
     });
 
     watch(visitercode, async (value) => {
-      console.log('visitercode value', value);
-      console.log('can scan ticket', canScanTicket.value);
       if (canScanTicket.value) {
         const storyRelations = (await useBoxVisiter(apolloClient).getRelationsByType(
           visitercode.value,
@@ -158,7 +156,6 @@ export default defineComponent({
         if (visiterByCode != null) {
           visitercode.value = String(code);
           visiter.value = visiterByCode;
-          console.log('code set');
         }
       } else {
         stateService.changeState(FlowState.storyOverview);

@@ -109,7 +109,6 @@ export default class ZoneService {
           zoneIndex = i;
         }
       }
-      console.log(`log jeroen zoneindex ${zoneIndex}`);
       if (zoneIndex == 2) {
         zone = this.zones[1];
       }

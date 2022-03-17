@@ -83,8 +83,6 @@ const MoveHelper = (
 
 export const getSizeStoryText = (storyText: Mesh | Group) => {
   const box = new Box3().setFromObject(storyText);
-  console.log(`Log jeroen box size text:`);
-  console.dir(box.getSize(new Vector3()));
   const textSize = box.getSize(new Vector3());
 
   return textSize;
