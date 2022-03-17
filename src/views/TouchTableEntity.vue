@@ -18,7 +18,7 @@
       <h2 class="font-bold text-4xl mb-12">
         {{ entity.title[0].value }}
       </h2>
-      <p v-if="entity.description[0].value" class="text-xl mb-12">
+      <p v-if="entity.description.length" class="text-xl mb-12">
         {{ entity.description[0].value }}
       </p>
       <p class="text-xl mb-12" v-else>Dit item heeft geen beschrijving</p>
