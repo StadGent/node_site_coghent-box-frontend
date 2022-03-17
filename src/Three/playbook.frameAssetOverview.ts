@@ -258,7 +258,7 @@ const useFrameAssetOverview = (
             `Zoom and highlight asset + set other assets inactive`,
           );
         }
-        if (relationMetadata.timestamp_end) {
+        if (relationMetadata.timestamp_end && relationMetadata.timestamp_zoom) {
           playBook.addToPlayBook(
             async () => {
               await resetImage(
