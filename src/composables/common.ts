@@ -1,4 +1,3 @@
-import Defaults from '@/Three/defaults.config';
 import { Mesh, Vector3 } from 'three';
 
 export type SensorObject = {
@@ -18,6 +17,7 @@ const Common = (): {
   getFilenameFromStorageLink: (_storageAPILink: string, _download: string) => string
   fillStringToIdealLength: (_title: string) => string
   getCodeFromString: (_string: string) => string | null
+  getUrlParamValue: (_searchParam: string) => string | null
 } => {
   const FilterOutIdAfterSlash = (str: string) => {
     const index = (str.indexOf('/') as number) + 1;
@@ -112,6 +112,11 @@ const Common = (): {
     return code
   }
 
+  const getUrlParamValue = (_searchParam: string) => {
+    const urlParams = window.location.search;
+    const params = new URLSearchParams(urlParams);
+    return params.get(_searchParam)
+  };
 
   return {
     FilterOutIdAfterSlash,
@@ -123,7 +128,8 @@ const Common = (): {
     setPosition,
     getFilenameFromStorageLink,
     fillStringToIdealLength,
-    getCodeFromString
+    getCodeFromString,
+    getUrlParamValue
   };
 };
 

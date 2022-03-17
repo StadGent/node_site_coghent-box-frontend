@@ -1,6 +1,7 @@
 <script lang="ts">
 import { defineComponent, onMounted } from 'vue';
 import mqtt, { IClientSubscribeOptions } from 'mqtt';
+import Common from '@/composables/common';
 
 export default defineComponent({
   name: 'Mqtt',
@@ -73,19 +74,12 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      const urlParams = window.location.search;
-      if (urlParams.length > 0) {
-        let params = new URLSearchParams(urlParams);
-        const mqttParamValue = params.get('mqtt');
-        console.log({ mqttParamValue });
-        if (mqttParamValue && mqttParamValue === 'true') {
-          console.log('Connect with mqtt');
-          createConnection('sensors/+/#');
-        } else {
-          console.log(`Don't Connect with mqtt`);
-        }
-      } else {
+      const paramValue = Common().getUrlParamValue('mqtt');
+      if (paramValue === null || paramValue === 'true') {
+        console.log('Connect with mqtt');
         createConnection('sensors/+/#');
+      } else {
+        console.log(`Don't Connect with mqtt`);
       }
     });
   },
