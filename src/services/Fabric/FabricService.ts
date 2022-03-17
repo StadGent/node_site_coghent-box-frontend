@@ -320,13 +320,13 @@ export default class FabricService {
         this.state.canvas.getObjects().length > 0 &&
         objectIsTypeHelper('frame', newObject.target)
       ) {
-        this.generateRelationBetweenFrames(
-          getFrameByEntityIdHelper(
-            newObject.target.relationOriginId,
-            this.state.canvas.getObjects(),
-          ),
-          newObject.target,
+        const originFrame: any = getFrameByEntityIdHelper(
+          newObject.target.relationOriginId,
+          this.state.canvas.getObjects(),
         );
+        if (originFrame) {
+          this.generateRelationBetweenFrames(originFrame, newObject.target);
+        }
       }
     });
   }

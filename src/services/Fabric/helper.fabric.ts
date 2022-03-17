@@ -77,9 +77,6 @@ const availablePositionsInRangeHelper = (
 };
 
 const indexedPositionsInRangeHelper = (indexedPosition: Position, range: number) => {
-  if (!indexedPosition) {
-    console.log('heeeeeeeee');
-  }
   const indexedPositions: Position[] = [];
 
   const startY: number = Math.max(0, indexedPosition.yIndex - range);
@@ -146,7 +143,7 @@ const getPositionByIdHelper = (entityId: string, objectsOnCanvas: Array<any>) =>
   }
 };
 
-const getFrameByEntityIdHelper = (frameId: string, canvasObjects: Array<any>) => {
+const getFrameByEntityIdHelper = (frameId: string, canvasObjects: Array<any>): any => {
   const foundFrame: any = canvasObjects.find(
     (object: any) => object.id == frameId && object.objectType == 'frame',
   );
