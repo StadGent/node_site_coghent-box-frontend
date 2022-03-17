@@ -22,6 +22,8 @@ import {
 } from './helper.fabric';
 import { router } from '@/router';
 import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
+import { useBoxVisiter } from 'coghent-vue-3-component-library';
+import { apolloClient } from '@/main';
 
 type State = {
   canvas: any;
@@ -260,10 +262,11 @@ export default class FabricService {
           objectIsTypeHelper('startFrame', selectedObject.target) ||
           objectIsTypeHelper('historyFrame', selectedObject.target)
         ) {
+          const { setHistoryAsset } = useBoxVisiter(apolloClient);
+          setHistoryAsset(this.state.selectedImage.entity);
           selectedObject = selectedObject.target;
-          console.log({ selectedObject });
           this.state.selectedImage = selectedObject.entity;
-          // this.state.canvas.dispose();
+
           router.push('/touchtable/' + selectedObject.entity.id);
         }
       }
