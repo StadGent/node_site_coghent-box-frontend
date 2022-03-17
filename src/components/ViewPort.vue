@@ -451,6 +451,7 @@ export default defineComponent({
           currentFunction = 0;
           clearInterval(interval);
           timingCount = 0;
+          subtitleService.currentSubtitleIndex = 1
         }
       }, 1000);
       interval;
