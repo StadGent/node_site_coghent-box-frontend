@@ -307,7 +307,7 @@ const PlayBookBuild = (
     );
     console.log('tagged objects AFTER move of active story', taggingService.taggedObjects)
 
-    // WallGarbageHelper(threeService, taggingService).removeActiveFrameDots();
+    WallGarbageHelper(threeService, taggingService).removeActiveFrameDots();
   };
 
   return {
