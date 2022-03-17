@@ -21,9 +21,9 @@ const Colors = (): {
 
   const story = () => {
     return [
+      yellow,
       lightBlue,
       pink,
-      yellow,
       green,
     ];
   };
