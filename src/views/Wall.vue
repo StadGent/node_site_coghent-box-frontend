@@ -1,9 +1,9 @@
 <template>
-  <label class="absolute left-0 top-0" :v-if="visitercode == null" for="">
+  <label class="absolute left-0 top-0 opacity-0" :v-if="visitercode == null" for="">
     <input
       ref="qrInput"
       v-model="inputValue"
-      class="z-50 relative"
+      class="z-50 relative opacity-0"
       type="text"
       autofocus
     />
