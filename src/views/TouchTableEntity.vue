@@ -64,7 +64,7 @@
     AddAssetToBoxVisiterDocument,
     boxVisiter,
     startAsset,
-    historyAsset,
+    // historyAsset,
     useBoxVisiter,
   } from 'coghent-vue-3-component-library';
   import BasketOverlay from '@/components/BasketOverlay.vue';
@@ -317,13 +317,13 @@
 
           if (startAsset.value && boxVisiter.value) {
             const startEntity = startAsset.value;
-            const historyEntity = historyAsset.value;
-            console.log({ historyEntity });
+            // const historyEntity = historyAsset.value;
+            // console.log({ historyEntity });
             if (startEntity) {
               fabricService.value?.generateInfoBar(
                 startEntity,
                 // TODO: get entity instead of relation
-                historyEntity.mediafiles ? historyEntity : undefined,
+                undefined,
               );
             }
           }
