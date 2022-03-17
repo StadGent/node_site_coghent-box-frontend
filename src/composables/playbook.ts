@@ -19,6 +19,11 @@ const PlayBook = (): PlayBookFunctions=> {
   let playbookActions: Array<PlayBookObject> = [{time: 0,func: () => {}, context: 'Beginning of playbook.'}];
 
   const addToPlayBook = (func: Function, timestamp:number, context?:string) => {
+    if(Development().showplayBookLogs()){
+      console.log(`| Add to playbook`)
+      console.log(`| timestamp: ${timestamp}`)
+      console.log(`| context: ${context}`)
+    }
     const obj = {
       time: timestamp,
       func: func,

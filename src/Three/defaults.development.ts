@@ -8,16 +8,18 @@ const Development = (): {
   stateLogs: () => true | false;
   sceneLogs: () => true | false;
   showVisiterCodePopUp: () => true | false;
+  showplayBookLogs: () => true | false;
 } => {
-  const showZonesInOverview = () => true;
-  const showDevTimeLogs = () => true;
+  const showZonesInOverview = () => false;
+  const showDevTimeLogs = () => false;
   const showGarbageLogs = () => false;
   const showMoveLogs = () => false;
-  const showSubtitleLogs = () => true;
-  const showBuildLogs = () => true;
+  const showSubtitleLogs = () => false;
+  const showBuildLogs = () => false;
   const stateLogs = () => false;
   const sceneLogs = () => false;
   const showVisiterCodePopUp = () => false;
+  const showplayBookLogs = () => false;
 
   return {
     showZonesInOverview,
@@ -29,6 +31,7 @@ const Development = (): {
     stateLogs,
     sceneLogs,
     showVisiterCodePopUp,
+    showplayBookLogs,
   };
 };
 
