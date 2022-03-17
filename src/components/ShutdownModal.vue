@@ -90,7 +90,8 @@
         required: true,
       },
     },
-    setup: (props) => {
+    emits: ['disposeCanvas'],
+    setup: (props, { emit }) => {
       const { openShutdownModal, closeShutdownModal, ShutdownModalState } =
         useShutdownModal();
       const { resetBoxVisiter } = useBoxVisiter(apolloClient);
@@ -98,12 +99,14 @@
 
       const goToCodeScreen = () => {
         closeShutdownModal();
+        emit('disposeCanvas', true);
         resetBoxVisiter();
         router.push('/touchtable/start');
       };
 
       const goToStoriesScreen = () => {
         closeShutdownModal();
+        emit('disposeCanvas', true);
         router.push('/touchtable/stories');
       };
 
@@ -122,3 +125,5 @@
     box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.2);
   }
 </style>
+
+function emit(arg0: string, value: any) { throw new Error('Function not implemented.'); }

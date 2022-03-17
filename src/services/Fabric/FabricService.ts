@@ -22,8 +22,8 @@ import {
 } from './helper.fabric';
 import { router } from '@/router';
 import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
-// import { useBoxVisiter } from 'coghent-vue-3-component-library';
-// import { apolloClient } from '@/main';
+import { useBoxVisiter } from 'coghent-vue-3-component-library';
+import { apolloClient } from '@/main';
 
 type State = {
   canvas: any;
@@ -184,18 +184,26 @@ export default class FabricService {
   ) {
     // Get positions around main entity, if none left increase the range
     let range: number = fabricdefaults.canvas.secondaryImage.positions.range;
-    let closeAvailablePositions: Array<Position> = availablePositionsInRangeHelper(
-      getPositionByIdHelper(subRelationOriginEntityId, this.state.canvas.getObjects()),
-      range,
-      this.state.takenPositions,
+
+    const originEntityPosition: Position = getPositionByIdHelper(
+      subRelationOriginEntityId,
+      this.state.canvas.getObjects(),
     );
-    while (closeAvailablePositions.length <= entities.length) {
-      range = range + 1;
+    let closeAvailablePositions: Array<Position> = [];
+    if (originEntityPosition) {
       closeAvailablePositions = availablePositionsInRangeHelper(
-        getPositionByIdHelper(subRelationOriginEntityId, this.state.canvas.getObjects()),
+        originEntityPosition,
         range,
         this.state.takenPositions,
       );
+      while (closeAvailablePositions.length <= entities.length) {
+        range = range + 1;
+        closeAvailablePositions = availablePositionsInRangeHelper(
+          originEntityPosition,
+          range,
+          this.state.takenPositions,
+        );
+      }
     }
 
     // Frame object
@@ -262,8 +270,8 @@ export default class FabricService {
           objectIsTypeHelper('startFrame', selectedObject.target) ||
           objectIsTypeHelper('historyFrame', selectedObject.target)
         ) {
-          // const { setHistoryAsset } = useBoxVisiter(apolloClient);
-          // setHistoryAsset(this.state.selectedImage.entity);
+          const { setHistoryAsset } = useBoxVisiter(apolloClient);
+          setHistoryAsset(this.state.selectedImage.entity);
           selectedObject = selectedObject.target;
           this.state.selectedImage = selectedObject.entity;
 

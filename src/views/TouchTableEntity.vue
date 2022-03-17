@@ -1,7 +1,7 @@
 <template>
   <div class="touchtable">
     <!-- <basket-overlay :basketItems="basketItems" /> -->
-    <shutdown-modal :code="code" />
+    <shutdown-modal :code="code" @disposeCanvas="disposeCanvas" />
     <IIIF-modal :image-url="IIIFImageUrl" />
     <touch-header :basket-amount="basketItems.length" />
     <div id="canvas-container">
@@ -64,7 +64,7 @@
     AddAssetToBoxVisiterDocument,
     boxVisiter,
     startAsset,
-    // historyAsset,
+    historyAsset,
     useBoxVisiter,
   } from 'coghent-vue-3-component-library';
   import BasketOverlay from '@/components/BasketOverlay.vue';
@@ -162,9 +162,9 @@
         () => route.params.entityID,
         () => {
           console.log('Refetch entity');
+          relationsLabelArray.value = [];
           refetchEntity({ id: asString(route.params.entityID) });
           mutateHistory();
-          // router.go(0);
         },
       );
 
@@ -299,12 +299,16 @@
         fabricService.value?.highlightRelatedFrames(filterIndex, relationsArray.value);
       };
 
+      const disposeCanvas = () => {
+        fabricService.value?.state.canvas.dispose();
+      };
+
       onEntityResult((queryResult) => {
         console.log('Entity result');
         if (queryResult.data) {
           if (fabricService.value) {
             // Dispose canvas (kill it) before creating a new one and filling it up
-            fabricService.value.state.canvas.dispose();
+            disposeCanvas();
           }
           fabricService.value = new FabricService();
 
@@ -314,15 +318,14 @@
           headEntityId.value = queryResult.data.Entity.id;
           entity.value = queryResult.data.Entity;
 
-          if (startAsset.value && boxVisiter.value) {
+          if (startAsset.value) {
             const startEntity = startAsset.value;
-            // const historyEntity = historyAsset.value;
-            // console.log({ historyEntity });
+            const historyEntity = historyAsset.value;
+            console.log({ historyEntity });
             if (startEntity) {
               fabricService.value?.generateInfoBar(
                 startEntity,
-                // TODO: get entity instead of relation
-                undefined,
+                historyEntity ? historyEntity : undefined,
               );
             }
           }
@@ -357,6 +360,7 @@
         code,
         showPictureModal,
         IIIFImageUrl,
+        disposeCanvas,
       };
     },
   });
