@@ -63,7 +63,8 @@ export default class FabricService {
   }
 
   setupFabric() {
-    const canvas = new fabric.Canvas('canvas');
+    const canvasNode = document.getElementById('canvas');
+    const canvas = new fabric.Canvas(canvasNode);
     canvas.preserveObjectStacking = true; // keep z-index of selected objects
     canvas.selection = false; // no group selection
     canvas.setHeight(fabricdefaults.canvas.dimensions.height);
