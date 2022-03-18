@@ -1,49 +1,45 @@
 <template>
   <div class="background" />
-  <div
-    class="w-screen h-screen flex flex-col justify-center"
-    @click="nextStep"
-  >
+  <div class="w-screen h-screen flex flex-col justify-center" @click="nextStep">
     <div class="w-full h-48 mb-8 flex justify-center mb-24">
-      <img
-        src="/images_entrance/qr_intro1.svg"
-        alt=""
-      >
+      <img src="/images_entrance/qr_intro1.svg" alt="" />
     </div>
     <div class="flex flex-wrap text-center text-neutral-0">
       <p class="font-bold text-6xl w-full mt-8">
-        Haal hier je code om te <br>starten in de box
+        Haal hier je code om te <br />starten in de box
       </p>
       <p class="w-full text-center text-3xl mt-8">
-        je hebt een ticket nodig om in <br>te loggen.
+        je hebt een ticket nodig om in <br />te loggen.
       </p>
       <div class="h-6 flex justify-center w-full mt-8 w-fullitems-center">
-        <img
-          src="/images_entrance/dots_intro1.svg"
-          alt=""
-        >
+        <img src="/images_entrance/dots_intro1.svg" alt="" />
       </div>
       <p class="font-bold text-6xl mt-8 w-full">
-        Get here your ticket to <br>start in the box
+        Get here your ticket to <br />start in the box
       </p>
-      <p class="w-full text-center text-3xl mt-8">
-        You need a ticket to log in.
-      </p>
+      <p class="w-full text-center text-3xl mt-8">You need a ticket to log in.</p>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import Common from '@/composables/common';
+import { defineComponent, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
+
+export let showCodePopup: string | null = null;
 
 export default defineComponent({
   name: 'Introscherm1',
   setup() {
     const router = useRouter();
     const nextStep = () => {
-      router.push({name: 'entrance.step2'})
+      router.push({ name: 'entrance.step2' });
     };
+
+    onMounted(() => {
+      if (showCodePopup === null) showCodePopup = Common().getUrlParamValue('popup');
+    });
 
     return { nextStep };
   },
@@ -52,8 +48,8 @@ export default defineComponent({
 
 <style>
 .background {
-  top:0;
-  left:0;
+  top: 0;
+  left: 0;
   position: absolute;
   width: 100vw;
   height: 100vh;
