@@ -1,9 +1,15 @@
 <template>
-  <label class="absolute left-0 top-0 opacity-0" :v-if="visitercode == null" for="">
+  <label
+  class="absolute left-0 top-0 z-50"
+    :class="[showInputField ? '' : ' opacity-0']"
+    :v-if="visitercode == null"
+    for=""
+  >
     <input
       ref="qrInput"
       v-model="inputValue"
-      class="z-50 relative opacity-0"
+      class="z-50 relative"
+      :class="[showInputField? '' : ' opacity-0']"
       type="text"
       autofocus
     />
@@ -18,7 +24,7 @@
     @restartSession="restartSession"
     @resetSelectedStory="resetSelectedStory"
   />
-  <mqtt @selectStory="setSelectStory" />
+  <mqtt @selectStory="setSelectStory" @mqttEnabled="toggleShowInputField" />
 </template>
 <script lang="ts">
 import { defineComponent, onMounted, ref, watch } from 'vue';
@@ -62,6 +68,12 @@ export default defineComponent({
       {},
       { fetchPolicy: 'cache-first' },
     );
+
+    const showInputField = ref<boolean>(false);
+
+    const toggleShowInputField = (_mqttEnabled: boolean) => {
+      showInputField.value = !_mqttEnabled;
+    };
 
     onResult((_stories) => {
       stories.value = _stories.data.ActiveBox.results;
@@ -287,6 +299,8 @@ export default defineComponent({
       showPauseOverview,
       stateService,
       currentState,
+      toggleShowInputField,
+      showInputField
     };
   },
 });

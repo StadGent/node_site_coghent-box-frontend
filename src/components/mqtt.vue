@@ -5,7 +5,7 @@ import Common from '@/composables/common';
 
 export default defineComponent({
   name: 'Mqtt',
-  emits: ['selectStory'],
+  emits: ['selectStory', 'mqttEnabled'],
   setup(props, { emit }) {
     const { host, port, endpoint, ...options } = {
       host: 'localhost',
@@ -77,9 +77,11 @@ export default defineComponent({
       const paramValue = Common().getUrlParamValue('mqtt');
       if (paramValue === null || paramValue === 'true') {
         console.log('Connect with mqtt');
+        emit('mqttEnabled', true)
         createConnection('sensors/+/#');
       } else {
         console.log(`Don't Connect with mqtt`);
+        emit('mqttEnabled', false)
       }
     });
   },
