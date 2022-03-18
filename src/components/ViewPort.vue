@@ -423,7 +423,10 @@ export default defineComponent({
           );
         }
         if (
-          audioHelper.DoEvent(time, playBook.getPlayBookActions()[currentFunction].time)
+          audioHelper.DoEvent(
+            timingCount,
+            playBook.getPlayBookActions()[currentFunction].time,
+          )
         ) {
           if (Development().showDevTimeLogs()) {
             console.log(
@@ -526,6 +529,13 @@ export default defineComponent({
           audio.onloadedmetadata = () => {
             if (audio) {
               audioDuration = audio.duration;
+              playBook.addToPlayBook(
+                () => {
+                  return;
+                },
+                audioDuration,
+                'End of audio.',
+              );
               audio.play();
               setAfterFrameScreen();
               spotlightBackground.material.opacity = Measurements().spotLight.opacity;
@@ -545,11 +555,11 @@ export default defineComponent({
             Measurements().storyCircle.radius,
             AnimationDefaults.values.scaleStep,
           );
-          3;
         },
         playBook.lastAction().time + Timing.delayForNext,
         'Move the spotlight to the center of the screen until the frame ends',
       );
+
       playBook.addToPlayBook(
         () => {
           if (audio) {
@@ -600,9 +610,7 @@ export default defineComponent({
             chooseStory.value = true;
           }
         },
-        audio && !isNaN(audio.duration) && audio.duration > playBook.lastAction().time
-          ? audioDuration
-          : playBook.lastAction().time + Timing.delayForNext,
+        playBook.lastAction().time + Timing.delayForNext,
         `Update storyData & show endOfSessions screen or the storyOverview`,
       );
       if (Development().showplayBookLogs()) {
