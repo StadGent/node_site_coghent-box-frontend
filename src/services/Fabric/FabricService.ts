@@ -63,10 +63,10 @@ export default class FabricService {
   }
 
   setupFabric() {
-    const canvasElement = document.getElementById('canvas');
+    const canvasElement = document.querySelector('.upper-canvas');
     console.log({ canvasElement });
     if (canvasElement) {
-      canvasElement.innerHTML = '';
+      canvasElement.remove();
     }
     const canvas = new fabric.Canvas('canvas');
     canvas.preserveObjectStacking = true; // keep z-index of selected objects
