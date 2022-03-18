@@ -1,21 +1,21 @@
-import {
-  ComponentMetadata,
-  Story,
-  Frame,
-  Asset
-} from '@/models/GraphqlModel';
+import { ComponentMetadata, Story, Frame, Asset } from '@/models/GraphqlModel';
 import ThreeService from '@/services/ThreeService';
 import { Entity } from 'coghent-vue-3-component-library/lib/queries';
 import Common from './common';
 import useAsset from './useAsset';
 
-const useFrame = (_threeService: ThreeService): {
+const useFrame = (
+  _threeService: ThreeService,
+): {
   title: (_frame: Entity) => string;
   GetFrameTitles: (frames: Array<Entity>) => Array<string>;
   GetFrameMainImage: (frame: Entity) => string;
   GetFramesMainImages: (frames: Array<Entity>) => Array<string>;
   CreateFrameRecord: (frames: any) => Record<string, string>;
-  getLastAssetRelationMetadata: (activeStoryData: Entity, currentFrameIndex: number) => ComponentMetadata;
+  getLastAssetRelationMetadata: (
+    activeStoryData: Entity,
+    currentFrameIndex: number,
+  ) => ComponentMetadata;
   getAudioForFrame: (frame: Frame) => string | null;
   getSubtitleForFrame: (frame: Frame) => string | null;
   getRelationMetadata: (frame: Frame) => Array<ComponentMetadata>;
@@ -24,7 +24,7 @@ const useFrame = (_threeService: ThreeService): {
   const title = (_frame: Entity) => {
     let _title = '';
     if (_frame.title && _frame.title.length > 0)
-      _title = _frame.title[0]?.value as string
+      _title = _frame.title[0]?.value as string;
     return _title;
   };
 
@@ -84,8 +84,15 @@ const useFrame = (_threeService: ThreeService): {
     let audioFiles: Array<string> = [];
     let audio = null;
     if (frame && frame.relationMetadata) {
-      audioFiles = [...frame.relationMetadata.filter(_data => _data.audioFile?.includes('download')).map(_item => _item.audioFile as string)];
-      if (audioFiles.length > 0 && audioFiles[0].includes('.mp3')) {
+      audioFiles = [
+        ...frame.relationMetadata
+          .filter((_data) => _data.audioFile?.includes('download'))
+          .map((_item) => _item.audioFile as string),
+      ];
+      if (
+        audioFiles.length > 0 &&
+        (audioFiles[0].includes('.mp3') || audioFiles[0].includes('.wav'))
+      ) {
         audio = audioFiles[0];
       }
     }
@@ -96,11 +103,10 @@ const useFrame = (_threeService: ThreeService): {
   const getSubtitleForFrame = (frame: Frame) => {
     let subtitle = null;
     if (frame && frame.relationMetadata) {
-      const subtitles = frame.relationMetadata.filter(_item => _item.subtitleFile);
-      if (subtitles.length > 0)
-        subtitle = subtitles[0].subtitleFile;
+      const subtitles = frame.relationMetadata.filter((_item) => _item.subtitleFile);
+      if (subtitles.length > 0) subtitle = subtitles[0].subtitleFile;
     }
-    return subtitle
+    return subtitle;
   };
 
   const getRelationMetadata = (frame: Frame) => {
@@ -110,13 +116,14 @@ const useFrame = (_threeService: ThreeService): {
   const getStartTimestampsWithTheirAsset = (frame: Frame) => {
     const relationMetadata = getRelationMetadata(frame);
     const assetWithStartTime: Record<string, number> = {};
-    relationMetadata.map(metadata => {
+    relationMetadata.map((metadata) => {
       if (!metadata.key.includes('mediafiles/')) {
-        assetWithStartTime[Common().FilterOutIdAfterSlash(metadata.key)] = metadata.timestamp_start;
+        assetWithStartTime[Common().FilterOutIdAfterSlash(metadata.key)] =
+          metadata.timestamp_start;
       }
-    })
+    });
     return assetWithStartTime;
-  }
+  };
 
   return {
     title,
