@@ -182,7 +182,7 @@ export default defineComponent({
       (storySelected.value = JSON.stringify(_resetTo));
 
     window.onkeydown = async (key: KeyboardEvent) => {
-      if (Defaults().keyboardSelect()) {
+      if (Defaults().keyboardSelect() || showInputField.value) {
         switch (key.code) {
           case 'Digit1' || '97':
             console.log('pressed 1');
