@@ -13,12 +13,13 @@ import BaseChapes from './shapes.base';
 
 const VideoHelper = (): {
   videoElementAsCube: (src: string, dimensions: Vector3, position: Vector3) => Mesh;
+  playVideo: (_videoId: string) => void
 } => {
   const videoElementAsCube = (src: string, dimensions: Vector3, position: Vector3) => {
     const video = document.createElement('video');
     document.body.appendChild(video);
-    video.src = src;
     video.id = src;
+    video.src = src.replace('http', 'https');    
     video.crossOrigin = 'anonymous';
     video.load();
 
@@ -32,13 +33,39 @@ const VideoHelper = (): {
       new PlaneGeometry(dimensions.x, dimensions.y),
       new MeshBasicMaterial({ map: videoTexture, side: DoubleSide }),
     );
+    
     ChapeHelper().SetPosition(position, videoCube);
-    videoCube.scale.set(0, 0, 0);
+    videoCube.scale.set(1, 1, 0);
     return videoCube;
   };
 
+  const playVideo = (_videoId: string) => {
+    console.log({_videoId})
+    _videoId = _videoId.replace('https', 'http')
+    const videoElement = document.getElementById(_videoId);
+    if (videoElement) {
+      const video = videoElement as HTMLVideoElement
+      video.onloadedmetadata = () => {
+        video.play();
+        console.log('vid range', video.played);
+        console.log('vid duration', video.duration);
+        //  if(!isNaN(vid.duration) &&  < vid.duration)
+      };
+      video.ontimeupdate = ((value) => {
+        console.log('Video currenttime', video.currentTime)
+        if (video.currentTime === video.duration) {
+          console.log('video ended')
+          video.pause()
+        }
+      })
+    } else {
+      console.log('videoElement not found', videoElement)
+    }
+  }
+
   return {
     videoElementAsCube,
+    playVideo
   };
 };
 

@@ -18,6 +18,7 @@ const Common = (): {
   fillStringToIdealLength: (_title: string) => string
   getCodeFromString: (_string: string) => string | null
   getUrlParamValue: (_searchParam: string) => string | null
+  isVideo: (_url: string) => boolean
 } => {
   const FilterOutIdAfterSlash = (str: string) => {
     const index = (str.indexOf('/') as number) + 1;
@@ -118,6 +119,15 @@ const Common = (): {
     return params.get(_searchParam)
   };
 
+  const isVideo = (_url: string) => {
+    let includes = false
+    const extensions = ['.mp4', '.mov']
+    extensions.forEach(ext => {
+      if (_url.includes(ext)) includes = true
+    })
+    return includes
+  }
+
   return {
     FilterOutIdAfterSlash,
     RemoveEntersFromString,
@@ -129,7 +139,8 @@ const Common = (): {
     getFilenameFromStorageLink,
     fillStringToIdealLength,
     getCodeFromString,
-    getUrlParamValue
+    getUrlParamValue,
+    isVideo
   };
 };
 

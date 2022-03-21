@@ -68,11 +68,12 @@ const useFrameAssetOverview = (
       data[relationMetadata.timestamp_start] = position;
       positions.push(position);
       //@ts-ignore
-      const isVideo = tempUrls[activeStory.id][currentFrame]?.videos[i];
+      // const isVideo = tempUrls[activeStory.id][currentFrame]?.videos[i];
       let image;
-      if (isVideo) {
-        image = await VideoHelper().videoElementAsCube(
-          isVideo,
+      if (asset.mediafiles[0] && Common().isVideo(asset.mediafiles[0].filename)) {
+        console.log('is video', asset.mediafiles[0].original_file_location)
+        image = VideoHelper().videoElementAsCube(
+          asset.mediafiles[0].original_file_location,
           new Vector3(
             asset.mediafiles[0]?.mediainfo.width,
             asset.mediafiles[0]?.mediainfo.height,
@@ -80,9 +81,25 @@ const useFrameAssetOverview = (
           ),
           position,
         );
+        console.log('height', asset.mediafiles[0]?.mediainfo.height, )
+        console.log('width', asset.mediafiles[0]?.mediainfo.width, )
+        console.log({image})
       } else {
         image = await FrameOverview(threeService).addImage(asset, 0, position);
       }
+      // if (isVideo) {
+      //   image = await VideoHelper().videoElementAsCube(
+      //     isVideo,
+      //     new Vector3(
+      //       asset.mediafiles[0]?.mediainfo.width,
+      //       asset.mediafiles[0]?.mediainfo.height,
+      //       0,
+      //     ),
+      //     position,
+      //   );
+      // } else {
+      //   image = await FrameOverview(threeService).addImage(asset, 0, position);
+      // }
       scaleTo[i] = relationMetadata.scale;
       images.push(image);
       group.add(image);
@@ -96,7 +113,7 @@ const useFrameAssetOverview = (
     await Common().awaitTimeout(1000);
     for (const [i, _child] of group.children.entries()) {
       const _mesh = _child as Mesh<any, MeshBasicMaterial>;
-      _mesh.scale.set(0, 0, 0);
+      // _mesh.scale.set(0, 0, 0);
       _mesh.material.opacity = 0.9;
       const tween = new TWEEN.Tween(_mesh.scale)
         .to(
@@ -181,9 +198,15 @@ const useFrameAssetOverview = (
       zoomSettings.scale,
       spotlight,
     );
+    
     if (isVideo) {
       //@ts-ignore
-      document.getElementById(isVideo).play();
+      const video  = document.getElementById(isVideo).play();
+
+      // console.log({video})
+      console.log({isVideo})
+      // VideoHelper().playVideo(isVideo)
+      video.play();
     }
     const collections = useAsset(threeService).getCollections(assets[currentAsset]);
     const title = useAsset(threeService).getTitle(assets[currentAsset]);
@@ -245,11 +268,14 @@ const useFrameAssetOverview = (
           playBook.addToPlayBook(
             async () => {
               //@ts-ignore
-              const isVideo = tempUrls[activeStory.id][currentFrame]?.videos[index];
+              // const isVideo = tempUrls[activeStory.id][currentFrame]?.videos[index];
+              console.log('source',theAsset.material.map.image.currentSrc)
+              const theAsset = asset as Mesh<BoxBufferGeometry, any>
+              console.log('theAsset',theAsset)
               await zoomAndHighlightAsset(
-                asset as Mesh<BoxBufferGeometry, any>,
+                theAsset,
                 index,
-                isVideo,
+                theAsset.material.map.image.currentSrc,
               );
             },
             relationMetadata.timestamp_zoom,
