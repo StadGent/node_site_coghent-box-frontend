@@ -1,7 +1,6 @@
 import { fabric } from 'fabric';
 import { fabricdefaults } from './defaults.fabric';
 import {
-  underlineHelper,
   ImageUrlHelper,
   initialAvailablePositionHelper,
   getRandomNumberInRangeHelper,
@@ -20,10 +19,12 @@ import {
   unHighlightCanvasObjectsHelper,
   isRelationOnFrameHelper,
 } from './helper.fabric';
+import { createDynamicLineHelper, underlineHelper } from './helper.lines';
 import { router } from '@/router';
 import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
 import { useBoxVisiter } from 'coghent-vue-3-component-library';
 import { apolloClient } from '@/main';
+import { create } from 'd3';
 
 type State = {
   canvas: any;
@@ -70,7 +71,7 @@ export default class FabricService {
     }
     const canvas = new fabric.Canvas('canvas');
     canvas.preserveObjectStacking = true; // keep z-index of selected objects
-    canvas.selection = false; // no group selection
+    canvas.selection = false;
     canvas.setHeight(fabricdefaults.canvas.dimensions.height);
     canvas.setWidth(fabricdefaults.canvas.dimensions.width);
     canvas.setBackgroundColor('#E5E5E5');
@@ -346,6 +347,7 @@ export default class FabricService {
 
   generateRelationBetweenFrames(frame1: any, frame2: any) {
     console.log('Generating relation');
+    // const relation = createDynamicLineHelper(frame1, frame2);
     if (frame1 && frame2) {
       const line = [
         frame1.getCenterPoint().x,

@@ -5,29 +5,6 @@ import { fabric } from 'fabric';
 import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
 import { iiiF } from '@/main';
 
-const underlineHelper = (mainImage: any) => {
-  const imageCoordinates: Array<Coordinate> = mainImage.getCoords();
-  const bottomCoordinates: Array<Coordinate> = [
-    { key: 'bl', x: imageCoordinates[2].x, y: imageCoordinates[2].y },
-    { key: 'br', x: imageCoordinates[3].x, y: imageCoordinates[3].y },
-  ];
-  const spacedCoordinates = lineSpacingHelper(bottomCoordinates);
-  const underline = [
-    spacedCoordinates.find((coordinate: Coordinate) => coordinate.key == 'bl')?.x,
-    spacedCoordinates.find((coordinate: Coordinate) => coordinate.key == 'bl')?.y,
-    spacedCoordinates.find((coordinate: Coordinate) => coordinate.key == 'br')?.x,
-    spacedCoordinates.find((coordinate: Coordinate) => coordinate.key == 'br')?.y,
-  ];
-  const lineObject = new fabric.Line(underline, {
-    fill: fabricdefaults.canvas.selectedImage.underline.color,
-    stroke: fabricdefaults.canvas.selectedImage.underline.color,
-    strokeWidth: fabricdefaults.canvas.selectedImage.underline.stroke,
-    selectable: false,
-    evented: false,
-  });
-  return lineObject;
-};
-
 const availablePositionsInRangeHelper = (
   indexedPosition: Position,
   range: number,
@@ -99,13 +76,6 @@ const indexedPositionsInRangeHelper = (indexedPosition: Position, range: number)
     }
   }
   return indexedPositions;
-};
-
-const lineSpacingHelper = (bottomCoordinates: Array<Coordinate>) => {
-  bottomCoordinates.forEach((coordinate: Coordinate) => {
-    coordinate.y = coordinate.y + fabricdefaults.canvas.selectedImage.underline.spacing;
-  });
-  return bottomCoordinates;
 };
 
 const objectIsTypeHelper = (type: string, object: any): boolean =>
@@ -280,7 +250,6 @@ const lockObjectMovementHelper = (object: any) => {
 };
 
 export {
-  underlineHelper,
   changeFrameScaleHelper,
   ImageUrlHelper,
   initialAvailablePositionHelper,
