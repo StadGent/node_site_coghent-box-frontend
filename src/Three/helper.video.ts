@@ -7,67 +7,74 @@ import {
   Vector3,
   VideoTexture,
 } from 'three';
-import { Ref } from 'vue-demi';
+import Development from './defaults.development';
 import ChapeHelper from './helper.chape';
-import BaseChapes from './shapes.base';
+
+export const savedVideoTextures: Array<VideoTexture> = []
 
 const VideoHelper = (): {
-  videoElementAsCube: (_id:string, src: string, dimensions: Vector3, position: Vector3) => Mesh;
-  playVideo: (_videoId: string) => void
+  videoElementAsCube: (_id: string, src: string, dimensions: Vector3, position: Vector3) => Mesh;
 } => {
   const videoElementAsCube = (_id: string, src: string, dimensions: Vector3, position: Vector3) => {
-    const video = document.createElement('video');
-    document.body.appendChild(video);
-    video.id = _id;
-    video.src = src.replace('http', 'https');    
-    video.crossOrigin = 'anonymous';
-    video.load();
+    const video = createVideoHTMLElement(_id, src)
+    const videoTexture = createVideoTexture(video)
 
-    const videoTexture = new VideoTexture(video);
-    videoTexture.minFilter = LinearFilter;
-    videoTexture.magFilter = LinearFilter;
-    videoTexture.needsUpdate = true;
-    console.log(videoTexture);
-    //@ts-ignore
     const videoCube = new Mesh(
       new PlaneGeometry(dimensions.x, dimensions.y),
       new MeshBasicMaterial({ map: videoTexture, side: DoubleSide }),
     );
-    
+
     ChapeHelper().SetPosition(position, videoCube);
     videoCube.scale.set(1, 1, 0);
     videoCube.name = _id
     return videoCube;
   };
 
-  const playVideo = (_videoId: string) => {
-    const videoElement = document.getElementById(_videoId);
-    if (videoElement) {
-      console.log('found videoElement', videoElement)
-      const video = videoElement as HTMLVideoElement
-
-      video.onloadedmetadata = () => {
-        video.play();
-        console.log('vid range', video.played);
-        console.log('vid duration', video.duration);
-        //  if(!isNaN(vid.duration) &&  < vid.duration)
-      };
-      video.ontimeupdate = ((value) => {
-        console.log('Video currenttime', video.currentTime)
-        if (video.currentTime === video.duration) {
-          console.log('video ended')
-          video.pause()
-        }
-      })
-    } else {
-      console.log('videoElement not found', videoElement)
+  const createVideoHTMLElement = (_id: string, _src: string) => {
+    if (!_src.includes('https')) {
+      _src = _src.replace('http', 'https');
     }
+
+    let video = document.getElementById(_id) as HTMLVideoElement
+    if (!video) {
+      video = document.createElement('video');
+      document.body.appendChild(video);
+      video.id = _id;
+      video.src = _src
+      video.crossOrigin = 'anonymous';
+      if (Development().showVideoLogs()) console.log('| Creating new videoElement')
+    }
+    if (Development().showVideoLogs()) console.log('| Load video')
+    video.load();
+
+    return video as HTMLVideoElement
   }
+
+  const createVideoTexture = (_video: HTMLVideoElement) => {
+    let videoTexture: VideoTexture | null = null
+    if (savedVideoTextures.length > 0) {
+      for (const texture of savedVideoTextures) {
+        if (texture.name === _video.id) {
+          videoTexture = texture
+          if (Development().showVideoLogs()) console.log('| VideoTexture from saved')
+        }
+      }
+    }
+    if (videoTexture === null && _video) {
+      videoTexture = new VideoTexture(_video);
+      videoTexture.minFilter = LinearFilter;
+      videoTexture.magFilter = LinearFilter;
+      videoTexture.needsUpdate = true;
+      videoTexture.name = _video.id
+      savedVideoTextures.push(videoTexture)
+    }
+    return videoTexture
+  }
+
 
   return {
     videoElementAsCube,
-    playVideo
   };
 };
 
-export default VideoHelper;
+export default VideoHelper

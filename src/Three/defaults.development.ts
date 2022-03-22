@@ -9,6 +9,7 @@ const Development = (): {
   sceneLogs: () => true | false;
   showVisiterCodePopUp: () => true | false;
   showplayBookLogs: () => true | false;
+  showVideoLogs: () => true | false;
 } => {
   const showZonesInOverview = () => false;
   const showDevTimeLogs = () => false;
@@ -20,6 +21,7 @@ const Development = (): {
   const sceneLogs = () => false;
   const showVisiterCodePopUp = () => false;
   const showplayBookLogs = () => false;
+  const showVideoLogs = () => false;
 
   return {
     showZonesInOverview,
@@ -32,6 +34,7 @@ const Development = (): {
     sceneLogs,
     showVisiterCodePopUp,
     showplayBookLogs,
+    showVideoLogs,
   };
 };
 
