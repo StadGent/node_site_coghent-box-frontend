@@ -73,6 +73,7 @@ const useFrameAssetOverview = (
       if (asset.mediafiles[0] && Common().isVideo(asset.mediafiles[0].filename)) {
         console.log('is video', asset.mediafiles[0].original_file_location)
         image = VideoHelper().videoElementAsCube(
+          asset.id,
           asset.mediafiles[0].original_file_location,
           new Vector3(
             asset.mediafiles[0]?.mediainfo.width,
@@ -200,12 +201,7 @@ const useFrameAssetOverview = (
     );
     
     if (isVideo) {
-      //@ts-ignore
-      const video  = document.getElementById(isVideo).play();
-
-      // console.log({video})
-      console.log({isVideo})
-      // VideoHelper().playVideo(isVideo)
+      const video  = document.getElementById(isVideo) as HTMLVideoElement
       video.play();
     }
     const collections = useAsset(threeService).getCollections(assets[currentAsset]);
@@ -269,13 +265,12 @@ const useFrameAssetOverview = (
             async () => {
               //@ts-ignore
               // const isVideo = tempUrls[activeStory.id][currentFrame]?.videos[index];
-              console.log('source',theAsset.material.map.image.currentSrc)
               const theAsset = asset as Mesh<BoxBufferGeometry, any>
               console.log('theAsset',theAsset)
               await zoomAndHighlightAsset(
                 theAsset,
                 index,
-                theAsset.material.map.image.currentSrc,
+                theAsset.name,
               );
             },
             relationMetadata.timestamp_zoom,

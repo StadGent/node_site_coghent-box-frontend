@@ -12,13 +12,13 @@ import ChapeHelper from './helper.chape';
 import BaseChapes from './shapes.base';
 
 const VideoHelper = (): {
-  videoElementAsCube: (src: string, dimensions: Vector3, position: Vector3) => Mesh;
+  videoElementAsCube: (_id:string, src: string, dimensions: Vector3, position: Vector3) => Mesh;
   playVideo: (_videoId: string) => void
 } => {
-  const videoElementAsCube = (src: string, dimensions: Vector3, position: Vector3) => {
+  const videoElementAsCube = (_id: string, src: string, dimensions: Vector3, position: Vector3) => {
     const video = document.createElement('video');
     document.body.appendChild(video);
-    video.id = src;
+    video.id = _id;
     video.src = src.replace('http', 'https');    
     video.crossOrigin = 'anonymous';
     video.load();
@@ -36,15 +36,16 @@ const VideoHelper = (): {
     
     ChapeHelper().SetPosition(position, videoCube);
     videoCube.scale.set(1, 1, 0);
+    videoCube.name = _id
     return videoCube;
   };
 
   const playVideo = (_videoId: string) => {
-    console.log({_videoId})
-    _videoId = _videoId.replace('https', 'http')
     const videoElement = document.getElementById(_videoId);
     if (videoElement) {
+      console.log('found videoElement', videoElement)
       const video = videoElement as HTMLVideoElement
+
       video.onloadedmetadata = () => {
         video.play();
         console.log('vid range', video.played);
