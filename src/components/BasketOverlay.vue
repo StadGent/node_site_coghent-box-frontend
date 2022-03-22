@@ -1,15 +1,17 @@
 <template>
   <base-overlay :overlay-state="BasketOverlayState.state" class="p-24">
     <main>
-      <section class="w-full">
+      <section class="w-full flex justify-center">
         <the-masonry
-          v-if="basketEntities.length == basketItems.length"
+          v-if="basketEntities.length == basketItems.length && basketItems.length"
           :entities="{ results: basketEntities }"
           :loading="loadingEntity"
           :generate-url="generateUrl"
           :no-image-url="noImageUrl"
           :show-load-more="false"
         />
+        <div v-else-if="basketItems.length"><spinner /></div>
+        <h3 v-else>Er zitten nog geen werken in jouw verhalenbox</h3>
       </section>
       <section
         class="
@@ -52,6 +54,7 @@
   import { apolloClient } from '@/main';
   import { getBoxVisitEntityById } from '@/services/Fabric/helper.boxvisit';
   import { iiiF } from '@/main';
+  import Spinner from './Spinner.vue';
 
   export type OverlayState = 'show' | 'hide' | 'loading';
 
@@ -93,6 +96,7 @@
       BaseOverlay,
       TheMasonry,
       BaseIcon,
+      Spinner,
     },
     props: {
       basketItems: {

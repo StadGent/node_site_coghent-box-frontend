@@ -190,10 +190,14 @@ export default class FabricService {
   ) {
     // Get positions around main entity, if none left increase the range
     let range: number = fabricdefaults.canvas.secondaryImage.positions.range;
+    const canvasFrames: any[] = getObjectsByObjectTypeHelper(
+      this.state.canvas.getObjects(),
+      'frame',
+    );
 
     const originEntityPosition: Position = getPositionByIdHelper(
       subRelationOriginEntityId,
-      this.state.canvas.getObjects(),
+      canvasFrames,
     );
     let closeAvailablePositions: Array<Position> = [];
     if (originEntityPosition) {
@@ -242,7 +246,7 @@ export default class FabricService {
           image.relationOriginId = subRelationOriginEntityId;
           image.objectType = 'frame';
           lockObjectMovementHelper(image);
-          if (!isDuplicateFrameHelper(image, this.state.canvas.getObjects())) {
+          if (!isDuplicateFrameHelper(image, canvasFrames)) {
             // Add to canvas and remove position from list
             this.state.canvas.add(image);
             closeAvailablePositions = closeAvailablePositions.filter(
@@ -252,13 +256,10 @@ export default class FabricService {
             this.state.takenPositions.push(image.positionIndexes);
           } else {
             // Generate relation instead of frame
-            const existingFrame = getFrameByEntityIdHelper(
-              image.id,
-              this.state.canvas.getObjects(),
-            );
+            const existingFrame = getFrameByEntityIdHelper(image.id, canvasFrames);
             const relationOriginFrame = getFrameByEntityIdHelper(
               image.relationOriginId,
-              this.state.canvas.getObjects(),
+              canvasFrames,
             );
             this.generateRelationBetweenFrames(existingFrame, relationOriginFrame);
           }

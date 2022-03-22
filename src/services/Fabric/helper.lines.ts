@@ -1,6 +1,6 @@
 import { fabric } from 'fabric';
 import { fabricdefaults } from './defaults.fabric';
-import { Coordinate, Scale, Position } from './FabricService';
+import { Coordinate } from './FabricService';
 
 const underlineHelper = (mainImage: any) => {
   const imageCoordinates: Array<Coordinate> = mainImage.getCoords();

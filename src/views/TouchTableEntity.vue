@@ -65,7 +65,6 @@
     boxVisiter,
     startAsset,
     historyAsset,
-    useBoxVisiter,
   } from 'coghent-vue-3-component-library';
   import BasketOverlay from '@/components/BasketOverlay.vue';
   import TouchHeader from '@/components/TouchHeader.vue';
@@ -75,7 +74,6 @@
   import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
   import IIIFModal, { useIIIFModal } from '@/components/IIIFModal.vue';
   import { IIIFImageUrlHelper } from '../services/Fabric/helper.fabric';
-  import { apolloClient } from '@/main';
 
   const asString = (x: string | string[]) => (Array.isArray(x) ? x[0] : x);
 
@@ -96,8 +94,9 @@
       BasketOverlay,
     },
     setup: () => {
+      onMounted(() => {});
       const route = useRoute();
-      let id = asString(route.params['entityID']);
+      let id = asString(route.params.entityID);
       const code = ref<string>(boxVisiter.value.code);
       const relationStringArray = ref<string[]>([]);
       const relationsLabelArray = ref<string[]>([]);
@@ -124,6 +123,7 @@
         code: code.value,
         type: 'inBasket',
       });
+
       const { mutate: mutateBasket, onDone: onDoneAddingToBasket } = useMutation(
         AddAssetToBoxVisiterDocument,
         { variables: { code: code.value, assetId: '', type: 'inBasket' } },
@@ -163,7 +163,9 @@
         () => {
           console.log('Refetch entity');
           relationsLabelArray.value = [];
+          // relationStringArray.value = [];
           id = asString(route.params.entityID);
+          refetchBasket();
           refetchEntity({ id: asString(route.params.entityID) });
           mutateHistory();
         },
@@ -283,7 +285,7 @@
         if (entity.relations) {
           entity.relations.forEach((relation: any) => {
             if (
-              relationStringArray.value.indexOf(relation.key) < 0 &&
+              !relationStringArray.value.includes(relation.key) &&
               !metaDataInLabel.includes(relation.label) &&
               relation.key &&
               relation.value
