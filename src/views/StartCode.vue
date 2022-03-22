@@ -15,12 +15,23 @@
         <number-pad />
       </section>
       <section class="flex justify-center items-center w-full mt-12">
-        <base-button
-          class="text-lg underline"
-          custom-style="touchtable-black"
-          :icon-shown="false"
-          text="Ik heb nog geen code"
-        />
+        <VDropdown>
+          <base-button
+            class="text-lg underline"
+            custom-style="touchtable-black"
+            :icon-shown="false"
+            text="Ik heb nog geen code"
+          />
+          <template #popper
+            ><div class="p-4 text-lg">
+              <p><b>Geen paniek!</b></p>
+              <p>
+                Je kan jouw persoonlijke code laten afdrukken via het scherm aan de
+                ingang. Veel succes!
+              </p>
+            </div></template
+          >
+        </VDropdown>
       </section>
     </CardComponent>
   </main>
@@ -36,10 +47,8 @@
   import NumberPad, { useNumberPad } from '@/components/NumberPad.vue';
   import NumberDisplay from '@/components/NumberDisplay.vue';
   import { useRouter } from 'vue-router';
-  import { useQuery, useMutation, provideApolloClient } from '@vue/apollo-composable';
   import { useBoxVisiter } from 'coghent-vue-3-component-library';
   import { apolloClient } from '@/main';
-  import { BoxVisiter } from '@/models/GraphqlModel';
 
   export default defineComponent({
     name: 'StartCode',
@@ -71,7 +80,7 @@
 
       const checkCode = () => {
         let code: string = NumberPadState.value.state.join('');
-        // code = '52389932';
+        // code = '81453243';
         const { getByCode } = useBoxVisiter(apolloClient);
         const resolvedBoxVisit = getByCode(code);
         resolvedBoxVisit.then((boxVisit: any) => {

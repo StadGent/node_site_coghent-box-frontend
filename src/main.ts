@@ -13,22 +13,29 @@ import { router } from './router';
 import './style.css';
 import StoreFactory from './stores/StoreFactory';
 import { useIIIF } from 'coghent-vue-3-component-library';
+import FloatingVue from 'floating-vue';
+import { Dropdown } from 'floating-vue';
+import 'floating-vue/dist/style.css';
 
 export let apolloClient: ApolloClient<NormalizedCacheObject>;
-export let iiiF: any
+export let iiiF: any;
 
 async function main() {
   const configStore = StoreFactory.get(ConfigStore);
   const config = await fetch('../config.json').then((r) => r.json());
   configStore.setConfig(config);
 
-  iiiF = useIIIF(config.iiifLink)
+  iiiF = useIIIF(config.iiifLink);
 
   apolloClient = new ApolloClient({
     link: createHttpLink({ uri: config.graphQlLink || '/api/graphql' }),
     cache: new InMemoryCache(),
   });
 
-  createApp(App).use(router).provide(DefaultApolloClient, apolloClient).mount('#app');
+  createApp(App)
+    .use(router, FloatingVue)
+    .component('VDropdown', Dropdown)
+    .provide(DefaultApolloClient, apolloClient)
+    .mount('#app');
 }
 main();
