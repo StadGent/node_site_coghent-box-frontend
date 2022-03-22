@@ -1,5 +1,8 @@
 <template>
-  <main class="flex justify-center items-center h-screen w-screen bg-touchtable-dark">
+  <main
+    class="flex justify-center items-center h-screen w-screen bg-touchtable-dark"
+    @click="hideWrongCodeMessage()"
+  >
     <CardComponent
       :large="true"
       background-color="bg-accent-yellow"
@@ -7,11 +10,23 @@
       class="w-1/2"
     >
       <section class="w-full">
-        <number-display
-          :code="NumberPadState.state"
-          :max-amount-of-characters="maxAmountOfNumbers"
-          class="mb-12"
-        />
+        <VDropdown
+          :shown="displayWrongCodeMessage"
+          placement="right-start"
+          :showTriggers="[]"
+        >
+          <number-display
+            :code="NumberPadState.state"
+            :max-amount-of-characters="maxAmountOfNumbers"
+            class="mb-12"
+          />
+          <template #popper
+            ><div class="p-4 text-lg">
+              <p><b>Deze code werd helaas niet gevonden!</b></p>
+              <p>Probeer het nogmaals</p>
+            </div></template
+          >
+        </VDropdown>
         <number-pad />
       </section>
       <section class="flex justify-center items-center w-full mt-12">
@@ -64,9 +79,14 @@
         useNumberPad();
       const maxAmountOfNumbers = 8;
       const router = useRouter();
+      const displayWrongCodeMessage = ref<boolean>(false);
 
       const showWrongCodeMessage = () => {
-        alert('Wrong code');
+        displayWrongCodeMessage.value = true;
+      };
+
+      const hideWrongCodeMessage = () => {
+        displayWrongCodeMessage.value = false;
       };
 
       watch(
@@ -96,7 +116,13 @@
 
       // checkCode();
 
-      return { NumberPadState, maxAmountOfNumbers, checkCode };
+      return {
+        NumberPadState,
+        maxAmountOfNumbers,
+        checkCode,
+        displayWrongCodeMessage,
+        hideWrongCodeMessage,
+      };
     },
   });
 </script>
