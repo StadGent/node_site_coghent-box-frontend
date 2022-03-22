@@ -1,6 +1,6 @@
 <template>
   <div class="touchtable">
-    <!-- <basket-overlay :basketItems="basketItems" /> -->
+    <basket-overlay :basketItems="basketItems" />
     <shutdown-modal :code="code" @disposeCanvas="disposeCanvas" />
     <IIIF-modal :image-url="IIIFImageUrl" />
     <touch-header :basket-amount="basketItems.length" />
@@ -31,14 +31,14 @@
           text="Afbeelding vergroten"
           @click="showPictureModal"
         />
-        <!-- <base-button
+        <base-button
           class="text-xl"
           custom-style="touchtable-purple"
           custom-icon="archiveDrawer"
           :icon-shown="true"
           text="Aan verhalenbox toevoegen"
           @click="addToBasket"
-        /> -->
+        />
       </div>
     </CardComponent>
     <relationBrowser
@@ -93,11 +93,11 @@
       BaseButton,
       ShutdownModal,
       IIIFModal,
-      // BasketOverlay,
+      BasketOverlay,
     },
     setup: () => {
       const route = useRoute();
-      const id = asString(route.params['entityID']);
+      let id = asString(route.params['entityID']);
       const code = ref<string>(boxVisiter.value.code);
       const relationStringArray = ref<string[]>([]);
       const relationsLabelArray = ref<string[]>([]);
@@ -126,7 +126,7 @@
       });
       const { mutate: mutateBasket, onDone: onDoneAddingToBasket } = useMutation(
         AddAssetToBoxVisiterDocument,
-        { variables: { code: code.value, assetId: id, type: 'inBasket' } },
+        { variables: { code: code.value, assetId: '', type: 'inBasket' } },
       );
       const { mutate: mutateHistory, onDone: onDoneAddingHistory } = useMutation(
         AddAssetToBoxVisiterDocument,
@@ -163,6 +163,7 @@
         () => {
           console.log('Refetch entity');
           relationsLabelArray.value = [];
+          id = asString(route.params.entityID);
           refetchEntity({ id: asString(route.params.entityID) });
           mutateHistory();
         },
@@ -257,7 +258,7 @@
       );
 
       const addToBasket = () => {
-        mutateBasket();
+        mutateBasket({ code: code.value, assetId: id, type: 'inBasket' });
       };
 
       const showPictureModal = () => {

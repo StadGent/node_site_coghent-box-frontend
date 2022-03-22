@@ -1,21 +1,36 @@
 <template>
-  <base-overlay :overlay-state="BasketOverlayState.state">
-    <section class="w-full">
-      <the-masonry
-        v-if="basketEntities.length == basketItems.length"
-        :entities="undefined"
-        :loading="loadingBasketItem"
-        :generate-url="generateUrl"
-        :no-image-url="noImageUrl"
-        :show-load-more="false"
-      />
-    </section>
-    <section
-      class="w-full flex justify-center items-center p-12 font-bold cursor-pointer"
-      @click="closeBasketOverlay"
-    >
-      <h2 class="text-6xl">Sluiten</h2>
-    </section>
+  <base-overlay :overlay-state="BasketOverlayState.state" class="p-24">
+    <main>
+      <section class="w-full">
+        <the-masonry
+          v-if="basketEntities.length == basketItems.length"
+          :entities="{ results: basketEntities }"
+          :loading="loadingEntity"
+          :generate-url="generateUrl"
+          :no-image-url="noImageUrl"
+          :show-load-more="false"
+        />
+      </section>
+      <section
+        class="
+          w-full
+          flex
+          justify-center
+          flex-wrap
+          items-center
+          p-12
+          font-bold
+          cursor-pointer
+          flex-col
+          absolute
+          bottom-0
+        "
+        @click="closeBasketOverlay"
+      >
+        <base-icon icon="downwardArrows" class="transform rotate-180 mb-4" />
+        <h2 class="text-4xl">Sluiten</h2>
+      </section>
+    </main>
   </base-overlay>
 </template>
 
@@ -24,6 +39,7 @@
   import {
     BaseOverlay,
     TheMasonry,
+    BaseIcon,
     GetEntityByIdDocument,
   } from 'coghent-vue-3-component-library';
   import { useQuery } from '@vue/apollo-composable';
@@ -73,7 +89,11 @@
 
   export default defineComponent({
     name: 'BasketOverlay',
-    components: { BaseOverlay, TheMasonry },
+    components: {
+      BaseOverlay,
+      TheMasonry,
+      BaseIcon,
+    },
     props: {
       basketItems: {
         type: Array as PropType<Relation[]>,
@@ -84,25 +104,48 @@
       const { closeBasketOverlay, openBasketOverlay, BasketOverlayState } =
         useBasketOverlay();
       const { generateUrl, noImageUrl } = iiiF;
-      const basketEntityIds: string[] = props.basketItems.map((item: Relation) =>
-        item.key.replace('entities/', ''),
-      );
       const basketEntities = ref<Entity[]>([]);
-      console.log({ basketEntityIds });
 
-      basketEntityIds.forEach((basketEntityId: string) => {
-        const basketEntity = getBoxVisitEntityById(basketEntityId);
-        console.log({ basketEntity });
+      const {
+        result: entityResult,
+        onResult: onEntityResult,
+        refetch: refetchEntity,
+        loading: loadingEntity,
+      } = useQuery(GetEntityByIdDocument, { id: '' });
+
+      watch(
+        () => props.basketItems,
+        (basketItems) => {
+          if (basketItems.length) {
+            const basketEntityIds: string[] = props.basketItems.map((item: Relation) =>
+              item.key.replace('entities/', ''),
+            );
+            basketEntityIds.forEach((basketEntityId: string) => {
+              refetchEntity({ id: basketEntityId });
+            });
+          }
+        },
+      );
+
+      const tempEntityArray: any[] = [];
+      onEntityResult((queryResult) => {
+        if (queryResult.data.Entity) {
+          tempEntityArray.push(queryResult.data.Entity);
+          if (props.basketItems.length == tempEntityArray.length) {
+            basketEntities.value.push(...tempEntityArray);
+            console.log({ basketEntities });
+          }
+        }
       });
-
-      console.log(basketEntities);
-
+      // TODO: Refresh masonry when item gets added
       return {
         closeBasketOverlay,
         openBasketOverlay,
         BasketOverlayState,
         generateUrl,
         noImageUrl,
+        basketEntities,
+        loadingEntity,
       };
     },
   });

@@ -1,17 +1,11 @@
 <template>
   <nav class="p-10 header bg-neutral-0">
     <div class="spacer" />
-    <div
-      class="cursor-pointer"
-      @click="openBasketOverlay"
-    >
+    <div class="cursor-pointer flex justify-center flex-wrap" @click="openBasketOverlay">
       <h1 class="font-bold text-4xl w-full pr-auto">
         Mijn verhalenbox ({{ basketAmount }})
       </h1>
-      <base-icon
-        icon="downwardArrows"
-        class="w-10 h-10 text-text-black"
-      />
+      <base-icon icon="downwardArrows" class="stroke-current fill-current stroke-2" />
     </div>
     <div class="flex">
       <base-button
@@ -35,7 +29,7 @@
 
 <script lang="ts">
   import { defineComponent, onMounted, ref } from 'vue';
-  import { baseIcon, BaseButton } from 'coghent-vue-3-component-library';
+  import { BaseIcon, BaseButton } from 'coghent-vue-3-component-library';
   import { fabricdefaults } from '@/services/Fabric/defaults.fabric';
   import { useShutdownModal } from '@/components/ShutdownModal.vue';
   import { useBasketOverlay } from '@/components/BasketOverlay.vue';
@@ -44,7 +38,7 @@
   export default defineComponent({
     name: 'TouchHeader',
     components: {
-      baseIcon,
+      BaseIcon,
       BaseButton,
     },
     props: {

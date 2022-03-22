@@ -129,7 +129,7 @@ const fabricdefaults: FabricDefaults = {
         color: '#B65099',
       },
     },
-    relationLimit: 4,
+    relationLimit: 5,
     dimensions: {
       width: 1920,
       height: 900,
