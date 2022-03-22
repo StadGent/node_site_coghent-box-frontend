@@ -287,6 +287,9 @@ export default defineComponent({
         Tags.StoryCircleFrameInnerDot,
         Tags.ActiveStoryCircleFrameInnerDot,
       );
+      // BUG introduction?
+      await checkPositionOfProgressRing()
+      //
       const groupOfAssetsTags = taggingService.getByTag(Tags.GroupOfAssets);
       if (groupOfAssetsTags && groupOfAssetsTags[0] && groupOfAssetsTags[0].object) {
         console.log('assets on screen', groupOfAssetsTags[0].object);
@@ -300,10 +303,21 @@ export default defineComponent({
         console.log('no assets found');
       }
 
-      //
-
       resetStory();
     };
+
+    const checkPositionOfProgressRing = async () => {
+      console.log('tagged objects', taggingService.taggedObjects)
+      const frameRing = taggingService.getByTag(Tags.ActiveStoryCircleFrameRing)
+      if(frameRing[0] && frameRing[0].object){
+        const ring = frameRing[0].object[0] as Group
+        console.log('frame ring position', ring.position)
+        if(ring.position.x != zoneService.middleZoneCenter.x){
+          console.log('ring is not on position center')
+          await MoveObject().startMoving(ring, zoneService.middleZoneCenter)
+        }
+      }else Promise.resolve()
+    }
 
     const startCountdownForSelectedStory = async (
       _storySelected: number,
@@ -463,7 +477,7 @@ export default defineComponent({
         const subtitleLink = useFrame(threeSvc).getSubtitleForFrame(
           storyService.activeStory.frames?.[currentFrame] as unknown as Frame,
         );
-        // TODO: await or not await for subtitles?
+        await subtitleService.downloadSRTFile(subtitleLink as string);
         await subtitleService.downloadSRTFile(subtitleLink as string);
 
         let progress: Array<Group> = [];
@@ -648,25 +662,7 @@ export default defineComponent({
         params: { color: Colors().green, height: 300, width: 400 } as CubeParams,
       } as CubeSchema);
 
-      // // threeSvc.AddToScene(label, Tags.Testing)
-      // const videoID =
-      //   'https://api.collectie.gent/storage/v1/download/035b032d048743a6aac3d6dae948ee3e-VI-0003-0008-cut.mp4';
-      // const video = VideoHelper().videoElementAsCube(
-      //   videoID,
-      //   new Vector3(300, 400, 0),
-      //   new Vector3(0, 0, 3),
-      // );
-      // // threeSvc.AddToScene(video, Tags.Testing);
-      // // const video2 = VideoHelper().videoElementAsCube(
-      // //   videoID,
-      // //   new Vector3(300, 400, 0),
-      // //   new Vector3(0, 0, 3),
-      // // );
-      // // threeSvc.AddToScene(video2, Tags.Testing);
-      // const videoElement = document.getElementById(videoID);
-      // if (videoElement) {
-      //   // VideoHelper().playVideo(videoID);
-      // }
+      // threeSvc.AddToScene(label, Tags.Testing)
       threeSvc.Animate();
     });
     return { viewport, videoElement, subtitles };
