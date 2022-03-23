@@ -1,6 +1,6 @@
 <template>
   <div class="touchtable">
-    <basket-overlay :basketItems="basketItems" />
+    <basket-overlay v-if="basketItems.length" :basketItems="basketItems" />
     <shutdown-modal :code="code" @disposeCanvas="disposeCanvas" />
     <IIIF-modal :image-url="IIIFImageUrl" />
     <touch-header :basket-amount="basketItems.length" />
@@ -60,7 +60,7 @@
     CardComponent,
     GetTouchTableEntityDocument,
     BaseButton,
-    GetBoxVisiterRelationsByTypeDocument,
+    useBoxVisiter,
     AddAssetToBoxVisiterDocument,
     boxVisiter,
     startAsset,
@@ -74,6 +74,7 @@
   import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
   import IIIFModal, { useIIIFModal } from '@/components/IIIFModal.vue';
   import { IIIFImageUrlHelper } from '../services/Fabric/helper.fabric';
+  import { apolloClient } from '@/main';
 
   const asString = (x: string | string[]) => (Array.isArray(x) ? x[0] : x);
 
@@ -94,7 +95,6 @@
       BasketOverlay,
     },
     setup: () => {
-      onMounted(() => {});
       const route = useRoute();
       let id = asString(route.params.entityID);
       const code = ref<string>(boxVisiter.value.code);
@@ -104,7 +104,11 @@
       const subRelations = ref<SecondaryRelation[]>([]);
       const entity = ref<any>();
       const headEntityId = ref<string>();
-      const basketItems = ref<Array<Relation>>([]);
+      const basketItems = ref<Array<Relation>>(
+        boxVisiter.value.relations.filter(
+          (relation: Relation) => relation.type == 'inBasket',
+        ),
+      );
       const IIIFImageUrl = ref<string>();
       let fabricService = ref<FabricService | undefined>(undefined);
       const { openIIIFModal, IIIFModalState } = useIIIFModal();
@@ -115,14 +119,6 @@
         loading,
         refetch: refetchEntity,
       } = useQuery(GetTouchTableEntityByIdDocument, { id });
-      const {
-        result: basketResult,
-        onResult: onBasketResult,
-        refetch: refetchBasket,
-      } = useQuery(GetBoxVisiterRelationsByTypeDocument, {
-        code: code.value,
-        type: 'inBasket',
-      });
 
       const { mutate: mutateBasket, onDone: onDoneAddingToBasket } = useMutation(
         AddAssetToBoxVisiterDocument,
@@ -165,7 +161,6 @@
           relationsLabelArray.value = [];
           // relationStringArray.value = [];
           id = asString(route.params.entityID);
-          refetchBasket();
           refetchEntity({ id: asString(route.params.entityID) });
           mutateHistory();
         },
@@ -326,20 +321,11 @@
             const historyEntity = historyAsset.value;
             console.log({ historyEntity });
             if (startEntity) {
-              fabricService.value?.generateInfoBar(
-                startEntity,
-                historyEntity ? historyEntity : undefined,
-              );
+              fabricService.value?.generateInfoBar(startEntity, historyEntity);
             }
           }
         } else {
           alert('Entity not foud');
-        }
-      });
-
-      onBasketResult((basketResult) => {
-        if (basketResult.data) {
-          basketItems.value = basketResult.data.BoxVisiterRelationsByType;
         }
       });
 

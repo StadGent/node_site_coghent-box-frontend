@@ -56,13 +56,13 @@
   import { defineComponent, onMounted, ref, watch } from 'vue';
   import {
     CardComponent,
-    GetBoxVisiterByCodeDocument,
     BaseButton,
+    GetBoxVisiterRelationsByTypeDocument,
+    useBoxVisiter,
   } from 'coghent-vue-3-component-library';
   import NumberPad, { useNumberPad } from '@/components/NumberPad.vue';
   import NumberDisplay from '@/components/NumberDisplay.vue';
   import { useRouter } from 'vue-router';
-  import { useBoxVisiter } from 'coghent-vue-3-component-library';
   import { apolloClient } from '@/main';
 
   export default defineComponent({

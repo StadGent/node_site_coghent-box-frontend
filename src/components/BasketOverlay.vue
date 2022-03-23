@@ -117,19 +117,14 @@
         loading: loadingEntity,
       } = useQuery(GetEntityByIdDocument, { id: '' });
 
-      watch(
-        () => props.basketItems,
-        (basketItems) => {
-          if (basketItems.length) {
-            const basketEntityIds: string[] = props.basketItems.map((item: Relation) =>
-              item.key.replace('entities/', ''),
-            );
-            basketEntityIds.forEach((basketEntityId: string) => {
-              refetchEntity({ id: basketEntityId });
-            });
-          }
-        },
-      );
+      if (props.basketItems.length) {
+        const basketEntityIds: string[] = props.basketItems.map((item: Relation) =>
+          item.key.replace('entities/', ''),
+        );
+        basketEntityIds.forEach((basketEntityId: string) => {
+          refetchEntity({ id: basketEntityId });
+        });
+      }
 
       const tempEntityArray: any[] = [];
       onEntityResult((queryResult) => {

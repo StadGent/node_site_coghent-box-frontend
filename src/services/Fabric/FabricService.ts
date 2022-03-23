@@ -108,7 +108,7 @@ export default class FabricService {
     });
   }
 
-  generateInfoBar(startEntity: Entity, historyEntity: Entity | undefined) {
+  generateInfoBar(startEntity: Entity, historyEntity: Entity | undefined = undefined) {
     console.log({ startEntity, historyEntity });
 
     const backgroundRect = new fabric.Rect({
@@ -199,6 +199,7 @@ export default class FabricService {
       subRelationOriginEntityId,
       canvasFrames,
     );
+    const takenPosition = this.state.takenPositions;
     let closeAvailablePositions: Array<Position> = [];
     if (originEntityPosition) {
       closeAvailablePositions = availablePositionsInRangeHelper(
@@ -265,6 +266,7 @@ export default class FabricService {
           }
         });
       });
+      this.state.canvas.requestRenderAll();
       return Promise.resolve();
     });
   }
