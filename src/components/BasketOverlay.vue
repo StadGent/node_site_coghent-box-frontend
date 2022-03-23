@@ -45,14 +45,7 @@
     GetEntityByIdDocument,
   } from 'coghent-vue-3-component-library';
   import { useQuery } from '@vue/apollo-composable';
-  import {
-    Relation,
-    Entity,
-    RelationType,
-  } from 'coghent-vue-3-component-library/lib/queries';
-  import { useBoxVisiter } from 'coghent-vue-3-component-library';
-  import { apolloClient } from '@/main';
-  import { getBoxVisitEntityById } from '@/services/Fabric/helper.boxvisit';
+  import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
   import { iiiF } from '@/main';
   import Spinner from './Spinner.vue';
 
@@ -117,14 +110,18 @@
         loading: loadingEntity,
       } = useQuery(GetEntityByIdDocument, { id: '' });
 
-      if (props.basketItems.length) {
-        const basketEntityIds: string[] = props.basketItems.map((item: Relation) =>
-          item.key.replace('entities/', ''),
-        );
-        basketEntityIds.forEach((basketEntityId: string) => {
-          refetchEntity({ id: basketEntityId });
-        });
-      }
+      const getEnitiesForRelations = () => {
+        if (props.basketItems.length) {
+          const basketEntityIds: string[] = props.basketItems.map((item: Relation) =>
+            item.key.replace('entities/', ''),
+          );
+          basketEntityIds.forEach((basketEntityId: string) => {
+            refetchEntity({ id: basketEntityId });
+          });
+        }
+      };
+
+      getEnitiesForRelations();
 
       const tempEntityArray: any[] = [];
       onEntityResult((queryResult) => {

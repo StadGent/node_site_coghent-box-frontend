@@ -24,7 +24,6 @@ import { router } from '@/router';
 import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
 import { useBoxVisiter } from 'coghent-vue-3-component-library';
 import { apolloClient } from '@/main';
-import { create } from 'd3';
 
 type State = {
   canvas: any;
@@ -108,8 +107,8 @@ export default class FabricService {
     });
   }
 
-  generateInfoBar(startEntity: Entity, historyEntity: Entity | undefined = undefined) {
-    console.log({ startEntity, historyEntity });
+  generateInfoBar(startEntity: Entity, historyEntities: Entity[]) {
+    console.log({ startEntity, historyEntities });
 
     const backgroundRect = new fabric.Rect({
       width: fabricdefaults.canvas.dimensions.width,
@@ -126,9 +125,10 @@ export default class FabricService {
     lockObjectMovementHelper(backgroundRect);
     this.state.canvas.add(backgroundRect);
 
+    let startFrame = undefined;
     ImageUrlHelper(startEntity).then((imageArray: string[]) => {
       const startImage: string = imageArray[0];
-      const startFrame = new fabric.Image.fromURL(startImage, (image: any) => {
+      new fabric.Image.fromURL(startImage, (image: any) => {
         image.top = fabricdefaults.canvas.infoBar.startFrame.position.top;
         image.left = fabricdefaults.canvas.infoBar.startFrame.position.left;
         image.scaleX = fabricdefaults.canvas.infoBar.startFrame.scale.scaleX;
@@ -141,6 +141,7 @@ export default class FabricService {
         image.entity = startEntity;
         lockObjectMovementHelper(image);
         this.state.canvas.add(image);
+        startFrame = image;
       });
     });
     const startText = canvasTextHelper(
@@ -153,22 +154,29 @@ export default class FabricService {
     );
     this.state.canvas.add(startText);
 
-    if (historyEntity) {
-      ImageUrlHelper(historyEntity).then((imageArray: string[]) => {
-        const historyImage: string = imageArray[0];
-        const historyFrame = new fabric.Image.fromURL(historyImage, (image: any) => {
-          image.top = fabricdefaults.canvas.infoBar.historyFrame.position.top;
-          image.left = fabricdefaults.canvas.infoBar.historyFrame.position.left;
-          image.scaleX = fabricdefaults.canvas.infoBar.historyFrame.scale.scaleX;
-          image.scaleY = fabricdefaults.canvas.infoBar.historyFrame.scale.scaleY;
-          image.originX = fabricdefaults.canvas.infoBar.historyFrame.origin.originX;
-          image.originY = fabricdefaults.canvas.infoBar.historyFrame.origin.originY;
-          image.objectType = 'historyFrame';
-          image.hoverCursor = 'pointer';
-          image.setCoords();
-          image.entity = historyEntity;
-          lockObjectMovementHelper(image);
-          this.state.canvas.add(image);
+    if (historyEntities.length) {
+      let previousHistoryFrame: any = undefined;
+      historyEntities.forEach((historyEntity: Entity) => {
+        ImageUrlHelper(historyEntity).then((imageArray: string[]) => {
+          const historyImage: string = imageArray[0];
+          const historyFrame = new fabric.Image.fromURL(historyImage, (image: any) => {
+            image.top = fabricdefaults.canvas.infoBar.historyFrame.position.top;
+            image.left = previousHistoryFrame
+              ? previousHistoryFrame.left + previousHistoryFrame.width + 25
+              : fabricdefaults.canvas.infoBar.historyFrame.position.left;
+            image.scaleX = fabricdefaults.canvas.infoBar.historyFrame.scale.scaleX;
+            image.scaleY = fabricdefaults.canvas.infoBar.historyFrame.scale.scaleY;
+            image.originX = fabricdefaults.canvas.infoBar.historyFrame.origin.originX;
+            image.originY = fabricdefaults.canvas.infoBar.historyFrame.origin.originY;
+            image.objectType = 'historyFrame';
+            image.hoverCursor = 'pointer';
+            image.setCoords();
+            image.entity = historyEntity;
+            lockObjectMovementHelper(image);
+            this.state.canvas.add(image);
+            console.log({ image });
+            previousHistoryFrame = image;
+          });
         });
       });
 
@@ -279,8 +287,8 @@ export default class FabricService {
           objectIsTypeHelper('startFrame', selectedObject.target) ||
           objectIsTypeHelper('historyFrame', selectedObject.target)
         ) {
-          const { setHistoryAsset } = useBoxVisiter(apolloClient);
-          setHistoryAsset(this.state.selectedImage.entity);
+          const { addHistoryAsset } = useBoxVisiter(apolloClient);
+          addHistoryAsset(this.state.selectedImage.entity);
           selectedObject = selectedObject.target;
           this.state.selectedImage = selectedObject.entity;
 
