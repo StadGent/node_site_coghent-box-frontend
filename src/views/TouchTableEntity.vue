@@ -188,49 +188,53 @@
                 console.log(queryResult);
                 console.log('Relation result');
                 if (queryResult.Entities && fabricService.value) {
-                  const relationEntities = queryResult.Entities?.results;
-                  const filteredRelationEntities = relationEntities.filter(
+                  const relationEntities: Entity[] = queryResult.Entities?.results;
+                  const filteredRelationEntities: Entity[] = relationEntities.filter(
                     (ent: Entity) => ent.id != entity.value.id,
                   );
-                  fabricService.value
-                    .generateSecondaryImageFrames(
-                      filteredRelationEntities,
-                      entity.value.id,
-                    )
-                    .then(() => {
-                      filteredRelationEntities.forEach((entity: any) => {
-                        const entityRelations: Array<string> = [];
+                  if (filteredRelationEntities.length) {
+                    fabricService.value
+                      .generateSecondaryImageFrames(
+                        filteredRelationEntities,
+                        entity.value.id,
+                      )
+                      .then(() => {
+                        filteredRelationEntities.forEach((relationEntity: Entity) => {
+                          const entityRelations: Array<string> = [];
 
-                        getRelations(entity);
-
-                        entity.relations.forEach((relation: Relation) => {
-                          entityRelations.push(relation.key);
-                        });
-
-                        fetchMoreRelations({
-                          variables: {
-                            limit: fabricdefaults.canvas.relationLimit,
-                            skip: relationResult ? 0 : 1,
-                            searchValue: {
-                              value: '',
-                              isAsc: false,
-                              relation_filter: entityRelations,
-                              randomize: false,
-                              key: 'title',
-                              has_mediafile: true,
-                            },
-                          },
-                          updateQuery: (previousData, { fetchMoreResult }) => {
-                            console.log({ fetchMoreResult });
-                            const newRelation: SecondaryRelation = {
-                              originId: entity.id,
-                              relatedEntities: fetchMoreResult.Entities.results,
-                            };
-                            subRelations.value.push(newRelation);
-                          },
+                          getRelations(relationEntity);
+                          if (relationEntity.relations) {
+                            relationEntity.relations.forEach((relation: any) => {
+                              entityRelations.push(relation.key);
+                            });
+                          }
+                          if (entityRelations.length) {
+                            fetchMoreRelations({
+                              variables: {
+                                limit: fabricdefaults.canvas.relationLimit,
+                                skip: relationResult ? 0 : 1,
+                                searchValue: {
+                                  value: '',
+                                  isAsc: false,
+                                  relation_filter: entityRelations,
+                                  randomize: false,
+                                  key: 'title',
+                                  has_mediafile: true,
+                                },
+                              },
+                              updateQuery: (previousData, { fetchMoreResult }) => {
+                                console.log({ fetchMoreResult });
+                                const newRelation: SecondaryRelation = {
+                                  originId: relationEntity.id,
+                                  relatedEntities: fetchMoreResult.Entities.results,
+                                };
+                                subRelations.value.push(newRelation);
+                              },
+                            });
+                          }
                         });
                       });
-                    });
+                  }
                 }
               },
             });
