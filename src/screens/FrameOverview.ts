@@ -29,13 +29,12 @@ const FrameOverview = (
         asset.mediafiles[0]?.mediainfo.height,
         0,
       ),
-    );
-
+    );      
     const filename = Common().getFilenameFromStorageLink(
       schema.params.url as string,
       'download/',
     );
-    schema.params.url = generateUrl(filename, 'full', 'max');
+    schema.params.url = generateUrl(encodeURI(filename), 'full', 'max');
 
     const cube = await SchemaCube().CreateImageCubeAsync(
       schema,
