@@ -156,9 +156,8 @@ export default class FabricService {
 
     if (historyEntities.length) {
       let previousHistoryFrame: any = undefined;
-      historyEntities.forEach((historyEntity: Entity) => {
-        ImageUrlHelper(historyEntity).then((imageArray: string[]) => {
-          const historyImage: string = imageArray[0];
+      ImageUrlHelper(historyEntities).then((imageArray: string[]) => {
+        imageArray.forEach((historyImage: any, index: number) => {
           new fabric.Image.fromURL(historyImage, (image: any) => {
             image.top = fabricdefaults.canvas.infoBar.historyFrame.position.top;
             image.left = previousHistoryFrame
@@ -171,7 +170,7 @@ export default class FabricService {
             image.objectType = 'historyFrame';
             image.hoverCursor = 'pointer';
             image.setCoords();
-            image.entity = historyEntity;
+            image.entity = historyEntities[index];
             lockObjectMovementHelper(image);
             this.state.canvas.add(image);
             previousHistoryFrame = image;
