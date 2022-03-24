@@ -60,7 +60,6 @@
     CardComponent,
     GetTouchTableEntityDocument,
     BaseButton,
-    useBoxVisiter,
     AddAssetToBoxVisiterDocument,
     boxVisiter,
     startAsset,

@@ -29,7 +29,7 @@
 
 <script lang="ts">
   import { defineComponent, onMounted, ref } from 'vue';
-  import { BaseIcon, BaseButton } from 'coghent-vue-3-component-library';
+  import { BaseIcon, BaseButton, useBoxVisiter } from 'coghent-vue-3-component-library';
   import { fabricdefaults } from '@/services/Fabric/defaults.fabric';
   import { useShutdownModal } from '@/components/ShutdownModal.vue';
   import { useBasketOverlay } from '@/components/BasketOverlay.vue';
@@ -60,6 +60,8 @@
       );
 
       const goToStoriesPage = () => {
+        const { clearHistoryAssets } = useBoxVisiter();
+        clearHistoryAssets();
         router.push('stories');
       };
 

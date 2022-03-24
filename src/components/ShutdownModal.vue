@@ -94,17 +94,19 @@
     setup: (props, { emit }) => {
       const { openShutdownModal, closeShutdownModal, ShutdownModalState } =
         useShutdownModal();
-      const { resetBoxVisiter } = useBoxVisiter(apolloClient);
       const router = useRouter();
 
       const goToCodeScreen = () => {
         closeShutdownModal();
         emit('disposeCanvas', true);
+        const { resetBoxVisiter } = useBoxVisiter(apolloClient);
         resetBoxVisiter();
         router.push('/touchtable/start');
       };
 
       const goToStoriesScreen = () => {
+        const { clearHistoryAssets } = useBoxVisiter();
+        clearHistoryAssets();
         closeShutdownModal();
         emit('disposeCanvas', true);
         router.push('/touchtable/stories');

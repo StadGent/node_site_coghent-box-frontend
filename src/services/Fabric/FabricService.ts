@@ -159,7 +159,7 @@ export default class FabricService {
       historyEntities.forEach((historyEntity: Entity) => {
         ImageUrlHelper(historyEntity).then((imageArray: string[]) => {
           const historyImage: string = imageArray[0];
-          const historyFrame = new fabric.Image.fromURL(historyImage, (image: any) => {
+          new fabric.Image.fromURL(historyImage, (image: any) => {
             image.top = fabricdefaults.canvas.infoBar.historyFrame.position.top;
             image.left = previousHistoryFrame
               ? previousHistoryFrame.left + previousHistoryFrame.width + 25
@@ -174,7 +174,6 @@ export default class FabricService {
             image.entity = historyEntity;
             lockObjectMovementHelper(image);
             this.state.canvas.add(image);
-            console.log({ image });
             previousHistoryFrame = image;
           });
         });
