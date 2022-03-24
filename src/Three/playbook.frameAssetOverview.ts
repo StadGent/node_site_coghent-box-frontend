@@ -87,6 +87,7 @@ const useFrameAssetOverview = (
         image.scale.set(0,0,0)
 
       }
+      console.log({scaleTo})
       scaleTo[i] = relationMetadata.scale;
       images.push(image);
       group.add(image);
@@ -179,6 +180,7 @@ const useFrameAssetOverview = (
     isVideo: string | undefined = undefined,
   ) => {
     const zoomSettings = calculateZoomSettingsOfAsset(asset);
+    console.log({zoomSettings})
     await useAsset(threeService).zoom(
       asset as Mesh<BoxBufferGeometry, any>,
       zoomSettings.zoomPosition,
