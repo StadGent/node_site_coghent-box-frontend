@@ -51,7 +51,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, onMounted, ref, watch } from 'vue';
+  import { defineComponent, onMounted, onUnmounted, ref, watch } from 'vue';
   import FabricService from '../services/Fabric/FabricService';
   import { useRoute, useRouter } from 'vue-router';
   import { useQuery, useMutation } from '@vue/apollo-composable';
@@ -73,7 +73,6 @@
   import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
   import IIIFModal, { useIIIFModal } from '@/components/IIIFModal.vue';
   import { IIIFImageUrlHelper } from '../services/Fabric/helper.fabric';
-  import { apolloClient } from '@/main';
 
   const asString = (x: string | string[]) => (Array.isArray(x) ? x[0] : x);
 
@@ -95,7 +94,6 @@
     },
     setup: () => {
       const route = useRoute();
-      const router = useRouter();
       let id = asString(route.params.entityID);
       const code = ref<string>(boxVisiter.value ? boxVisiter.value.code : undefined);
       const relationStringArray = ref<string[]>([]);
@@ -103,7 +101,6 @@
       const relationsArray = ref<Relation[]>([]);
       const subRelations = ref<SecondaryRelation[]>([]);
       const entity = ref<any>();
-      const headEntityId = ref<string>();
       const basketItems = ref<Array<Relation>>(
         boxVisiter.value
           ? boxVisiter.value.relations.filter(
@@ -115,12 +112,8 @@
       let fabricService = ref<FabricService | undefined>(undefined);
       const { openIIIFModal, IIIFModalState } = useIIIFModal();
 
-      console.log({ id });
-      console.log(entity.value);
-
       const {
-        result,
-        onResult: onEntityResult,
+        result: startEntityResult,
         loading,
         refetch: refetchEntity,
       } = useQuery(GetTouchTableEntityByIdDocument, { id });
@@ -134,17 +127,11 @@
         { variables: { code: code.value, assetId: id, type: 'visited' } },
       );
 
-      const {
-        result: relationResult,
-        onResult: onRelationResult,
-        loading: loadingRelations,
-        refetch: refetchRelations,
-        fetchMore: fetchMoreRelations,
-      } = useQuery(
+      const { result: relationResult, fetchMore: fetchMoreRelations } = useQuery(
         GetTouchTableEntityDocument,
         () => ({
           limit: fabricdefaults.canvas.relationLimit,
-          skip: result ? 0 : 1,
+          skip: startEntityResult ? 0 : 1,
           searchValue: {
             value: '',
             isAsc: false,
@@ -159,18 +146,14 @@
         }),
       );
 
-      watch(
-        () => route.params.entityID,
-        () => {
-          console.log('Refetch entity');
-          relationsLabelArray.value = [];
-          relationStringArray.value = [];
-          id = asString(route.params.entityID);
-          refetchEntity({ id: asString(route.params.entityID) });
-          mutateHistory();
-        },
-        { deep: true, immediate: true },
-      );
+      onMounted(() => {
+        console.log('Refetch entity');
+        relationsLabelArray.value = [];
+        relationStringArray.value = [];
+        id = asString(route.params.entityID);
+        refetchEntity({ id: asString(route.params.entityID) });
+        mutateHistory();
+      });
 
       const loadRelations = (entity: Entity) => {
         if (entity) {
@@ -179,7 +162,7 @@
           fetchMoreRelations({
             variables: {
               limit: fabricdefaults.canvas.relationLimit,
-              skip: result ? 0 : 1,
+              skip: startEntityResult ? 0 : 1,
               searchValue: {
                 value: '',
                 isAsc: false,
@@ -243,60 +226,8 @@
         }
       };
 
-      watch(
-        () => result.value,
-        (entityResult) => {
-          console.log({ entityResult });
-          console.log('Entity result');
-          if (entityResult) {
-            if (fabricService.value) {
-              // Dispose canvas (kill it) before creating a new one and filling it up
-              disposeCanvas();
-            }
-            fabricService.value = new FabricService();
-
-            fabricService.value.generateMainImageFrame(entityResult.Entity);
-
-            getRelations(entityResult.Entity);
-            headEntityId.value = entityResult.Entity.id;
-            entity.value = entityResult.Entity;
-            IIIFImageUrlHelper(entityResult.Entity);
-
-            if (startAsset.value) {
-              const startEntity = startAsset.value;
-              const historyEntities = historyAssets.value;
-              if (startEntity) {
-                fabricService.value?.generateInfoBar(startEntity, historyEntities);
-              }
-            }
-          } else {
-            alert('Entity not found');
-          }
-          loadRelations(entity.value);
-        },
-      );
-
-      watch(
-        () => subRelations.value.length,
-        () => {
-          subRelations.value.forEach((relation: SecondaryRelation) => {
-            fabricService.value?.generateSecondaryImageFrames(
-              relation.relatedEntities,
-              relation.originId,
-            );
-            subRelations.value = subRelations.value.filter(
-              (subrelation: any) => subrelation != relation,
-            );
-          });
-        },
-      );
-
-      const addToBasket = () => {
-        mutateBasket({ code: code.value, assetId: id, type: 'inBasket' });
-      };
-
-      const showPictureModal = () => {
-        openIIIFModal();
+      const disposeCanvas = () => {
+        fabricService.value?.state.canvas.dispose();
       };
 
       const getRelations = (entity: Entity) => {
@@ -329,12 +260,65 @@
         }
       };
 
-      const highlightSelectedFilter = (filterIndex: number) => {
-        fabricService.value?.highlightRelatedFrames(filterIndex, relationsArray.value);
+      watch(
+        () => startEntityResult.value,
+        (entityResult) => {
+          if (entityResult.Entity) {
+            entityResult = entityResult.Entity;
+            console.log({ entityResult });
+            console.log('Entity result');
+            if (fabricService.value) {
+              // Dispose canvas (destroy it) before creating a new one and filling it up
+              disposeCanvas();
+            }
+            fabricService.value = new FabricService();
+
+            fabricService.value.generateMainImageFrame(entityResult);
+
+            getRelations(entityResult);
+            entity.value = entityResult;
+            IIIFImageUrl.value = IIIFImageUrlHelper(entityResult);
+
+            if (startAsset.value) {
+              const startEntity = startAsset.value;
+              const historyEntities = historyAssets.value;
+              if (startEntity) {
+                fabricService.value?.generateInfoBar(startEntity, historyEntities);
+              }
+            }
+            loadRelations(entityResult);
+          } else {
+            alert('Entity not found');
+          }
+        },
+        { deep: true },
+      );
+
+      watch(
+        () => subRelations.value.length,
+        () => {
+          subRelations.value.forEach((relation: SecondaryRelation) => {
+            fabricService.value?.generateSecondaryImageFrames(
+              relation.relatedEntities,
+              relation.originId,
+            );
+            subRelations.value = subRelations.value.filter(
+              (subrelation: any) => subrelation != relation,
+            );
+          });
+        },
+      );
+
+      const addToBasket = () => {
+        mutateBasket({ code: code.value, assetId: id, type: 'inBasket' });
       };
 
-      const disposeCanvas = () => {
-        fabricService.value?.state.canvas.dispose();
+      const showPictureModal = () => {
+        openIIIFModal();
+      };
+
+      const highlightSelectedFilter = (filterIndex: number) => {
+        fabricService.value?.highlightRelatedFrames(filterIndex, relationsArray.value);
       };
 
       onDoneAddingToBasket((_basketItems) => {
