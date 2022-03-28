@@ -6,7 +6,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, onUpdated, PropType, Ref, ref, watch } from 'vue';
+import { defineComponent, onMounted, PropType, ref, watch } from 'vue';
 import { BoxGeometry, Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
 import { Entity as _Entity, Frame } from '@/models/GraphqlModel';
 
@@ -18,7 +18,6 @@ import TaggingService, { Tags } from '@/services/TaggingService';
 import SubtitleService from '@/services/SubtitleService';
 
 import AudioHelper, { AudioHelperFunctions } from '@/Three/helper.audio';
-import VideoHelper from '@/Three/helper.video';
 import WallGarbageHelper, { GarabageHelperForWall } from '@/Three/helper.wall.garbage';
 import SceneHelper from '@/Three/helper.scene';
 
@@ -32,7 +31,6 @@ import Development from '@/Three/defaults.development';
 import PlayBookBuild from '@/Three/playbook.build';
 
 import PlayBook from '@/composables/playbook';
-import useStory from '@/composables/useStory';
 import MoveObject from '@/composables/moveObject';
 import CustomAnimation from '@/composables/animation';
 import { SensorObject } from '@/composables/common';
@@ -44,10 +42,7 @@ import { Entity } from 'coghent-vue-3-component-library/lib';
 import useStartOfSession from '@/Three/playbook.startOfSession';
 import Spot from '@/Three/shapes.spotlight';
 import StateService, { FlowState } from '@/services/StateService';
-import TestSingleComponent from '@/Three/test.components';
-import SchemaCube, { CubeParams, CubeSchema } from '@/Three/schema.cube';
-import Colors from '@/Three/defaults.color';
-import Layers from '@/Three/defaults.layers';
+import MetadataLabel from '@/Three/shapes.metadataLabel';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -674,6 +669,10 @@ export default defineComponent({
       garbageHelper = WallGarbageHelper(threeSvc, taggingService);
       subtitleService = new SubtitleService();
       threeSvc.ClearScene();
+
+      const text = await MetadataLabel(new Vector3(0, 0, 0)).label('Loading...');
+      text.text.position.x -= text.dimensions.x / 2;
+      threeSvc.AddToScene(text.text, Tags.Testing);
 
       threeSvc.Animate();
     });
