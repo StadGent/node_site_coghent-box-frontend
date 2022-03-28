@@ -95,8 +95,9 @@
     },
     setup: () => {
       const route = useRoute();
+      const router = useRouter();
       let id = asString(route.params.entityID);
-      const code = ref<string>(boxVisiter.value.code);
+      const code = ref<string>(boxVisiter.value ? boxVisiter.value.code : undefined);
       const relationStringArray = ref<string[]>([]);
       const relationsLabelArray = ref<string[]>([]);
       const relationsArray = ref<Relation[]>([]);
@@ -104,13 +105,18 @@
       const entity = ref<any>();
       const headEntityId = ref<string>();
       const basketItems = ref<Array<Relation>>(
-        boxVisiter.value.relations.filter(
-          (relation: Relation) => relation.type == 'inBasket',
-        ),
+        boxVisiter.value
+          ? boxVisiter.value.relations.filter(
+              (relation: Relation) => relation.type == 'inBasket',
+            )
+          : undefined,
       );
       const IIIFImageUrl = ref<string>();
       let fabricService = ref<FabricService | undefined>(undefined);
       const { openIIIFModal, IIIFModalState } = useIIIFModal();
+
+      console.log({ id });
+      console.log(entity.value);
 
       const {
         result,
@@ -158,87 +164,115 @@
         () => {
           console.log('Refetch entity');
           relationsLabelArray.value = [];
-          // relationStringArray.value = [];
+          relationStringArray.value = [];
           id = asString(route.params.entityID);
           refetchEntity({ id: asString(route.params.entityID) });
           mutateHistory();
         },
+        { deep: true, immediate: true },
       );
 
-      watch(
-        () => entity.value,
-        () => {
-          if (entity.value) {
-            console.log('refetch relations');
-            console.log(entity.value);
-            fetchMoreRelations({
-              variables: {
-                limit: fabricdefaults.canvas.relationLimit,
-                skip: result ? 0 : 1,
-                searchValue: {
-                  value: '',
-                  isAsc: false,
-                  relation_filter: relationStringArray.value,
-                  randomize: false,
-                  key: 'title',
-                  has_mediafile: true,
-                },
+      const loadRelations = (entity: Entity) => {
+        if (entity) {
+          console.log('refetch relations');
+          console.log(entity);
+          fetchMoreRelations({
+            variables: {
+              limit: fabricdefaults.canvas.relationLimit,
+              skip: result ? 0 : 1,
+              searchValue: {
+                value: '',
+                isAsc: false,
+                relation_filter: relationStringArray.value,
+                randomize: false,
+                key: 'title',
+                has_mediafile: true,
               },
-              updateQuery: (previousData, { fetchMoreResult: queryResult }) => {
-                console.log(queryResult);
-                console.log('Relation result');
-                if (queryResult.Entities && fabricService.value) {
-                  const relationEntities: Entity[] = queryResult.Entities?.results;
-                  const filteredRelationEntities: Entity[] = relationEntities.filter(
-                    (ent: Entity) => ent.id != entity.value.id,
-                  );
-                  if (filteredRelationEntities.length) {
-                    fabricService.value
-                      .generateSecondaryImageFrames(
-                        filteredRelationEntities,
-                        entity.value.id,
-                      )
-                      .then(() => {
-                        filteredRelationEntities.forEach((relationEntity: Entity) => {
-                          const entityRelations: Array<string> = [];
+            },
+            updateQuery: (previousData, { fetchMoreResult: queryResult }) => {
+              console.log(queryResult);
+              console.log('Relation result');
+              if (queryResult.Entities && fabricService.value) {
+                const relationEntities: Entity[] = queryResult.Entities?.results;
+                const filteredRelationEntities: Entity[] = relationEntities.filter(
+                  (ent: Entity) => ent.id != entity.id,
+                );
+                if (filteredRelationEntities.length) {
+                  fabricService.value
+                    .generateSecondaryImageFrames(filteredRelationEntities, entity.id)
+                    .then(() => {
+                      filteredRelationEntities.forEach((relationEntity: Entity) => {
+                        const entityRelations: Array<string> = [];
 
-                          getRelations(relationEntity);
-                          if (relationEntity.relations) {
-                            relationEntity.relations.forEach((relation: any) => {
-                              entityRelations.push(relation.key);
-                            });
-                          }
-                          if (entityRelations.length) {
-                            fetchMoreRelations({
-                              variables: {
-                                limit: fabricdefaults.canvas.relationLimit,
-                                skip: relationResult ? 0 : 1,
-                                searchValue: {
-                                  value: '',
-                                  isAsc: false,
-                                  relation_filter: entityRelations,
-                                  randomize: false,
-                                  key: 'title',
-                                  has_mediafile: true,
-                                },
+                        getRelations(relationEntity);
+                        if (relationEntity.relations) {
+                          relationEntity.relations.forEach((relation: any) => {
+                            entityRelations.push(relation.key);
+                          });
+                        }
+                        if (entityRelations.length) {
+                          fetchMoreRelations({
+                            variables: {
+                              limit: fabricdefaults.canvas.relationLimit,
+                              skip: relationResult ? 0 : 1,
+                              searchValue: {
+                                value: '',
+                                isAsc: false,
+                                relation_filter: entityRelations,
+                                randomize: false,
+                                key: 'title',
+                                has_mediafile: true,
                               },
-                              updateQuery: (previousData, { fetchMoreResult }) => {
-                                console.log({ fetchMoreResult });
-                                const newRelation: SecondaryRelation = {
-                                  originId: relationEntity.id,
-                                  relatedEntities: fetchMoreResult.Entities.results,
-                                };
-                                subRelations.value.push(newRelation);
-                              },
-                            });
-                          }
-                        });
+                            },
+                            updateQuery: (previousData, { fetchMoreResult }) => {
+                              console.log({ fetchMoreResult });
+                              const newRelation: SecondaryRelation = {
+                                originId: relationEntity.id,
+                                relatedEntities: fetchMoreResult.Entities.results,
+                              };
+                              subRelations.value.push(newRelation);
+                            },
+                          });
+                        }
                       });
-                  }
+                    });
                 }
-              },
-            });
+              }
+            },
+          });
+        }
+      };
+
+      watch(
+        () => result.value,
+        (entityResult) => {
+          console.log({ entityResult });
+          console.log('Entity result');
+          if (entityResult) {
+            if (fabricService.value) {
+              // Dispose canvas (kill it) before creating a new one and filling it up
+              disposeCanvas();
+            }
+            fabricService.value = new FabricService();
+
+            fabricService.value.generateMainImageFrame(entityResult.Entity);
+
+            getRelations(entityResult.Entity);
+            headEntityId.value = entityResult.Entity.id;
+            entity.value = entityResult.Entity;
+            IIIFImageUrlHelper(entityResult.Entity);
+
+            if (startAsset.value) {
+              const startEntity = startAsset.value;
+              const historyEntities = historyAssets.value;
+              if (startEntity) {
+                fabricService.value?.generateInfoBar(startEntity, historyEntities);
+              }
+            }
+          } else {
+            alert('Entity not found');
           }
+          loadRelations(entity.value);
         },
       );
 
@@ -262,7 +296,6 @@
       };
 
       const showPictureModal = () => {
-        IIIFImageUrl.value = IIIFImageUrlHelper(entity.value);
         openIIIFModal();
       };
 
@@ -303,33 +336,6 @@
       const disposeCanvas = () => {
         fabricService.value?.state.canvas.dispose();
       };
-
-      onEntityResult((queryResult) => {
-        console.log('Entity result');
-        if (queryResult.data) {
-          if (fabricService.value) {
-            // Dispose canvas (kill it) before creating a new one and filling it up
-            disposeCanvas();
-          }
-          fabricService.value = new FabricService();
-
-          fabricService.value.generateMainImageFrame(queryResult.data.Entity);
-
-          getRelations(queryResult.data.Entity);
-          headEntityId.value = queryResult.data.Entity.id;
-          entity.value = queryResult.data.Entity;
-
-          if (startAsset.value) {
-            const startEntity = startAsset.value;
-            const historyEntities = historyAssets.value;
-            if (startEntity) {
-              fabricService.value?.generateInfoBar(startEntity, historyEntities);
-            }
-          }
-        } else {
-          alert('Entity not foud');
-        }
-      });
 
       onDoneAddingToBasket((_basketItems) => {
         if (_basketItems.data) {
