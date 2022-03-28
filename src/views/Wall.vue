@@ -156,6 +156,7 @@ export default defineComponent({
 
     const getCode = async (code: string) => {
       if (
+        stories.value != null &&
         stateService.getCurrentState() != FlowState[1] &&
         stateService.getCurrentState() != FlowState[2] &&
         stateService.getCurrentState() != FlowState[3] &&

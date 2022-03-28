@@ -6,7 +6,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, PropType, Ref, ref, watch } from 'vue';
+import { defineComponent, onMounted, onUpdated, PropType, Ref, ref, watch } from 'vue';
 import { BoxGeometry, Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
 import { Entity as _Entity, Frame } from '@/models/GraphqlModel';
 
@@ -47,12 +47,14 @@ import StateService, { FlowState } from '@/services/StateService';
 import TestSingleComponent from '@/Three/test.components';
 import SchemaCube, { CubeParams, CubeSchema } from '@/Three/schema.cube';
 import Colors from '@/Three/defaults.color';
+import Layers from '@/Three/defaults.layers';
 
 export default defineComponent({
   name: 'ViewPort',
   props: {
     stories: {
       type: Array as PropType<Array<Entity>>,
+      default: null,
       required: true,
     },
     storySelected: {
@@ -85,7 +87,7 @@ export default defineComponent({
   setup(props, { emit }) {
     let storySelected = JSON.parse(props.storySelected) as SensorObject;
     const viewport = ref(null);
-    const stories = ref(props.stories);
+    const stories = ref<Array<Entity> | null>(null);
     const currentStoryID = ref<string>('');
     const chooseStory = ref<boolean>(false);
     const videoElement = ref<HTMLVideoElement>();
@@ -186,7 +188,7 @@ export default defineComponent({
             countingStory.value = null;
             props.stateService.changeState(FlowState.storySelected);
             console.log('You selected sensor', countingStory.value);
-            storyData = stories.value;
+            stories.value ? (storyData = stories.value) : [];
             await setNewStoryWhenSelected(_storySelected.id - 1);
           }
 
@@ -201,9 +203,10 @@ export default defineComponent({
       () => props.stories,
       (value) => {
         stories.value = value;
-        // playStartVideo();
+        initState();
       },
     );
+
     watch(
       () => props.storyService,
       (value) => {
@@ -671,17 +674,7 @@ export default defineComponent({
       garbageHelper = WallGarbageHelper(threeSvc, taggingService);
       subtitleService = new SubtitleService();
       threeSvc.ClearScene();
-      initState();
-      const label = TestSingleComponent().metadataLabel(
-        new Vector3(0, 0, 3),
-        'My special label',
-      );
-      const cube = SchemaCube().CreateCube({
-        position: new Vector3(0, 0, 0),
-        params: { color: Colors().green, height: 300, width: 400 } as CubeParams,
-      } as CubeSchema);
 
-      // threeSvc.AddToScene(label, Tags.Testing)
       threeSvc.Animate();
     });
     return { viewport, videoElement, subtitles };
