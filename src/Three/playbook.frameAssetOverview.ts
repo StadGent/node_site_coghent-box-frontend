@@ -81,13 +81,12 @@ const useFrameAssetOverview = (
           ),
           position,
         );
-        image.scale.set(0.0001,0.0001,0.0001)
+        image.scale.set(0.0001, 0.0001, 0.0001)
       } else {
         image = await FrameOverview(threeService).addImage(asset, 0, position);
-        image.scale.set(0,0,0)
+        image.scale.set(0, 0, 0)
 
       }
-      console.log({scaleTo})
       scaleTo[i] = relationMetadata.scale;
       images.push(image);
       group.add(image);
@@ -180,25 +179,32 @@ const useFrameAssetOverview = (
     isVideo: string | undefined = undefined,
   ) => {
     const zoomSettings = calculateZoomSettingsOfAsset(asset);
-    console.log({zoomSettings})
     await useAsset(threeService).zoom(
       asset as Mesh<BoxBufferGeometry, any>,
       zoomSettings.zoomPosition,
       zoomSettings.scale,
       spotlight,
     );
-    
+
     if (isVideo) {
-      const video  = document.getElementById(isVideo) as HTMLVideoElement
+      const video = document.getElementById(isVideo) as HTMLVideoElement
       video.play();
     }
+
     const collections = useAsset(threeService).getCollections(assets[currentAsset]);
     const title = useAsset(threeService).getTitle(assets[currentAsset]);
     const metadataInfo = await useAsset(threeService).addMetadata(
       asset,
       storyColor,
       `${title} ${collections[0] ? `, (${collections[0].value}0` : ''}`,
+      zoomSettings
     );
+    const correction = (asset.geometry.parameters.width / 2) * zoomSettings.scale
+    if (zoomSettings.zoomPosition.x < 0) {
+      metadataInfo.position.x += correction
+    } else {
+      metadataInfo.position.x -= correction
+    }
     threeService.AddGroupsToScene(
       [metadataInfo],
       Tags.HighlightedMetadata,
@@ -254,7 +260,7 @@ const useFrameAssetOverview = (
               //@ts-ignore
               // const isVideo = tempUrls[activeStory.id][currentFrame]?.videos[index];
               const theAsset = asset as Mesh<BoxBufferGeometry, any>
-              console.log('theAsset',theAsset)
+              console.log('theAsset', theAsset)
               await zoomAndHighlightAsset(
                 theAsset,
                 index,

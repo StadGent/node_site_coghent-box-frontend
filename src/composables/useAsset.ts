@@ -171,21 +171,12 @@ const useAsset = (
     text: string,
     zoomSettings: any
   ) => {
-    console.log({zoomSettings})
-    console.log('asset position', object.position)
-    console.log('asset parameters',object)
-    const labelPosition: Vector3 = zoomSettings.zoomPosition 
-    let correctionSide = object.geometry.parameters.width/2 * zoomSettings.scale
-    if(zoomSettings.zoomPosition.x < 0){
-      // labelPosition.x = (zoomPosition.x - assetWidth/2)
-      correctionSide = -correctionSide
-    }
-    console.log({correctionSide})
-    console.log({labelPosition})
-    console.log('corrected position =', labelPosition.x - correctionSide)
+    const labelPosition: Vector3 = zoomSettings.zoomPosition
+
+    const labelText = await MetadataLabel(new Vector3(labelPosition.x, labelPosition.y, 0.1)).label(text)
 
     const metadataInfo = (
-      await MetadataLabel(new Vector3(labelPosition.x - correctionSide,labelPosition.y, 0.1)).create(text, color)
+      await MetadataLabel(new Vector3(labelPosition.x, labelPosition.y, 0.1)).create(labelText, color)
     ).metadata;
     return metadataInfo;
   };

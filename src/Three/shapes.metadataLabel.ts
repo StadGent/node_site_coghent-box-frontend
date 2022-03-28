@@ -1,3 +1,4 @@
+import Common from '@/composables/common';
 import { BoxGeometry, Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
 import Colors from './defaults.color';
 import Layers from './defaults.layers';
@@ -16,32 +17,39 @@ type MetadataLabelWithConnection = {
   connection?: Group,
 };
 
-const MetadataLabel = (_position: Vector3): {
-  label: (text: string) => Promise<Mesh<BoxGeometry, any>>
-  create: (text: string, _color: number) => Promise<MetadataLabelWithConnection>;
-} => {
+type Label = {
+  text: Mesh<BoxGeometry, any>,
+  dimensions: Vector3
+}
 
+const MetadataLabel = (_position: Vector3): {
+  label: (text: string) => Promise<Label>
+  create: (text: Label, _color: number) => Promise<MetadataLabelWithConnection>;
+} => {
+  let dotWidth = 0;
   const label = async (text: string) => {
     const labelText = await TextHelper().CreateText(text, new Vector3(_position.x, _position.y, _position.z + Layers.fraction), { width: 0, height: 0 } as CubeParams, { color: Colors().white, size: Measurements().text.size.medium } as FontParams, 1) as Mesh<BoxGeometry, any>;
-    return labelText;
+    return { text: labelText, dimensions: getSizeStoryText(labelText) };
   }
 
   const labelBox = (_width: number, _height: number, _color: number) => {
+    const position = _position
     const cube = schemaCube().CreateCube({
-      position: _position,
+      position: position,
       params: { width: _width, height: _height, color: _color },
     } as CubeSchema);
     return cube;
   };
 
   const circles = (box: Mesh<BoxGeometry, MeshBasicMaterial>, color: number) => {
+    dotWidth = box.geometry.parameters.height / 2
     const schema = CircleHelper().CreateSchema(
       new Vector3(
         box.position.x - box.geometry.parameters.width / 2,
         box.position.y,
         box.position.z,
       ),
-      box.geometry.parameters.height / 2,
+      dotWidth,
       color,
     );
     const schema2 = CircleHelper().CreateSchema(
@@ -50,7 +58,7 @@ const MetadataLabel = (_position: Vector3): {
         box.position.y,
         box.position.z,
       ),
-      box.geometry.parameters.height / 2,
+      dotWidth,
       color,
     );
     const circle = SchemaCircle().CreateCircle(schema);
@@ -99,19 +107,19 @@ const MetadataLabel = (_position: Vector3): {
   // }
 
 
-  const create = async (_text: string, _color: number) => {
-    const labelText = await label(_text);
-    const textDimensions = getSizeStoryText(labelText)
-    // const textHeight = Measurements().text.size.medium;
-    labelText.position.x = labelText.position.x - (textDimensions.x / 2)
-    labelText.position.y = labelText.position.y - (textDimensions.y / 2)
-    const box = labelBox(textDimensions.x, textDimensions.y + Measurements().text.paddingAround, _color);
+  const create = async (_label: Label, _color: number) => {
+    _label.text.position.y = _label.text.position.y - (_label.dimensions.y / 2)
+    _label.text.position.x = _position.x - (_label.dimensions.x / 2)
+
+
+    const box = labelBox(_label.dimensions.x, _label.dimensions.y + Measurements().text.paddingAround, _color);
     // const connect = connection(box, _color);
+    const endCircles = circles(box, _color)
     const metadataLabel = GroupHelper().CreateGroup([
       box,
-      labelText,
-      circles(box, _color).left,
-      circles(box, _color).right,
+      _label.text,
+      endCircles.left,
+      endCircles.right,
     ]);
     return {
       metadata: metadataLabel,
