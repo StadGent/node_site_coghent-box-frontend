@@ -199,12 +199,6 @@ const useFrameAssetOverview = (
       `${title} ${collections[0] ? `, (${collections[0].value}0` : ''}`,
       zoomSettings
     );
-    const correction = (asset.geometry.parameters.width / 2) * zoomSettings.scale
-    if (zoomSettings.zoomPosition.x < 0) {
-      metadataInfo.position.x += correction
-    } else {
-      metadataInfo.position.x -= correction
-    }
     threeService.AddGroupsToScene(
       [metadataInfo],
       Tags.HighlightedMetadata,

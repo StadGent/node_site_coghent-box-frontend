@@ -178,6 +178,16 @@ const useAsset = (
     const metadataInfo = (
       await MetadataLabel(new Vector3(labelPosition.x, labelPosition.y, 0.1)).create(labelText, color)
     ).metadata;
+    const correction = (object.geometry.parameters.width / 2) * zoomSettings.scale
+    if (zoomSettings.zoomPosition.x < 0) {
+      metadataInfo.position.x += correction
+      metadataInfo.position.x += labelText.dimensions.x/2
+      metadataInfo.position.x += labelText.dimensions.y
+    } else {
+      metadataInfo.position.x -= correction
+      metadataInfo.position.x -= labelText.dimensions.x/2
+      metadataInfo.position.x -= labelText.dimensions.y
+    }
     return metadataInfo;
   };
 
