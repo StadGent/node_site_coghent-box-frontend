@@ -86,7 +86,7 @@ const Measurements = (): {
       big: 50,
       veryBig: 120,
     },
-    paddingAround: 0.4,
+    paddingAround: 40,
   };
 
   const startOfSession = {

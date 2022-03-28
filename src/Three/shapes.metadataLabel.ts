@@ -4,6 +4,7 @@ import Layers from './defaults.layers';
 import Measurements from './defaults.measurements';
 import CircleHelper from './helper.circle';
 import GroupHelper from './helper.group';
+import { getSizeStoryText } from './helper.move';
 import TextHelper from './helper.text';
 import SchemaCircle from './schema.circle';
 import schemaCube, { CubeParams, CubeSchema } from './schema.cube';
@@ -16,14 +17,12 @@ type MetadataLabelWithConnection = {
 };
 
 const MetadataLabel = (_position: Vector3): {
+  label: (text: string) => Promise<Mesh<BoxGeometry, any>>
   create: (text: string, _color: number) => Promise<MetadataLabelWithConnection>;
 } => {
 
   const label = async (text: string) => {
-    const labelText = await TextHelper().CreateText(text, new Vector3(_position.x, _position.y, _position.z + Layers.fraction), { width: 0, height: 0 } as CubeParams, { color: Colors().white, size: Measurements().text.size.smaller } as FontParams, 1) as Mesh<BoxGeometry, any>;
-    const lengthOfText = ((text.length * Measurements().text.size.smaller))
-    labelText.position.setY(_position.y - (Measurements().text.size.smaller / 2));
-    labelText.position.setX(_position.x - lengthOfText / 3 - Measurements().text.paddingAround);
+    const labelText = await TextHelper().CreateText(text, new Vector3(_position.x, _position.y, _position.z + Layers.fraction), { width: 0, height: 0 } as CubeParams, { color: Colors().white, size: Measurements().text.size.medium } as FontParams, 1) as Mesh<BoxGeometry, any>;
     return labelText;
   }
 
@@ -102,9 +101,11 @@ const MetadataLabel = (_position: Vector3): {
 
   const create = async (_text: string, _color: number) => {
     const labelText = await label(_text);
-    const textWidth = _text.length * Measurements().text.size.smaller;
-    const textHeight = Measurements().text.size.smaller;
-    const box = labelBox(textWidth, textHeight + Measurements().text.paddingAround, _color);
+    const textDimensions = getSizeStoryText(labelText)
+    // const textHeight = Measurements().text.size.medium;
+    labelText.position.x = labelText.position.x - (textDimensions.x / 2)
+    labelText.position.y = labelText.position.y - (textDimensions.y / 2)
+    const box = labelBox(textDimensions.x, textDimensions.y + Measurements().text.paddingAround, _color);
     // const connect = connection(box, _color);
     const metadataLabel = GroupHelper().CreateGroup([
       box,
@@ -117,7 +118,7 @@ const MetadataLabel = (_position: Vector3): {
     };
   };
 
-  return { create };
+  return { label, create };
 
 };
 

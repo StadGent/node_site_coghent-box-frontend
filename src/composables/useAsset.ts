@@ -20,6 +20,8 @@ import Spot from '@/Three/shapes.spotlight';
 import { Tags } from '@/services/TaggingService';
 import { Entity } from 'coghent-vue-3-component-library/lib';
 import TWEEN from '@tweenjs/tween.js';
+import TextService from '@/services/TextService';
+import { getSizeStoryText } from '@/Three/helper.move';
 
 const useAsset = (
   threeService: ThreeService,
@@ -45,6 +47,7 @@ const useAsset = (
     object: Mesh<BoxBufferGeometry, any>,
     color: number,
     text: string,
+    zoomSettings: any
   ) => Promise<Group>;
   getAssetsFromFrame: (activeStory: Entity, frame: number) => Array<Entity>;
   connectRelationMetadata: (
@@ -166,9 +169,23 @@ const useAsset = (
     object: Mesh<BoxBufferGeometry, any>,
     color: number,
     text: string,
+    zoomSettings: any
   ) => {
+    console.log({zoomSettings})
+    console.log('asset position', object.position)
+    console.log('asset parameters',object)
+    const labelPosition: Vector3 = zoomSettings.zoomPosition 
+    let correctionSide = object.geometry.parameters.width/2 * zoomSettings.scale
+    if(zoomSettings.zoomPosition.x < 0){
+      // labelPosition.x = (zoomPosition.x - assetWidth/2)
+      correctionSide = -correctionSide
+    }
+    console.log({correctionSide})
+    console.log({labelPosition})
+    console.log('corrected position =', labelPosition.x - correctionSide)
+
     const metadataInfo = (
-      await MetadataLabel(new Vector3(object.position.x, -500, 1)).create(text, color)
+      await MetadataLabel(new Vector3(labelPosition.x - correctionSide,labelPosition.y, 0.1)).create(text, color)
     ).metadata;
     return metadataInfo;
   };
