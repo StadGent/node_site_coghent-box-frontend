@@ -288,7 +288,7 @@ export default defineComponent({
         Tags.ActiveStoryCircleFrameInnerDot,
       );
       // BUG introduction?
-      await checkPositionOfProgressRing()
+      await checkPositionOfProgressRing();
       //
       const groupOfAssetsTags = taggingService.getByTag(Tags.GroupOfAssets);
       if (groupOfAssetsTags && groupOfAssetsTags[0] && groupOfAssetsTags[0].object) {
@@ -307,17 +307,17 @@ export default defineComponent({
     };
 
     const checkPositionOfProgressRing = async () => {
-      console.log('tagged objects', taggingService.taggedObjects)
-      const frameRing = taggingService.getByTag(Tags.ActiveStoryCircleFrameRing)
-      if(frameRing[0] && frameRing[0].object){
-        const ring = frameRing[0].object[0] as Group
-        console.log('frame ring position', ring.position)
-        if(ring.position.x != zoneService.middleZoneCenter.x){
-          console.log('ring is not on position center')
-          await MoveObject().startMoving(ring, zoneService.middleZoneCenter)
+      console.log('tagged objects', taggingService.taggedObjects);
+      const frameRing = taggingService.getByTag(Tags.ActiveStoryCircleFrameRing);
+      if (frameRing[0] && frameRing[0].object) {
+        const ring = frameRing[0].object[0] as Group;
+        console.log('frame ring position', ring.position);
+        if (ring.position.x != zoneService.middleZoneCenter.x) {
+          console.log('ring is not on position center');
+          await MoveObject().startMoving(ring, zoneService.middleZoneCenter);
         }
-      }else Promise.resolve()
-    }
+      } else Promise.resolve();
+    };
 
     const startCountdownForSelectedStory = async (
       _storySelected: number,
@@ -484,7 +484,7 @@ export default defineComponent({
 
         const framePlaybook = PlayBook();
 
-        PlayBookBuild(
+        await PlayBookBuild(
           threeSvc,
           storyService,
           zoneService,
@@ -497,6 +497,16 @@ export default defineComponent({
           storyService.getStoryColor(storyService.activeStory.id),
           !taggingService.idAlreadyInList(storyService.activeStory.id),
         );
+
+        PlayBookBuild(
+          threeSvc,
+          storyService,
+          zoneService,
+          taggingService,
+          framePlaybook,
+          spotlight,
+          storyService.activeStory,
+        ).setActiveStoryCircleToBackground(false);
 
         await PlayBookBuild(
           threeSvc,
@@ -566,6 +576,15 @@ export default defineComponent({
     const setAfterFrameScreen = () => {
       playBook.addToPlayBook(
         () => {
+          PlayBookBuild(
+            threeSvc,
+            storyService,
+            zoneService,
+            taggingService,
+            playBook,
+            spotlight,
+            storyService.activeStory,
+          ).setActiveStoryCircleToBackground(true);
           MoveObject().startMoving(spotlight, zoneService.middleZoneCenter);
           CustomAnimation().shrink(
             spotlight as Mesh<any, MeshBasicMaterial>,

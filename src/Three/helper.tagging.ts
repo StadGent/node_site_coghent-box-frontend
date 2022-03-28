@@ -16,24 +16,23 @@ const TaggingHelper = (
   tagStorycircleAsActiveStoryCircle: (_storyId: string) => void;
 } => {
   const getActiveStoryCircle = () => {
-    const basic = _taggingService.getByTag(Tags.ActiveStoryCircleBasic)[0].object as Mesh<
-      CircleGeometry,
-      MeshBasicMaterial
-    >;
+    const basic = getByTag(Tags.ActiveStoryCircleBasic)
+
     let shade;
     _taggingService.getByTag(Tags.ActiveStoryCircleShade).length > 0
       ? (shade = _taggingService.getByTag(Tags.ActiveStoryCircleShade)[0].object as Mesh<
-          CircleGeometry,
-          MeshBasicMaterial
-        >)
+        CircleGeometry,
+        MeshBasicMaterial
+      >)
       : undefined;
-    const text = _taggingService.getByTag(Tags.ActiveStoryCircleText)[0].object as Group;
+    const text = getByTag(Tags.ActiveStoryCircleText)
     const frameDots = _taggingService.getByTag(Tags.ActiveStoryCircleFrameDot);
     const frameInnerDots = _taggingService.getByTag(Tags.ActiveStoryCircleFrameInnerDot);
-    const frameRing = _taggingService.getByTag(Tags.ActiveStoryCircleFrameRing)[0]
-      .object as Array<Group>;
+    // const frameRing = _taggingService.getByTag(Tags.ActiveStoryCircleFrameRing)[0]
+    //   .object as Array<Group>;
+    const frameRing = getByTag(Tags.ActiveStoryCircleFrameRing)
     const dots: Array<DotWithinDotObjects> = [];
-    for (let index = 0; index < frameDots.length; index++) {
+    for (let index = 0;index < frameDots.length;index++) {
       const _object = {
         dot: frameDots[index].object,
       } as DotWithinDotObjects;
@@ -52,6 +51,13 @@ const TaggingHelper = (
       } as PauseProgressbarObjects,
     };
   };
+
+  const getByTag = (_tag: Tags) => {
+    let taggedObject: null | any = null
+    const result = _taggingService.getByTag(_tag)
+    if (result && result[0] && result[0].object) taggedObject = result[0].object
+    return taggedObject
+  }
 
   const tagActiveStorycircleAsStoryCircle = () => {
     _taggingService.retag(Tags.ActiveStoryCircleBasic, Tags.StoryCircleBasic);

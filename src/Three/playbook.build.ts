@@ -70,6 +70,7 @@ const PlayBookBuild = (
   ) => Promise<Array<StoryData> | null>;
   startOfSession: () => Promise<true | false>;
   setSelectedStory: () => Promise<void>;
+  setActiveStoryCircleToBackground: (_moveToFront: boolean) => void
 } => {
   const logBuild = (_buildName: string) => {
     if (Development().showBuildLogs()) {
@@ -308,6 +309,25 @@ const PlayBookBuild = (
     WallGarbageHelper(threeService, taggingService).removeActiveFrameDots();
   };
 
+  const setActiveStoryCircleToBackground = (_moveToFront: boolean) => {
+    const difference = Math.abs(Layers.background) - 0.1
+    if(Development().showBuildLogs()){
+      console.log('move active storycircle to the front', _moveToFront)
+      console.log('difference to move', difference)
+    }
+    const activeObjects = TaggingHelper(taggingService).getActiveStoryCircle()
+    let property: keyof typeof activeObjects
+    for (property in activeObjects) {
+      if (activeObjects[property]) {
+        const element = activeObjects[property] as any
+        if (element.position) {
+          _moveToFront ? element.position.z = element.position.z + difference : element.position.z = element.position.z - difference
+        }
+      }
+    }
+
+  }
+
   return {
     updateAudio,
     storyCircle,
@@ -320,6 +340,7 @@ const PlayBookBuild = (
     storyData,
     startOfSession,
     setSelectedStory,
+    setActiveStoryCircleToBackground
   };
 };
 
