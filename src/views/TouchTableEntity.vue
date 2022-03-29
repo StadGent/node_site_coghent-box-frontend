@@ -51,9 +51,9 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, onMounted, onUnmounted, ref, watch } from 'vue';
+  import { defineComponent, onUnmounted, ref, watch } from 'vue';
   import FabricService from '../services/Fabric/FabricService';
-  import { useRoute, useRouter } from 'vue-router';
+  import { useRoute } from 'vue-router';
   import { useQuery, useMutation } from '@vue/apollo-composable';
   import {
     GetTouchTableEntityByIdDocument,
@@ -146,15 +146,28 @@
         }),
       );
 
+      // onUnmounted(() => {
+      //   console.log('Unmount');
+      //   startEntityResult.value = undefined;
+      //   console.log(startEntityResult);
+      // });
+
       watch(
         () => route.params.entityID,
         () => {
-          console.log('Refetch entity');
-          relationsLabelArray.value = [];
-          relationStringArray.value = [];
-          id = asString(route.params.entityID);
-          refetchEntity({ id: asString(route.params.entityID) });
-          mutateHistory();
+          if (route.params.entityID) {
+            console.log('Refetch entity');
+            console.log(route.params.entityID);
+            console.log(entity.value);
+            console.log(startEntityResult.value);
+            relationsLabelArray.value = [];
+            relationStringArray.value = [];
+            id = asString(route.params.entityID);
+            refetchEntity({
+              id: asString(route.params.entityID),
+            });
+            mutateHistory();
+          }
         },
         { deep: true, immediate: true },
       );
@@ -264,35 +277,40 @@
         }
       };
 
+      const generateCanvas = (primaryEntity: any) => {
+        console.log({ primaryEntity });
+        console.log('Entity result');
+        if (fabricService.value) {
+          // Dispose canvas (destroy it) before creating a new one and filling it up
+          disposeCanvas();
+        }
+        fabricService.value = new FabricService();
+
+        fabricService.value.generateMainImageFrame(primaryEntity);
+
+        getRelations(primaryEntity);
+        entity.value = primaryEntity;
+        IIIFImageUrl.value = IIIFImageUrlHelper(primaryEntity);
+
+        if (startAsset.value) {
+          const startEntity = startAsset.value;
+          const historyEntities = historyAssets.value;
+          if (startEntity) {
+            fabricService.value?.generateInfoBar(startEntity, historyEntities);
+          }
+        }
+        loadRelations(primaryEntity);
+      };
+
+      if (startEntityResult.value) {
+        generateCanvas(startEntityResult.value.Entity);
+      }
+
       watch(
         () => startEntityResult.value,
         (entityResult) => {
-          if (entityResult.Entity) {
-            entityResult = entityResult.Entity;
-            console.log({ entityResult });
-            console.log('Entity result');
-            if (fabricService.value) {
-              // Dispose canvas (destroy it) before creating a new one and filling it up
-              disposeCanvas();
-            }
-            fabricService.value = new FabricService();
-
-            fabricService.value.generateMainImageFrame(entityResult);
-
-            getRelations(entityResult);
-            entity.value = entityResult;
-            IIIFImageUrl.value = IIIFImageUrlHelper(entityResult);
-
-            if (startAsset.value) {
-              const startEntity = startAsset.value;
-              const historyEntities = historyAssets.value;
-              if (startEntity) {
-                fabricService.value?.generateInfoBar(startEntity, historyEntities);
-              }
-            }
-            loadRelations(entityResult);
-          } else {
-            alert('Entity not found');
+          if (entityResult) {
+            generateCanvas(entityResult.Entity);
           }
         },
         { deep: true },
