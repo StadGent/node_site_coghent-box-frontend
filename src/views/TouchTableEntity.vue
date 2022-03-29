@@ -146,14 +146,18 @@
         }),
       );
 
-      onMounted(() => {
-        console.log('Refetch entity');
-        relationsLabelArray.value = [];
-        relationStringArray.value = [];
-        id = asString(route.params.entityID);
-        refetchEntity({ id: asString(route.params.entityID) });
-        mutateHistory();
-      });
+      watch(
+        () => route.params.entityID,
+        () => {
+          console.log('Refetch entity');
+          relationsLabelArray.value = [];
+          relationStringArray.value = [];
+          id = asString(route.params.entityID);
+          refetchEntity({ id: asString(route.params.entityID) });
+          mutateHistory();
+        },
+        { deep: true, immediate: true },
+      );
 
       const loadRelations = (entity: Entity) => {
         if (entity) {
