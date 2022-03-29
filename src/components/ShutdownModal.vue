@@ -97,10 +97,11 @@
       const router = useRouter();
 
       const goToCodeScreen = () => {
-        closeShutdownModal();
-        emit('disposeCanvas', true);
         const { resetBoxVisiter } = useBoxVisiter(apolloClient);
         resetBoxVisiter();
+        closeShutdownModal();
+        emit('disposeCanvas', true);
+        document.body.classList.remove('overflow-hidden');
         router.push('/touchtable/start');
       };
 
