@@ -86,12 +86,11 @@ const useFrame = (
     if (frame && frame.relationMetadata) {
       audioFiles = [
         ...frame.relationMetadata
-          .filter((_data) => _data.audioFile?.includes('download'))
+          .filter((_data) => _data.audioFile != null)
           .map((_item) => _item.audioFile as string),
       ];
       if (
-        audioFiles.length > 0 &&
-        (audioFiles[0].includes('.mp3') || audioFiles[0].includes('.wav'))
+        audioFiles.length > 0
       ) {
         audio = audioFiles[0];
       }

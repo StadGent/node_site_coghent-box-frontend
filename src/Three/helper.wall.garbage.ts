@@ -23,7 +23,9 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
   const removeArrayOfGroupsByTag = (_tag: Tags) => {
     const _groups = taggingService.getByTag(_tag);
     for (const item of _groups) {
-      threeService.RemoveGroupsFromScene(item.object);
+      if (item.object) {
+        threeService.RemoveGroupsFromScene(item.object);
+      }
     }
     taggingService.removeAllTagsFrom(_tag);
   };
@@ -38,7 +40,7 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
 
   const removeByTag = (_tag: Tags) => {
     const taggedObject = taggingService.getByTag(_tag);
-    if (taggedObject.length > 0) {
+    if (taggedObject.length > 0 && taggedObject[0]) {
       threeService.RemoveFromScene(taggedObject[0].object);
       removeByTag(_tag);
     }
@@ -53,7 +55,7 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
 
   const newStorySelected = async () => {
     const groupOfAssetsTags = TaggingHelper(taggingService).getByTag(Tags.GroupOfAssets);
-    if (groupOfAssetsTags) {
+    if (groupOfAssetsTags && groupOfAssetsTags[0]) {
       await CustomAnimation().fadeOutGroups([groupOfAssetsTags[0].object], 0, AnimationDefaults.values.fadeStep);
       threeService.RemoveFromScene(groupOfAssetsTags[0].object);
     }
