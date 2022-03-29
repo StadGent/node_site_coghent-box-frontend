@@ -41,7 +41,7 @@
           :loading="loadingActiveBoxResult"
         />
       </div>
-      <div v-else class="w-screen h-screen flex justify-center align-center">
+      <div v-else class="w-full flex justify-center align-center">
         <spinner />
       </div>
     </main>
