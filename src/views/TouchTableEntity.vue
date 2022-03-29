@@ -64,6 +64,7 @@
     boxVisiter,
     startAsset,
     historyAssets,
+    useBoxVisiter,
   } from 'coghent-vue-3-component-library';
   import BasketOverlay from '@/components/BasketOverlay.vue';
   import TouchHeader from '@/components/TouchHeader.vue';
@@ -73,6 +74,7 @@
   import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
   import IIIFModal, { useIIIFModal } from '@/components/IIIFModal.vue';
   import { IIIFImageUrlHelper } from '../services/Fabric/helper.fabric';
+  import { apolloClient } from '@/main';
 
   const asString = (x: string | string[]) => (Array.isArray(x) ? x[0] : x);
 
@@ -118,10 +120,6 @@
         refetch: refetchEntity,
       } = useQuery(GetTouchTableEntityByIdDocument, { id });
 
-      const { mutate: mutateBasket, onDone: onDoneAddingToBasket } = useMutation(
-        AddAssetToBoxVisiterDocument,
-        { variables: { code: code.value, assetId: '', type: 'inBasket' } },
-      );
       const { mutate: mutateHistory, onDone: onDoneAddingHistory } = useMutation(
         AddAssetToBoxVisiterDocument,
         { variables: { code: code.value, assetId: id, type: 'visited' } },
@@ -146,20 +144,11 @@
         }),
       );
 
-      // onUnmounted(() => {
-      //   console.log('Unmount');
-      //   startEntityResult.value = undefined;
-      //   console.log(startEntityResult);
-      // });
-
       watch(
         () => route.params.entityID,
         () => {
           if (route.params.entityID) {
             console.log('Refetch entity');
-            console.log(route.params.entityID);
-            console.log(entity.value);
-            console.log(startEntityResult.value);
             relationsLabelArray.value = [];
             relationStringArray.value = [];
             id = asString(route.params.entityID);
@@ -332,7 +321,13 @@
       );
 
       const addToBasket = () => {
-        mutateBasket({ code: code.value, assetId: id, type: 'inBasket' });
+        const { addAssetToBoxVisiter } = useBoxVisiter(apolloClient);
+        addAssetToBoxVisiter(code.value, id, 'inBasket').then(
+          (relations: Relation[]) =>
+            (basketItems.value = relations.filter(
+              (relation: Relation) => relation.type == 'inBasket',
+            )),
+        );
       };
 
       const showPictureModal = () => {
@@ -342,14 +337,6 @@
       const highlightSelectedFilter = (filterIndex: number) => {
         fabricService.value?.highlightRelatedFrames(filterIndex, relationsArray.value);
       };
-
-      onDoneAddingToBasket((_basketItems) => {
-        if (_basketItems.data) {
-          basketItems.value = _basketItems.data.AddAssetToBoxVisiter.filter(
-            (asset: any) => asset.type == 'inBasket',
-          );
-        }
-      });
 
       return {
         entity,
