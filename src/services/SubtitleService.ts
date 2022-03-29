@@ -77,29 +77,28 @@ export default class SubtitleService {
     return convertedTime
   }
 
-  getSubtitleForTime(_currentTime: number, _data: Array<srtObject>, _index: number) {
-    const action = _data.filter(_objects => this.currentSubtitleIndex == parseInt(_objects.id))[0];
-
-    if (_currentTime >= this.timeToSeconds(action.startTime)
-      && _currentTime <= this.timeToSeconds(action.endTime)) {
-      if (Development().showSubtitleLogs()) {
-        console.log('| subtitle Action', action);
-        console.log('| currentAction startTime:', this.timeToSeconds(_data.filter(_objects => Number(action.id) == parseInt(_objects.id))[0].startTime));
-        console.log('| currentAction endTime:', this.timeToSeconds(_data.filter(_objects => Number(action.id) == parseInt(_objects.id))[0].endTime));
-        console.log(`| text: ${action.text}`)
-        console.log('| --------------------------------');
+  getSrtForTime(_currentTime: number) {
+    let srtLineToDisplay = null
+    if (this.subtitles) {
+      for (const srt of this.subtitles) {
+        if (_currentTime > this.timeToSeconds(srt.startTime) - 0.25 &&
+          _currentTime <= this.timeToSeconds(srt.endTime) + 0.25
+        ) {
+          srtLineToDisplay = srt
+          if (Development().showSubtitleLogs()) console.log(`${srt.id}. `, srt.text)
+        }
       }
-      this.currentSubtitle = action.text;
-
-    } else {
-      this.currentSubtitleIndex++
-      const action = _data.filter(_objects => this.currentSubtitleIndex == parseInt(_objects.id))[0];
-      this.currentSubtitle = action.text;
     }
-    return {
-      subtitle: this.currentSubtitle,
-      index: this.currentSubtitleIndex,
-    };
+    return srtLineToDisplay
+  }
+
+  getCurrentSubtitleText(_currentTime: number) {
+    const srtSection = this.getSrtForTime(_currentTime)
+    if (srtSection) {
+      this.currentSubtitle = srtSection.text
+      this.currentSubtitleIndex = Number(srtSection.id)
+    } else this.currentSubtitle = ''
+    return this.currentSubtitle
   }
 
   returnPreviousSubtitle(_index: number) {

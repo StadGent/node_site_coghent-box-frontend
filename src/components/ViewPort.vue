@@ -398,7 +398,6 @@ export default defineComponent({
     const timing = () => {
       props.stateService.changeState(FlowState.framePlaying);
       let currentFunction = 0;
-      let currentSubtitle = 1;
       let timingCount = 0;
 
       let progress: Array<Group> = [];
@@ -408,14 +407,9 @@ export default defineComponent({
         if (
           audio &&
           subtitleService.subtitles &&
-          subtitleService.currentSubtitleIndex < subtitleService.subtitles.length
+          subtitleService.currentSubtitleIndex <= subtitleService.subtitles.length
         ) {
-          const subtitleParams = subtitleService.getSubtitleForTime(
-            audio.currentTime,
-            subtitleService.subtitles,
-            currentSubtitle,
-          );
-          subtitles.value = `${subtitleParams.subtitle}`;
+          subtitles.value = subtitleService.getCurrentSubtitleText(audio.currentTime);
         }
         let time = timingCount;
         if (audio != null && !isNaN(audio.duration)) {
@@ -670,9 +664,11 @@ export default defineComponent({
       subtitleService = new SubtitleService();
       threeSvc.ClearScene();
 
-      const text = await MetadataLabel(new Vector3(0, 0, 0)).label('Loading...');
-      text.text.position.x -= text.dimensions.x / 2;
-      threeSvc.AddToScene(text.text, Tags.Testing);
+      if (!stories.value) {
+        const text = await MetadataLabel(new Vector3(0, 0, 0)).label('Loading...');
+        text.text.position.x -= text.dimensions.x / 2;
+        threeSvc.AddToScene(text.text, Tags.Testing);
+      }
 
       threeSvc.Animate();
     });

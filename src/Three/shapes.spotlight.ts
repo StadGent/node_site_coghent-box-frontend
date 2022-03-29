@@ -62,7 +62,6 @@ const Spot = (): SpotlightFunctions => {
 
   const move = (position: Vector3, widestLenght: number) => {
     // spotlight.position.set(position.x, position.y, Layers.scene);
-    console.log(widestLenght);
     const newScale = {
       x: widestLenght / 2 + 250,
       y: widestLenght / 2 + 250,

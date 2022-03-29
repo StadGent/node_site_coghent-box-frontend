@@ -14,6 +14,7 @@ const TaggingHelper = (
   };
   tagActiveStorycircleAsStoryCircle: () => void;
   tagStorycircleAsActiveStoryCircle: (_storyId: string) => void;
+  getByTag: (_tag: Tags) => any | null
 } => {
   const getActiveStoryCircle = () => {
     const basic = getByTag(Tags.ActiveStoryCircleBasic)
@@ -150,6 +151,7 @@ const TaggingHelper = (
     getActiveStoryCircle,
     tagActiveStorycircleAsStoryCircle,
     tagStorycircleAsActiveStoryCircle,
+    getByTag,
   };
 };
 
