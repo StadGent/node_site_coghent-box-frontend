@@ -160,9 +160,6 @@ const useFrameAssetOverview = (
 
   const calculateZoomSettingsOfAsset = (asset: Mesh<BoxBufferGeometry, any>) => {
     const inZone = zoneService.objectIsInZone(asset);
-    Tools().dotOnPosition(threeService, inZone.center, Colors().yellow);
-    Tools().dotOnPosition(threeService, inZone.start, Colors().lightBlue);
-    Tools().dotOnPosition(threeService, inZone.end, Colors().pink);
 
     let scale = 1000 / asset.geometry.parameters.height;
 
