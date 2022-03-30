@@ -82,7 +82,7 @@
     props: {},
     setup(props) {
       const { openShutdownModal, closeShutdownModal } = useShutdownModal();
-      const stories = ref<Array<Relation>>([]);
+      const boxVisitorStories = ref<Array<Relation>>([]);
       const storyResults = ref<Array<StoryResult>>([]);
       const storyAssets = ref<Array<any>>([]);
       const colors = [...Colors().storyCss()];
@@ -93,17 +93,12 @@
 
       if (!boxVisiter.value) {
         router.push('/touchtable/start');
-      } else {
-        stories.value = boxVisiter.value.relations.filter(
-          (relation: any) => relation.type == 'stories',
-        );
       }
 
       return {
         openShutdownModal,
         activeBoxResult,
         boxVisiter,
-        stories,
         storyResults,
         colors,
         storyAssets,
