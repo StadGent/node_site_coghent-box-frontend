@@ -1,6 +1,6 @@
 <template>
   <label
-  class="absolute left-0 top-0 z-50"
+    class="absolute left-0 top-0 z-50"
     :class="[showInputField ? '' : ' opacity-0']"
     :v-if="visitercode == null"
     for=""
@@ -9,7 +9,7 @@
       ref="qrInput"
       v-model="inputValue"
       class="z-50 relative"
-      :class="[showInputField? '' : ' opacity-0']"
+      :class="[showInputField ? '' : ' opacity-0']"
       type="text"
       autofocus
     />
@@ -167,9 +167,9 @@ export default defineComponent({
         currentState.value = stateService.getCurrentState();
         storyService.value = null;
         const visiterByCode = await useBoxVisiter(apolloClient).getByCode(String(code));
-        visitercode.value = null;
-        console.log('visiter', visiter);
-        if (visiterByCode != null) {
+        if (visiterByCode != null || visitercode.value === String(code)) {
+          console.log('visiter', visiter);
+          visitercode.value = null;
           visitercode.value = String(code);
           visiter.value = visiterByCode;
         }
@@ -301,7 +301,7 @@ export default defineComponent({
       stateService,
       currentState,
       toggleShowInputField,
-      showInputField
+      showInputField,
     };
   },
 });
