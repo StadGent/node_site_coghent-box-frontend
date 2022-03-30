@@ -183,10 +183,12 @@ const useAsset = (
       metadataInfo.position.x += correction
       metadataInfo.position.x += labelText.dimensions.x/2
       metadataInfo.position.x += labelText.dimensions.y
+      metadataInfo.position.x += Measurements().spacing
     } else {
       metadataInfo.position.x -= correction
       metadataInfo.position.x -= labelText.dimensions.x/2
       metadataInfo.position.x -= labelText.dimensions.y
+      metadataInfo.position.x -= Measurements().spacing
     }
     return metadataInfo;
   };

@@ -47,6 +47,7 @@ const Measurements = (): {
   pauseScreen: PauseScreenParams;
   text: TextParams;
   startOfSession: StartOfSessionScreenParams;
+  spacing: number
 } => {
   const storyCircle = {
     radius: 200,
@@ -94,6 +95,8 @@ const Measurements = (): {
     countdownCircleThickness: 15,
   };
 
+  const spacing = 30 
+
   return {
     storyCircle,
     progressBar,
@@ -101,6 +104,7 @@ const Measurements = (): {
     pauseScreen,
     text,
     startOfSession,
+    spacing,
   };
 };
 
