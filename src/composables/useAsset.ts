@@ -81,7 +81,7 @@ const useAsset = (
       scale =
         (height / 2) * _scale +
         Measurements().spotLight.spaceAroundObject;
-    } else if (height < width) {
+    } else {
       scale =
         (width / 2) * _scale +
         Measurements().spotLight.spaceAroundObject;
@@ -118,7 +118,6 @@ const useAsset = (
     // } else if (!widest) {
     const scaleForSpotlight = getAssetSpotlightScale(asset, scale);
     // if (scaleForSpotlight > scale) {
-    console.log({ scaleForSpotlight })
     CustomAnimation().scale(
       spotlight as Mesh<any, MeshBasicMaterial>,
       scaleForSpotlight,
