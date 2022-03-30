@@ -32,7 +32,7 @@
           <div
             v-if="entity.seen"
             :class="`
-              relative
+              absolute
               top-4
               left-4
               flex
@@ -99,7 +99,7 @@
       const masonry = ref<any>(null);
       const entityData = ref<EntityData>({ results: [] });
       const { boxVisiter, setStartAsset, setSelectedStory } = useBoxVisiter(apolloClient);
-      const relation = boxVisiter.value.relations.find(
+      const boxVisiterStories = boxVisiter.value.relations.find(
         (relation: any) => relation.type === 'stories',
       );
       const router = useRouter();
@@ -107,14 +107,20 @@
       const tempAssetArray: any[] = [];
       props.storyEntities.forEach((frame: any) => {
         try {
-          const isFrameSeen =
-            relation.seen_frames && relation.seen_frames.includes('entities/' + frame.id);
-          const frameAssets = frame.assets.map((asset: any) => {
-            const newAsset = { ...asset };
-            newAsset.seen = isFrameSeen ? true : false;
-            return newAsset;
-          });
-          tempAssetArray.push(...entityData.value.results.concat(frameAssets));
+          if (boxVisiterStories.seen_frames) {
+            let isFrameSeen: Boolean = false;
+            boxVisiterStories.seen_frames.forEach((seenFrame: any) => {
+              if (seenFrame.id == frame.id) {
+                isFrameSeen = true;
+              }
+            });
+            const frameAssets = frame.assets.map((asset: any) => {
+              const newAsset = { ...asset };
+              newAsset.seen = isFrameSeen ? true : false;
+              return newAsset;
+            });
+            tempAssetArray.push(...entityData.value.results.concat(frameAssets));
+          }
         } catch (e) {
           if (frame.assets) {
             tempAssetArray.push(...frame.assets);
