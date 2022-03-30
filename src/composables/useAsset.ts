@@ -75,13 +75,15 @@ const useAsset = (
     _scale: number,
   ) => {
     let scale = 1;
-    if (_asset.geometry.parameters.height > _asset.geometry.parameters.width) {
+    const height = Number(_asset.geometry.parameters.height)
+    const width = Number(_asset.geometry.parameters.width)
+    if (height > width) {
       scale =
-        (_asset.geometry.parameters.height / 2) * _scale +
+        (height / 2) * _scale +
         Measurements().spotLight.spaceAroundObject;
-    } else {
+    } else if (height < width) {
       scale =
-        (_asset.geometry.parameters.width / 2) * _scale +
+        (width / 2) * _scale +
         Measurements().spotLight.spaceAroundObject;
     }
     return scale;
@@ -116,10 +118,10 @@ const useAsset = (
     // } else if (!widest) {
     const scaleForSpotlight = getAssetSpotlightScale(asset, scale);
     // if (scaleForSpotlight > scale) {
-    CustomAnimation().grow(
+    console.log({ scaleForSpotlight })
+    CustomAnimation().scale(
       spotlight as Mesh<any, MeshBasicMaterial>,
       scaleForSpotlight,
-      AnimationDefaults.values.scaleStep,
     );
     // } else {
     //   CustomAnimation().shrink(
@@ -181,12 +183,12 @@ const useAsset = (
     const correction = (object.geometry.parameters.width / 2) * zoomSettings.scale
     if (zoomSettings.zoomPosition.x < 0) {
       metadataInfo.position.x += correction
-      metadataInfo.position.x += labelText.dimensions.x/2
+      metadataInfo.position.x += labelText.dimensions.x / 2
       metadataInfo.position.x += labelText.dimensions.y
       metadataInfo.position.x += Measurements().spacing
     } else {
       metadataInfo.position.x -= correction
-      metadataInfo.position.x -= labelText.dimensions.x/2
+      metadataInfo.position.x -= labelText.dimensions.x / 2
       metadataInfo.position.x -= labelText.dimensions.y
       metadataInfo.position.x -= Measurements().spacing
     }

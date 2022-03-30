@@ -33,6 +33,10 @@ const CustomAnimation = (): {
     scaleTo: number,
     step: number,
   ) => Promise<void>;
+  scale: (
+    object: Mesh<any, MeshBasicMaterial>,
+    scaleTo: number
+  ) => Promise<void>;
   circularCountdown: (
     _threeService: ThreeService,
     _position: Vector3,
@@ -236,6 +240,7 @@ const CustomAnimation = (): {
     fadeInGroups,
     grow,
     shrink,
+    scale,
     circularCountdown,
     singleCircularCountdown,
     circularLoader,
