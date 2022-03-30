@@ -81,7 +81,7 @@ export default defineComponent({
       canScanTicket.value = true;
     });
 
-    watch(visitercode, async (value) => {
+    const setVisiterData = async () => {
       if (canScanTicket.value) {
         const storyRelations = (await useBoxVisiter(apolloClient).getRelationsByType(
           visitercode.value,
@@ -120,7 +120,7 @@ export default defineComponent({
         }
         canScanTicket.value = false;
       }
-    });
+    };
 
     const createTempStoryService = (_storyRelations: Array<Relation>) => {
       const tmpStoryService = new StoryService(
@@ -167,11 +167,10 @@ export default defineComponent({
         currentState.value = stateService.getCurrentState();
         storyService.value = null;
         const visiterByCode = await useBoxVisiter(apolloClient).getByCode(String(code));
-        if (visiterByCode != null || visitercode.value === String(code)) {
-          console.log('visiter', visiter);
-          visitercode.value = null;
-          visitercode.value = String(code);
+        if (visiterByCode.code) {
           visiter.value = visiterByCode;
+          visitercode.value = String(code);
+          await setVisiterData();
         }
       } else {
         stateService.changeState(FlowState.storyOverview);
