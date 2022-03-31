@@ -34,7 +34,7 @@ const FrameOverview = (
       schema.params.url as string,
       'download/',
     );
-    schema.params.url = generateUrl(encodeURI(filename), 'full', 'max');
+    schema.params.url = generateUrl(filename, 'full', 'max');
 
     const cube = await SchemaCube().CreateImageCubeAsync(
       schema,
