@@ -69,7 +69,7 @@ const canvasTextHelper = (
 
 const ImageUrlHelper = (
   entities: Array<any>,
-  height: number = 150,
+  height: number[] | number = 150,
 ): Promise<string[]> => {
   try {
     const { generateUrl } = iiiF;
@@ -78,7 +78,11 @@ const ImageUrlHelper = (
     entities.forEach((entity: any) => {
       if (entity.primary_mediafile || entity.mediafiles[0].filename) {
         const image = entity.primary_mediafile || entity.mediafiles[0].filename;
-        imageUrls.push(generateUrl(image, 'full', '', height));
+        const requestHeight =
+          height instanceof Array
+            ? height[getRandomNumberInRangeHelper(0, height.length)]
+            : height;
+        imageUrls.push(generateUrl(image, 'full', '', requestHeight));
       }
     });
 

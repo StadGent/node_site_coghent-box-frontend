@@ -25,10 +25,6 @@ type FabricDefaults = {
         left: number;
         top: number;
       };
-      scale: {
-        scaleX: number;
-        scaleY: number;
-      };
       controls: {
         bl: boolean;
         br: boolean;
@@ -106,10 +102,7 @@ type FabricDefaults = {
         blockedPositions: Position[];
         range: number;
       };
-      scale: {
-        scaleX: number;
-        scaleY: number;
-      };
+      height: Array<number>;
     };
   };
 };
@@ -138,10 +131,6 @@ const fabricdefaults: FabricDefaults = {
       canvasPosition: {
         left: 1920 / 2,
         top: 880 - 10,
-      },
-      scale: {
-        scaleX: 1,
-        scaleY: 1,
       },
       controls: {
         bl: false,
@@ -233,10 +222,7 @@ const fabricdefaults: FabricDefaults = {
         blockedPositions: [{ yIndex: 3, xIndex: 3 }],
         range: 1,
       },
-      scale: {
-        scaleX: 1.1,
-        scaleY: 1.1,
-      },
+      height: [150, 125, 100],
     },
   },
 };
