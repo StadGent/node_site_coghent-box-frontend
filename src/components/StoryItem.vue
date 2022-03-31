@@ -1,5 +1,5 @@
 <template>
-  <section class="pb-24">
+  <section :class="storyNumber == 1 ? 'pb-12' : 'py-12'">
     <section class="flex items-center">
       <div
         :class="`flex justify-center items-center mr-12 h-48 w-48 z-40 rounded-full bg-${storyColor} shadow-${storyColor}`"
@@ -57,7 +57,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, onMounted, onUpdated, ref, watch } from 'vue';
+  import { defineComponent, nextTick, onMounted, onUpdated, ref, watch } from 'vue';
   import { TheMasonry } from 'coghent-vue-3-component-library';
   import { useBoxVisiter, BaseIcon } from 'coghent-vue-3-component-library';
   import { apolloClient } from '@/main';
@@ -93,8 +93,14 @@
         type: Boolean,
         required: true,
       },
+      lastStoryItem: {
+        type: Boolean,
+        required: true,
+        default: false,
+      },
     },
-    setup(props) {
+    emits: ['storyItemLoaded'],
+    setup(props, { emit }) {
       const { generateUrl, noImageUrl } = iiiF;
       const masonry = ref<any>(null);
       const entityData = ref<EntityData>({ results: [] });
@@ -107,20 +113,18 @@
       const tempAssetArray: any[] = [];
       props.storyEntities.forEach((frame: any) => {
         try {
-          if (boxVisiterStories.seen_frames) {
-            let isFrameSeen: Boolean = false;
-            boxVisiterStories.seen_frames.forEach((seenFrame: any) => {
-              if (seenFrame.id == frame.id) {
-                isFrameSeen = true;
-              }
-            });
-            const frameAssets = frame.assets.map((asset: any) => {
-              const newAsset = { ...asset };
-              newAsset.seen = isFrameSeen ? true : false;
-              return newAsset;
-            });
-            tempAssetArray.push(...entityData.value.results.concat(frameAssets));
-          }
+          let isFrameSeen: Boolean = false;
+          boxVisiterStories.seen_frames.forEach((seenFrame: any) => {
+            if (seenFrame.id == frame.id) {
+              isFrameSeen = true;
+            }
+          });
+          const frameAssets = frame.assets.map((asset: any) => {
+            const newAsset = { ...asset };
+            newAsset.seen = isFrameSeen ? true : false;
+            return newAsset;
+          });
+          tempAssetArray.push(...entityData.value.results.concat(frameAssets));
         } catch (e) {
           if (frame.assets) {
             tempAssetArray.push(...frame.assets);
@@ -140,6 +144,15 @@
           title: props.story.title[0].value,
         });
       };
+
+      onUpdated(() => {
+        nextTick(() => {
+          console.log('yeew');
+          if (props.lastStoryItem) {
+            emit('storyItemLoaded', true);
+          }
+        });
+      });
 
       return {
         entityData,

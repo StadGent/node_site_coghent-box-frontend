@@ -23,23 +23,22 @@
       </div>
     </nav>
     <main class="bg-background-light h-auto min-h-screen p-24">
-      <div
-        v-if="
-          !loadingActiveBoxResult &&
-          activeBoxResult &&
-          activeBoxResult.ActiveBox &&
-          activeBoxResult.ActiveBox.results
-        "
-      >
-        <story-item
+      <div v-if="!loadingActiveBoxResult && activeBoxResult">
+        <div
           v-for="(storyAsset, index) in activeBoxResult.ActiveBox.results"
           :key="storyAsset.id"
-          :story="storyAsset"
-          :story-number="index + 1"
-          :story-entities="storyAsset.frames"
-          :story-color="colors[index].replace('bg-', '')"
-          :loading="loadingActiveBoxResult"
-        />
+          :id="storyAsset.id"
+        >
+          <story-item
+            :story="storyAsset"
+            :story-number="index + 1"
+            :story-entities="storyAsset.frames"
+            :story-color="colors[index].replace('bg-', '')"
+            :loading="loadingActiveBoxResult"
+            :lastStoryItem="index == storyAssets.length ? true : false"
+            @storyItemLoaded="scrollToStoryItem"
+          />
+        </div>
       </div>
       <div v-else class="w-full flex justify-center align-center">
         <spinner />
@@ -49,14 +48,12 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref, watch } from 'vue';
+  import { defineComponent, nextTick, onUpdated, ref, watch } from 'vue';
   import {
     baseIcon,
     BaseButton,
     boxVisiter,
-    GetStoryByIdDocument,
     GetActiveBoxDocument,
-    GetEntityByIdDocument,
   } from 'coghent-vue-3-component-library';
   import { useRouter } from 'vue-router';
   import ShutdownModal, { useShutdownModal } from '@/components/ShutdownModal.vue';
@@ -82,9 +79,9 @@
     props: {},
     setup(props) {
       const { openShutdownModal, closeShutdownModal } = useShutdownModal();
-      const boxVisitorStories = ref<Array<Relation>>([]);
       const storyResults = ref<Array<StoryResult>>([]);
       const storyAssets = ref<Array<any>>([]);
+      const lastSeenStoryId = ref<any>();
       const colors = [...Colors().storyCss()];
       const router = useRouter();
 
@@ -95,6 +92,66 @@
         router.push('/touchtable/start');
       }
 
+      const getLastSeenFrame = (seenFrames: any) => {
+        seenFrames.sort((a: any, b: any) => {
+          return parseInt(b.date) - parseInt(a.date);
+        });
+        return seenFrames[0];
+      };
+
+      const getStoryForFrame = (stories: Relation[], frame: any) => {
+        let storyToReturn: Relation | undefined = undefined;
+        stories.forEach((story: any) => {
+          const foundFrameInStory = story.frames.find(
+            (storyFrame: any) => storyFrame.id == frame.id,
+          );
+          if (foundFrameInStory) {
+            storyToReturn = story.id;
+          }
+        });
+        return storyToReturn;
+      };
+
+      watch(
+        () => activeBoxResult.value,
+        (boxResult) => {
+          if (boxResult.ActiveBox) {
+            const activeStories = boxResult.ActiveBox.results;
+            const boxVisitorStories = boxVisiter.value.relations.filter(
+              (relation: Relation) => relation.type == 'stories',
+            );
+            const seenFrames: Array<any> = [];
+            boxVisitorStories.forEach((boxVisitorStory: any) => {
+              if (boxVisitorStory.seen_frames) {
+                seenFrames.push(...boxVisitorStory.seen_frames);
+              } else {
+                lastSeenStoryId.value = boxVisitorStory.key.replace('entities/', '');
+              }
+            });
+            if (!lastSeenStoryId.value) {
+              try {
+                const lastSeenFrame = getLastSeenFrame(seenFrames);
+                lastSeenStoryId.value = getStoryForFrame(activeStories, lastSeenFrame);
+              } catch (e) {
+                console.warn(e);
+              }
+            }
+          }
+        },
+      );
+
+      const scrollToStoryItem = () => {};
+
+      onUpdated(() => {
+        setTimeout(() => {
+          const storyItem: any = document.getElementById(lastSeenStoryId.value);
+          console.log(lastSeenStoryId.value, storyItem);
+          if (lastSeenStoryId.value && storyItem) {
+            storyItem.scrollIntoView({ behavior: 'smooth' });
+          }
+        }, 500);
+      });
+
       return {
         openShutdownModal,
         activeBoxResult,
@@ -102,7 +159,9 @@
         storyResults,
         colors,
         storyAssets,
+        lastSeenStoryId,
         loadingActiveBoxResult,
+        scrollToStoryItem,
       };
     },
   });

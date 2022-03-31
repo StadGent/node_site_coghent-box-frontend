@@ -120,11 +120,6 @@
         refetch: refetchEntity,
       } = useQuery(GetTouchTableEntityByIdDocument, { id });
 
-      const { mutate: mutateHistory, onDone: onDoneAddingHistory } = useMutation(
-        AddAssetToBoxVisiterDocument,
-        { variables: { code: code.value, assetId: id, type: 'visited' } },
-      );
-
       const { result: relationResult, fetchMore: fetchMoreRelations } = useQuery(
         GetTouchTableEntityDocument,
         () => ({
@@ -155,7 +150,8 @@
             refetchEntity({
               id: asString(route.params.entityID),
             });
-            mutateHistory();
+            const { addAssetToBoxVisiter } = useBoxVisiter(apolloClient);
+            addAssetToBoxVisiter(code.value, id, 'visited');
           }
         },
         { deep: true, immediate: true },
