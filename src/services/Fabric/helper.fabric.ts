@@ -5,112 +5,12 @@ import { fabric } from 'fabric';
 import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
 import { iiiF } from '@/main';
 
-const availablePositionsInRangeHelper = (
-  indexedPosition: Position,
-  range: number,
-  takenPositions: Array<Position>,
-): Array<Position> => {
-  let positionsInRange: Array<Position> = indexedPositionsInRangeHelper(
-    indexedPosition,
-    range,
-  );
-
-  positionsInRange.forEach((position: Position) => {
-    const blockedPositions =
-      fabricdefaults.canvas.secondaryImage.positions.blockedPositions;
-    if (
-      blockedPositions.length &&
-      blockedPositions.find(
-        (blockedPosition: Position) =>
-          blockedPosition.xIndex == position.xIndex &&
-          blockedPosition.yIndex == position.yIndex,
-      )
-    ) {
-      positionsInRange = positionsInRange.filter(
-        (positionInRange: Position) => positionInRange != position,
-      );
-    } else if (
-      takenPositions.find(
-        (takenPosition: Position) =>
-          takenPosition.xIndex == position.xIndex &&
-          takenPosition.yIndex == position.yIndex,
-      )
-    ) {
-      positionsInRange = positionsInRange.filter(
-        (positionInRange: Position) => positionInRange != position,
-      );
-    }
-    if (
-      indexedPosition.xIndex == position.xIndex &&
-      indexedPosition.yIndex == position.yIndex
-    ) {
-      positionsInRange = positionsInRange.filter(
-        (positionInRange: Position) => positionInRange != position,
-      );
-    }
-  });
-
-  return positionsInRange;
-};
-
-const indexedPositionsInRangeHelper = (indexedPosition: Position, range: number) => {
-  const indexedPositions: Position[] = [];
-
-  const startY: number = Math.max(0, indexedPosition.yIndex - range);
-  const endY: number = Math.min(
-    fabricdefaults.canvas.secondaryImage.positions.yAxis.length - 1,
-    indexedPosition.yIndex + range,
-  );
-
-  for (let row: number = startY; row <= endY; row++) {
-    const xRange: number = range - Math.abs(row - indexedPosition.yIndex);
-
-    const startX: number = Math.max(0, indexedPosition.xIndex - xRange);
-    const endX: number = Math.min(
-      fabricdefaults.canvas.secondaryImage.positions.xAxis.length - 1,
-      indexedPosition.xIndex + xRange,
-    );
-
-    for (let col = startX; col <= endX; col++) {
-      indexedPositions.push({ xIndex: col, yIndex: row });
-    }
-  }
-  return indexedPositions;
-};
-
 const objectIsTypeHelper = (type: string, object: any): boolean =>
   object.objectType == type ? true : false;
 
 const changeFrameScaleHelper = (frame: any, scale: Scale) => {
   frame.scaleX = scale.scaleX;
   frame.scaleY = scale.scaleY;
-};
-
-const initialAvailablePositionHelper = () => {
-  const availablePositionArray: Array<Position> = [];
-  fabricdefaults.canvas.secondaryImage.positions.xAxis.forEach((xPosition, xIndex) => {
-    fabricdefaults.canvas.secondaryImage.positions.yAxis.forEach((yPosition, yIndex) => {
-      if (
-        !fabricdefaults.canvas.secondaryImage.positions.blockedPositions.find(
-          (position: Position) => position.xIndex == xIndex && position.yIndex == yIndex,
-        )
-      ) {
-        availablePositionArray.push({ yIndex, xIndex });
-      }
-    });
-  });
-  return availablePositionArray;
-};
-
-const getPositionByIdHelper = (entityId: string, objectsOnCanvas: Array<any>) => {
-  const positionIndexEntity = objectsOnCanvas.find(
-    (object: any) => object.id == entityId,
-  );
-  if (positionIndexEntity) {
-    return positionIndexEntity.positionIndexes;
-  } else {
-    return undefined;
-  }
 };
 
 const getFrameByEntityIdHelper = (frameId: string, canvasObjects: Array<any>): any => {
@@ -167,7 +67,10 @@ const canvasTextHelper = (
   return textbox;
 };
 
-const ImageUrlHelper = (entities: Array<any> | any): Promise<string[]> => {
+const ImageUrlHelper = (
+  entities: Array<any> | any,
+  height: number = 150,
+): Promise<string[]> => {
   try {
     const { generateUrl, noImageUrl } = iiiF;
     const imageUrls: Array<string> = [];
@@ -175,13 +78,13 @@ const ImageUrlHelper = (entities: Array<any> | any): Promise<string[]> => {
       entities.forEach((entity: any) => {
         if (entity.primary_mediafile || entity.mediafiles[0].filename) {
           const image = entity.primary_mediafile || entity.mediafiles[0].filename;
-          imageUrls.push(generateUrl(image, 'full', '', 150));
+          imageUrls.push(generateUrl(image, 'full', '', height));
         }
       });
     } else {
       if (entities.primary_mediafile || entities.mediafiles[0].filename) {
         const image = entities.primary_mediafile || entities.mediafiles[0].filename;
-        imageUrls.push(generateUrl(image, 'full', '', 150));
+        imageUrls.push(generateUrl(image, 'full', '', height));
       }
     }
     return Promise.resolve(imageUrls as Array<string>);
@@ -252,14 +155,10 @@ const lockObjectMovementHelper = (object: any) => {
 export {
   changeFrameScaleHelper,
   ImageUrlHelper,
-  initialAvailablePositionHelper,
   getRandomNumberInRangeHelper,
-  indexedPositionsInRangeHelper,
   isDuplicateFrameHelper,
   getFrameByEntityIdHelper,
-  getPositionByIdHelper,
   lockObjectMovementHelper,
-  availablePositionsInRangeHelper,
   objectIsTypeHelper,
   frameBorderHighlightHelper,
   objectOpacityHelper,

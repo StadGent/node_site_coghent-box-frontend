@@ -144,7 +144,6 @@
       onUpdated(() => {
         setTimeout(() => {
           const storyItem: any = document.getElementById(lastSeenStoryId.value);
-          console.log(lastSeenStoryId.value, storyItem, isFirstStoryOverview);
           if (lastSeenStoryId.value && storyItem && isFirstStoryOverview.value) {
             storyItem.scrollIntoView({ behavior: 'smooth' });
           }

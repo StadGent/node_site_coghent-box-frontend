@@ -2,13 +2,10 @@ import { fabric } from 'fabric';
 import { fabricdefaults } from './defaults.fabric';
 import {
   ImageUrlHelper,
-  initialAvailablePositionHelper,
   getRandomNumberInRangeHelper,
   isDuplicateFrameHelper,
   getFrameByEntityIdHelper,
-  getPositionByIdHelper,
   lockObjectMovementHelper,
-  availablePositionsInRangeHelper,
   objectIsTypeHelper,
   frameBorderHighlightHelper,
   objectOpacityHelper,
@@ -20,6 +17,11 @@ import {
   isRelationOnFrameHelper,
 } from './helper.fabric';
 import { createDynamicLineHelper, underlineHelper } from './helper.lines';
+import {
+  availablePositionsInRangeHelper,
+  getPositionByIdHelper,
+  initialAvailablePositionHelper,
+} from './helper.positions';
 import { router } from '@/router';
 import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
 import { useBoxVisiter } from 'coghent-vue-3-component-library';
@@ -194,6 +196,7 @@ export default class FabricService {
     entities: Array<any>,
     subRelationOriginEntityId: string,
   ) {
+    console.log('hee');
     // Get positions around main entity, if none left increase the range
     let range: number = fabricdefaults.canvas.secondaryImage.positions.range;
     const canvasFrames: any[] = getObjectsByObjectTypeHelper(
