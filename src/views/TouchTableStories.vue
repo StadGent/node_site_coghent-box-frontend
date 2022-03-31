@@ -1,5 +1,5 @@
 <template>
-  <div v-if="boxVisiter">
+  <div v-if="boxVisiter" :key="boxVisiter.code">
     <shutdown-modal :code="boxVisiter.code" />
     <nav class="px-24 py-8 flex justify-between items-center">
       <div class="">
