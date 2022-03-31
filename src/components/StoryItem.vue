@@ -99,8 +99,7 @@
         default: false,
       },
     },
-    emits: ['storyItemLoaded'],
-    setup(props, { emit }) {
+    setup(props) {
       const { generateUrl, noImageUrl } = iiiF;
       const masonry = ref<any>(null);
       const entityData = ref<EntityData>({ results: [] });
@@ -144,15 +143,6 @@
           title: props.story.title[0].value,
         });
       };
-
-      onUpdated(() => {
-        nextTick(() => {
-          console.log('yeew');
-          if (props.lastStoryItem) {
-            emit('storyItemLoaded', true);
-          }
-        });
-      });
 
       return {
         entityData,

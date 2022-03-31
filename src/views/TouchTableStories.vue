@@ -36,7 +36,6 @@
             :story-color="colors[index].replace('bg-', '')"
             :loading="loadingActiveBoxResult"
             :lastStoryItem="index == storyAssets.length ? true : false"
-            @storyItemLoaded="scrollToStoryItem"
           />
         </div>
       </div>
@@ -140,8 +139,6 @@
         },
       );
 
-      const scrollToStoryItem = () => {};
-
       onUpdated(() => {
         setTimeout(() => {
           const storyItem: any = document.getElementById(lastSeenStoryId.value);
@@ -161,7 +158,6 @@
         storyAssets,
         lastSeenStoryId,
         loadingActiveBoxResult,
-        scrollToStoryItem,
       };
     },
   });
