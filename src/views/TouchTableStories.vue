@@ -58,6 +58,7 @@
   import ShutdownModal, { useShutdownModal } from '@/components/ShutdownModal.vue';
   import StoryItem from '@/components/StoryItem.vue';
   import Spinner from '@/components/Spinner.vue';
+  import { useTouchTable } from '@/composables/useTouchTable';
   import { useQuery, useMutation } from '@vue/apollo-composable';
   import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
   import Colors from '@/Three/defaults.color';
@@ -83,6 +84,7 @@
       const lastSeenStoryId = ref<any>();
       const colors = [...Colors().storyCss()];
       const router = useRouter();
+      const { isFirstStoryOverview } = useTouchTable();
 
       const { result: activeBoxResult, loading: loadingActiveBoxResult } =
         useQuery(GetActiveBoxDocument);
@@ -142,8 +144,8 @@
       onUpdated(() => {
         setTimeout(() => {
           const storyItem: any = document.getElementById(lastSeenStoryId.value);
-          console.log(lastSeenStoryId.value, storyItem);
-          if (lastSeenStoryId.value && storyItem) {
+          console.log(lastSeenStoryId.value, storyItem, isFirstStoryOverview);
+          if (lastSeenStoryId.value && storyItem && isFirstStoryOverview.value) {
             storyItem.scrollIntoView({ behavior: 'smooth' });
           }
         }, 500);
