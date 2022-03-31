@@ -64,6 +64,7 @@
   import { useRouter } from 'vue-router';
   import { Entity } from 'coghent-vue-3-component-library/lib/queries';
   import { iiiF } from '@/main';
+  import { useTouchTable } from '@/composables/useTouchTable';
 
   type EntityData = {
     results: any[];
@@ -108,6 +109,7 @@
         (relation: any) => relation.type === 'stories',
       );
       const router = useRouter();
+      const { updateIsFirstStoryOverview } = useTouchTable();
 
       const tempAssetArray: any[] = [];
       props.storyEntities.forEach((frame: any) => {
@@ -135,6 +137,7 @@
       entityData.value.results = tempAssetArray;
 
       const navigateToTouchtable = (entity: Entity) => {
+        updateIsFirstStoryOverview(false);
         setStartAsset(entity);
         router.push('/touchtable/' + entity.id);
         setSelectedStory({

@@ -64,6 +64,7 @@
   import NumberDisplay from '@/components/NumberDisplay.vue';
   import { useRouter } from 'vue-router';
   import { apolloClient } from '@/main';
+  import { useTouchTable } from '@/composables/useTouchTable';
 
   export default defineComponent({
     name: 'StartCode',
@@ -80,6 +81,7 @@
       const maxAmountOfNumbers = 8;
       const router = useRouter();
       const displayWrongCodeMessage = ref<boolean>(false);
+      const { updateIsFirstStoryOverview } = useTouchTable();
 
       const showWrongCodeMessage = () => {
         displayWrongCodeMessage.value = true;
@@ -100,11 +102,12 @@
 
       const checkCode = () => {
         let code: string = NumberPadState.value.state.join('');
-        // code = '81453243';
+        // code = '81453243'; // 37898122, 15747469
         const { getByCode } = useBoxVisiter(apolloClient);
         const resolvedBoxVisit = getByCode(code);
         resolvedBoxVisit.then((boxVisit: any) => {
           if (boxVisit) {
+            updateIsFirstStoryOverview(true);
             router.push('/touchtable/stories');
             resetNumberPad();
           } else {
