@@ -227,7 +227,7 @@ export default class FabricService {
       ImageUrlHelper(entities, fabricdefaults.canvas.secondaryImage.height).then(
         (images: string[]) => {
           images.forEach((image, index) => {
-            const frame = new fabric.Image.fromURL(image, (image: any) => {
+            new fabric.Image.fromURL(image, (image: any) => {
               const randomNumber = getRandomNumberInRangeHelper(
                 0,
                 closeAvailablePositions.length - 1,
@@ -258,7 +258,7 @@ export default class FabricService {
                 closeAvailablePositions = closeAvailablePositions.filter(
                   (pos: any) => pos != closeAvailablePositions[randomNumber],
                 );
-
+                console.log(image.id);
                 this.state.takenPositions.push(image.positionIndexes);
               } else {
                 // Generate relation instead of frame

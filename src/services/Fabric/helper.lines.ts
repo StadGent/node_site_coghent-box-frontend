@@ -16,7 +16,6 @@ const underlineHelper = (mainImage: any) => {
     spacedCoordinates.find((coordinate: Coordinate) => coordinate.key == 'br')?.y,
   ];
   const lineObject = new fabric.Line(underline, {
-    fill: fabricdefaults.canvas.selectedImage.underline.color,
     stroke: fabricdefaults.canvas.selectedImage.underline.color,
     strokeWidth: fabricdefaults.canvas.selectedImage.underline.stroke,
     selectable: false,

@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, nextTick, onUpdated, ref, watch } from 'vue';
+  import { defineComponent, nextTick, onMounted, onUpdated, ref, watch } from 'vue';
   import {
     baseIcon,
     BaseButton,
@@ -140,14 +140,21 @@
           }
         },
       );
-
-      onUpdated(() => {
+      const scrollToStory = () => {
         setTimeout(() => {
           const storyItem: any = document.getElementById(lastSeenStoryId.value);
           if (lastSeenStoryId.value && storyItem && isFirstStoryOverview.value) {
             storyItem.scrollIntoView({ behavior: 'smooth' });
           }
         }, 500);
+      };
+
+      onUpdated(() => {
+        scrollToStory();
+      });
+
+      onMounted(() => {
+        scrollToStory();
       });
 
       return {
