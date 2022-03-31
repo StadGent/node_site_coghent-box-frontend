@@ -80,7 +80,7 @@ export default class FabricService {
   }
 
   generateMainImageFrame(entity: Entity) {
-    ImageUrlHelper(entity).then((images: string[]) => {
+    ImageUrlHelper([entity]).then((images: string[]) => {
       const image = images[0];
       const frame = new fabric.Image.fromURL(image, (image: any) => {
         image.top = fabricdefaults.canvas.selectedImage.canvasPosition.top;
@@ -128,7 +128,7 @@ export default class FabricService {
     this.state.canvas.add(backgroundRect);
 
     let startFrame = undefined;
-    ImageUrlHelper(startEntity).then((imageArray: string[]) => {
+    ImageUrlHelper([startEntity]).then((imageArray: string[]) => {
       const startImage: string = imageArray[0];
       new fabric.Image.fromURL(startImage, (image: any) => {
         image.top = fabricdefaults.canvas.infoBar.startFrame.position.top;
