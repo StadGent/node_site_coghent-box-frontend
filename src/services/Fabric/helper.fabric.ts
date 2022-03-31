@@ -68,25 +68,20 @@ const canvasTextHelper = (
 };
 
 const ImageUrlHelper = (
-  entities: Array<any> | any,
+  entities: Array<any>,
   height: number = 150,
 ): Promise<string[]> => {
   try {
-    const { generateUrl, noImageUrl } = iiiF;
+    const { generateUrl } = iiiF;
     const imageUrls: Array<string> = [];
-    if (entities instanceof Array) {
-      entities.forEach((entity: any) => {
-        if (entity.primary_mediafile || entity.mediafiles[0].filename) {
-          const image = entity.primary_mediafile || entity.mediafiles[0].filename;
-          imageUrls.push(generateUrl(image, 'full', '', height));
-        }
-      });
-    } else {
-      if (entities.primary_mediafile || entities.mediafiles[0].filename) {
-        const image = entities.primary_mediafile || entities.mediafiles[0].filename;
+
+    entities.forEach((entity: any) => {
+      if (entity.primary_mediafile || entity.mediafiles[0].filename) {
+        const image = entity.primary_mediafile || entity.mediafiles[0].filename;
         imageUrls.push(generateUrl(image, 'full', '', height));
       }
-    }
+    });
+
     return Promise.resolve(imageUrls as Array<string>);
   } catch (e) {
     console.warn(`Image url could not be constructed: ${e}`);
