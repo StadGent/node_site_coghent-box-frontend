@@ -1,5 +1,6 @@
 <template>
-  <label
+ <div class="black">
+    <label
     class="absolute left-0 top-0 z-50"
     :class="[showInputField ? '' : ' opacity-0']"
     :v-if="visitercode == null"
@@ -25,6 +26,7 @@
     @resetSelectedStory="resetSelectedStory"
   />
   <mqtt @selectStory="setSelectStory" @mqttEnabled="toggleShowInputField" />
+ </div>
 </template>
 <script lang="ts">
 import { defineComponent, onMounted, ref, watch } from 'vue';
@@ -305,3 +307,12 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+.black{
+  background-color: black;
+  height: 100vh;
+  width: 100vw;
+  z-index: 0;
+}
+</style>

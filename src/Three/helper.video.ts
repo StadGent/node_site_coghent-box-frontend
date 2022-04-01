@@ -42,7 +42,9 @@ const VideoHelper = (): {
       video.id = _id;
       video.src = _src
       video.crossOrigin = 'anonymous';
-      video.style.visibility='hidden'
+      video.style.visibility = 'hidden'
+      video.style.position = 'absolute'
+      video.style.top = '0'
       if (Development().showVideoLogs()) {
         console.log('| Creating new videoElement')
         console.log('| Load video')
