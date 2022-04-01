@@ -27,6 +27,7 @@ import StoryCircle from './section.storyCircle';
 import { CircleParams, CircleSchema } from './schema.circle';
 import { Entity } from 'coghent-vue-3-component-library/lib';
 import Development from './defaults.development';
+import StoryCircleCorrections from './corrections.storycircle';
 
 const PlayBookBuild = (
   threeService: ThreeService,
@@ -205,7 +206,7 @@ const PlayBookBuild = (
       AnimationDefaults.values.scaleStep,
     );
     const shadedStoryCircle = taggingService.getByTag(Tags.ActiveStoryCircleShade)
-    if(shadedStoryCircle && shadedStoryCircle[0] && shadedStoryCircle[0].object){
+    if (shadedStoryCircle && shadedStoryCircle[0] && shadedStoryCircle[0].object) {
       await CustomAnimation().fadeOut(
         shadedStoryCircle[0].object,
         -1,
@@ -304,17 +305,20 @@ const PlayBookBuild = (
       } as CircleSchema),
       Tags.ActiveStoryCircleShade,
     );
+
     await MoveHelper(taggingService).activeStoryCircle(
       zoneService.middleZoneCenter,
       storyService.activeStoryData,
     );
+    await StoryCircleCorrections(threeService, storyService, taggingService).ringprogressToCenterOfScreen(storyService.activeStoryData)
 
-    WallGarbageHelper(threeService, taggingService).removeActiveFrameDots();
+    // WallGarbageHelper(threeService, taggingService).removeActiveFrameDots();
+
   };
 
   const setActiveStoryCircleToBackground = (_moveToFront: boolean) => {
     const difference = Math.abs(Layers.background) - 0.1
-    if(Development().showBuildLogs()){
+    if (Development().showBuildLogs()) {
       console.log('move active storycircle to the front', _moveToFront)
       console.log('difference to move', difference)
     }

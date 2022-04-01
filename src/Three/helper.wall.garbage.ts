@@ -6,6 +6,7 @@ import Development from './defaults.development';
 import TaggingHelper from './helper.tagging';
 
 export type GarabageHelperForWall = {
+  removeArrayOfGroupsByTag: (_tag: Tags) => void;
   removeGroupsByTag: (_tag: Tags) => void;
   pauseScreen: () => void;
   newStorySelected: () => Promise<void>;
@@ -131,6 +132,7 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
   }
 
   return {
+    removeArrayOfGroupsByTag,
     pauseScreen,
     newStorySelected,
     newStorySelectedWithNoActive,

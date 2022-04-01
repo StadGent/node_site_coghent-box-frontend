@@ -43,6 +43,8 @@ import useStartOfSession from '@/Three/playbook.startOfSession';
 import Spot from '@/Three/shapes.spotlight';
 import StateService, { FlowState } from '@/services/StateService';
 import MetadataLabel from '@/Three/shapes.metadataLabel';
+import StoryCircle from '@/Three/section.storyCircle';
+import Colors from '@/Three/defaults.color';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -669,6 +671,25 @@ export default defineComponent({
         text.text.position.x -= text.dimensions.x / 2;
         threeSvc.AddToScene(text.text, Tags.Testing);
       }
+      const storydataJKSON = `{
+    "storyId": "85d5b6bb-f8e7-4fb5-9dc6-ff1de6b4a75b",
+    "totalOfFrames": 3,
+    "seenFrames": {},
+    "totalOfFramesSeen": 0,
+    "storySeen": false,
+    "storyColor": 654557,
+    "pausedPosition": {
+        "x": -960,
+        "y": 1080,
+        "z": 0
+    }
+}`
+      const storydata = JSON.parse(storydataJKSON)
+      // const circle = StoryCircle(storyService).progressOfFrames(new Vector3(0,0,0), Colors().green,storydata)
+      // console.log({circle})
+      // threeSvc.AddGroupsToScene(circle.ring, Tags.Testing)
+      // circle.ring
+      // SceneHelper(threeSvc,storyService).addFrameProgressDotsToScene(circle.dots,storydata.storyId, 1, true)
 
       threeSvc.Animate();
     });
