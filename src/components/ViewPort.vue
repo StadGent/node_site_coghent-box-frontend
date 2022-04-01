@@ -145,6 +145,7 @@ export default defineComponent({
         let storyDataOfSelected: StoryData | null = null;
         if (storyService) {
           storyDataOfSelected = storyService.getStoryData()[_storySelected.id - 1];
+          // storyService.updateStoryStatus(storyDataOfSelected);
         }
         if (
           chooseStory.value &&
@@ -237,13 +238,12 @@ export default defineComponent({
 
     const setNewStoryWhenSelected = async (_storySelected: number) => {
       chooseStory.value = false;
+      storyService.setActiveStory(storyData[_storySelected].id);
       const _storyData = storyService.getStoryDataOfStory(storyData[_storySelected].id);
       const next = storyService.setNextFrameForStory(_storyData.storyId);
       currentFrame = next.frame;
-      storyService.setActiveStory(storyData[_storySelected].id);
-      currentStoryID.value = storyService.activeStoryData.storyId;
 
-      const resultStoryData = await PlayBookBuild(
+      await PlayBookBuild(
         threeSvc,
         storyService,
         zoneService,
@@ -252,6 +252,8 @@ export default defineComponent({
         spotlight,
         storyService.activeStory,
       ).storyData(storyService, storyService.activeStory, currentFrame);
+
+      currentStoryID.value = storyService.activeStoryData.storyId;
 
       await PlayBookBuild(
         threeSvc,
@@ -683,8 +685,8 @@ export default defineComponent({
         "y": 1080,
         "z": 0
     }
-}`
-      const storydata = JSON.parse(storydataJKSON)
+}`;
+      const storydata = JSON.parse(storydataJKSON);
       // const circle = StoryCircle(storyService).progressOfFrames(new Vector3(0,0,0), Colors().green,storydata)
       // console.log({circle})
       // threeSvc.AddGroupsToScene(circle.ring, Tags.Testing)

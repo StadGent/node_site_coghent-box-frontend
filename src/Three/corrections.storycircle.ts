@@ -13,13 +13,13 @@ const StoryCircleCorrections = (_threeService: ThreeService, _storyService: Stor
   ringprogressToCenterOfScreen: (_storydata: StoryData) => Promise<void>
 } => {
   const ringprogressToCenterOfScreen = async (_storydata: StoryData) => {
-    WallGarbageHelper(_threeService, _taggingService).removeArrayOfGroupsByTag(Tags.ActiveStoryCircleFrameRing);
+    // WallGarbageHelper(_threeService, _taggingService).removeArrayOfGroupsByTag(Tags.ActiveStoryCircleFrameRing);
     WallGarbageHelper(_threeService, _taggingService).removeActiveFrameDots()
     // create the progresscircle
-    await Common().awaitTimeout(400)
-    const circle = StoryCircle(_storyService).progressOfFrames(new Vector3(0, 0, Layers.scene), _storydata.storyColor, _storydata)
-    _threeService.AddGroupsToScene(circle.ring, Tags.ActiveStoryCircleFrameRing, 'Storycircle progress ring added again for bug ')
-    SceneHelper(_threeService, _storyService).addFrameProgressDotsToScene(circle.dots, _storydata.storyId, _storydata.totalOfFramesSeen, true)
+    // await Common().awaitTimeout(400)
+    // const circle = StoryCircle(_storyService).progressOfFrames(new Vector3(0, 0, Layers.scene), _storydata.storyColor, _storydata)
+    // _threeService.AddGroupsToScene(circle.ring, Tags.ActiveStoryCircleFrameRing, 'Storycircle progress ring added again for bug ')
+    // SceneHelper(_threeService, _storyService).addFrameProgressDotsToScene(circle.dots, _storydata.storyId, _storydata.totalOfFramesSeen, true)
   }
   return {
     ringprogressToCenterOfScreen
