@@ -1,5 +1,5 @@
 import useAsset from '@/composables/useAsset';
-import { Asset, Frame, Story } from '@/models/GraphqlModel';
+import { Asset, Frame } from '@/models/GraphqlModel';
 import FrameOverview from '@/screens/FrameOverview';
 import ThreeService from '@/services/ThreeService';
 import {
@@ -8,10 +8,8 @@ import {
   Mesh,
   MeshBasicMaterial,
   Object3D,
-  Texture,
   Vector3,
 } from 'three';
-import Layers from './defaults.layers';
 import { PlayBookFunctions } from '@/composables/playbook';
 import { Frame as modelFrame } from '@/models/GraphqlModel';
 import Common from '@/composables/common';
@@ -72,7 +70,7 @@ const useFrameAssetOverview = (
 
       if (mediafile) {
         let image;
-        if (mediafile?.original_file_location && Common().isVideo(mediafile.filename as string)) {
+        if (mediafile?.original_file_location && mediafile.mediatype && mediafile.mediatype?.video) {
           if (Development().showVideoLogs()) console.log('| Asset is video', mediafile.original_file_location)
           image = VideoHelper().videoElementAsCube(
             asset.id,

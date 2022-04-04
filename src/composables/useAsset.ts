@@ -1,14 +1,12 @@
 import { Metadata } from '@/models/CollectionModel';
 import { Asset, ComponentMetadata, Frame, Story } from '@/models/GraphqlModel';
 import ThreeService from '@/services/ThreeService';
-import Layers from '@/Three/defaults.layers';
 import Measurements from '@/Three/defaults.measurements';
 import {
   BoxBufferGeometry,
   Mesh,
   Vector3,
   Group,
-  BoxGeometry,
   MeshBasicMaterial,
 } from 'three';
 import MoveObject from './moveObject';
@@ -16,12 +14,8 @@ import CustomAnimation from './animation';
 import AnimationDefaults from '@/Three/defaults.animation';
 import MetadataLabel from '@/Three/shapes.metadataLabel';
 import Common from './common';
-import Spot from '@/Three/shapes.spotlight';
-import { Tags } from '@/services/TaggingService';
 import { Entity } from 'coghent-vue-3-component-library/lib';
 import TWEEN from '@tweenjs/tween.js';
-import TextService from '@/services/TextService';
-import { getSizeStoryText } from '@/Three/helper.move';
 import { MediaFile } from 'coghent-vue-3-component-library/lib/queries';
 
 const useAsset = (
