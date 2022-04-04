@@ -68,28 +68,32 @@ const useFrameAssetOverview = (
       data[relationMetadata.timestamp_start] = position;
       positions.push(position);
 
-      let image;
-      if (asset.mediafiles[0] && Common().isVideo(asset.mediafiles[0].filename)) {
-        if (Development().showVideoLogs()) console.log('| Asset is video', asset.mediafiles[0].original_file_location)
-        image = VideoHelper().videoElementAsCube(
-          asset.id,
-          asset.mediafiles[0].original_file_location,
-          new Vector3(
-            asset.mediafiles[0]?.mediainfo.width,
-            asset.mediafiles[0]?.mediainfo.height,
-            0,
-          ),
-          position,
-        );
-        image.scale.set(0.0001, 0.0001, 0.0001)
-      } else {
-        image = await FrameOverview(threeService).addImage(asset, 0, position);
-        image.scale.set(0, 0, 0)
+      const mediafile = useAsset(threeService).getMediaInfoForAsset(asset.id, asset.primary_mediafile_location, frame.assets)
 
+      if (mediafile) {
+        let image;
+        if (mediafile?.original_file_location && Common().isVideo(mediafile.filename as string)) {
+          if (Development().showVideoLogs()) console.log('| Asset is video', mediafile.original_file_location)
+          image = VideoHelper().videoElementAsCube(
+            asset.id,
+            mediafile.original_file_location,
+            new Vector3(
+              Number(mediafile.mediainfo?.width),
+              Number(mediafile.mediainfo?.height),
+              0,
+            ),
+            position,
+          );
+          image.scale.set(0.0001, 0.0001, 0.0001)
+        } else {
+          image = await FrameOverview(threeService).addImage(mediafile, 0, position);
+        }
+        scaleTo[i] = relationMetadata.scale;
+        if (image) {
+          images.push(image);
+          group.add(image);
+        }
       }
-      scaleTo[i] = relationMetadata.scale;
-      images.push(image);
-      group.add(image);
     }
 
     threeService.AddToScene(
@@ -248,10 +252,7 @@ const useFrameAssetOverview = (
         if (relationMetadata.timestamp_zoom) {
           playBook.addToPlayBook(
             async () => {
-              //@ts-ignore
-              // const isVideo = tempUrls[activeStory.id][currentFrame]?.videos[index];
               const theAsset = asset as Mesh<BoxBufferGeometry, any>
-              console.log('theAsset', theAsset)
               await zoomAndHighlightAsset(
                 theAsset,
                 index,

@@ -22,6 +22,7 @@ import { Entity } from 'coghent-vue-3-component-library/lib';
 import TWEEN from '@tweenjs/tween.js';
 import TextService from '@/services/TextService';
 import { getSizeStoryText } from '@/Three/helper.move';
+import { MediaFile } from 'coghent-vue-3-component-library/lib/queries';
 
 const useAsset = (
   threeService: ThreeService,
@@ -54,6 +55,7 @@ const useAsset = (
     parent: Frame | Story,
     child: Asset | Frame,
   ) => ComponentMetadata;
+  getMediaInfoForAsset: (_assetID: string, _primaryMediafile: string, _assets: Array<Asset>) => null | MediaFile
 } => {
   const getTitle = (asset: Asset) => {
     return asset.title[0]?.value;
@@ -221,6 +223,24 @@ const useAsset = (
     return metadataForAsset;
   };
 
+  const getMediaInfoForAsset = (_assetID: string, _primaryMediafile: string, _assets: Array<Asset>) => {
+    let mediafile: null | MediaFile = null
+    if(_assets.length >= 0) {
+      for(const asset of _assets){
+        if(asset.id === _assetID){
+          if(asset.mediafiles.length >= 0){
+            for(const file of asset.mediafiles){
+              if(file.original_file_location && file.original_file_location === _primaryMediafile){
+                mediafile = file as MediaFile
+              } 
+            }
+          }
+        }
+      }
+    }
+    return mediafile
+  }
+
   return {
     getTitle,
     getCollections,
@@ -233,6 +253,7 @@ const useAsset = (
     setActive,
     getAssetsFromFrame,
     connectRelationMetadata,
+    getMediaInfoForAsset,
   };
 };
 

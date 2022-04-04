@@ -89,7 +89,7 @@ export type Asset = {
   collections: Array<Metadata>;
   dimensions: Array<Metadata>;
   timestamps: Array<Metadata>;
-  mediafiles: Array<Mediafiles>;
+  mediafiles: Array<MediaFile>;
   primary_mediafile_location: string;
 };
 

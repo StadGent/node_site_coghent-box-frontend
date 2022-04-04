@@ -6,13 +6,14 @@ import CubeHelper from '@/Three/helper.cube';
 import SchemaCube, { CubeSchema } from '@/Three/schema.cube';
 import Layers from '@/Three/defaults.layers';
 import GroupHelper from '@/Three/helper.group';
-import { Group, Mesh, Vector3 } from 'three';
+import { BoxGeometry, Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
 import { iiiF } from '@/main';
+import { MediaFile } from 'coghent-vue-3-component-library/lib/queries';
 
 const FrameOverview = (
   threeService: ThreeService,
 ): {
-  addImage: (asset: Asset, scale: number, position: Vector3) => Promise<Mesh>;
+  addImage: (_mediafile: MediaFile, scale: number, position: Vector3) => Promise<Mesh | null>;
   create: (assets: Record<string, string>) => {
     groups: Array<Group>;
     schemas: Array<CubeSchema>;
@@ -20,28 +21,31 @@ const FrameOverview = (
 } => {
   const { generateUrl } = iiiF;
 
-  const addImage = async (asset: Asset, scale: number, position: Vector3) => {
-    const schema = CubeHelper().CreateSchema(
-      position,
-      useAsset(threeService).getImage(asset),
-      new Vector3(
-        asset.mediafiles[0]?.mediainfo.width,
-        asset.mediafiles[0]?.mediainfo.height,
-        0,
-      ),
-    );      
-    const filename = Common().getFilenameFromStorageLink(
-      schema.params.url as string,
-      'download/',
-    );
-    schema.params.url = generateUrl(filename, 'full', 'max');
+  const addImage = async (_mediafile: MediaFile, scale: number, position: Vector3) => {
+    let cube: Mesh<BoxGeometry, MeshBasicMaterial> | null = null
+    if (_mediafile.original_file_location && _mediafile.mediainfo) {
+      const schema = CubeHelper().CreateSchema(
+        position,
+        _mediafile.original_file_location,
+        new Vector3(
+          Number(_mediafile.mediainfo?.width),
+          Number(_mediafile.mediainfo?.height),
+          0,
+        ),
+      );
+      const filename = Common().getFilenameFromStorageLink(
+        schema.params.url as string,
+        'download/',
+      );
+      schema.params.url = generateUrl(filename, 'full', 'max');
 
-    const cube = await SchemaCube().CreateImageCubeAsync(
-      schema,
-      threeService.cachedTextures,
-    );
-    cube.scale.set(scale, scale, 0);
-    cube.material.opacity = 1;
+      cube = await SchemaCube().CreateImageCubeAsync(
+        schema,
+        threeService.cachedTextures,
+      );
+      cube.scale.set(scale, scale, 0);
+      cube.material.opacity = 1;
+    }
     return cube;
   };
 
