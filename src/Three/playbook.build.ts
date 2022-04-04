@@ -2,7 +2,7 @@ import useFrame from '@/composables/useFrame';
 import { PlayBookFunctions } from '@/composables/playbook';
 import { Frame, Story } from '@/models/GraphqlModel';
 import ThreeService from '@/services/ThreeService';
-import { Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
+import { CircleGeometry, Color, Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
 import AudioHelper from './helper.audio';
 import Layers from './defaults.layers';
 import Spot from './shapes.spotlight';
@@ -28,6 +28,7 @@ import { CircleParams, CircleSchema } from './schema.circle';
 import { Entity } from 'coghent-vue-3-component-library/lib';
 import Development from './defaults.development';
 import StoryCircleCorrections from './corrections.storycircle';
+import Colors from './defaults.color';
 
 const PlayBookBuild = (
   threeService: ThreeService,
@@ -214,6 +215,21 @@ const PlayBookBuild = (
       );
     }
     taggingService.removeAllTagsFrom(Tags.ActiveStoryCircleShade);
+    const basic = taggingService.getByTag(Tags.ActiveStoryCircleBasic)
+    const dots = taggingService.getByTag(Tags.ActiveStoryCircleFrameDot)
+    if (basic && basic[0] && basic[0].object && storyService.activeStoryData.storySeen) {
+      const basicCircle = basic[0].object as Mesh<CircleGeometry, MeshBasicMaterial>
+      basicCircle.material.color.set(Colors().grey)
+    }
+    if (dots.length >= 0 && storyService.activeStoryData.storySeen) {
+      for (const dot of dots) {
+        if (dot.object) {
+          const dott = dot.object as Mesh<CircleGeometry, MeshBasicMaterial>
+          dott.material.color.set(Colors().grey)
+        }
+
+      }
+    }
     const inactiveStories = storyService.getDataOfInactiveStories();
     MoveHelper(taggingService).activeStoryCircle(
       new Vector3(

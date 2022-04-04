@@ -131,8 +131,15 @@ export default class StoryService {
   }
 
   private IHaveSeenTheStory(storyId: string) {
-    const story = this.storyData.filter((story) => story.storyId === storyId)?.[0];
-    return story.totalOfFramesSeen === story.totalOfFrames;
+    let story: null | StoryData = null
+    let seen = false
+    this.storyData.forEach(_data => {
+      if (_data.storyId === storyId) {
+        story = _data
+        if (story.totalOfFramesSeen === story.totalOfFrames) seen = true
+      }
+    })
+    return seen;
   }
 
   fillUpDataSources() {
@@ -148,10 +155,12 @@ export default class StoryService {
   mergeVisiterStoryRelationsWithStoryData(_relations: Array<typeof Relation>) {
     const storyDataOfVisiter = useStory(this).createStoryDataOfVisiter(_relations)
     for (const data of this.storyData) {
+      if(data.totalOfFrames === data.totalOfFramesSeen){
+        data.storySeen = true
+      }
       const matches = storyDataOfVisiter.filter(_visiterData => _visiterData.storyId == data.storyId)
       if (matches[0]) {
         if (matches[0].storySeen) {
-          console.log('story exists and color set to grey')
           matches[0].storyColor = Colors().grey
         }
         Object.assign(data, matches[0])
