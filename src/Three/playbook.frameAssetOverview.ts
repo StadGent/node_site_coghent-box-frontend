@@ -162,6 +162,7 @@ const useFrameAssetOverview = (
 
   const calculateZoomSettingsOfAsset = (asset: Mesh<BoxBufferGeometry, any>) => {
     const inZone = zoneService.objectIsInZone(asset);
+    const zoomPosition = inZone.center
 
     let scale = 1000 / asset.geometry.parameters.height;
 
@@ -169,7 +170,18 @@ const useFrameAssetOverview = (
       scale = 1;
     }
 
-    return { scale: scale, zoomPosition: inZone.center };
+    const outerZone = zoneService.isInOuterZone(inZone)
+    if (outerZone) {
+      const zoneWidth = inZone.end.x - inZone.start.x
+      const assetWidth = scale * asset.geometry.parameters.width
+      if (assetWidth > zoneWidth) {
+        const diff = (assetWidth / 2) - (zoneWidth / 2)
+        outerZone === 1 ? zoomPosition.x += diff : zoomPosition.x
+        outerZone === 6 ? zoomPosition.x -= diff : zoomPosition.x
+      }
+    }
+
+    return { scale: scale, zoomPosition: zoomPosition };
   };
 
   const zoomAndHighlightAsset = async (

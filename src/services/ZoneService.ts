@@ -46,7 +46,7 @@ export default class ZoneService {
   private orderZoneCentersFromInnerToOuterPosition() {
     const zones: Array<Vector3> = [];
     let positionOfIndex = Math.floor(this.zoneCenters.length / 2);
-    for (let index = 1; index < this.zoneCenters.length; index++) {
+    for (let index = 1;index < this.zoneCenters.length;index++) {
       if (index % 2 === 0) {
         positionOfIndex += index;
         zones.push(this.zones[positionOfIndex].start);
@@ -131,5 +131,16 @@ export default class ZoneService {
       width: this.screen.x,
       height: this.screen.y,
     } as Zone;
+  }
+
+  isInOuterZone(_zone: Zone) {
+    let inZone: null | number = null
+    if (_zone.start.x === -(this.screen.x/2)) {
+      inZone = 0
+    }
+    if (_zone.end.x === (this.screen.x/2)) {
+      inZone = Defaults().screenZones()
+    }
+    return inZone
   }
 }
