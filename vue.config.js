@@ -16,5 +16,16 @@ module.exports = {
         //'@vee-validate/rules': path.resolve('./node_modules/@vee-validate/rules'),
       },
     },
-  }
+  },
+  pluginOptions: {
+    i18n: {
+      locale: 'nl',
+      fallbackLocale: 'nl',
+      localeDir: 'locales',
+      enableLegacy: false,
+      runtimeOnly: false,
+      compositionOnly: false,
+      fullInstall: true,
+    },
+  },
 }

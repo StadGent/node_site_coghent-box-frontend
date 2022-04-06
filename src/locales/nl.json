@@ -1,0 +1,11 @@
+{
+  "header":{
+      "basket": "Mijn verhalenbox",
+      "storyOverviewTitle": "Ontdek alle verhalen",
+      "buttons": {
+          "overview": "Overzicht alle verhalen",
+          "shutdown": "Afsluiten"
+      }
+
+  }
+}

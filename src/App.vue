@@ -6,14 +6,16 @@
 
 <script lang="ts">
   import { defineComponent } from 'vue';
+  import { useI18n } from 'vue-i18n';
   import { useRoute } from 'vue-router';
 
   export default defineComponent({
     name: 'App',
     setup: () => {
       const route = useRoute();
+      const { t } = useI18n();
 
-      return { route };
+      return { route, t };
     },
   });
 </script>

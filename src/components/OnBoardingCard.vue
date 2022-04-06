@@ -92,7 +92,6 @@
 
       const nextButtonFunction = () => {
         goToNextStep();
-        console.log(onBoardingState.value);
         emit('nextButtonClicked', true);
       };
 

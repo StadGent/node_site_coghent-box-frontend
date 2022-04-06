@@ -3,7 +3,7 @@
     <shutdown-modal :code="boxVisiter.code" />
     <nav class="px-24 py-8 flex justify-between items-center">
       <div class="">
-        <h1 class="text-4xl font-bold">Ontdek alle verhalen</h1>
+        <h1 class="text-4xl font-bold">{{ t('header.storyOverviewTitle') }}</h1>
       </div>
       <div class="flex">
         <base-button
@@ -11,7 +11,7 @@
           custom-style="touchtable-white-round"
           custom-icon="door"
           :icon-shown="true"
-          text="Afsluiten"
+          :text="t('header.buttons.shutdown')"
           @click="openShutdownModal"
         />
         <!-- <base-button
@@ -63,6 +63,7 @@
   import { useQuery, useMutation } from '@vue/apollo-composable';
   import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
   import Colors from '@/Three/defaults.color';
+  import { useI18n } from 'vue-i18n';
 
   type StoryResult = {
     story: Entity;
@@ -86,6 +87,7 @@
       const colors = [...Colors().storyCss()];
       const router = useRouter();
       const { isFirstStoryOverview } = useTouchTable();
+      const { t } = useI18n();
 
       const { result: activeBoxResult, loading: loadingActiveBoxResult } =
         useQuery(GetActiveBoxDocument);
@@ -167,6 +169,7 @@
         storyAssets,
         lastSeenStoryId,
         loadingActiveBoxResult,
+        t,
       };
     },
   });

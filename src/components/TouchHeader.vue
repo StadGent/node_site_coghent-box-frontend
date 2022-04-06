@@ -3,7 +3,7 @@
     <div class="spacer" />
     <div class="cursor-pointer flex justify-center flex-wrap" @click="openBasketOverlay">
       <h1 class="font-bold text-4xl w-full pr-auto">
-        Mijn verhalenbox ({{ basketAmount }})
+        {{ t('header.basket') + ` (${basketAmount})` }}
       </h1>
       <base-icon icon="downwardArrows" class="stroke-current fill-current stroke-2" />
     </div>
@@ -24,7 +24,7 @@
           class="shadow mr-8 text-xl"
           custom-style="touchtable-green-round"
           :icon-shown="false"
-          text="Overzicht alle verhalen"
+          :text="t('header.buttons.overview')"
           @click="goToStoriesPage"
         />
       </on-boarding-card>
@@ -33,7 +33,7 @@
         custom-style="touchtable-white-round"
         custom-icon="door"
         :icon-shown="true"
-        text="Afsluiten"
+        :text="t('header.buttons.shutdown')"
         @click="openShutdownModal"
       />
     </div>
@@ -49,6 +49,7 @@
   import { useRouter } from 'vue-router';
   import OnBoardingCard from '@/components/OnBoardingCard.vue';
   import { useOnBoarding } from '@/composables/useOnBoarding';
+  import { useI18n } from 'vue-i18n';
 
   export default defineComponent({
     name: 'TouchHeader',
@@ -69,6 +70,7 @@
       const { closeBasketOverlay, openBasketOverlay } = useBasketOverlay();
       const { onBoardingState } = useOnBoarding();
       const router = useRouter();
+      const { t } = useI18n();
 
       const root = document.documentElement;
       root.style.setProperty(
@@ -87,6 +89,7 @@
         goToStoriesPage,
         openBasketOverlay,
         onBoardingState,
+        t,
       };
     },
   });

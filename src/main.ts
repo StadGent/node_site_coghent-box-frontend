@@ -16,6 +16,7 @@ import { useIIIF } from 'coghent-vue-3-component-library';
 import FloatingVue from 'floating-vue';
 import { Dropdown } from 'floating-vue';
 import 'floating-vue/dist/style.css';
+import i18n from './i18n';
 
 export let apolloClient: ApolloClient<NormalizedCacheObject>;
 export let iiiF: any;
@@ -34,6 +35,7 @@ async function main() {
 
   createApp(App)
     .use(router, FloatingVue)
+    .use(i18n)
     .component('VDropdown', Dropdown)
     .provide(DefaultApolloClient, apolloClient)
     .mount('#app');
