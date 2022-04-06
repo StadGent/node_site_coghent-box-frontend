@@ -18,7 +18,7 @@ const MoveHelper = (
       _position,
       _storyData.totalOfFrames,
     );
-    const textSize = getSizeStoryText(objects.text);
+    // const textSize = getSizeStoryText(objects.text);
 
     const xDelta = objects.basic.position.x - _position.x;
     const yDelta = objects.basic.position.y - _position.y;

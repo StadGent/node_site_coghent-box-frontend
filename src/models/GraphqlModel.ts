@@ -90,6 +90,8 @@ export type Asset = {
   dimensions: Array<Metadata>;
   timestamps: Array<Metadata>;
   mediafiles: Array<MediaFile>;
+  primary_width: number;
+  primary_height: number;
   primary_mediafile_location: string;
 };
 

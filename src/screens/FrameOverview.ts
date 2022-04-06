@@ -13,7 +13,7 @@ import { MediaFile } from 'coghent-vue-3-component-library/lib/queries';
 const FrameOverview = (
   threeService: ThreeService,
 ): {
-  addImage: (_mediafile: MediaFile, scale: number, position: Vector3) => Promise<Mesh | null>;
+  addImage: (_mediafile: MediaFile, scale: number, position: Vector3, _dimensions: Vector3) => Promise<Mesh | null>;
   create: (assets: Record<string, string>) => {
     groups: Array<Group>;
     schemas: Array<CubeSchema>;
@@ -21,16 +21,16 @@ const FrameOverview = (
 } => {
   const { generateUrl } = iiiF;
 
-  const addImage = async (_mediafile: MediaFile, scale: number, position: Vector3) => {
+  const addImage = async (_mediafile: MediaFile, scale: number, position: Vector3, _dimensions: Vector3) => {
     let cube: Mesh<BoxGeometry, MeshBasicMaterial> | null = null
     if (_mediafile.original_file_location && _mediafile.mediainfo) {
       const schema = CubeHelper().CreateSchema(
         position,
         _mediafile.original_file_location,
         new Vector3(
-          Number(_mediafile.mediainfo?.width),
-          Number(_mediafile.mediainfo?.height),
-          0,
+          _dimensions.x,
+          _dimensions.y,
+          _dimensions.z,
         ),
       );
       const filename = Common().getFilenameFromStorageLink(

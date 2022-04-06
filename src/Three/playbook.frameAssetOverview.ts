@@ -65,26 +65,32 @@ const useFrameAssetOverview = (
       }
       data[relationMetadata.timestamp_start] = position;
       positions.push(position);
-
       const mediafile = useAsset(threeService).getMediaInfoForAsset(asset.id, asset.primary_mediafile_location, frame.assets)
-
       if (mediafile) {
         let image;
-        if (mediafile?.original_file_location && mediafile.mediatype && mediafile.mediatype?.video) {
+        let dimensions: Vector3 = new Vector3(0, 0, 0)
+        console.log({ asset })
+        if (asset.primary_height && asset.primary_width) {
+          dimensions.setX(asset.primary_width)
+          dimensions.setY(asset.primary_height)
+        } else if (mediafile.mediatype) {
+          dimensions = new Vector3(Number(mediafile.mediainfo?.width), Number(mediafile.mediainfo?.height), 0)
+        }
+        if (mediafile?.original_file_location && mediafile.mediatype?.video) {
           if (Development().showVideoLogs()) console.log('| Asset is video', mediafile.original_file_location)
           image = VideoHelper().videoElementAsCube(
             asset.id,
             mediafile.original_file_location,
             new Vector3(
-              Number(mediafile.mediainfo?.width),
-              Number(mediafile.mediainfo?.height),
-              0,
+              dimensions.x,
+              dimensions.y,
+              dimensions.z,
             ),
             position,
           );
           image.scale.set(0.0001, 0.0001, 0.0001)
         } else {
-          image = await FrameOverview(threeService).addImage(mediafile, 0, position);
+          image = await FrameOverview(threeService).addImage(mediafile, 0, position, dimensions);
         }
         scaleTo[i] = relationMetadata.scale;
         if (image) {
