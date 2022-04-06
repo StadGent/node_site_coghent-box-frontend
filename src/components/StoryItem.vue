@@ -58,9 +58,8 @@
           >
             <on-boarding-card
               :showCard="true"
-              cardTitle="Alle verhalen op een rij"
-              cardDescription="Selecteer een afbeelding om te starten. Ga naar het<br />
-                    netwerk en duik in de geschiedenis."
+              :cardTitle="t('onBoarding.goToTouchTable.title')"
+              :cardDescription="t('onBoarding.goToTouchTable.description')"
               :showPreviousButton="false"
               @nextButtonClicked="navigateToTouchtable(entity)"
             ></on-boarding-card>
@@ -85,6 +84,7 @@
   import { useTouchTable } from '@/composables/useTouchTable';
   import { useOnBoarding } from '@/composables/useOnBoarding';
   import OnBoardingCard from '@/components/OnBoardingCard.vue';
+  import { useI18n } from 'vue-i18n';
 
   type EntityData = {
     results: any[];
@@ -136,6 +136,7 @@
       const { updateIsFirstStoryOverview } = useTouchTable();
       const onBoardingEntityId = ref<string>();
       const { onBoardingState } = useOnBoarding();
+      const { t } = useI18n();
 
       const tempAssetArray: any[] = [];
       props.storyEntities.forEach((frame: any) => {
@@ -185,6 +186,7 @@
         navigateToTouchtable,
         onBoardingEntityId,
         onBoardingState,
+        t,
       };
     },
   });

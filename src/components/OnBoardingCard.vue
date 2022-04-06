@@ -8,15 +8,15 @@
   >
     <slot></slot>
     <template #popper
-      ><div class="p-4 text-lg">
+      ><div class="p-4 text-lg onBoardingCard">
         <h3 class="text-2xl">
           <b>{{ cardTitle }}</b>
         </h3>
-        <p v-html="cardDescription"></p>
+        <p>{{ cardDescription }}</p>
         <div class="flex justify-end p-4">
           <base-button
             v-if="showPreviousButton"
-            text="Vorige"
+            :text="t('onBoarding.buttons.previous')"
             custom-style="touchtable-white-round"
             :iconShown="false"
             class="shadow mr-2"
@@ -24,7 +24,7 @@
           />
           <base-button
             v-if="showNextButton"
-            :text="nextButtonText"
+            :text="t(nextButtonText)"
             custom-style="touchtable-green-round"
             :iconShown="false"
             class="shadow"
@@ -39,6 +39,7 @@
   import { defineComponent } from 'vue';
   import { BaseButton } from 'coghent-vue-3-component-library';
   import { useOnBoarding } from '@/composables/useOnBoarding';
+  import { useI18n } from 'vue-i18n';
 
   export default defineComponent({
     name: 'OnBoardingCard',
@@ -65,7 +66,7 @@
       nextButtonText: {
         type: String,
         required: false,
-        default: 'Volgende',
+        default: 'onBoarding.buttons.next',
       },
       placement: {
         type: String,
@@ -84,6 +85,7 @@
     emits: ['previousButtonClicked', 'nextButtonClicked'],
     setup(props, { emit }) {
       const { onBoardingState, goToNextStep, goToPreviousStep } = useOnBoarding();
+      const { t } = useI18n();
 
       const previousButtonFunction = () => {
         goToPreviousStep();
@@ -98,7 +100,14 @@
       return {
         previousButtonFunction,
         nextButtonFunction,
+        t,
       };
     },
   });
 </script>
+
+<style scoped>
+  .onBoardingCard {
+    max-width: 500px;
+  }
+</style>

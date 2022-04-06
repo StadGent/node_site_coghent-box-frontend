@@ -12,8 +12,8 @@
             ? true
             : false
         "
-        cardTitle="Bekijk andere foto's"
-        cardDescription="Selecteer foto's in het netwerk om ze te bekijken en<br/>meer informatie te weten te komen."
+        :cardTitle="t('onBoarding.lookAtOtherPictures.title')"
+        :cardDescription="t('onBoarding.lookAtOtherPictures.description')"
         placement="right"
         :distance="-500"
       >
@@ -51,8 +51,8 @@
               ? true
               : false
           "
-          cardTitle="Vul je verhalen box"
-          cardDescription="Voeg interessante afbeeldingen toe aan je<br/>verhalenbox om deze op te slaan, deze kan je dan<br/>later herbekijken in de box of op de website."
+          :cardTitle="t('onBoarding.fillStoryBasket.title')"
+          :cardDescription="t('onBoarding.fillStoryBasket.description')"
           placement="right"
           :distance="10"
           ><base-button
@@ -101,6 +101,7 @@
   import { apolloClient } from '@/main';
   import OnBoardingCard from '@/components/OnBoardingCard.vue';
   import { useOnBoarding } from '@/composables/useOnBoarding';
+  import { useI18n } from 'vue-i18n';
 
   const asString = (x: string | string[]) => (Array.isArray(x) ? x[0] : x);
 
@@ -141,6 +142,7 @@
       let fabricService = ref<FabricService | undefined>(undefined);
       const { openIIIFModal, IIIFModalState } = useIIIFModal();
       const { onBoardingState } = useOnBoarding();
+      const { t } = useI18n();
 
       const {
         result: startEntityResult,
@@ -376,6 +378,7 @@
         IIIFImageUrl,
         disposeCanvas,
         onBoardingState,
+        t,
       };
     },
   });

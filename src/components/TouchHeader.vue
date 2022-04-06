@@ -15,9 +15,9 @@
             ? true
             : false
         "
-        cardTitle="Alle verhalen op een rij"
-        cardDescription="Via deze knop kan je steeds terug naar het overzicht van<br/>de afbeeldingen van alle verhalen."
-        nextButtonText="Ik ben er klaar voor!"
+        :cardTitle="t('onBoarding.backToOverview.title')"
+        :cardDescription="t('onBoarding.backToOverview.description')"
+        nextButtonText="onBoarding.buttons.end"
         placement="bottom-end"
       >
         <base-button
