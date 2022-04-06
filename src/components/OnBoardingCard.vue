@@ -16,7 +16,7 @@
         <div class="flex justify-end p-4">
           <base-button
             v-if="showPreviousButton"
-            :text="t('onBoarding.buttons.previous')"
+            :text="t('touchtable.onBoarding.buttons.previous')"
             custom-style="touchtable-white-round"
             :iconShown="false"
             class="shadow mr-2"
@@ -66,7 +66,7 @@
       nextButtonText: {
         type: String,
         required: false,
-        default: 'onBoarding.buttons.next',
+        default: 'touchtable.onBoarding.buttons.next',
       },
       placement: {
         type: String,

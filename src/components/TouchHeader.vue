@@ -3,7 +3,7 @@
     <div class="spacer" />
     <div class="cursor-pointer flex justify-center flex-wrap" @click="openBasketOverlay">
       <h1 class="font-bold text-4xl w-full pr-auto">
-        {{ t('header.basket') + ` (${basketAmount})` }}
+        {{ t('touchtable.header.basket') + ` (${basketAmount})` }}
       </h1>
       <base-icon icon="downwardArrows" class="stroke-current fill-current stroke-2" />
     </div>
@@ -15,16 +15,16 @@
             ? true
             : false
         "
-        :cardTitle="t('onBoarding.backToOverview.title')"
-        :cardDescription="t('onBoarding.backToOverview.description')"
-        nextButtonText="onBoarding.buttons.end"
+        :cardTitle="t('touchtable.onBoarding.backToOverview.title')"
+        :cardDescription="t('touchtable.onBoarding.backToOverview.description')"
+        nextButtonText="touchtable.onBoarding.buttons.end"
         placement="bottom-end"
       >
         <base-button
           class="shadow mr-8 text-xl"
           custom-style="touchtable-green-round"
           :icon-shown="false"
-          :text="t('header.buttons.overview')"
+          :text="t('touchtable.header.buttons.overview')"
           @click="goToStoriesPage"
         />
       </on-boarding-card>
@@ -33,7 +33,7 @@
         custom-style="touchtable-white-round"
         custom-icon="door"
         :icon-shown="true"
-        :text="t('header.buttons.shutdown')"
+        :text="t('touchtable.header.buttons.shutdown')"
         @click="openShutdownModal"
       />
     </div>

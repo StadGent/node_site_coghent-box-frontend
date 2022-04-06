@@ -3,7 +3,9 @@
     <shutdown-modal :code="boxVisiter.code" />
     <nav class="px-24 py-8 flex justify-between items-center">
       <div class="">
-        <h1 class="text-4xl font-bold">{{ t('header.storyOverviewTitle') }}</h1>
+        <h1 class="text-4xl font-bold">
+          {{ t('touchtable.header.storyOverviewTitle') }}
+        </h1>
       </div>
       <div class="flex">
         <base-button
@@ -11,7 +13,7 @@
           custom-style="touchtable-white-round"
           custom-icon="door"
           :icon-shown="true"
-          :text="t('header.buttons.shutdown')"
+          :text="t('touchtable.header.buttons.shutdown')"
           @click="openShutdownModal"
         />
         <!-- <base-button

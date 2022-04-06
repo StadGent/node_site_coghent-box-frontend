@@ -1,5 +1,6 @@
 {
-  "header":{
+  "touchtable":{
+    "header":{
       "basket": "Mijn verhalenbox",
       "storyOverviewTitle": "Ontdek alle verhalen",
       "buttons": {
@@ -31,4 +32,6 @@
           "end": "Ik ben er klaar voor!"
       }
   }
+  },
+  "wall": {}
 }

@@ -12,8 +12,8 @@
             ? true
             : false
         "
-        :cardTitle="t('onBoarding.lookAtOtherPictures.title')"
-        :cardDescription="t('onBoarding.lookAtOtherPictures.description')"
+        :cardTitle="t('touchtable.onBoarding.lookAtOtherPictures.title')"
+        :cardDescription="t('touchtable.onBoarding.lookAtOtherPictures.description')"
         placement="right"
         :distance="-500"
       >
@@ -51,8 +51,8 @@
               ? true
               : false
           "
-          :cardTitle="t('onBoarding.fillStoryBasket.title')"
-          :cardDescription="t('onBoarding.fillStoryBasket.description')"
+          :cardTitle="t('touchtable.onBoarding.fillStoryBasket.title')"
+          :cardDescription="t('touchtable.onBoarding.fillStoryBasket.description')"
           placement="right"
           :distance="10"
           ><base-button

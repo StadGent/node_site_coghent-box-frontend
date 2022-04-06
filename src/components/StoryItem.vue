@@ -58,8 +58,8 @@
           >
             <on-boarding-card
               :showCard="true"
-              :cardTitle="t('onBoarding.goToTouchTable.title')"
-              :cardDescription="t('onBoarding.goToTouchTable.description')"
+              :cardTitle="t('touchtable.onBoarding.goToTouchTable.title')"
+              :cardDescription="t('touchtable.onBoarding.goToTouchTable.description')"
               :showPreviousButton="false"
               @nextButtonClicked="navigateToTouchtable(entity)"
             ></on-boarding-card>
