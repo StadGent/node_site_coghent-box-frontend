@@ -73,10 +73,11 @@ const ImageUrlHelper = (
 ): Promise<string[]> => {
   try {
     const { generateUrl } = iiiF;
+    const noImageUrl = '/no-image-150.png';
     const imageUrls: Array<string> = [];
 
     entities.forEach((entity: any) => {
-      if (entity.primary_mediafile || entity.mediafiles[0].filename) {
+      if (entity.primary_mediafile || entity.mediafiles[0]?.filename) {
         const image = entity.primary_mediafile || entity.mediafiles[0].filename;
         const requestHeight =
           height instanceof Array
@@ -84,7 +85,7 @@ const ImageUrlHelper = (
             : height;
         imageUrls.push(generateUrl(image, 'full', '', requestHeight));
       } else {
-        Promise.reject('No mediafile found');
+        imageUrls.push(noImageUrl);
       }
     });
 
@@ -97,7 +98,7 @@ const ImageUrlHelper = (
 
 const IIIFImageUrlHelper = (entity: any): string => {
   const { generateInfoUrl } = iiiF;
-  const filename = entity.primary_mediafile || entity.mediafiles[0].filename;
+  const filename = entity.primary_mediafile || entity.mediafiles[0]?.filename;
 
   return generateInfoUrl(filename);
 };
