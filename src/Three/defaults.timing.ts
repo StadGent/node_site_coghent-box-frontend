@@ -21,7 +21,7 @@ const Timing: Timings = {
   },
   endOfSession:{
     // countdown: 30000,
-    countdown: 2000,
+    countdown: 30000,
   },
   delayForNext: 1,
   moveObject: {
