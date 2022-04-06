@@ -1,7 +1,7 @@
 <template>
   <base-overlay :overlay-state="BasketOverlayState.state" class="p-24">
     <main>
-      <section class="w-full flex justify-center overflow-y-scroll">
+      <section class="w-full flex justify-center overflow-y-scroll h-full">
         <the-masonry
           v-if="basketEntities.length == basketItems.length && basketItems.length"
           :entities="{ results: basketEntities }"
@@ -11,7 +11,7 @@
           :show-load-more="false"
         />
         <div v-else-if="basketItems.length"><spinner /></div>
-        <h3 v-else>Er zitten nog geen werken in jouw verhalenbox</h3>
+        <h3 v-else>{{ t('touchtable.network.basketOverlay.empty') }}</h3>
       </section>
       <section
         class="
@@ -30,7 +30,7 @@
         @click="closeBasketOverlay"
       >
         <base-icon icon="downwardArrows" class="transform rotate-180 mb-4" />
-        <h2 class="text-4xl">Sluiten</h2>
+        <h2 class="text-4xl">{{ t('touchtable.network.basketOverlay.close') }}</h2>
       </section>
     </main>
   </base-overlay>
@@ -48,6 +48,7 @@
   import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
   import { iiiF } from '@/main';
   import Spinner from './Spinner.vue';
+  import { useI18n } from 'vue-i18n';
 
   export type OverlayState = 'show' | 'hide' | 'loading';
 
@@ -102,6 +103,7 @@
         useBasketOverlay();
       const { generateUrl, noImageUrl } = iiiF;
       const basketEntities = ref<Entity[]>([]);
+      const { t } = useI18n();
 
       const {
         result: entityResult,
@@ -142,6 +144,7 @@
         noImageUrl,
         basketEntities,
         loadingEntity,
+        t,
       };
     },
   });

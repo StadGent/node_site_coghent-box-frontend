@@ -1,6 +1,6 @@
 <template>
   <div class="touchtable">
-    <basket-overlay v-if="basketItems.length" :basketItems="basketItems" />
+    <basket-overlay :basketItems="basketItems" />
     <shutdown-modal :code="code" @disposeCanvas="disposeCanvas" />
     <IIIF-modal :image-url="IIIFImageUrl" />
     <touch-header :basket-amount="basketItems.length" />
@@ -31,17 +31,22 @@
       <h2 class="font-bold text-4xl mb-12">
         {{ entity.title[0].value }}
       </h2>
-      <p v-if="entity.description.length" class="text-xl mb-12">
+      <p
+        v-if="entity.description.length && entity.description[0].value"
+        class="text-xl mb-12"
+      >
         {{ entity.description[0].value }}
       </p>
-      <p class="text-xl mb-12" v-else>Dit item heeft geen beschrijving</p>
+      <p class="text-xl mb-12" v-else>
+        {{ t('touchtable.network.infoCard.noDescription') }}
+      </p>
       <div class="flex w-full flex-wrap justify-center items-center mt-12">
         <base-button
           class="text-xl"
           custom-style="touchtable-black"
           custom-icon="zoomIn"
           :icon-shown="true"
-          text="Afbeelding vergroten"
+          :text="t('touchtable.network.infoCard.buttons.zoom')"
           @click="showPictureModal"
         />
         <on-boarding-card
@@ -60,7 +65,7 @@
             custom-style="touchtable-purple"
             custom-icon="archiveDrawer"
             :icon-shown="true"
-            text="Aan verhalenbox toevoegen"
+            :text="t('touchtable.network.infoCard.buttons.add')"
             @click="addToBasket"
         /></on-boarding-card>
       </div>

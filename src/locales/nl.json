@@ -7,7 +7,19 @@
           "overview": "Overzicht alle verhalen",
           "shutdown": "Afsluiten"
       }
-
+  },
+  "network":{
+    "infoCard":{
+      "noDescription": "Dit item heeft geen beschrijving",
+      "buttons":{
+        "zoom": "Afbeelding vergroten",
+        "add": "Aan verhalenbox toevoegen"
+      }
+    },
+    "basketOverlay":{
+      "empty": "Er zitten nog geen werken in jouw verhalenbox",
+      "close": "Sluiten"
+    }
   },
   "onBoarding": {
       "goToTouchTable":{
