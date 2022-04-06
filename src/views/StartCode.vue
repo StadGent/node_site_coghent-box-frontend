@@ -22,7 +22,7 @@
           />
           <template #popper
             ><div class="p-4 text-lg">
-              <p><b>Deze code werd helaas niet gevonden!</b></p>
+              <h3 class="text-2xl"><b>Deze code werd helaas niet gevonden!</b></h3>
               <p>Probeer het nogmaals</p>
             </div></template
           >
@@ -39,7 +39,7 @@
           />
           <template #popper
             ><div class="p-4 text-lg">
-              <p><b>Geen paniek!</b></p>
+              <h3 class="text-2xl"><b>Geen paniek!</b></h3>
               <p>
                 Je kan jouw persoonlijke code laten afdrukken via het scherm aan de
                 ingang. Veel succes!
@@ -65,6 +65,7 @@
   import { useRouter } from 'vue-router';
   import { apolloClient } from '@/main';
   import { useTouchTable } from '@/composables/useTouchTable';
+  import { useOnBoarding } from '@/composables/useOnBoarding';
 
   export default defineComponent({
     name: 'StartCode',
@@ -82,6 +83,7 @@
       const router = useRouter();
       const displayWrongCodeMessage = ref<boolean>(false);
       const { updateIsFirstStoryOverview } = useTouchTable();
+      const { resetOnBoardingState } = useOnBoarding();
 
       const showWrongCodeMessage = () => {
         displayWrongCodeMessage.value = true;
@@ -102,11 +104,12 @@
 
       const checkCode = () => {
         let code: string = NumberPadState.value.state.join('');
-        // code = '81453243'; // 37898122, 15747469
+        // code = '81453243'; // 81453243, 37898122, 15747469
         const { getByCode } = useBoxVisiter(apolloClient);
         const resolvedBoxVisit = getByCode(code);
         resolvedBoxVisit.then((boxVisit: any) => {
           if (boxVisit) {
+            resetOnBoardingState();
             updateIsFirstStoryOverview(true);
             router.push('/touchtable/stories');
             resetNumberPad();

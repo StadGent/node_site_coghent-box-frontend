@@ -35,6 +35,7 @@
             :story-entities="storyAsset.frames"
             :story-color="colors[index].replace('bg-', '')"
             :loading="loadingActiveBoxResult"
+            :isLastSeenStory="lastSeenStoryId == storyAsset.id"
             :lastStoryItem="index == storyAssets.length ? true : false"
           />
         </div>

@@ -4,8 +4,21 @@
     <shutdown-modal :code="code" @disposeCanvas="disposeCanvas" />
     <IIIF-modal :image-url="IIIFImageUrl" />
     <touch-header :basket-amount="basketItems.length" />
-    <div id="my-canvas">
-      <canvas id="canvas" class="touchcanvas" />
+    <div>
+      <on-boarding-card
+        :showCard="
+          onBoardingState.status == 'started' &&
+          onBoardingState.currentStepName == 'lookAtOtherPictures'
+            ? true
+            : false
+        "
+        cardTitle="Bekijk andere foto's"
+        cardDescription="Selecteer foto's in het netwerk om ze te bekijken en<br/>meer informatie te weten te komen."
+        placement="right"
+        :distance="-500"
+      >
+        <canvas id="canvas" class="touchcanvas" />
+      </on-boarding-card>
     </div>
     <CardComponent
       v-if="entity"
@@ -31,14 +44,25 @@
           text="Afbeelding vergroten"
           @click="showPictureModal"
         />
-        <base-button
-          class="text-xl"
-          custom-style="touchtable-purple"
-          custom-icon="archiveDrawer"
-          :icon-shown="true"
-          text="Aan verhalenbox toevoegen"
-          @click="addToBasket"
-        />
+        <on-boarding-card
+          :showCard="
+            onBoardingState.status == 'started' &&
+            onBoardingState.currentStepName == 'fillStoryBasket'
+              ? true
+              : false
+          "
+          cardTitle="Vul je verhalen box"
+          cardDescription="Voeg interessante afbeeldingen toe aan je<br/>verhalenbox om deze op te slaan, deze kan je dan<br/>later herbekijken in de box of op de website."
+          placement="right"
+          :distance="10"
+          ><base-button
+            class="text-xl"
+            custom-style="touchtable-purple"
+            custom-icon="archiveDrawer"
+            :icon-shown="true"
+            text="Aan verhalenbox toevoegen"
+            @click="addToBasket"
+        /></on-boarding-card>
       </div>
     </CardComponent>
     <relationBrowser
@@ -75,6 +99,8 @@
   import IIIFModal, { useIIIFModal } from '@/components/IIIFModal.vue';
   import { IIIFImageUrlHelper } from '../services/Fabric/helper.fabric';
   import { apolloClient } from '@/main';
+  import OnBoardingCard from '@/components/OnBoardingCard.vue';
+  import { useOnBoarding } from '@/composables/useOnBoarding';
 
   const asString = (x: string | string[]) => (Array.isArray(x) ? x[0] : x);
 
@@ -93,6 +119,7 @@
       ShutdownModal,
       IIIFModal,
       BasketOverlay,
+      OnBoardingCard,
     },
     setup: () => {
       const route = useRoute();
@@ -113,6 +140,7 @@
       const IIIFImageUrl = ref<string>();
       let fabricService = ref<FabricService | undefined>(undefined);
       const { openIIIFModal, IIIFModalState } = useIIIFModal();
+      const { onBoardingState } = useOnBoarding();
 
       const {
         result: startEntityResult,
@@ -347,6 +375,7 @@
         showPictureModal,
         IIIFImageUrl,
         disposeCanvas,
+        onBoardingState,
       };
     },
   });

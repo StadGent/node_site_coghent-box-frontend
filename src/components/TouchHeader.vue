@@ -8,13 +8,26 @@
       <base-icon icon="downwardArrows" class="stroke-current fill-current stroke-2" />
     </div>
     <div class="flex">
-      <base-button
-        class="shadow mr-8 text-xl"
-        custom-style="touchtable-green-round"
-        :icon-shown="false"
-        text="Overzicht alle verhalen"
-        @click="goToStoriesPage"
-      />
+      <on-boarding-card
+        :showCard="
+          onBoardingState.status == 'started' &&
+          onBoardingState.currentStepName == 'backToOverviewPage'
+            ? true
+            : false
+        "
+        cardTitle="Alle verhalen op een rij"
+        cardDescription="Via deze knop kan je steeds terug naar het overzicht van<br/>de afbeeldingen van alle verhalen."
+        nextButtonText="Ik ben er klaar voor!"
+        placement="bottom-end"
+      >
+        <base-button
+          class="shadow mr-8 text-xl"
+          custom-style="touchtable-green-round"
+          :icon-shown="false"
+          text="Overzicht alle verhalen"
+          @click="goToStoriesPage"
+        />
+      </on-boarding-card>
       <base-button
         class="shadow text-xl"
         custom-style="touchtable-white-round"
@@ -34,12 +47,15 @@
   import { useShutdownModal } from '@/components/ShutdownModal.vue';
   import { useBasketOverlay } from '@/components/BasketOverlay.vue';
   import { useRouter } from 'vue-router';
+  import OnBoardingCard from '@/components/OnBoardingCard.vue';
+  import { useOnBoarding } from '@/composables/useOnBoarding';
 
   export default defineComponent({
     name: 'TouchHeader',
     components: {
       BaseIcon,
       BaseButton,
+      OnBoardingCard,
     },
     props: {
       basketAmount: {
@@ -51,6 +67,7 @@
     setup: (props) => {
       const { openShutdownModal, closeShutdownModal } = useShutdownModal();
       const { closeBasketOverlay, openBasketOverlay } = useBasketOverlay();
+      const { onBoardingState } = useOnBoarding();
       const router = useRouter();
 
       const root = document.documentElement;
@@ -69,6 +86,7 @@
         openShutdownModal,
         goToStoriesPage,
         openBasketOverlay,
+        onBoardingState,
       };
     },
   });

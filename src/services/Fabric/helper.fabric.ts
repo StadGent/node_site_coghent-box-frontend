@@ -83,6 +83,8 @@ const ImageUrlHelper = (
             ? height[getRandomNumberInRangeHelper(0, height.length)]
             : height;
         imageUrls.push(generateUrl(image, 'full', '', requestHeight));
+      } else {
+        Promise.reject('No mediafile found');
       }
     });
 

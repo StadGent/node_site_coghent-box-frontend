@@ -47,6 +47,24 @@
           >
             <base-icon icon="check" class="stroke-current fill-current stroke-2" />
           </div>
+          <div
+            v-if="
+              onBoardingEntityId == entity.id &&
+              isLastSeenStory &&
+              onBoardingState.status == 'started' &&
+              onBoardingState.currentStepName == 'goToTouchTable'
+            "
+            class="text-4xl"
+          >
+            <on-boarding-card
+              :showCard="true"
+              cardTitle="Alle verhalen op een rij"
+              cardDescription="Selecteer een afbeelding om te starten. Ga naar het<br />
+                    netwerk en duik in de geschiedenis."
+              :showPreviousButton="false"
+              @nextButtonClicked="navigateToTouchtable(entity)"
+            ></on-boarding-card>
+          </div>
         </template>
       </the-masonry>
     </section>
@@ -65,6 +83,8 @@
   import { Entity } from 'coghent-vue-3-component-library/lib/queries';
   import { iiiF } from '@/main';
   import { useTouchTable } from '@/composables/useTouchTable';
+  import { useOnBoarding } from '@/composables/useOnBoarding';
+  import OnBoardingCard from '@/components/OnBoardingCard.vue';
 
   type EntityData = {
     results: any[];
@@ -72,7 +92,7 @@
 
   export default defineComponent({
     name: 'StoryItem',
-    components: { TheMasonry, BaseIcon },
+    components: { TheMasonry, BaseIcon, OnBoardingCard },
     props: {
       story: {
         type: Object,
@@ -99,6 +119,10 @@
         required: true,
         default: false,
       },
+      isLastSeenStory: {
+        type: Boolean,
+        required: false,
+      },
     },
     setup(props) {
       const { generateUrl, noImageUrl } = iiiF;
@@ -110,6 +134,8 @@
       );
       const router = useRouter();
       const { updateIsFirstStoryOverview } = useTouchTable();
+      const onBoardingEntityId = ref<string>();
+      const { onBoardingState } = useOnBoarding();
 
       const tempAssetArray: any[] = [];
       props.storyEntities.forEach((frame: any) => {
@@ -120,7 +146,10 @@
               isFrameSeen = true;
             }
           });
-          const frameAssets = frame.assets.map((asset: any) => {
+          const frameAssets = frame.assets.map((asset: any, index: number) => {
+            if (index == 2) {
+              onBoardingEntityId.value = asset.id;
+            }
             const newAsset = { ...asset };
             newAsset.seen = isFrameSeen ? true : false;
             return newAsset;
@@ -154,6 +183,8 @@
         masonry,
         router,
         navigateToTouchtable,
+        onBoardingEntityId,
+        onBoardingState,
       };
     },
   });

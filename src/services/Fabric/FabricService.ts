@@ -194,7 +194,6 @@ export default class FabricService {
     entities: Array<any>,
     subRelationOriginEntityId: string,
   ) {
-    console.log('hee');
     // Get positions around main entity, if none left increase the range
     let range: number = fabricdefaults.canvas.secondaryImage.positions.range;
     const canvasFrames: any[] = getObjectsByObjectTypeHelper(
