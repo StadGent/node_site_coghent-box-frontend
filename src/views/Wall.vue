@@ -83,7 +83,7 @@ export default defineComponent({
     });
 
     const setVisiterData = async () => {
-      console.log('canscan ticket', canScanTicket.value)
+      console.log('canscan ticket', canScanTicket.value);
       if (canScanTicket.value) {
         const storyRelations = (await useBoxVisiter(apolloClient).getRelationsByType(
           visitercode.value,
@@ -139,9 +139,9 @@ export default defineComponent({
     };
 
     watch(inputValue, (value: string) => {
-      console.log('input value', value)
+      console.log('input value', value);
       let code = Common().getCodeFromString(value);
-      if (value.length === 8) {
+      if (showInputField.value && value.length === 8) {
         code = value;
       }
       if (
@@ -150,9 +150,10 @@ export default defineComponent({
         code.length === 8 &&
         stateService.getCurrentState() === FlowState[0]
       ) {
-        console.log({ code });
+        console.log('code:', code);
         getCode(code);
-        // inputValue.value = '';
+        inputValue.value = '';
+        console.log('inputvalue', inputValue.value);
       }
       // inputValue.value = '';
     });
@@ -173,10 +174,7 @@ export default defineComponent({
         if (visiterByCode.code) {
           visiter.value = visiterByCode;
           visitercode.value = String(code);
-          console.log('visiter code set to', visitercode.value)
           await setVisiterData();
-          console.log('visiterdata set', )
-
         }
       } else {
         stateService.changeState(FlowState.storyOverview);
