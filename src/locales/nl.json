@@ -1,5 +1,17 @@
 {
   "touchtable":{
+    "codeScreen":{
+      "noCode": "Ik heb nog geen code",
+      "noCodePopUp": {
+        "title": "Geen paniek!",
+        "description": "Je kan jouw persoonlijke code laten afdrukken via het scherm aan de ingang. Veel succes!"
+      },
+      "wrongCode":{
+        "title": "Deze code werd helaas niet gevonden!",
+        "description": "Probeer het nogmaals"
+      }
+
+    },
     "header":{
       "basket": "Mijn verhalenbox",
       "storyOverviewTitle": "Ontdek alle verhalen",

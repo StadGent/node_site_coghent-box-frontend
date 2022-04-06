@@ -21,9 +21,11 @@
             class="mb-12"
           />
           <template #popper
-            ><div class="p-4 text-lg">
-              <h3 class="text-2xl"><b>Deze code werd helaas niet gevonden!</b></h3>
-              <p>Probeer het nogmaals</p>
+            ><div class="p-4">
+              <h3 class="text-lg">
+                <b>{{ t('touchtable.codeScreen.wrongCode.title') }}</b>
+              </h3>
+              <p>{{ t('touchtable.codeScreen.wrongCode.description') }}</p>
             </div></template
           >
         </VDropdown>
@@ -35,14 +37,15 @@
             class="text-lg underline"
             custom-style="touchtable-black"
             :icon-shown="false"
-            text="Ik heb nog geen code"
+            :text="t('touchtable.codeScreen.noCode')"
           />
           <template #popper
-            ><div class="p-4 text-lg">
-              <h3 class="text-2xl"><b>Geen paniek!</b></h3>
+            ><div class="p-4">
+              <h3 class="text-lg">
+                <b>{{ t('touchtable.codeScreen.noCodePopUp.title') }}</b>
+              </h3>
               <p>
-                Je kan jouw persoonlijke code laten afdrukken via het scherm aan de
-                ingang. Veel succes!
+                {{ t('touchtable.codeScreen.noCodePopUp.description') }}
               </p>
             </div></template
           >
@@ -66,6 +69,7 @@
   import { apolloClient } from '@/main';
   import { useTouchTable } from '@/composables/useTouchTable';
   import { useOnBoarding } from '@/composables/useOnBoarding';
+  import { useI18n } from 'vue-i18n';
 
   export default defineComponent({
     name: 'StartCode',
@@ -84,6 +88,7 @@
       const displayWrongCodeMessage = ref<boolean>(false);
       const { updateIsFirstStoryOverview } = useTouchTable();
       const { resetOnBoardingState } = useOnBoarding();
+      const { t } = useI18n();
 
       const showWrongCodeMessage = () => {
         displayWrongCodeMessage.value = true;
@@ -128,6 +133,7 @@
         checkCode,
         displayWrongCodeMessage,
         hideWrongCodeMessage,
+        t,
       };
     },
   });
