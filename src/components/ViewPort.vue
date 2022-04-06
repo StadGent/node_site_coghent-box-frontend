@@ -35,6 +35,7 @@ import MoveObject from '@/composables/moveObject';
 import CustomAnimation from '@/composables/animation';
 import { SensorObject } from '@/composables/common';
 import useFrame from '@/composables/useFrame';
+import useDMX from '@/composables/useDMX';
 
 import PauseProgressbar from '@/Three/shapes.pauseProgressbar';
 import Template from '@/Three/template.shapes';
@@ -187,6 +188,7 @@ export default defineComponent({
             props.stateService.changeState(FlowState.storySelected);
             console.log('You selected sensor', countingStory.value);
             stories.value ? (storyData = stories.value) : [];
+            useDMX().lightsOff();
             await setNewStoryWhenSelected(_storySelected.id - 1);
           }
 
@@ -342,7 +344,7 @@ export default defineComponent({
 
     const setup = async (initial: boolean = true) => {
       threeSvc.ClearScene();
-
+      useDMX().sequence();
       if (initial) {
         spotlight = Spot().create(
           zoneService.zones[0].center,
@@ -379,6 +381,7 @@ export default defineComponent({
       ).storyData(storyService, storyService.activeStory, currentFrame);
       if (resultStoryData) {
         currentStoryID.value = storyService.activeStoryData.storyId;
+        useDMX().lightsOff();
         props.stateService.changeState(FlowState.countdownToFrame);
         await PlayBookBuild(
           threeSvc,
@@ -466,6 +469,7 @@ export default defineComponent({
     };
 
     const buildStory = async (_currenStoryId: string) => {
+      useDMX().lightsOff();
       spotlightBackground.material.opacity = 0;
       if (props.stateService.getCurrentState() != FlowState[4]) {
         props.stateService.changeState(FlowState.buildFrame);
@@ -603,6 +607,7 @@ export default defineComponent({
             emit('restartSession', true);
             props.stateService.changeState(FlowState.endCountdown);
             garbageHelper.endOfSessionScreen();
+            useDMX().sequence();
             PlayBookBuild(
               threeSvc,
               storyService,
@@ -617,6 +622,7 @@ export default defineComponent({
                 setup();
               });
           } else {
+            useDMX().lightsOn();
             props.stateService.changeState(FlowState.storyOverview);
             emit('resetSelectedStory', {
               topic: 'sensors/0/present',

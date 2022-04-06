@@ -1,7 +1,6 @@
 {
   "graphQlLink": "/api/graphql",
   "printerService": "http://localhost:8080",
-  "userEditUrl": "https://accounts.inuits.io/auth/admin/master/console/#/realms/dams/users/",
-  "lazyLoad": "https://data-uat.collectie.gent/lazy-loading.svg",
-  "iiifLink": "https://api.collectie.gent/iiif/image"
+  "iiifLink": "https://api.collectie.gent/iiif/image",
+  "dmx": "http://10.240.68.145/ajax/pb"
 }
