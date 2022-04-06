@@ -7,5 +7,28 @@
           "shutdown": "Afsluiten"
       }
 
+  },
+  "onBoarding": {
+      "goToTouchTable":{
+          "title": "Alle verhalen op een rij",
+          "description": "Selecteer een afbeelding om te starten. Ga naar het netwerk en duik in de geschiedenis."
+      },
+      "fillStoryBasket":{
+        "title": "Vul je verhalen box",
+        "description": "Voeg interessante afbeeldingen toe aan je verhalenbox om deze op te slaan, deze kan je dan later herbekijken in de box of op de website."
+      },
+      "lookAtOtherPictures":{
+        "title": "Bekijk andere foto's",
+        "description": "Selecteer foto's in het netwerk om ze te bekijken en meer informatie te weten te komen."
+      },
+      "backToOverview":{
+        "title": "Alle verhalen op een rij",
+        "description": "Via deze knop kan je steeds terug naar het overzicht van de afbeeldingen van alle verhalen."
+      },
+      "buttons":{
+          "next": "Volgende",
+          "previous": "Vorige",
+          "end": "Ik ben er klaar voor!"
+      }
   }
 }
