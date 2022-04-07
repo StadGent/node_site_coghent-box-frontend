@@ -16,12 +16,13 @@
           :text="t('touchtable.header.buttons.shutdown')"
           @click="openShutdownModal"
         />
-        <!-- <base-button
+        <base-button
           class="shadow text-xl"
           custom-style="touchtable-white-round"
           text="?"
           :icon-shown="false"
-        /> -->
+          @click="changeOnBoardingStatus('started')"
+        />
       </div>
     </nav>
     <main class="bg-background-light h-auto min-h-screen p-24">
@@ -66,6 +67,7 @@
   import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
   import Colors from '@/Three/defaults.color';
   import { useI18n } from 'vue-i18n';
+  import { useOnBoarding } from '@/composables/useOnBoarding';
 
   type StoryResult = {
     story: Entity;
@@ -89,6 +91,7 @@
       const colors = [...Colors().storyCss()];
       const router = useRouter();
       const { isFirstStoryOverview } = useTouchTable();
+      const { changeOnBoardingStatus } = useOnBoarding();
       const { t } = useI18n();
 
       const { result: activeBoxResult, loading: loadingActiveBoxResult } =
@@ -171,6 +174,7 @@
         storyAssets,
         lastSeenStoryId,
         loadingActiveBoxResult,
+        changeOnBoardingStatus,
         t,
       };
     },

@@ -25,7 +25,7 @@ const onBoardingState = ref<OnBoardingState>({
 });
 
 export const useOnBoarding = () => {
-  const changeWalkThroughStatus = (input: OnBoardingStatus) => {
+  const changeOnBoardingStatus = (input: OnBoardingStatus) => {
     onBoardingState.value.status = input;
   };
 
@@ -34,7 +34,7 @@ export const useOnBoarding = () => {
     onBoardingState.value.currentStepNumber = currentStepIndex;
     onBoardingState.value.currentStepName = onBoardingSteps[currentStepIndex];
     if (onBoardingState.value.currentStepNumber == onBoardingSteps.length) {
-      changeWalkThroughStatus('ended');
+      changeOnBoardingStatus('ended');
     }
   };
 
@@ -48,13 +48,13 @@ export const useOnBoarding = () => {
   };
 
   const resetOnBoardingState = () => {
-    changeWalkThroughStatus('started');
+    changeOnBoardingStatus('started');
     onBoardingState.value.currentStepNumber = 0;
     onBoardingState.value.currentStepName = onBoardingSteps[0];
   };
 
   return {
-    changeWalkThroughStatus,
+    changeOnBoardingStatus,
     goToNextStep,
     goToPreviousStep,
     resetOnBoardingState,

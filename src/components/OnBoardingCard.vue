@@ -91,12 +91,12 @@
     },
     emits: ['previousButtonClicked', 'nextButtonClicked'],
     setup(props, { emit }) {
-      const { onBoardingState, goToNextStep, goToPreviousStep, changeWalkThroughStatus } =
+      const { onBoardingState, goToNextStep, goToPreviousStep, changeOnBoardingStatus } =
         useOnBoarding();
       const { t } = useI18n();
 
       const endOnBoarding = () => {
-        changeWalkThroughStatus('ended');
+        changeOnBoardingStatus('ended');
       };
 
       const previousButtonFunction = () => {
