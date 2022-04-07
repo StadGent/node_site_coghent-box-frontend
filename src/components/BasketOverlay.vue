@@ -107,13 +107,10 @@
       const basketEntities = ref<Entity[]>([]);
       const { t } = useI18n();
 
-      const {
-        result: entityResult,
-        onResult: onEntityResult,
-        refetch: refetchEntity,
-        loading: loadingEntity,
-        fetchMore: fetchMoreEntities,
-      } = useQuery(GetEntityByIdDocument, { id: '' });
+      const { loading: loadingEntity, fetchMore: fetchMoreEntities } = useQuery(
+        GetEntityByIdDocument,
+        { id: '' },
+      );
 
       const getEntitiesForRelations = (entitiesToAdd: any[] = []) => {
         const tempEntityArray: any[] = [];
@@ -127,12 +124,10 @@
           fetchMoreEntities({
             variables: { id: basketEntityId },
             updateQuery: (previousData, { fetchMoreResult }) => {
-              console.log(fetchMoreResult.Entity);
               if (fetchMoreResult.Entity) {
                 tempEntityArray.push(fetchMoreResult.Entity);
                 if (entitiesToAdd.length == tempEntityArray.length) {
                   basketEntities.value.push(...tempEntityArray);
-                  console.log({ basketEntities });
                 }
               }
             },
@@ -143,12 +138,9 @@
       watch(
         () => props.basketItems.length,
         () => {
-          console.log('Reload basket');
           if (!basketEntities.value.length) {
             getEntitiesForRelations(props.basketItems);
           } else {
-            console.log(props.basketItems);
-            console.log(basketEntities.value);
             const newEntities = props.basketItems.filter(
               (item: any) =>
                 !basketEntities.value.find(
@@ -161,14 +153,6 @@
         { immediate: true },
       );
 
-      watch(
-        () => entityResult.value,
-        () => {
-          console.log(entityResult.value);
-        },
-      );
-
-      // TODO: Refresh masonry when item gets added
       return {
         closeBasketOverlay,
         openBasketOverlay,
