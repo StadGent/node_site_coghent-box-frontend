@@ -9,9 +9,16 @@
     <slot></slot>
     <template #popper
       ><div class="p-4 text-lg onBoardingCard">
-        <h3 class="text-2xl">
-          <b>{{ cardTitle }}</b>
-        </h3>
+        <div class="flex justify-between">
+          <h3 class="text-2xl">
+            <b>{{ cardTitle }}</b>
+          </h3>
+          <base-icon
+            icon="close"
+            class="stroke-current fill-current stroke-2 cursor-pointer"
+            @click="endOnBoarding()"
+          />
+        </div>
         <p>{{ cardDescription }}</p>
         <div class="flex justify-end p-4">
           <base-button
@@ -37,13 +44,13 @@
 
 <script lang="ts">
   import { defineComponent } from 'vue';
-  import { BaseButton } from 'coghent-vue-3-component-library';
+  import { BaseButton, BaseIcon } from 'coghent-vue-3-component-library';
   import { useOnBoarding } from '@/composables/useOnBoarding';
   import { useI18n } from 'vue-i18n';
 
   export default defineComponent({
     name: 'OnBoardingCard',
-    components: { BaseButton },
+    components: { BaseButton, BaseIcon },
     props: {
       cardTitle: {
         type: String,
@@ -84,8 +91,13 @@
     },
     emits: ['previousButtonClicked', 'nextButtonClicked'],
     setup(props, { emit }) {
-      const { onBoardingState, goToNextStep, goToPreviousStep } = useOnBoarding();
+      const { onBoardingState, goToNextStep, goToPreviousStep, changeWalkThroughStatus } =
+        useOnBoarding();
       const { t } = useI18n();
+
+      const endOnBoarding = () => {
+        changeWalkThroughStatus('ended');
+      };
 
       const previousButtonFunction = () => {
         goToPreviousStep();
@@ -100,6 +112,7 @@
       return {
         previousButtonFunction,
         nextButtonFunction,
+        endOnBoarding,
         t,
       };
     },
