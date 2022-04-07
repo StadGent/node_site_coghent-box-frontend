@@ -115,36 +115,55 @@
         fetchMore: fetchMoreEntities,
       } = useQuery(GetEntityByIdDocument, { id: '' });
 
-      const getEntitiesForRelations = () => {
+      const getEntitiesForRelations = (entitiesToAdd: any[] = []) => {
         const tempEntityArray: any[] = [];
-        if (props.basketItems.length) {
-          const basketEntityIds: string[] = props.basketItems.map((item: Relation) =>
+        let basketEntityIds: string[] = [];
+        if (entitiesToAdd.length) {
+          basketEntityIds = entitiesToAdd.map((item: Relation) =>
             item.key.replace('entities/', ''),
           );
-          basketEntityIds.forEach((basketEntityId: string) => {
-            fetchMoreEntities({
-              variables: { id: basketEntityId },
-              updateQuery: (previousData, { fetchMoreResult }) => {
-                console.log(fetchMoreResult.Entity);
-                if (fetchMoreResult.Entity) {
-                  tempEntityArray.push(fetchMoreResult.Entity);
-                  if (props.basketItems.length == tempEntityArray.length) {
-                    basketEntities.value.push(...tempEntityArray);
-                    console.log({ basketEntities });
-                  }
-                }
-              },
-            });
-          });
+        } else {
+          basketEntityIds = props.basketItems.map((item: Relation) =>
+            item.key.replace('entities/', ''),
+          );
         }
+        basketEntityIds.forEach((basketEntityId: string) => {
+          fetchMoreEntities({
+            variables: { id: basketEntityId },
+            updateQuery: (previousData, { fetchMoreResult }) => {
+              console.log(fetchMoreResult.Entity);
+              if (fetchMoreResult.Entity) {
+                tempEntityArray.push(fetchMoreResult.Entity);
+                if (props.basketItems.length == tempEntityArray.length) {
+                  basketEntities.value.push(...tempEntityArray);
+                  console.log({ basketEntities });
+                } else if (entitiesToAdd.length) {
+                  basketEntities.value.push(...tempEntityArray);
+                  console.log({ basketEntities });
+                }
+              }
+            },
+          });
+        });
       };
 
       watch(
         () => props.basketItems.length,
         () => {
           console.log('Reload basket');
-          basketEntities.value = [];
-          getEntitiesForRelations();
+          if (!basketEntities.value.length) {
+            getEntitiesForRelations();
+          } else {
+            console.log(props.basketItems);
+            console.log(basketEntities.value);
+            const newEntities = props.basketItems.filter(
+              (item: any) =>
+                !basketEntities.value.find(
+                  (basketItem: any) => basketItem.id == item.key.replace('entities/', ''),
+                ),
+            );
+            getEntitiesForRelations(newEntities);
+          }
         },
         { immediate: true },
       );
