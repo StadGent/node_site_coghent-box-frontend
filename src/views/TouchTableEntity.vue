@@ -214,14 +214,11 @@
               console.log('Relation result');
               if (queryResult.Entities && fabricService.value) {
                 const relationEntities: Entity[] = queryResult.Entities?.results;
-                const filteredRelationEntities: Entity[] = relationEntities.filter(
-                  (ent: Entity) => ent.id != entity.id,
-                );
-                if (filteredRelationEntities.length) {
+                if (relationEntities.length) {
                   fabricService.value
-                    .generateSecondaryImageFrames(filteredRelationEntities, entity.id)
+                    .generateSecondaryImageFrames(relationEntities, entity.id)
                     .then(() => {
-                      filteredRelationEntities.forEach((relationEntity: Entity) => {
+                      relationEntities.forEach((relationEntity: Entity) => {
                         const entityRelations: Array<string> = [];
 
                         getRelations(relationEntity);
@@ -315,6 +312,7 @@
         if (startAsset.value) {
           const startEntity = startAsset.value;
           const historyEntities = historyAssets.value;
+          console.log({ historyEntities });
           if (startEntity) {
             fabricService.value?.generateInfoBar(startEntity, historyEntities);
           }

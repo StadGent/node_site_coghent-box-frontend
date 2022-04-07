@@ -21,7 +21,7 @@
           custom-style="touchtable-white-round"
           text="?"
           :icon-shown="false"
-          @click="changeOnBoardingStatus('started')"
+          @click="resetOnBoardingState()"
         />
       </div>
     </nav>
@@ -91,7 +91,7 @@
       const colors = [...Colors().storyCss()];
       const router = useRouter();
       const { isFirstStoryOverview } = useTouchTable();
-      const { changeOnBoardingStatus } = useOnBoarding();
+      const { resetOnBoardingState } = useOnBoarding();
       const { t } = useI18n();
 
       const { result: activeBoxResult, loading: loadingActiveBoxResult } =
@@ -174,7 +174,7 @@
         storyAssets,
         lastSeenStoryId,
         loadingActiveBoxResult,
-        changeOnBoardingStatus,
+        resetOnBoardingState,
         t,
       };
     },

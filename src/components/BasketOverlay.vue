@@ -1,7 +1,7 @@
 <template>
   <base-overlay :overlay-state="BasketOverlayState.state" class="p-24">
     <main>
-      <section class="w-full flex justify-center overflow-y-scroll h-full">
+      <section class="w-full flex justify-center overflow-y-scroll overlay">
         <the-masonry
           v-if="basketEntities.length == basketItems.length && basketItems.length"
           :entities="{ results: basketEntities }"
@@ -11,7 +11,9 @@
           :show-load-more="false"
         />
         <div v-else-if="basketItems.length"><spinner /></div>
-        <h3 v-else>{{ t('touchtable.network.basketOverlay.empty') }}</h3>
+        <h3 class="text-lg" v-else>
+          {{ t('touchtable.network.basketOverlay.empty') }}
+        </h3>
       </section>
       <section
         class="
@@ -37,7 +39,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, PropType, ref, toRefs, watch } from 'vue';
+  import { defineComponent, onUpdated, PropType, ref, toRefs, watch } from 'vue';
   import {
     BaseOverlay,
     TheMasonry,
@@ -110,31 +112,50 @@
         onResult: onEntityResult,
         refetch: refetchEntity,
         loading: loadingEntity,
+        fetchMore: fetchMoreEntities,
       } = useQuery(GetEntityByIdDocument, { id: '' });
 
-      const getEnitiesForRelations = () => {
+      const getEntitiesForRelations = () => {
+        const tempEntityArray: any[] = [];
         if (props.basketItems.length) {
           const basketEntityIds: string[] = props.basketItems.map((item: Relation) =>
             item.key.replace('entities/', ''),
           );
           basketEntityIds.forEach((basketEntityId: string) => {
-            refetchEntity({ id: basketEntityId });
+            fetchMoreEntities({
+              variables: { id: basketEntityId },
+              updateQuery: (previousData, { fetchMoreResult }) => {
+                console.log(fetchMoreResult.Entity);
+                if (fetchMoreResult.Entity) {
+                  tempEntityArray.push(fetchMoreResult.Entity);
+                  if (props.basketItems.length == tempEntityArray.length) {
+                    basketEntities.value.push(...tempEntityArray);
+                    console.log({ basketEntities });
+                  }
+                }
+              },
+            });
           });
         }
       };
 
-      getEnitiesForRelations();
+      watch(
+        () => props.basketItems.length,
+        () => {
+          console.log('Reload basket');
+          basketEntities.value = [];
+          getEntitiesForRelations();
+        },
+        { immediate: true },
+      );
 
-      const tempEntityArray: any[] = [];
-      onEntityResult((queryResult) => {
-        if (queryResult.data.Entity) {
-          tempEntityArray.push(queryResult.data.Entity);
-          if (props.basketItems.length == tempEntityArray.length) {
-            basketEntities.value.push(...tempEntityArray);
-            console.log({ basketEntities });
-          }
-        }
-      });
+      watch(
+        () => entityResult.value,
+        () => {
+          console.log(entityResult.value);
+        },
+      );
+
       // TODO: Refresh masonry when item gets added
       return {
         closeBasketOverlay,
@@ -149,3 +170,9 @@
     },
   });
 </script>
+
+<style scoped>
+  .overlay {
+    height: 850px;
+  }
+</style>

@@ -16,7 +16,7 @@ import {
   unHighlightCanvasObjectsHelper,
   isRelationOnFrameHelper,
 } from './helper.fabric';
-import { createDynamicLineHelper, underlineHelper } from './helper.lines';
+import { underlineHelper } from './helper.lines';
 import {
   availablePositionsInRangeHelper,
   getPositionByIdHelper,
