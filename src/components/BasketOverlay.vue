@@ -122,10 +122,6 @@
           basketEntityIds = entitiesToAdd.map((item: Relation) =>
             item.key.replace('entities/', ''),
           );
-        } else {
-          basketEntityIds = props.basketItems.map((item: Relation) =>
-            item.key.replace('entities/', ''),
-          );
         }
         basketEntityIds.forEach((basketEntityId: string) => {
           fetchMoreEntities({
@@ -134,10 +130,7 @@
               console.log(fetchMoreResult.Entity);
               if (fetchMoreResult.Entity) {
                 tempEntityArray.push(fetchMoreResult.Entity);
-                if (props.basketItems.length == tempEntityArray.length) {
-                  basketEntities.value.push(...tempEntityArray);
-                  console.log({ basketEntities });
-                } else if (entitiesToAdd.length) {
+                if (entitiesToAdd.length == tempEntityArray.length) {
                   basketEntities.value.push(...tempEntityArray);
                   console.log({ basketEntities });
                 }
@@ -152,7 +145,7 @@
         () => {
           console.log('Reload basket');
           if (!basketEntities.value.length) {
-            getEntitiesForRelations();
+            getEntitiesForRelations(props.basketItems);
           } else {
             console.log(props.basketItems);
             console.log(basketEntities.value);
