@@ -50,9 +50,9 @@ const Measurements = (): {
   spacing: number
 } => {
   const storyCircle = {
-    radius: 200,
-    progressRadius: 250,
-    outerCircle: 320,
+    radius: 180,
+    progressRadius: 230,
+    outerCircle: 300,
     opacityShadedCircle: 0.4,
     correctionText: 1.5,
   };
@@ -60,9 +60,9 @@ const Measurements = (): {
   const progressBar = {
     radius: 300,
     thickness: 16,
-    dotRadius: 40,
-    activeDotRadius: 15,
-    seenDotRadius: 25,
+    dotRadius:38,
+    activeDotRadius: 13,
+    seenDotRadius: 23,
     opacity: 0.95,
   };
 
