@@ -10,14 +10,14 @@ const Colors = (): {
   story: () => Array<number>
   storyCss: () => Array<string>
 } => {
-  const green = 0x02a77f;
-  const pink = 0xb65099;
-  const yellow = 0xfdc20b;
-  const lightBlue = 0x9fcdd;
+  const green = 0x028666
+  const pink = 0x92407A;
+  const yellow = 0xCA9B09;
+  const lightBlue = 0x3596DB;
   const white = 0xffffff;
   const black = 0x00f00;
-  const grey = 0xdcdcdc;
-  const progressGrey = 0xc6c6c6;
+  const grey = 0xB0B0B0;
+  const progressGrey = 0x9E9E9E;
 
   const story = () => {
     return [
