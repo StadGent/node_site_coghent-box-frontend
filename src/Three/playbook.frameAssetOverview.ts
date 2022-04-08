@@ -19,14 +19,11 @@ import { Tags } from '@/services/TaggingService';
 import AnimationDefaults from './defaults.animation';
 import CustomAnimation from '@/composables/animation';
 import { GarabageHelperForWall } from '@/Three/helper.wall.garbage';
-import Measurements from './defaults.measurements';
 import Development from './defaults.development';
 import MoveObject from '@/composables/moveObject';
 import { Entity } from 'coghent-vue-3-component-library/lib';
-import Colors from './defaults.color';
 import { tweenPromise } from './helper.tweenPromise';
 import TWEEN from '@tweenjs/tween.js';
-import tempUrls from '@/temp-urls';
 import VideoHelper from './helper.video';
 
 const useFrameAssetOverview = (
@@ -158,6 +155,14 @@ const useFrameAssetOverview = (
     ]);
   };
 
+  const setToFront = (displayedAsset: Mesh<BoxBufferGeometry, any>, _toFront = true) => {
+    const inactiveAssets = group.children.filter((_asset) => _asset != displayedAsset);
+    inactiveAssets.forEach((_asset) => {
+      const asset = _asset as Mesh<BoxBufferGeometry, any>
+      _toFront ? asset.position.setZ(0.2) : asset.position.setZ(-2)
+    });
+  };
+
   const setAssetsInactive = async (displayedAsset: Mesh<BoxBufferGeometry, any>) => {
     const inactiveAssets = group.children.filter((_asset) => _asset != displayedAsset);
     inactiveAssets.forEach(async (_asset) => {
@@ -243,8 +248,9 @@ const useFrameAssetOverview = (
           playBook.addToPlayBook(
             async () => {
               if (Development().showZonesInOverview()) {
-                // Tools().displayZones(threeService, zoneService.zones);
+                Tools().displayZones(threeService, zoneService.zones);
               }
+              setToFront(asset as Mesh<BoxBufferGeometry, any>, false)
               await setAssetsInactive(asset as Mesh<BoxBufferGeometry, any>);
               await CustomAnimation().grow(
                 spotlight as Mesh<any, MeshBasicMaterial>,
@@ -281,6 +287,7 @@ const useFrameAssetOverview = (
         if (relationMetadata.timestamp_end && relationMetadata.timestamp_zoom) {
           playBook.addToPlayBook(
             async () => {
+              setToFront(asset as Mesh<BoxBufferGeometry, any>)
               await resetImage(
                 asset as Object3D<Event>,
                 relationMetadata.scale,
@@ -294,7 +301,7 @@ const useFrameAssetOverview = (
         } else {
           playBook.addToPlayBook(
             () => {
-              return
+              setToFront(asset as Mesh<BoxBufferGeometry, any>)
             },
             relationMetadata.timestamp_end,
             `Timestamp added when image has no timestamp_zoom.`,
