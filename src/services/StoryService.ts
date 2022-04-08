@@ -3,7 +3,9 @@ import { apolloClient } from '@/main';
 import { Frame } from '@/models/GraphqlModel';
 import Colors from '@/Three/defaults.color';
 import Defaults from '@/Three/defaults.config';
+import Measurements from '@/Three/defaults.measurements';
 import Positions from '@/Three/defaults.positions';
+import { threeDefaultsWall } from '@/Three/defaults.three';
 import { useBoxVisiter, Relation, Entity } from 'coghent-vue-3-component-library';
 import { Vector3 } from 'three';
 
@@ -89,6 +91,8 @@ export default class StoryService {
   setStoryPausedPositions(positions: Array<Vector3>) {
     this.storyData.map((_data, index) => {
       _data['pausedPosition'] = positions[index];
+      const bannerTopPosition = -(threeDefaultsWall.viewport.height / 2) + Measurements().pauseScreen.bannerHeight
+      _data['pausedPosition'].setY(bannerTopPosition)
     })
   }
 
@@ -155,7 +159,7 @@ export default class StoryService {
   mergeVisiterStoryRelationsWithStoryData(_relations: Array<typeof Relation>) {
     const storyDataOfVisiter = useStory(this).createStoryDataOfVisiter(_relations)
     for (const data of this.storyData) {
-      if(data.totalOfFrames === data.totalOfFramesSeen){
+      if (data.totalOfFrames === data.totalOfFramesSeen) {
         data.storySeen = true
       }
       const matches = storyDataOfVisiter.filter(_visiterData => _visiterData.storyId == data.storyId)

@@ -73,7 +73,7 @@ const Measurements = (): {
   };
 
   const pauseScreen = {
-    bannerHeight: 550,
+    bannerHeight: 300,
     bannerOpacity: 1,
     bannerColor: Colors().black,
     spotLightRadius: 350,

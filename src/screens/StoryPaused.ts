@@ -19,6 +19,7 @@ import schemaCube from '@/Three/schema.cube';
 import Measurements from '@/Three/defaults.measurements';
 import Defaults from '@/Three/defaults.config';
 import { Entity } from 'coghent-vue-3-component-library/lib';
+import { threeDefaultsWall } from '@/Three/defaults.three';
 
 export type PauseScreenObjects = {
   text: Array<Group>;
@@ -34,9 +35,9 @@ const StoryPaused = (
   Create: (_storyData: Array<StoryData>) => Promise<PauseScreenObjects>;
 } => {
   const bannerTopPosition =
-    -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight;
+    -(threeDefaultsWall.viewport.height / 2) + Measurements().pauseScreen.bannerHeight;
   const bannerCenterPosition =
-    -(zoneService.sceneZone().height / 2) + Measurements().pauseScreen.bannerHeight / 2;
+    -(threeDefaultsWall.viewport.height / 2) + (Measurements().pauseScreen.bannerHeight / 2);
   const storyCircle = (
     _storyData: StoryData,
     story: Entity,
@@ -63,7 +64,7 @@ const StoryPaused = (
       Colors().white,
     );
     const manSchema = CubeHelper().CreateSchema(
-      new Vector3(0, bannerTopPosition + 2, 0),
+      new Vector3(0, -125, 0),
       Images.pauseScreen.man,
       new Vector3(500, 250, 0),
     );

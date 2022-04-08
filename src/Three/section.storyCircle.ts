@@ -90,13 +90,13 @@ const StoryCircle = (
   const title = async (title: string, position: Vector3, color: number) => {
     const titles = title.split('\n');
     const group = new Group();
-    let prevSize: Vector3 = new Vector3(0, 0, 0);
+    let prevSize: Vector3 = position;
     for (const title of titles.reverse()) {
       const storyTitle = await TextHelper().CreateText(
         title,
         new Vector3(
           position.x,
-          position.y + prevSize.y === 0 ? 0 : prevSize.y + 10,
+          position.y === prevSize.y ? position.y : position.y + Measurements().text.size.small + 10,
           position.z,
         ),
         {

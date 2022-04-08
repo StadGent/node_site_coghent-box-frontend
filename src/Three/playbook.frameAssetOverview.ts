@@ -69,7 +69,6 @@ const useFrameAssetOverview = (
       if (mediafile) {
         let image;
         let dimensions: Vector3 = new Vector3(0, 0, 0)
-        console.log({ asset })
         if (asset.primary_height != null && asset.primary_width != null) {
           dimensions.setX(asset.primary_width)
           dimensions.setY(asset.primary_height)
