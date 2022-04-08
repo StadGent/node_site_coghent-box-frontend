@@ -4,13 +4,11 @@ import DefaultColors from '@/Three/defaults.color';
 import TextHelper from '@/Three/helper.text';
 import { FontParams } from '@/Three/schema.text';
 import {
-  BufferGeometry,
   CircleGeometry,
   Group,
   Mesh,
   MeshBasicMaterial,
   Vector3,
-  Box3,
 } from 'three';
 import CubeHelper from './helper.cube';
 import Colors from '@/Three/defaults.color';
@@ -59,7 +57,7 @@ const StoryCircle = (
     _position: Vector3,
     _color: number,
     _storyData: StoryData,
-  ) => PauseProgressbarObjects;
+  ) => Promise<PauseProgressbarObjects>;
 } => {
   const main = (schema: CircleSchema) => {
     return SchemaCircle().CreateCircle(
@@ -114,12 +112,12 @@ const StoryCircle = (
     return group;
   };
 
-  const progressOfFrames = (
+  const progressOfFrames = async (
     _position: Vector3,
     _color: number,
     _storyData: StoryData,
   ) => {
-    return PauseProgressbar(_storyData).create({
+    return await PauseProgressbar(_storyData).create({
       position: _position,
       params: {
         radius: Measurements().storyCircle.progressRadius,
@@ -137,7 +135,7 @@ const StoryCircle = (
     const templateLayers = Template().storyCircleLayers(circleSchema.position);
     const fadedCircle = shadedCircle(circleSchema);
     const basicCircle = main(circleSchema);
-    const progress = progressOfFrames(
+    const progress = await progressOfFrames(
       templateLayers.progressCircle,
       circleSchema.params.color || Colors().white,
       storyData,

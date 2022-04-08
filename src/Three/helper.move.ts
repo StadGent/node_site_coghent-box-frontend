@@ -1,7 +1,6 @@
 import MoveObject from '@/composables/moveObject';
 import { StoryData } from '@/services/StoryService';
 import TaggingService from '@/services/TaggingService';
-import { text } from 'd3';
 import { Vector3, Box3, Mesh, Group } from 'three';
 import TaggingHelper from './helper.tagging';
 import Template from './template.shapes';
@@ -59,6 +58,14 @@ const MoveHelper = (
     objects.progress.dots.forEach((_dot, index) => {
       MoveObject().startMoving(
         _dot.dot,
+        new Vector3(
+          storyCirclePositions.frameDots[index].x,
+          storyCirclePositions.frameDots[index].y,
+          _position.z,
+        ),
+      );
+      MoveObject().startMoving(
+        _dot.checkmark,
         new Vector3(
           storyCirclePositions.frameDots[index].x,
           storyCirclePositions.frameDots[index].y,

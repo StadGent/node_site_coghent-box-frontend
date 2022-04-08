@@ -1,5 +1,5 @@
 import TaggingService, { Tag, Tags } from '@/services/TaggingService';
-import { BufferGeometry, CircleGeometry, Group, Mesh, MeshBasicMaterial } from 'three';
+import { CircleGeometry, Group, Mesh, MeshBasicMaterial } from 'three';
 import { DotWithinDotObjects } from './shapes.dotWithinDot';
 import { PauseProgressbarObjects } from './shapes.pauseProgressbar';
 
@@ -28,15 +28,17 @@ const TaggingHelper = (
       : undefined;
     const text = getByTag(Tags.ActiveStoryCircleText)
     const frameDots = _taggingService.getByTag(Tags.ActiveStoryCircleFrameDot);
+    const frameDotCheckmarks = _taggingService.getByTag(Tags.ActiveStoryCircleFrameDotCheckmark);
     const frameInnerDots = _taggingService.getByTag(Tags.ActiveStoryCircleFrameInnerDot);
-    // const frameRing = _taggingService.getByTag(Tags.ActiveStoryCircleFrameRing)[0]
-    //   .object as Array<Group>;
     const frameRing = getByTag(Tags.ActiveStoryCircleFrameRing)
     const dots: Array<DotWithinDotObjects> = [];
     for (let index = 0;index < frameDots.length;index++) {
       const _object = {
         dot: frameDots[index].object,
       } as DotWithinDotObjects;
+      if (frameDotCheckmarks[index]) {
+        _object['checkmark'] = frameDotCheckmarks[index].object;
+      }
       if (frameInnerDots[index]) {
         _object['innerDot'] = frameInnerDots[index].object;
       }
@@ -63,6 +65,7 @@ const TaggingHelper = (
   const tagActiveStorycircleAsStoryCircle = () => {
     _taggingService.retag(Tags.ActiveStoryCircleBasic, Tags.StoryCircleBasic);
     _taggingService.retag(Tags.ActiveStoryCircleFrameDot, Tags.StoryCircleFrameDot);
+    _taggingService.retag(Tags.ActiveStoryCircleFrameDotCheckmark, Tags.StoryCircleFrameDotCheckmark);
     _taggingService.retag(
       Tags.ActiveStoryCircleFrameInnerDot,
       Tags.StoryCircleFrameInnerDot,
@@ -84,6 +87,7 @@ const TaggingHelper = (
     StoryCircleFrameDot,
     StoryCircleFrameInnerDot,
     StoryCircleFrameRing,
+    StoryCircleFrameDotCheckmark,
   }
 
   const matchTags = (_tags: Array<Tag>) => {
@@ -138,6 +142,15 @@ const TaggingHelper = (
           _taggingService.removeTaggedObject(_tag.object);
           _taggingService.tag(
             Tags.ActiveStoryCircleFrameRing,
+            _tag.object,
+            _tag.context,
+            _tag.id,
+          );
+          break;
+        case inactive[6]:
+          _taggingService.removeTaggedObject(_tag.object);
+          _taggingService.tag(
+            Tags.ActiveStoryCircleFrameDotCheckmark,
             _tag.object,
             _tag.context,
             _tag.id,

@@ -1,6 +1,7 @@
 type DefaultImages = {
   story: {
     defaultIcon: string;
+    checkmark: string;
   },
   pauseScreen : {
     man: string;
@@ -19,6 +20,7 @@ type DefaultImages = {
 const Images: DefaultImages = {
   story: {
     defaultIcon: '/images/Bucket.svg',
+    checkmark: '/images/Checkmark.svg',
   },
   pauseScreen : {
     man: '/images/man.svg',

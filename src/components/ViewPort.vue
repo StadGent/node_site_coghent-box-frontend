@@ -44,8 +44,6 @@ import useStartOfSession from '@/Three/playbook.startOfSession';
 import Spot from '@/Three/shapes.spotlight';
 import StateService, { FlowState } from '@/services/StateService';
 import MetadataLabel from '@/Three/shapes.metadataLabel';
-import StoryCircle from '@/Three/section.storyCircle';
-import Colors from '@/Three/defaults.color';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -274,7 +272,7 @@ export default defineComponent({
         await garbageHelper.newStorySelected();
       }
 
-      const progressDots = PauseProgressbar(storyService.activeStoryData).dots(
+      const progressDots = await PauseProgressbar(storyService.activeStoryData).dots(
         Template().storyCircleLayers(zoneService.middleZoneCenter).progressDots,
         Measurements().storyCircle.progressRadius,
         storyService.activeStoryData.totalOfFrames,
@@ -287,6 +285,10 @@ export default defineComponent({
         true,
       );
       taggingService.retag(Tags.StoryCircleFrameDot, Tags.ActiveStoryCircleFrameDot);
+      taggingService.retag(
+        Tags.StoryCircleFrameDotCheckmark,
+        Tags.ActiveStoryCircleFrameDotCheckmark,
+      );
       taggingService.retag(
         Tags.StoryCircleFrameInnerDot,
         Tags.ActiveStoryCircleFrameInnerDot,
@@ -311,13 +313,10 @@ export default defineComponent({
     };
 
     const checkPositionOfProgressRing = async () => {
-      console.log('tagged objects', taggingService.taggedObjects);
       const frameRing = taggingService.getByTag(Tags.ActiveStoryCircleFrameRing);
       if (frameRing[0] && frameRing[0].object) {
         const ring = frameRing[0].object[0] as Group;
-        console.log('frame ring position', ring.position);
         if (ring.position.x != zoneService.middleZoneCenter.x) {
-          console.log('ring is not on position center');
           await MoveObject().startMoving(ring, zoneService.middleZoneCenter);
         }
       } else Promise.resolve();

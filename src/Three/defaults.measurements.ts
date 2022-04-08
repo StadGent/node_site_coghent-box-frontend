@@ -12,6 +12,7 @@ type ProgressbarParams = {
   dotRadius: number;
   activeDotRadius: number;
   seenDotRadius: number;
+  checkMarkRadius: number;
   opacity: number;
 };
 
@@ -60,9 +61,10 @@ const Measurements = (): {
   const progressBar = {
     radius: 300,
     thickness: 16,
-    dotRadius:38,
+    dotRadius: 38,
     activeDotRadius: 13,
     seenDotRadius: 23,
+    checkMarkRadius: 28,
     opacity: 0.95,
   };
 
@@ -95,7 +97,7 @@ const Measurements = (): {
     countdownCircleThickness: 15,
   };
 
-  const spacing = 30 
+  const spacing = 30
 
   return {
     storyCircle,

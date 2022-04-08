@@ -13,8 +13,8 @@ export type PauseProgressbarObjects = {
 }
 
 const PauseProgressbar = (_storyData: StoryData): {
-  create: (_schema: CircleSchema) => PauseProgressbarObjects;
-  dots: (_position: Vector3, _radius: number, _segments: number, _color: number) => Array<DotWithinDotObjects>;
+  create: (_schema: CircleSchema) => Promise<PauseProgressbarObjects>;
+  dots: (_position: Vector3, _radius: number, _segments: number, _color: number) => Promise<Array<DotWithinDotObjects>>;
 } => {
 
   const ring = (_schema: CircleSchema, _segments: number) => {
@@ -44,12 +44,12 @@ const PauseProgressbar = (_storyData: StoryData): {
     return [ringGroup];
   };
 
-  const dots = (_position: Vector3, _radius: number, _segments: number, _color: number) => {
+  const dots = async (_position: Vector3, _radius: number, _segments: number, _color: number) => {
     const pointsOnCircle = CircleHelper().SplitCircleInSegments(new Vector3(_position.x,_position.y,_position.z + 0.01), _radius + (Measurements().progressBar.thickness / 2), _segments);
     const schemas = CircleHelper().CreateSchemas(pointsOnCircle, _radius - (Measurements().progressBar.thickness / 2), _color);
     const dotWithinDots: Array<DotWithinDotObjects> = [];
     for (const _schema of schemas) {
-      const _dot = DotWithinDot().create(
+      const _dot = await DotWithinDot().create(
         Measurements().progressBar.activeDotRadius,
         Measurements().progressBar.seenDotRadius,
         _schema.position,
@@ -61,9 +61,9 @@ const PauseProgressbar = (_storyData: StoryData): {
     return dotWithinDots
   };
 
-  const create = (_schema: CircleSchema) => {
+  const create = async (_schema: CircleSchema) => {
     const _ring = ring(_schema, _storyData.totalOfFrames);
-    const _dots = dots(
+    const _dots = await dots(
       _schema.position,
       _schema.params.radius,
       _storyData.totalOfFrames,

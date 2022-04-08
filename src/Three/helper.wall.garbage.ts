@@ -78,6 +78,7 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     removeByTag(Tags.GroupOfAssets);
     removeByTag(Tags.ActiveStoryCircleFrameInnerDot);
     removeByTag(Tags.ActiveStoryCircleFrameDot);
+    removeByTag(Tags.ActiveStoryCircleFrameDotCheckmark);
     activeStoryCircle();
     logRemoved('endOfSessionScreen');
   };
@@ -94,6 +95,7 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
 
   const removeActiveFrameDots = () => {
     removeByTag(Tags.ActiveStoryCircleFrameDot);
+    removeByTag(Tags.ActiveStoryCircleFrameDotCheckmark);
     removeByTag(Tags.ActiveStoryCircleFrameInnerDot);
   };
 
@@ -103,6 +105,7 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     removeByTag(Tags.ActiveStoryCircleShade);
     removeArrayOfGroupsByTag(Tags.ActiveStoryCircleFrameRing);
     removeByTag(Tags.ActiveStoryCircleFrameDot);
+    removeByTag(Tags.ActiveStoryCircleFrameDotCheckmark);
     removeByTag(Tags.ActiveStoryCircleFrameInnerDot);
     logRemoved('activeStoryCircle');
   };
@@ -112,6 +115,7 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     removeByTag(Tags.StoryCircleBasic);
     removeArrayOfGroupsByTag(Tags.StoryCircleFrameRing);
     removeByTag(Tags.StoryCircleFrameDot);
+    removeByTag(Tags.StoryCircleFrameDotCheckmark);
     removeByTag(Tags.StoryCircleFrameInnerDot);
     logRemoved('storyCircle');
   };

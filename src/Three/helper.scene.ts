@@ -98,7 +98,7 @@ const SceneHelper = (
     _progress: number,
     _animation: boolean,
   ) => {
-    for (let index = 0; index < _progress; index++) {
+    for (let index = 0;index < _progress;index++) {
       if (_dots[index]) {
         _threeService.AddToScene(
           _dots[index].dot,
@@ -120,6 +120,18 @@ const SceneHelper = (
           if (_animation) {
             _dots[index].innerDot.material.opacity = 0;
             await CustomAnimation().fadeIn(_dots[index].innerDot, 1, 0.1);
+          }
+        }
+        if (_dots[index].checkmark) {
+          _threeService.AddToScene(
+            _dots[index].checkmark,
+            Tags.StoryCircleFrameDotCheckmark,
+            'Dot to show the frame is seen in the story.',
+            _storyId,
+          );
+          if (_animation) {
+            _dots[index].checkmark.material.opacity = 0;
+            await CustomAnimation().fadeIn(_dots[index].checkmark, 1, 0.1);
           }
         }
         await Common().awaitTimeout(AnimationDefaults.timing.fadeIn);
