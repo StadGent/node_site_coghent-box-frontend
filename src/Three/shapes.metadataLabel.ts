@@ -28,7 +28,7 @@ const MetadataLabel = (_position: Vector3): {
 } => {
   let dotWidth = 0;
   const label = async (text: string) => {
-    const labelText = await TextHelper().CreateText(text, new Vector3(_position.x, _position.y, _position.z + Layers.fraction), { width: 0, height: 0 } as CubeParams, { color: Colors().white, size: Measurements().text.size.medium } as FontParams, 1) as Mesh<BoxGeometry, any>;
+    const labelText = await TextHelper().CreateText(text, new Vector3(_position.x, _position.y, _position.z + Layers.fraction), { width: 0, height: 0 } as CubeParams, { color: Colors().white, size: Measurements().text.size.smaller } as FontParams, 1) as Mesh<BoxGeometry, any>;
     return { text: labelText, dimensions: getSizeStoryText(labelText) };
   }
 
