@@ -73,13 +73,16 @@ const useAsset = (
     let scale = 1;
     const height = Number(_asset.geometry.parameters.height)
     const width = Number(_asset.geometry.parameters.width)
+
     if (height > width) {
+      const diagonalOfSquare = Math.SQRT2 * _asset.geometry.parameters.height
       scale =
-        (height / 2) * _scale +
+        (diagonalOfSquare / 2) * _scale +
         Measurements().spotLight.spaceAroundObject;
     } else {
+      const diagonalOfSquare = Math.SQRT2 * _asset.geometry.parameters.width
       scale =
-        (width / 2) * _scale +
+        (diagonalOfSquare / 2) * _scale +
         Measurements().spotLight.spaceAroundObject;
     }
     return scale;
@@ -219,14 +222,14 @@ const useAsset = (
 
   const getMediaInfoForAsset = (_assetID: string, _primaryMediafile: string, _assets: Array<Asset>) => {
     let mediafile: null | MediaFile = null
-    if(_assets.length >= 0) {
-      for(const asset of _assets){
-        if(asset.id === _assetID){
-          if(asset.mediafiles.length >= 0){
-            for(const file of asset.mediafiles){
-              if(file.original_file_location && file.original_file_location === _primaryMediafile){
+    if (_assets.length >= 0) {
+      for (const asset of _assets) {
+        if (asset.id === _assetID) {
+          if (asset.mediafiles.length >= 0) {
+            for (const file of asset.mediafiles) {
+              if (file.original_file_location && file.original_file_location === _primaryMediafile) {
                 mediafile = file as MediaFile
-              } 
+              }
             }
           }
         }
