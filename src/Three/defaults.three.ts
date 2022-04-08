@@ -13,7 +13,10 @@ type ThreeDefaults = {
     gammaFactor: number;
     antialias: true | false;
   };
-  viewport: number;
+  viewport: {
+    height: number;
+    width: number;
+  };
 };
 
 const threeDefaultsWall: ThreeDefaults = {
@@ -31,25 +34,13 @@ const threeDefaultsWall: ThreeDefaults = {
     gammaFactor: 1,
     antialias: true,
   },
-  viewport: window.innerHeight * (48 / 9),
+  viewport: {
+    height: 1080,
+    width: 5760,
+  },
 };
 
-const threeDefaultsTouchTable: ThreeDefaults = {
-  camera: {
-    fov: 40,
-    near: 10,
-    far: 100,
-    distance: 101,
-  },
-  scene: {
-    ratioX: 48,
-    ratioY: 9,
-  },
-  renderer: {
-    gammaFactor: 2,
-    antialias: true,
-  },
-  viewport: window.innerWidth,
+export {
+  threeDefaultsWall,
+  ThreeDefaults,
 };
-
-export { threeDefaultsWall, threeDefaultsTouchTable, ThreeDefaults };

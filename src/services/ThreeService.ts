@@ -2,7 +2,6 @@ import { ThreeDefaults } from '@/Three/defaults.three';
 import {
   Camera,
   Scene,
-  PerspectiveCamera,
   WebGLRenderer,
   Group,
   sRGBEncoding,
@@ -12,10 +11,8 @@ import {
   Texture,
   OrthographicCamera,
 } from 'three';
-import * as d3 from 'd3';
 import { Ref } from 'vue';
 import TaggingService, { Tags } from './TaggingService';
-import ZoomHelper from '@/Three/helper.zoom';
 import Development from '@/Three/defaults.development';
 import TWEEN from '@tweenjs/tween.js';
 
@@ -55,7 +52,7 @@ export default class ThreeService {
     this.element = _element;
     this.defaultvalues = _defaultvalues;
     this.taggingService = _taggingService;
-    this.SetViewPort(5760, 1080);
+    this.SetViewPort(this.defaultvalues.viewport.width, this.defaultvalues.viewport.height);
     this.InitializeRenderer();
     this.InitializeCamera();
     this.cachedTextures = [];
@@ -131,17 +128,6 @@ export default class ThreeService {
 
   ChangeSceneBackgroundColor(color: number) {
     this.state.scene.background = new Color(color);
-  }
-
-  setupZoom() {
-    const view = d3.select(this.element.value);
-    view.call(ZoomHelper().zoom(this));
-    const initial_scale = ZoomHelper().getScaleFromZ(this.defaultvalues.camera.far, this);
-    const initial_transform = d3.zoomIdentity
-      .translate(this.state.width / 2, this.state.height / 2)
-      .scale(initial_scale);
-    view.attr('transform', initial_transform.toString);
-    this.state.camera.position.set(0, 0, this.defaultvalues.camera.far);
   }
 
   ClearScene() {
