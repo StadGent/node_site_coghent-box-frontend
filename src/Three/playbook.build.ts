@@ -29,6 +29,7 @@ import { Entity } from 'coghent-vue-3-component-library/lib';
 import Development from './defaults.development';
 import StoryCircleCorrections from './corrections.storycircle';
 import Colors from './defaults.color';
+import PresenceService from '@/services/PresenceService';
 
 const PlayBookBuild = (
   threeService: ThreeService,
@@ -74,6 +75,8 @@ const PlayBookBuild = (
   setSelectedStory: () => Promise<void>;
   setActiveStoryCircleToBackground: (_moveToFront: boolean) => void
 } => {
+  const presenceService = new PresenceService(threeService, taggingService)
+
   const logBuild = (_buildName: string) => {
     if (Development().showBuildLogs()) {
       console.log(`PLAYBOOK BUILD | ${_buildName}`);
@@ -248,6 +251,7 @@ const PlayBookBuild = (
     await MoveObject().startMoving(spotlight, new Vector3(0, 0, spotlight.position.z));
 
     TaggingHelper(taggingService).tagActiveStorycircleAsStoryCircle();
+    presenceService.overviewStoryCircles(storyService.getStoryData().map(_data => _data.storyId))
   };
 
   const storyPausedWithNoActiveStory = async () => {
@@ -304,6 +308,8 @@ const PlayBookBuild = (
     TaggingHelper(taggingService).tagStorycircleAsActiveStoryCircle(
       storyService.activeStoryData.storyId,
     );
+    presenceService.activeStoryCircle()
+
     await CustomAnimation().shrink(
       spotlight as Mesh<any, MeshBasicMaterial>,
       Measurements().storyCircle.radius,
@@ -326,13 +332,15 @@ const PlayBookBuild = (
       zoneService.middleZoneCenter,
       storyService.activeStoryData,
     );
+    presenceService.activeStoryCircle()
     await StoryCircleCorrections(threeService, storyService, taggingService).ringprogressToCenterOfScreen(storyService.activeStoryData)
-
+    presenceService.activeFrameRingPosition(storyService.activeStoryData.pausedPosition, zoneService.middleZoneCenter)
     // WallGarbageHelper(threeService, taggingService).removeActiveFrameDots();
 
   };
 
   const setActiveStoryCircleToBackground = (_moveToFront: boolean) => {
+    logBuild('setActiveStoryCircleToBackground')
     const difference = Math.abs(Layers.background) - 0.1
     if (Development().showBuildLogs()) {
       console.log('move active storycircle to the front', _moveToFront)
