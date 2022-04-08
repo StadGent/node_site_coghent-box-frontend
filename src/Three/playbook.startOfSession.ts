@@ -42,7 +42,7 @@ const useStartOfSession = (
     const scanText = await ScanQR(
       new Vector3(
         zoneService.zoneCenters[0].x,
-        zoneService.zoneCenters[0].y,
+        zoneService.zoneCenters[0].y + 200,
         zoneService.zoneCenters[0].z,
       ),
     ).create();
