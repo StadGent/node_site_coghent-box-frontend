@@ -153,6 +153,7 @@ const useFrameAssetOverview = (
         new Vector3(positions[currentAsset].x, positions[currentAsset].y, 0),
       ),
     ]);
+    setToFront(asset as unknown as Mesh<BoxBufferGeometry, any>)
   };
 
   const setToFront = (displayedAsset: Mesh<BoxBufferGeometry, any>, _toFront = true) => {
@@ -160,6 +161,11 @@ const useFrameAssetOverview = (
     inactiveAssets.forEach((_asset) => {
       const asset = _asset as Mesh<BoxBufferGeometry, any>
       _toFront ? asset.position.setZ(0.2) : asset.position.setZ(-2)
+    });
+  };
+  const moveAllAssetsToFront = (assets: Array<Mesh<BoxBufferGeometry, any>>, _toFront = true) => {
+    assets.forEach((_asset: Mesh<BoxBufferGeometry, any>) => {
+      _toFront ? _asset.position.setZ(0.2) : _asset.position.setZ(-2)
     });
   };
 
@@ -239,6 +245,7 @@ const useFrameAssetOverview = (
         timestamp,
         currentFrame,
       );
+      moveAllAssetsToFront(group.children as Array<Mesh<BoxBufferGeometry, any>>)
       group.children.forEach((asset, index) => {
         const relationMetadata = useAsset(threeService).connectRelationMetadata(
           activeStory.frames?.[currentFrame] as unknown as Frame,
@@ -250,7 +257,7 @@ const useFrameAssetOverview = (
               if (Development().showZonesInOverview()) {
                 Tools().displayZones(threeService, zoneService.zones);
               }
-              setToFront(asset as Mesh<BoxBufferGeometry, any>, false)
+
               await setAssetsInactive(asset as Mesh<BoxBufferGeometry, any>);
               await CustomAnimation().grow(
                 spotlight as Mesh<any, MeshBasicMaterial>,
@@ -273,6 +280,7 @@ const useFrameAssetOverview = (
         if (relationMetadata.timestamp_zoom) {
           playBook.addToPlayBook(
             async () => {
+              setToFront(asset as Mesh<BoxBufferGeometry, any>, false)
               const theAsset = asset as Mesh<BoxBufferGeometry, any>
               await zoomAndHighlightAsset(
                 theAsset,
@@ -287,7 +295,6 @@ const useFrameAssetOverview = (
         if (relationMetadata.timestamp_end && relationMetadata.timestamp_zoom) {
           playBook.addToPlayBook(
             async () => {
-              setToFront(asset as Mesh<BoxBufferGeometry, any>)
               await resetImage(
                 asset as Object3D<Event>,
                 relationMetadata.scale,
