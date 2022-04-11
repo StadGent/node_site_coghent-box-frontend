@@ -43,6 +43,7 @@ export enum Tags {
   SmallCountdownProgressRing,
   SmallCountdowndownNumber,
   HighlightedMetadata,
+  Layer,
 }
 
 export default class TaggingService {
