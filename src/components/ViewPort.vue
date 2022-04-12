@@ -45,6 +45,7 @@ import Spot from '@/Three/shapes.spotlight';
 import { FlowState } from '@/services/StateService';
 import MetadataLabel from '@/Three/shapes.metadataLabel';
 import stateService from '@/services/StateService';
+import scenery from '@/composables/useScenery';
 import TimerCountdown from '@/Three/shapes.timer';
 import Positions from '@/Three/defaults.positions';
 
@@ -237,7 +238,7 @@ export default defineComponent({
 
     const setNewStoryWhenSelected = async (_storySelected: number) => {
       chooseStory.value = false;
-      garbageHelper.removeCountdown()
+      garbageHelper.removeCountdown();
       storyService.setActiveStory(storyData[_storySelected].id);
       const _storyData = storyService.getStoryDataOfStory(storyData[_storySelected].id);
       const next = storyService.setNextFrameForStory(_storyData.storyId);
@@ -267,7 +268,11 @@ export default defineComponent({
       if (props.showPauseOverview) {
         stateService.changeState(FlowState.storyOverview);
         garbageHelper.newStorySelectedWithNoActive();
-        TimerCountdown(threeSvc).start(Timing.pauseMenu.countdown, Positions().timerCountdown(), FlowState.storySelected)
+        TimerCountdown(threeSvc).start(
+          Timing.pauseMenu.countdown,
+          Positions().timerCountdown(),
+          FlowState.storySelected,
+        );
         audioHelper = AudioHelper(threeSvc);
       } else {
         await garbageHelper.newStorySelected();
@@ -350,13 +355,13 @@ export default defineComponent({
           zoneService.zones[0].center,
           Measurements().storyCircle.radius,
         );
+        scenery.addSpotlight(spotlight);
 
         spotlightBackground = Spot().spotLightBackground();
         threeSvc.AddToScene(spotlight, Tags.Spotlight, 'InitialSpotlight');
-        threeSvc.AddToScene(spotlightBackground, Tags.Spotlight, 'InitialSpotlight');
+        threeSvc.AddToScene(spotlightBackground, Tags.Spotlight, 'Initial background Spotlight');
       }
-      stateService.changeState(FlowState.welcome);
-      useStartOfSession(threeSvc, zoneService, spotlight).showScanImage();
+      scenery.welcomeScene()
     };
 
     const setData = async () => {
@@ -618,7 +623,7 @@ export default defineComponent({
             )
               .endOfSession()
               .then((_start) => {
-                setup();
+                setup(false);
               });
           } else {
             useDMX().lightsOn();
@@ -669,6 +674,8 @@ export default defineComponent({
         threeSvc.state.sceneDimensions,
         Defaults().screenZones(),
       );
+      scenery.addThreeService(threeSvc);
+      scenery.addZoneService(zoneService);
       garbageHelper = WallGarbageHelper(threeSvc, taggingService);
       subtitleService = new SubtitleService();
       threeSvc.ClearScene();
@@ -678,7 +685,7 @@ export default defineComponent({
         text.text.position.x -= text.dimensions.x / 2;
         threeSvc.AddToScene(text.text, Tags.Testing);
       }
-      
+
       threeSvc.Animate();
     });
     return { viewport, videoElement, subtitles };
