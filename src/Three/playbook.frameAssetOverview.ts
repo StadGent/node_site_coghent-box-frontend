@@ -51,6 +51,7 @@ const useFrameAssetOverview = (
     const images: Array<Mesh> = [];
     const scaleTo: Array<number> = [];
     for (const [i, asset] of assets.entries()) {
+
       const relationMetadata = useAsset(threeService).connectRelationMetadata(
         frame,
         asset,
@@ -60,10 +61,11 @@ const useFrameAssetOverview = (
         position.x = relationMetadata.position.x;
         position.y = relationMetadata.position.y;
       }
-      data[relationMetadata.timestamp_start] = position;
-      positions.push(position);
+
       const mediafile = useAsset(threeService).getMediaInfoForAsset(asset.id, asset.primary_mediafile_location, frame.assets)
       if (mediafile) {
+        data[relationMetadata.timestamp_start] = position;
+        positions.push(position);
         let image;
         let dimensions: Vector3 = new Vector3(0, 0, 0)
         if (asset.primary_height != null && asset.primary_width != null) {
@@ -94,6 +96,8 @@ const useFrameAssetOverview = (
           group.add(image);
         }
       }
+
+
     }
 
     threeService.AddToScene(
@@ -146,6 +150,7 @@ const useFrameAssetOverview = (
       AnimationDefaults.values.scaleStep,
     );
     await Common().awaitTimeout(150);
+    // FIXME:
     await Promise.all([
       MoveObject().startMoving(asset, positions[currentAsset]),
       MoveObject().startMoving(
@@ -238,6 +243,7 @@ const useFrameAssetOverview = (
       activeStory,
       currentFrame,
     ) as unknown as Array<Asset>;
+    assets = assets.filter(_asset => _asset.mediafiles.length >= 0)
     storyColor = _storyColor;
     if (assets && assets.length > 0) {
       await displayAllAssets(
@@ -246,6 +252,7 @@ const useFrameAssetOverview = (
         currentFrame,
       );
       moveAllAssetsToFront(group.children as Array<Mesh<BoxBufferGeometry, any>>)
+      console.log('group.children', group.children)
       group.children.forEach((asset, index) => {
         const relationMetadata = useAsset(threeService).connectRelationMetadata(
           activeStory.frames?.[currentFrame] as unknown as Frame,
