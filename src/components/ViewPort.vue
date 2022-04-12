@@ -42,8 +42,9 @@ import Template from '@/Three/template.shapes';
 import { Entity } from 'coghent-vue-3-component-library/lib';
 import useStartOfSession from '@/Three/playbook.startOfSession';
 import Spot from '@/Three/shapes.spotlight';
-import StateService, { FlowState } from '@/services/StateService';
+import { FlowState } from '@/services/StateService';
 import MetadataLabel from '@/Three/shapes.metadataLabel';
+import stateService from '@/services/StateService';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -64,10 +65,6 @@ export default defineComponent({
     },
     storyService: {
       type: StoryService || null,
-      required: true,
-    },
-    stateService: {
-      type: StateService,
       required: true,
     },
     showPauseOverview: {
@@ -151,7 +148,7 @@ export default defineComponent({
           _storySelected.id != 0 &&
           storyDataOfSelected &&
           !storyDataOfSelected.storySeen &&
-          props.stateService.getCurrentState() === FlowState[5]
+          stateService.getCurrentState() === FlowState[5]
           // storyDataOfSelected.totalOfFrames > storyDataOfSelected.totalOfFramesSeen
         ) {
           if (
@@ -183,7 +180,7 @@ export default defineComponent({
             counter.value = 0;
             isCounting.value = false;
             countingStory.value = null;
-            props.stateService.changeState(FlowState.storySelected);
+            stateService.changeState(FlowState.storySelected);
             console.log('You selected sensor', countingStory.value);
             stories.value ? (storyData = stories.value) : [];
             useDMX().lightsOff();
@@ -213,7 +210,7 @@ export default defineComponent({
           if (!props.showPauseOverview) {
             setData();
           } else {
-            props.stateService.changeState(FlowState.storyOverview);
+            stateService.changeState(FlowState.storyOverview);
             emit('resetSelectedStory', {
               topic: 'sensors/0/present',
               id: 0,
@@ -265,7 +262,7 @@ export default defineComponent({
         storyService.activeStory,
       ).setSelectedStory();
       if (props.showPauseOverview) {
-        props.stateService.changeState(FlowState.storyOverview);
+        stateService.changeState(FlowState.storyOverview);
         garbageHelper.newStorySelectedWithNoActive();
         audioHelper = AudioHelper(threeSvc);
       } else {
@@ -356,7 +353,7 @@ export default defineComponent({
       }
 
       useStartOfSession(threeSvc, zoneService, spotlight).showScanImage();
-      props.stateService.changeState(FlowState.welcome);
+      stateService.changeState(FlowState.welcome);
     };
 
     const setData = async () => {
@@ -381,7 +378,7 @@ export default defineComponent({
       if (resultStoryData) {
         currentStoryID.value = storyService.activeStoryData.storyId;
         useDMX().lightsOff();
-        props.stateService.changeState(FlowState.countdownToFrame);
+        stateService.changeState(FlowState.countdownToFrame);
         await PlayBookBuild(
           threeSvc,
           storyService,
@@ -402,7 +399,7 @@ export default defineComponent({
     };
 
     const timing = () => {
-      props.stateService.changeState(FlowState.framePlaying);
+      stateService.changeState(FlowState.framePlaying);
       let currentFunction = 0;
       let timingCount = 0;
 
@@ -470,8 +467,8 @@ export default defineComponent({
     const buildStory = async (_currenStoryId: string) => {
       useDMX().lightsOff();
       spotlightBackground.material.opacity = 0;
-      if (props.stateService.getCurrentState() != FlowState[4]) {
-        props.stateService.changeState(FlowState.buildFrame);
+      if (stateService.getCurrentState() != FlowState[4]) {
+        stateService.changeState(FlowState.buildFrame);
 
         const subtitleLink = useFrame(threeSvc).getSubtitleForFrame(
           storyService.activeStory.frames?.[currentFrame] as unknown as Frame,
@@ -604,7 +601,7 @@ export default defineComponent({
           storyService.setStoryColor();
           if (storyService.isEndOfSession()) {
             emit('restartSession', true);
-            props.stateService.changeState(FlowState.endCountdown);
+            stateService.changeState(FlowState.endCountdown);
             garbageHelper.endOfSessionScreen();
             useDMX().sequence();
             PlayBookBuild(
@@ -622,7 +619,7 @@ export default defineComponent({
               });
           } else {
             useDMX().lightsOn();
-            props.stateService.changeState(FlowState.storyOverview);
+            stateService.changeState(FlowState.storyOverview);
             emit('resetSelectedStory', {
               topic: 'sensors/0/present',
               id: 0,

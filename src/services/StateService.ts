@@ -49,4 +49,5 @@ class StateService {
   }
 }
 
-export default StateService
+const stateService = new StateService(FlowState.welcome);
+export default stateService

@@ -41,12 +41,12 @@ import { apolloClient } from '@/main';
 import { Relation } from 'coghent-vue-3-component-library/lib/queries';
 import { getFirstStoryToSee, getUnseenStories } from '@/composables/useBox';
 import Defaults from '@/Three/defaults.config';
+import stateService from '@/services/StateService';
 
 export default defineComponent({
   name: 'Wall',
   components: { ViewPort, mqtt },
   setup() {
-    const stateService = new StateService(FlowState.welcome);
     let stories = ref<Array<any>>();
     const storySelected = ref<string>(
       JSON.stringify({ topic: 'sensors/1/present', id: 1, msg: true } as SensorObject),
