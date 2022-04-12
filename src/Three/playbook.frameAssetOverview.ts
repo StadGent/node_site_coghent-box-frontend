@@ -243,7 +243,7 @@ const useFrameAssetOverview = (
       activeStory,
       currentFrame,
     ) as unknown as Array<Asset>;
-    assets = assets.filter(_asset => _asset.mediafiles.length >= 0)
+    assets = assets.filter(_asset => _asset.mediafiles.length > 0)
     storyColor = _storyColor;
     if (assets && assets.length > 0) {
       await displayAllAssets(
