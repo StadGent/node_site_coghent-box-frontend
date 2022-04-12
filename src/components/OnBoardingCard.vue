@@ -5,6 +5,7 @@
     :triggers="[]"
     :placement="placement"
     :distance="distance"
+    :shift="false"
   >
     <slot></slot>
     <template #popper

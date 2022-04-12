@@ -61,6 +61,7 @@
               :cardTitle="t('touchtable.onBoarding.goToTouchTable.title')"
               :cardDescription="t('touchtable.onBoarding.goToTouchTable.description')"
               :showPreviousButton="false"
+              placement="right"
               @nextButtonClicked="navigateToTouchtable(entity)"
             ></on-boarding-card>
           </div>
@@ -79,7 +80,7 @@
   import { useBoxVisiter, BaseIcon } from 'coghent-vue-3-component-library';
   import { apolloClient } from '@/main';
   import { useRouter } from 'vue-router';
-  import { Entity } from 'coghent-vue-3-component-library/lib/queries';
+  import { Entity, Relation } from 'coghent-vue-3-component-library/lib/queries';
   import { iiiF } from '@/main';
   import { useTouchTable } from '@/composables/useTouchTable';
   import { useOnBoarding } from '@/composables/useOnBoarding';
@@ -138,8 +139,25 @@
       const { onBoardingState } = useOnBoarding();
       const { t } = useI18n();
 
+      const filterVisitedRelationsFromBoxVisiter = (relations: Relation[]): string[] => {
+        const visitedRelations = relations
+          .filter((relation: Relation) => relation.type == 'visited')
+          .map((relation: Relation) => relation.key.replace('entities/', ''));
+        return visitedRelations as string[];
+      };
+
+      watch(
+        () => boxVisiter.value,
+        (loading) => {
+          console.log({ loading });
+        },
+      );
+
       const tempAssetArray: any[] = [];
       props.storyEntities.forEach((frame: any, frameIndex: number) => {
+        const visitedAssets = filterVisitedRelationsFromBoxVisiter(
+          boxVisiter.value.relations,
+        );
         try {
           let isFrameSeen: Boolean = false;
           boxVisiterStories.seen_frames.forEach((seenFrame: any) => {
@@ -152,18 +170,24 @@
               onBoardingEntityId.value = asset.id;
             }
             const newAsset = { ...asset };
-            newAsset.seen = isFrameSeen ? true : false;
+            newAsset.seen =
+              isFrameSeen || visitedAssets.includes(asset.id) ? true : false;
             return newAsset;
           });
           tempAssetArray.push(...entityData.value.results.concat(frameAssets));
         } catch (e) {
           if (frame.assets) {
-            tempAssetArray.push(...frame.assets);
-            if (frameIndex == 0) {
-              onBoardingEntityId.value = frame.assets[2].id;
-            }
+            console.log(`No seen frames, looking for visited assets instead`);
+            const frameAssets = frame.assets.map((asset: any, index: number) => {
+              if (index == 2 && frameIndex == 0) {
+                onBoardingEntityId.value = asset.id;
+              }
+              const newAsset = { ...asset };
+              newAsset.seen = visitedAssets.includes(asset.id) ? true : false;
+              return newAsset;
+            });
+            tempAssetArray.push(...entityData.value.results.concat(frameAssets));
           }
-          console.log(`Seen frames could not be shown: ${e}`);
         }
       });
 

@@ -1,15 +1,38 @@
 <template>
   <base-overlay :overlay-state="BasketOverlayState.state" class="p-24">
     <main>
-      <section class="w-full flex justify-center overflow-y-scroll overlay">
+      <section
+        class="w-full flex justify-center overflow-y-scroll overflow-x-hidden overlay"
+      >
         <the-masonry
           v-if="basketEntities.length == basketItems.length && basketItems.length"
+          ref="masonry"
           :entities="{ results: basketEntities }"
           :loading="loadingEntity"
           :generate-url="generateUrl"
           :no-image-url="noImageUrl"
           :show-load-more="false"
-        />
+          :hasCustomImageOverlay="true"
+        >
+          <template #tile="entity">
+            <div class="flex absolute p-4 justify-between w-full">
+              <base-button
+                class="w-0"
+                custom-style="secondary-round"
+                :icon-shown="true"
+                custom-icon="fullscreen"
+                @click="openIIIFOverlay(entity)"
+              />
+              <base-button
+                class="w-0"
+                custom-style="secondary-round"
+                :icon-shown="true"
+                custom-icon="wasteBasket"
+                @click="removeFromBasket(entity.id)"
+              />
+            </div>
+          </template>
+        </the-masonry>
         <div v-else-if="basketItems.length"><spinner /></div>
         <h3 class="text-lg" v-else>
           {{ t('touchtable.network.basketOverlay.empty') }}
@@ -26,8 +49,6 @@
           font-bold
           cursor-pointer
           flex-col
-          absolute
-          bottom-0
         "
         @click="closeBasketOverlay"
       >
@@ -45,12 +66,15 @@
     TheMasonry,
     BaseIcon,
     GetEntityByIdDocument,
+    BaseButton,
   } from 'coghent-vue-3-component-library';
   import { useQuery } from '@vue/apollo-composable';
   import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
   import { iiiF } from '@/main';
   import Spinner from './Spinner.vue';
   import { useI18n } from 'vue-i18n';
+  import { useIIIFModal } from '@/components/IIIFModal.vue';
+  import { IIIFImageUrlHelper } from '../services/Fabric/helper.fabric';
 
   export type OverlayState = 'show' | 'hide' | 'loading';
 
@@ -93,6 +117,7 @@
       TheMasonry,
       BaseIcon,
       Spinner,
+      BaseButton,
     },
     props: {
       basketItems: {
@@ -106,6 +131,8 @@
       const { generateUrl, noImageUrl } = iiiF;
       const basketEntities = ref<Entity[]>([]);
       const { t } = useI18n();
+      const { openIIIFModal, setIIIFImage } = useIIIFModal();
+      const masonry = ref<any>(null);
 
       const { loading: loadingEntity, fetchMore: fetchMoreEntities } = useQuery(
         GetEntityByIdDocument,
@@ -153,6 +180,20 @@
         { immediate: true },
       );
 
+      onUpdated(() => {
+        if (masonry.value.constructTiles) {
+          console.log(masonry.value);
+          masonry.value.constructTiles();
+        }
+      });
+
+      // Todo: fix masonry collapse
+
+      const openIIIFOverlay = (entity: any) => {
+        setIIIFImage(IIIFImageUrlHelper(entity));
+        openIIIFModal();
+      };
+
       return {
         closeBasketOverlay,
         openBasketOverlay,
@@ -161,6 +202,8 @@
         noImageUrl,
         basketEntities,
         loadingEntity,
+        openIIIFOverlay,
+        masonry,
         t,
       };
     },
