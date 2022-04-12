@@ -30,7 +30,7 @@
           class="h-5 w-5 ml-0.5 stroke-current fill-current stroke-2"
         />
       </a>
-      <IIIFViewer :image-url="imageUrl" :canGoFullScreen="false" />
+      <IIIFViewer :image-url="IIIFModalState.imageUrl" :canGoFullScreen="false" />
     </section>
   </BaseModal>
 </template>
@@ -43,31 +43,34 @@
 
   export type IIIFModalType = {
     state: ModalState;
+    imageUrl: string;
   };
 
   const IIIFModalState = ref<IIIFModalType>({
     state: 'hide',
+    imageUrl: '',
   });
 
   export const useIIIFModal = () => {
-    const updateIIIFModal = (IIIFModalInput: IIIFModalType) => {
-      IIIFModalState.value = IIIFModalInput;
+    const updateIIIFModal = (IIIFModalInput: ModalState) => {
+      IIIFModalState.value.state = IIIFModalInput;
+    };
+
+    const setIIIFImage = (imageUrl: string) => {
+      IIIFModalState.value.imageUrl = imageUrl;
     };
 
     const closeIIIFModal = () => {
-      updateIIIFModal({
-        state: 'hide',
-      });
+      updateIIIFModal('hide');
     };
 
     const openIIIFModal = () => {
-      updateIIIFModal({
-        state: 'show',
-      });
+      updateIIIFModal('show');
     };
     return {
       closeIIIFModal,
       openIIIFModal,
+      setIIIFImage,
       IIIFModalState,
     };
   };
@@ -79,12 +82,7 @@
       IIIFViewer,
       BaseIcon,
     },
-    props: {
-      imageUrl: {
-        type: String,
-        required: true,
-      },
-    },
+    props: {},
     setup: (props) => {
       const { closeIIIFModal, openIIIFModal, IIIFModalState } = useIIIFModal();
 

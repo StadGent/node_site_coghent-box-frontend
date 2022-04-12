@@ -2,7 +2,7 @@
   <div class="touchtable">
     <basket-overlay :basketItems="basketItems" />
     <shutdown-modal :code="code" @disposeCanvas="disposeCanvas" />
-    <IIIF-modal :image-url="IIIFImageUrl" />
+    <IIIF-modal />
     <touch-header :basket-amount="basketItems.length" />
     <div>
       <on-boarding-card
@@ -145,7 +145,7 @@
       );
       const IIIFImageUrl = ref<string>();
       let fabricService = ref<FabricService | undefined>(undefined);
-      const { openIIIFModal, IIIFModalState } = useIIIFModal();
+      const { openIIIFModal, setIIIFImage } = useIIIFModal();
       const { onBoardingState } = useOnBoarding();
       const { t } = useI18n();
 
@@ -360,7 +360,10 @@
       };
 
       const showPictureModal = () => {
-        openIIIFModal();
+        if (IIIFImageUrl.value) {
+          setIIIFImage(IIIFImageUrl.value);
+          openIIIFModal();
+        }
       };
 
       const highlightSelectedFilter = (filterIndex: number) => {
