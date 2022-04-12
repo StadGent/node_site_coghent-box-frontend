@@ -139,7 +139,7 @@
       const { t } = useI18n();
 
       const tempAssetArray: any[] = [];
-      props.storyEntities.forEach((frame: any) => {
+      props.storyEntities.forEach((frame: any, frameIndex: number) => {
         try {
           let isFrameSeen: Boolean = false;
           boxVisiterStories.seen_frames.forEach((seenFrame: any) => {
@@ -148,7 +148,7 @@
             }
           });
           const frameAssets = frame.assets.map((asset: any, index: number) => {
-            if (index == 2) {
+            if (index == 2 && frameIndex == 0) {
               onBoardingEntityId.value = asset.id;
             }
             const newAsset = { ...asset };
@@ -159,6 +159,9 @@
         } catch (e) {
           if (frame.assets) {
             tempAssetArray.push(...frame.assets);
+            if (frameIndex == 0) {
+              onBoardingEntityId.value = frame.assets[2].id;
+            }
           }
           console.log(`Seen frames could not be shown: ${e}`);
         }

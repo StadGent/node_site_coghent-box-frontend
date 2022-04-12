@@ -28,7 +28,7 @@
     <main class="bg-background-light h-auto min-h-screen p-24">
       <div v-if="!loadingActiveBoxResult && activeBoxResult">
         <div
-          v-for="(storyAsset, index) in activeBoxResult.ActiveBox.results"
+          v-for="(storyAsset, index) in storyAssets"
           :key="storyAsset.id"
           :id="storyAsset.id"
         >
@@ -125,7 +125,7 @@
         () => activeBoxResult.value,
         (boxResult) => {
           if (boxResult.ActiveBox) {
-            const activeStories = boxResult.ActiveBox.results;
+            storyAssets.value = boxResult.ActiveBox.results;
             const boxVisitorStories = boxVisiter.value.relations.filter(
               (relation: Relation) => relation.type == 'stories',
             );
@@ -140,7 +140,10 @@
             if (!lastSeenStoryId.value) {
               try {
                 const lastSeenFrame = getLastSeenFrame(seenFrames);
-                lastSeenStoryId.value = getStoryForFrame(activeStories, lastSeenFrame);
+                lastSeenStoryId.value = getStoryForFrame(
+                  storyAssets.value,
+                  lastSeenFrame,
+                );
               } catch (e) {
                 console.warn(e);
               }
