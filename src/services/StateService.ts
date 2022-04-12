@@ -15,9 +15,14 @@ class StateService {
   private currentState: string
   private states: Array<string>
 
+  public canScanTicket: true | false
+  public canChooseNextStory: true | false
+
   constructor(_intitalState: FlowState) {
     this.currentState = FlowState[_intitalState]
     this.states = Object.keys(FlowState).filter(_k => isNaN(Number(_k)))
+    this.canScanTicket = true
+    this.canChooseNextStory = true
   }
 
   changeState(_state: FlowState) {

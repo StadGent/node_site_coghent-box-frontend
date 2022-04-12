@@ -85,7 +85,6 @@ export default defineComponent({
     const viewport = ref(null);
     const stories = ref<Array<Entity> | null>(null);
     const currentStoryID = ref<string>('');
-    const chooseStory = ref<boolean>(false);
     const videoElement = ref<HTMLVideoElement>();
 
     const playBook = PlayBook();
@@ -147,7 +146,7 @@ export default defineComponent({
           // storyService.updateStoryStatus(storyDataOfSelected);
         }
         if (
-          chooseStory.value &&
+          stateService.canChooseNextStory &&
           _storySelected.id != 0 &&
           storyDataOfSelected &&
           !storyDataOfSelected.storySeen &&
@@ -230,14 +229,14 @@ export default defineComponent({
               spotlight,
               {} as Entity,
             ).storyPausedWithNoActiveStory();
-            chooseStory.value = true;
+            stateService.canChooseNextStory = true;
           }
         }
       },
     );
 
     const setNewStoryWhenSelected = async (_storySelected: number) => {
-      chooseStory.value = false;
+      stateService.canChooseNextStory = false;
       garbageHelper.removeCountdown();
       storyService.setActiveStory(storyData[_storySelected].id);
       const _storyData = storyService.getStoryDataOfStory(storyData[_storySelected].id);
@@ -332,6 +331,7 @@ export default defineComponent({
       _storySelected: number,
       _count: number,
     ) => {
+      console.log(taggingService.getByTag(Tags.Spotlight));
       const pausePosition = storyService.getStoryData()[_storySelected].pausedPosition;
       await CustomAnimation().circularLoader(
         threeSvc,
@@ -355,13 +355,17 @@ export default defineComponent({
           zoneService.zones[0].center,
           Measurements().storyCircle.radius,
         );
-        scenery.addSpotlight(spotlight);
-
+        
         spotlightBackground = Spot().spotLightBackground();
         threeSvc.AddToScene(spotlight, Tags.Spotlight, 'InitialSpotlight');
-        threeSvc.AddToScene(spotlightBackground, Tags.Spotlight, 'Initial background Spotlight');
+        threeSvc.AddToScene(
+          spotlightBackground,
+          Tags.Spotlight,
+          'Initial background Spotlight',
+        );
       }
-      scenery.welcomeScene()
+      scenery.addSpotlight(spotlight);
+      scenery.welcomeScene();
     };
 
     const setData = async () => {
@@ -473,6 +477,7 @@ export default defineComponent({
     };
 
     const buildStory = async (_currenStoryId: string) => {
+      garbageHelper.removeCountdown();
       useDMX().lightsOff();
       spotlightBackground.material.opacity = 0;
       if (stateService.getCurrentState() != FlowState[4]) {
@@ -623,7 +628,7 @@ export default defineComponent({
             )
               .endOfSession()
               .then((_start) => {
-                setup(false);
+                setup();
               });
           } else {
             useDMX().lightsOn();
@@ -649,7 +654,7 @@ export default defineComponent({
               spotlight,
               storyService.activeStory,
             ).storyPaused();
-            chooseStory.value = true;
+            stateService.canChooseNextStory = true;
           }
         },
         playBook.lastAction().time + Timing.delayForNext,

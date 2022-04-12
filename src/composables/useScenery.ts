@@ -14,13 +14,17 @@ const useScenery = (): {
   let threeService: ThreeService | null = null
   let zoneService: ZoneService | null = null
 
-  const checkResources = () => {
+  const checkAllResources = () => {
     return threeService != null && spotlight != null && zoneService != null
   }
   const addSpotlight = (_spotlight: Mesh<BufferGeometry, any>) => {
     if (spotlight === null) {
       spotlight = _spotlight
-    } else console.log('You wanted to overide the single spotlight in the 180 wall', _spotlight)
+    } else {
+      console.log('You have overide the single spotlight in the 180 wall', _spotlight)
+      // threeService?.RemoveFromScene(_spotlight)
+      spotlight = _spotlight
+    }
   }
   const addThreeService = (_threeService: ThreeService) => {
     if (threeService === null) {
@@ -34,13 +38,14 @@ const useScenery = (): {
   }
 
   const welcomeScene = () => {
-    if (checkResources()) {
+    if (checkAllResources()) {
       stateService.changeState(FlowState.welcome)
       useStartOfSession(
         threeService as ThreeService,
         zoneService as ZoneService,
         spotlight as Mesh<BufferGeometry, any>
       ).showScanImage();
+      stateService.canScanTicket = true
     } else console.log(`Could't find alls the components`, {
       threeService: threeService,
       spotlight: spotlight,

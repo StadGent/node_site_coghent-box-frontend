@@ -28,12 +28,12 @@
   <mqtt @selectStory="setSelectStory" @mqttEnabled="toggleShowInputField" />
 </template>
 <script lang="ts">
-import { defineComponent, onMounted, ref, watch } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 import ViewPort from '@/components/ViewPort.vue';
 import { useQuery } from '@vue/apollo-composable';
 import mqtt from '@/components/mqtt.vue';
 import StoryService from '@/services/StoryService';
-import StateService, { FlowState } from '@/services/StateService';
+import { FlowState } from '@/services/StateService';
 import Common, { SensorObject } from '@/composables/common';
 import { GetActiveBoxDocument, RelationType } from 'coghent-vue-3-component-library';
 import { useBoxVisiter } from 'coghent-vue-3-component-library';
@@ -57,7 +57,6 @@ export default defineComponent({
     const inputValue = ref<string>('');
     const currentState = ref<string>(FlowState[0]);
     const showPauseOverview = ref<boolean>(false);
-    const canScanTicket = ref<boolean>(false);
     const { getByCode, getRelationsByType } = useBoxVisiter(apolloClient);
     const qrInput = ref<any>(null);
     window.addEventListener('focus', () => {
@@ -79,12 +78,11 @@ export default defineComponent({
     onResult((_stories) => {
       stories.value = _stories.data.ActiveBox.results;
       console.log('stories', stories.value);
-      canScanTicket.value = true;
+      stateService.canScanTicket = true;
     });
 
     const setVisiterData = async () => {
-      console.log('canscan ticket', canScanTicket.value);
-      if (canScanTicket.value) {
+      if (stateService.canScanTicket) {
         const storyRelations = (await useBoxVisiter(apolloClient).getRelationsByType(
           visitercode.value,
           RelationType.Stories,
@@ -120,7 +118,7 @@ export default defineComponent({
             storyService.value = tmpStoryService;
           }
         }
-        canScanTicket.value = false;
+        stateService.canScanTicket = false;
       }
     };
 
@@ -135,7 +133,7 @@ export default defineComponent({
     };
 
     const restartSession = async (start: boolean) => {
-      canScanTicket.value = start;
+      stateService.canScanTicket = start;
     };
 
     watch(inputValue, (value: string) => {
@@ -145,7 +143,7 @@ export default defineComponent({
         code = value;
       }
       if (
-        canScanTicket.value &&
+        stateService.canScanTicket &&
         code &&
         code.length === 8 &&
         stateService.getCurrentState() === FlowState[0]
@@ -167,7 +165,7 @@ export default defineComponent({
         stateService.getCurrentState() != FlowState[4] &&
         stateService.getCurrentState() != FlowState[6]
       ) {
-        canScanTicket.value = true;
+        stateService.canScanTicket = true;
         currentState.value = stateService.getCurrentState();
         storyService.value = null;
         const visiterByCode = await useBoxVisiter(apolloClient).getByCode(String(code));
