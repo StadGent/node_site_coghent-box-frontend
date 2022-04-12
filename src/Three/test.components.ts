@@ -1,5 +1,8 @@
 import Common from '@/composables/common';
 import { StoryData } from '@/services/StoryService';
+import { Tags } from '@/services/TaggingService';
+import ThreeService from '@/services/ThreeService';
+import { Entity } from 'coghent-vue-3-component-library/lib';
 import { BoxGeometry, BufferGeometry, CircleGeometry, Group, Material, MathUtils, Mesh, MeshBasicMaterial, MeshNormalMaterial, RingGeometry, Vector3 } from 'three';
 import Colors from './defaults.color';
 import HelperText from './defaults.helperText';
@@ -27,9 +30,10 @@ const TestSingleComponent = (): {
   endOfStoryText: (position: Vector3) => Promise<Group>;
   metadataLabel: (position: Vector3, text: string) => Group;
   metadataLabelWithConnection: (position: Vector3, text: string) => Array<Group>;
-  pauseStoryCircleProgress: (_position: Vector3) => PauseProgressbarObjects;
+  pauseStoryCircleProgress: (_position: Vector3) => Promise<PauseProgressbarObjects>;
   countdownCircle: (_position: Vector3, _progress: number, _color?: number) => Mesh<RingGeometry, MeshBasicMaterial>;
   spotlight: (_position: Vector3) => Mesh<CircleGeometry, MeshBasicMaterial>;
+  frameOverview: (_threeService: ThreeService, _stories: Array<Entity>, _story: string, _frame: string) => void
 } => {
 
   const testCube = (_position: Vector3, _dimensions: Vector3) => {
@@ -76,7 +80,7 @@ const TestSingleComponent = (): {
     return groups;
   };
 
-  const pauseStoryCircleProgress = (_position: Vector3) => {
+  const pauseStoryCircleProgress = async (_position: Vector3) => {
     const storyData = {
       storyId: '',
       totalOfFrames: 6,
@@ -90,7 +94,7 @@ const TestSingleComponent = (): {
       position: _position,
       params: { radius: Measurements().storyCircle.progressRadius - Measurements().progressBar.thickness / 2, color: Colors().green } as CircleParams,
     } as CircleSchema;
-    return PauseProgressbar(storyData).create(schema);
+    return await PauseProgressbar(storyData).create(schema);
   };
 
   const countdownCircle = (_position: Vector3, _progress: number, _color?: number) => {
@@ -117,9 +121,42 @@ const TestSingleComponent = (): {
     const material = new MeshBasicMaterial({ color: Colors().progressGrey, opacity: 0.4, transparent: true });
     material.color.convertSRGBToLinear();
     material.clipIntersection = true;
-    const mesh = new Mesh(geometry,material);
+    const mesh = new Mesh(geometry, material);
     Common().setPosition(mesh, _position)
     return mesh;
+  }
+
+  const frameOverview = (_threeService: ThreeService, _stories: Array<Entity>, _story: string, _frame: string) => {
+    const cube = testCube(new Vector3(0, 0, 0), new Vector3(1, 1, 0))
+    console.log({ _stories })
+    _stories.forEach((story) => {
+      if (story.id === _story) {
+        console.log('Found story', story)
+        if (story.frames && story.frames.length >= 0) {
+          console.log('has frames')
+          story.frames?.forEach(frame => {
+            if (frame?.id === _frame) {
+              frame?.relationMetadata?.forEach(data => {
+                const newCube = cube.clone()
+                if (data && data?.position) {
+                  const assetResults = story.assets?.filter(asset => asset?._key?.replace('entities/', '') === data.key)
+                  console.log({ assetResults })
+                  if (assetResults && assetResults[0]) {
+                    newCube.position.set(data?.position?.x as number, data?.position?.y as number, data?.position.z as number)
+                    cube.geometry.parameters.width = Number(assetResults[0].primary_width)
+                    cube.geometry.parameters.height = Number(assetResults[0].primary_height)
+                    console.log('ADDING CUBE')
+                    Common().setScale(cube, data.scale ? data.scale : 1)
+                    _threeService.AddToScene(cube, Tags.Testing)
+                  }
+                }
+              })
+            }
+          })
+        }
+
+      }
+    })
   }
 
   return {
@@ -135,6 +172,7 @@ const TestSingleComponent = (): {
     pauseStoryCircleProgress,
     countdownCircle,
     spotlight,
+    frameOverview
   }
 };
 
