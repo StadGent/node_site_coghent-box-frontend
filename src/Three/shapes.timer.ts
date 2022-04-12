@@ -1,4 +1,5 @@
 import Common from '@/composables/common';
+import stateService, { FlowState } from '@/services/StateService';
 import { Tags } from '@/services/TaggingService';
 import ThreeService from '@/services/ThreeService';
 import { BufferGeometry, Mesh, Vector3 } from 'three';
@@ -13,12 +14,12 @@ type TimeObjects = {
   minutesTwo: Promise<Mesh>,
   secondsOne: Promise<Mesh>,
   secondsTwo: Promise<Mesh>,
-  semiColon:  Promise<Mesh>,
+  semiColon: Promise<Mesh>,
 }
 
 const TimerCountdown = (_threeService: ThreeService): {
-  start: (_timeInMiliseconds: number, _position: Vector3) => Promise<void>;
-  createNumber: (_time: string, _position: Vector3, _size: number) => Promise<Mesh<BufferGeometry,any>>
+  start: (_timeInMiliseconds: number, _position: Vector3, _stopState: FlowState) => Promise<void>;
+  createNumber: (_time: string, _position: Vector3, _size: number) => Promise<Mesh<BufferGeometry, any>>
 } => {
 
   const addZeroIfTimeIsUnderTen = (_time: number) => {
@@ -65,10 +66,10 @@ const TimerCountdown = (_threeService: ThreeService): {
 
     minutesTwo.position.setX(_position.x - Measurements().text.size.veryBig);
     minutesOne.position.setX(minutesTwo.position.x - Measurements().text.size.veryBig + 0.2);
-    const secondsOne = await createNumber(getSeconds(_currentTime)[0], _position,Measurements().text.size.veryBig)
-    const secondsTwo = await createNumber(getSeconds(_currentTime)[1], _position,Measurements().text.size.veryBig)
+    const secondsOne = await createNumber(getSeconds(_currentTime)[0], _position, Measurements().text.size.veryBig)
+    const secondsTwo = await createNumber(getSeconds(_currentTime)[1], _position, Measurements().text.size.veryBig)
 
-    ;(await secondsOne).position.setX(_position.x + Measurements().text.size.veryBig / 2 - 0.2);
+      ; (await secondsOne).position.setX(_position.x + Measurements().text.size.veryBig / 2 - 0.2);
     (await secondsTwo).position.setX((await secondsOne).position.x + Measurements().text.size.veryBig - 0.2);
 
     const semiColon = await createNumber(':', _position, Measurements().text.size.veryBig);
@@ -91,35 +92,31 @@ const TimerCountdown = (_threeService: ThreeService): {
     _threeService.AddToScene(_objects.minutesOne, Tags.Countdown, 'EndOfSession countdown timer');
     _threeService.AddToScene(_objects.minutesTwo, Tags.Countdown, 'EndOfSession countdown timer');
     _threeService.AddToScene(_objects.semiColon, Tags.Countdown, 'EndOfSession countdown timer');
-    // if ((Math.floor((_currentTime / 1000) % 60) + 1) % 10 == 0 || _initial) {
-    //   console.log('DRAWN');
-      _threeService.AddToScene(_objects.secondsOne, Tags.Countdown, 'EndOfSession countdown timer');
+    _threeService.AddToScene(_objects.secondsOne, Tags.Countdown, 'EndOfSession countdown timer');
     // }
     _threeService.AddToScene(_objects.secondsTwo, Tags.Countdown, 'EndOfSession countdown timer');
   };
 
-  const start = async (_timeInMiliseconds: number, _position: Vector3) => {
+  const start = async (_timeInMiliseconds: number, _position: Vector3, _stopState: FlowState) => {
+    let stop = false
     let currentTime = _timeInMiliseconds;
     let initial = true;
     do {
       const times = await create(_position, currentTime);
-      if(initial){
+      if (initial) {
         updateTime(times, currentTime, initial);
         initial = false;
       }
       updateTime(times, currentTime, initial);
       await Common().awaitTimeout(1000);
-      // if ((Math.floor((currentTime / 1000) % 60)) % 10 == 0) {
-      //   console.log('REMOVED',Math.floor((currentTime / 1000) % 60))
-
-        // _threeService.RemoveFromScene(times.secondsOne);
       // }
       if (currentTime != 0) {
-         _threeService.RemoveFromScene(times.secondsOne);
+        _threeService.RemoveFromScene(times.secondsOne);
         _threeService.RemoveFromScene(times.secondsTwo);
       }
       currentTime -= 1000;
-    } while (currentTime > -1)
+      stateService.getCurrentState() === FlowState[_stopState] ? stop = true : stop = false
+    } while (currentTime > -1 && stop === false)
   }
 
   return { start, createNumber };

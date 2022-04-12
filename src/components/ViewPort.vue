@@ -45,6 +45,8 @@ import Spot from '@/Three/shapes.spotlight';
 import { FlowState } from '@/services/StateService';
 import MetadataLabel from '@/Three/shapes.metadataLabel';
 import stateService from '@/services/StateService';
+import TimerCountdown from '@/Three/shapes.timer';
+import Positions from '@/Three/defaults.positions';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -235,6 +237,7 @@ export default defineComponent({
 
     const setNewStoryWhenSelected = async (_storySelected: number) => {
       chooseStory.value = false;
+      garbageHelper.removeCountdown()
       storyService.setActiveStory(storyData[_storySelected].id);
       const _storyData = storyService.getStoryDataOfStory(storyData[_storySelected].id);
       const next = storyService.setNextFrameForStory(_storyData.storyId);
@@ -264,6 +267,7 @@ export default defineComponent({
       if (props.showPauseOverview) {
         stateService.changeState(FlowState.storyOverview);
         garbageHelper.newStorySelectedWithNoActive();
+        TimerCountdown(threeSvc).start(Timing.pauseMenu.countdown, Positions().timerCountdown(), FlowState.storySelected)
         audioHelper = AudioHelper(threeSvc);
       } else {
         await garbageHelper.newStorySelected();
@@ -351,9 +355,8 @@ export default defineComponent({
         threeSvc.AddToScene(spotlight, Tags.Spotlight, 'InitialSpotlight');
         threeSvc.AddToScene(spotlightBackground, Tags.Spotlight, 'InitialSpotlight');
       }
-
-      useStartOfSession(threeSvc, zoneService, spotlight).showScanImage();
       stateService.changeState(FlowState.welcome);
+      useStartOfSession(threeSvc, zoneService, spotlight).showScanImage();
     };
 
     const setData = async () => {

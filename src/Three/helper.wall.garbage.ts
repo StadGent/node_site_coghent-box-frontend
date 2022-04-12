@@ -17,6 +17,7 @@ export type GarabageHelperForWall = {
   removeActiveFrameDots: () => void;
   activeStoryCircle: () => void;
   smallCountdownTimer: () => void;
+  removeCountdown: () => void;
 };
 
 const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingService): GarabageHelperForWall => {
@@ -55,6 +56,7 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
   };
 
   const newStorySelected = async () => {
+    removeCountdown()
     const groupOfAssetsTags = TaggingHelper(taggingService).getByTag(Tags.GroupOfAssets);
     if (groupOfAssetsTags && groupOfAssetsTags[0]) {
       await CustomAnimation().fadeOutGroups([groupOfAssetsTags[0].object], 0, AnimationDefaults.values.fadeStep);
@@ -135,6 +137,8 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     logRemoved('smallCountdown');
   }
 
+  const removeCountdown = () => removeByTag(Tags.Countdown)
+
   return {
     removeArrayOfGroupsByTag,
     pauseScreen,
@@ -147,6 +151,7 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     removeActiveFrameDots,
     activeStoryCircle,
     smallCountdownTimer,
+    removeCountdown
   }
 };
 

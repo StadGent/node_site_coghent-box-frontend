@@ -19,7 +19,7 @@ import ZoneService from '@/services/ZoneService';
 import TaggingService, { Tags } from '@/services/TaggingService';
 import CustomAnimation from '@/composables/animation';
 import AnimationDefaults from './defaults.animation';
-import WallGarbageHelper, { GarabageHelperForWall } from './helper.wall.garbage';
+import { GarabageHelperForWall } from './helper.wall.garbage';
 import TaggingHelper from './helper.tagging';
 import MoveHelper from './helper.move';
 import SceneHelper from './helper.scene';
@@ -30,6 +30,10 @@ import Development from './defaults.development';
 import StoryCircleCorrections from './corrections.storycircle';
 import Colors from './defaults.color';
 import PresenceService from '@/services/PresenceService';
+import Positions from './defaults.positions';
+import Timing from './defaults.timing';
+import TimerCountdown from './shapes.timer';
+import { FlowState } from '@/services/StateService';
 
 const PlayBookBuild = (
   threeService: ThreeService,
@@ -252,6 +256,7 @@ const PlayBookBuild = (
 
     TaggingHelper(taggingService).tagActiveStorycircleAsStoryCircle();
     presenceService.overviewStoryCircles(storyService.getStoryData().map(_data => _data.storyId))
+    TimerCountdown(threeService).start(Timing.pauseMenu.countdown, Positions().timerCountdown(), FlowState.storySelected)
   };
 
   const storyPausedWithNoActiveStory = async () => {
@@ -275,6 +280,7 @@ const PlayBookBuild = (
         Layers.scene,
       ),
     );
+    TimerCountdown(threeService).start(Timing.pauseMenu.countdown, Positions().timerCountdown(), FlowState.storySelected)
   };
 
   const storyData = async (

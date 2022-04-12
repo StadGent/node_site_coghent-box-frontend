@@ -13,6 +13,9 @@ type Timings = {
   storyCircle: {
     showFrameTitle: number;
   };
+  pauseMenu: {
+    countdown: number,
+  }
 };
 
 const Timing: Timings = {
@@ -31,6 +34,9 @@ const Timing: Timings = {
   storyCircle: {
     showFrameTitle: 2,
   },
+  pauseMenu: {
+    countdown: 30000,
+  }
 };
 
 export default Timing;
