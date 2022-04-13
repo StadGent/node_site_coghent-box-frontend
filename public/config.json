@@ -2,5 +2,5 @@
   "graphQlLink": "/api/graphql",
   "printerService": "http://localhost:8080",
   "iiifLink": "https://api.collectie.gent/iiif/image",
-  "dmx": "http://10.240.68.145/ajax/pb"
+  "dmx": " http://localhost/api/dmx"
 }

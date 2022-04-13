@@ -10,17 +10,30 @@ const useDMX = (): {
   const configStore = StoreFactory.get(ConfigStore);
   const BASE = configStore.config.value.dmx
   const sequence = () => {
-    console.log('DMX SEQUENCE')
-    axios.get(`${BASE}1/go+`)
+    try {
+      axios.get(`${BASE}/sequence`)
+      console.log('DMX SEQUENCE')
+
+    } catch (error) {
+      console.error({ error })
+    }
   };
   const lightsOff = () => {
-    console.log('DMX OFF')
-    axios.get(`${BASE}3/go+`)
+    try {
+      axios.get(`${BASE}/lightsOff`)
+      console.log('DMX OFF')
+    } catch (error) {
+      console.error({ error })
+    }
 
   };
   const lightsOn = () => {
-    console.log('DMX ON')
-    axios.get(`${BASE}2/go+`)
+    try {
+      axios.get(`${BASE}/lightsOn`)
+      console.log('DMX ON')
+    } catch (error) {
+      console.error({ error })
+    }
 
   };
   return { sequence, lightsOff, lightsOn };
