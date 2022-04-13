@@ -146,13 +146,6 @@
         return visitedRelations as string[];
       };
 
-      watch(
-        () => boxVisiter.value,
-        (loading) => {
-          console.log({ loading });
-        },
-      );
-
       const tempAssetArray: any[] = [];
       props.storyEntities.forEach((frame: any, frameIndex: number) => {
         const visitedAssets = filterVisitedRelationsFromBoxVisiter(
@@ -166,7 +159,7 @@
             }
           });
           const frameAssets = frame.assets.map((asset: any, index: number) => {
-            if (index == 2 && frameIndex == 0) {
+            if (index == 0 && frameIndex == 0) {
               onBoardingEntityId.value = asset.id;
             }
             const newAsset = { ...asset };
@@ -179,7 +172,7 @@
           if (frame.assets) {
             console.log(`No seen frames, looking for visited assets instead`);
             const frameAssets = frame.assets.map((asset: any, index: number) => {
-              if (index == 2 && frameIndex == 0) {
+              if (index == 0 && frameIndex == 0) {
                 onBoardingEntityId.value = asset.id;
               }
               const newAsset = { ...asset };

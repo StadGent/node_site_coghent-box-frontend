@@ -180,13 +180,6 @@
         { immediate: true },
       );
 
-      onUpdated(() => {
-        if (masonry.value.constructTiles) {
-          console.log(masonry.value);
-          masonry.value.constructTiles();
-        }
-      });
-
       // Todo: fix masonry collapse
 
       const openIIIFOverlay = (entity: any) => {
