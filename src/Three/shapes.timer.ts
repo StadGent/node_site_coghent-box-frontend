@@ -18,7 +18,7 @@ type TimeObjects = {
 }
 
 const TimerCountdown = (_threeService: ThreeService): {
-  start: (_timeInMiliseconds: number, _position: Vector3, _stopState: FlowState) => Promise<void>;
+  start: (_timeInMiliseconds: number, _position: Vector3, _stopState: FlowState, _nextScene?: Function) => Promise<void>;
   createNumber: (_time: string, _position: Vector3, _size: number) => Promise<Mesh<BufferGeometry, any>>
 } => {
 
@@ -93,11 +93,10 @@ const TimerCountdown = (_threeService: ThreeService): {
     _threeService.AddToScene(_objects.minutesTwo, Tags.Countdown, 'EndOfSession countdown timer');
     _threeService.AddToScene(_objects.semiColon, Tags.Countdown, 'EndOfSession countdown timer');
     _threeService.AddToScene(_objects.secondsOne, Tags.Countdown, 'EndOfSession countdown timer');
-    // }
     _threeService.AddToScene(_objects.secondsTwo, Tags.Countdown, 'EndOfSession countdown timer');
   };
 
-  const start = async (_timeInMiliseconds: number, _position: Vector3, _stopState: FlowState) => {
+  const start = async (_timeInMiliseconds: number, _position: Vector3, _stopState: FlowState, _nextScene?: Function) => {
     let stop = false
     let currentTime = _timeInMiliseconds;
     let initial = true;
@@ -117,6 +116,9 @@ const TimerCountdown = (_threeService: ThreeService): {
       currentTime -= 1000;
       stateService.getCurrentState() === FlowState[_stopState] ? stop = true : stop = false
     } while (currentTime > -1 && stop === false)
+    if(stop === false && _nextScene){
+      _nextScene()
+    }
   }
 
   return { start, createNumber };
