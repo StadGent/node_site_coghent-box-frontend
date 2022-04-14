@@ -21,7 +21,7 @@
           custom-style="touchtable-white-round"
           text="?"
           :icon-shown="false"
-          @click="resetOnBoardingState()"
+          @click="restartOnBoarding()"
         />
       </div>
     </nav>
@@ -90,7 +90,7 @@
       const lastSeenStoryId = ref<any>();
       const colors = [...Colors().storyCss()];
       const router = useRouter();
-      const { isFirstStoryOverview } = useTouchTable();
+      const { isFirstStoryOverview, updateIsFirstStoryOverview } = useTouchTable();
       const { resetOnBoardingState } = useOnBoarding();
       const { t } = useI18n();
 
@@ -151,21 +151,25 @@
           }
         },
       );
+
       const scrollToStory = () => {
         setTimeout(() => {
           const storyItem: any = document.getElementById(lastSeenStoryId.value);
-          if (lastSeenStoryId.value && storyItem && isFirstStoryOverview.value) {
+          if (lastSeenStoryId.value && storyItem) {
             storyItem.scrollIntoView({ behavior: 'smooth' });
           }
         }, 500);
       };
 
-      onUpdated(() => {
+      const restartOnBoarding = () => {
+        resetOnBoardingState();
         scrollToStory();
-      });
+      };
 
-      onMounted(() => {
-        scrollToStory();
+      onUpdated(() => {
+        if (isFirstStoryOverview.value) {
+          scrollToStory();
+        }
       });
 
       return {
@@ -178,6 +182,7 @@
         lastSeenStoryId,
         loadingActiveBoxResult,
         resetOnBoardingState,
+        restartOnBoarding,
         t,
       };
     },
