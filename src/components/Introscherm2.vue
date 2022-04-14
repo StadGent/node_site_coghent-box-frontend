@@ -1,5 +1,5 @@
 <template>
-  <div oncontextmenu="return false;" class="flex justify-center flex-wrap h-screen w-screen bg-background-light">
+  <div class="flex justify-center flex-wrap h-screen w-screen bg-background-light">
     <CardComponent
       :large="true"
       :background-color="`bg-accent-yellow`"

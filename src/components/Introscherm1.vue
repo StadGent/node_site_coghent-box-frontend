@@ -1,7 +1,6 @@
 <template>
   <div class="background" />
   <div
-    oncontextmenu="return false;"
     class="w-screen h-screen flex flex-col justify-center"
     @click="nextStep"
   >

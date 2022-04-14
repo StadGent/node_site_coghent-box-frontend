@@ -1,6 +1,5 @@
 <template>
   <div
-    oncontextmenu="return false;"
     class="
       flex
       grid-cols-1
