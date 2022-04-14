@@ -336,12 +336,11 @@ export default defineComponent({
         globals.threeService as ThreeService,
         new Vector3(
           pausePosition.x,
-          -(zoneService.sceneZone().height / 2) +
-            Measurements().storyCircle.progressRadius / 2,
+          pausePosition.y,
           pausePosition.z,
         ),
-        30,
-        10,
+        Measurements().storyCircle.radius,
+        15,
         [Tags.SmallCountdownRing, Tags.SmallCountdownProgressRing],
       );
     };
