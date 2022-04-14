@@ -215,7 +215,6 @@ export default defineComponent({
           if (!props.showPauseOverview) {
             setData();
           } else {
-            stateService.changeState(FlowState.storyOverview);
             emit('resetSelectedStory', {
               topic: 'sensors/0/present',
               id: 0,
@@ -270,11 +269,6 @@ export default defineComponent({
       if (props.showPauseOverview) {
         stateService.changeState(FlowState.storyOverview);
         garbageHelper.newStorySelectedWithNoActive();
-        TimerCountdown(globals.threeService as ThreeService).start(
-          Timing.pauseMenu.countdown,
-          Positions().timerCountdown(),
-          FlowState.storySelected,
-        );
         audioHelper = AudioHelper(globals.threeService as ThreeService);
       } else {
         await garbageHelper.newStorySelected();

@@ -281,7 +281,7 @@ const PlayBookBuild = (
         Layers.scene,
       ),
     );
-    TimerCountdown(threeService).start(Timing.pauseMenu.countdown, Positions().timerCountdown(), FlowState.storySelected)
+    TimerCountdown(threeService).start(Timing.pauseMenu.countdown, Positions().timerCountdown(), FlowState.storySelected, scenery.welcomeScene)
   };
 
   const storyData = async (
