@@ -101,8 +101,7 @@
         resetBoxVisiter();
         closeShutdownModal();
         emit('disposeCanvas', true);
-        document.body.classList.remove('overflow-hidden');
-        router.push('/touchtable/start');
+        window.location.href = '/touchtable/start';
       };
 
       const goToStoriesScreen = () => {
