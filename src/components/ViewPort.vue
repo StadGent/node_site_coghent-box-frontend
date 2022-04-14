@@ -47,8 +47,6 @@ import useDMX from '@/composables/useDMX';
 import PauseProgressbar from '@/Three/shapes.pauseProgressbar';
 import Template from '@/Three/template.shapes';
 import { Entity } from 'coghent-vue-3-component-library/lib';
-import useStartOfSession from '@/Three/playbook.startOfSession';
-import Spot from '@/Three/shapes.spotlight';
 import { FlowState } from '@/services/StateService';
 import MetadataLabel from '@/Three/shapes.metadataLabel';
 import stateService from '@/services/StateService';
@@ -113,8 +111,6 @@ export default defineComponent({
     let showProgressOfFrame = false;
     let interval: ReturnType<typeof setTimeout>;
     let storyData: Array<Entity> = [];
-    let spotlight: Mesh;
-    let spotlightBackground: Mesh<BoxGeometry, MeshBasicMaterial>;
 
     let subtitles = ref<string>('');
 
@@ -234,7 +230,7 @@ export default defineComponent({
               zoneService,
               taggingService,
               playBook,
-              spotlight,
+              globals.spotlight as Mesh<BufferGeometry, any>,
               {} as Entity,
             ).storyPausedWithNoActiveStory();
             stateService.canChooseNextStory = true;
@@ -257,7 +253,7 @@ export default defineComponent({
         zoneService,
         taggingService,
         playBook,
-        spotlight,
+        globals.spotlight as Mesh<BufferGeometry, any>,
         storyService.activeStory,
       ).storyData(storyService, storyService.activeStory, currentFrame);
 
@@ -269,7 +265,7 @@ export default defineComponent({
         zoneService,
         taggingService,
         playBook,
-        spotlight,
+        globals.spotlight as Mesh<BufferGeometry, any>,
         storyService.activeStory,
       ).setSelectedStory();
       if (props.showPauseOverview) {
@@ -390,7 +386,7 @@ export default defineComponent({
         zoneService,
         taggingService,
         playBook,
-        spotlight,
+        globals.spotlight as Mesh<BufferGeometry, any>,
         storyService.activeStory,
       ).storyData(storyService, storyService.activeStory, currentFrame);
       if (resultStoryData) {
@@ -403,7 +399,7 @@ export default defineComponent({
           zoneService,
           taggingService,
           playBook,
-          spotlight,
+          globals.spotlight as Mesh<BufferGeometry, any>,
           storyService.activeStory,
         )
           .startOfSession()
@@ -442,7 +438,7 @@ export default defineComponent({
             zoneService,
             taggingService,
             playBook,
-            spotlight,
+            globals.spotlight as Mesh<BufferGeometry, any>,
             storyService.activeStory,
           ).progressOfFrame(
             currentFrame,
@@ -487,7 +483,9 @@ export default defineComponent({
       garbageHelper.removeCountdown();
       useDMX().lightsOff();
       console.log('material', globals.spotlightBackground?.material);
-      globals.spotlightBackground ? (globals.spotlightBackground.material.opacity = 0) : null;
+      globals.spotlightBackground
+        ? (globals.spotlightBackground.material.opacity = 0)
+        : null;
       if (stateService.getCurrentState() != FlowState[4]) {
         stateService.changeState(FlowState.buildFrame);
 
@@ -507,7 +505,7 @@ export default defineComponent({
           zoneService,
           taggingService,
           framePlaybook,
-          spotlight,
+          globals.spotlight as Mesh<BufferGeometry, any>,
           storyService.activeStory,
         ).storyCircle(
           currentFrame,
@@ -521,7 +519,7 @@ export default defineComponent({
           zoneService,
           taggingService,
           framePlaybook,
-          spotlight,
+          globals.spotlight as Mesh<BufferGeometry, any>,
           storyService.activeStory,
         ).setActiveStoryCircleToBackground(false);
 
@@ -531,7 +529,7 @@ export default defineComponent({
           zoneService,
           taggingService,
           framePlaybook,
-          spotlight,
+          globals.spotlight as Mesh<BufferGeometry, any>,
           storyService.activeStory,
         ).frameOverview(
           currentFrame,
@@ -547,7 +545,10 @@ export default defineComponent({
         );
         if (audio === null) {
           setAfterFrameScreen();
-          spotlightBackground.material.opacity = Measurements().spotLight.opacity;
+          globals.spotlightBackground
+            ? (globals.spotlightBackground.material.opacity =
+                Measurements().spotLight.opacity)
+            : null;
           timing();
         }
         if (audio != null) {
@@ -559,7 +560,7 @@ export default defineComponent({
                 zoneService,
                 taggingService,
                 framePlaybook,
-                spotlight,
+                globals.spotlight as Mesh<BufferGeometry, any>,
                 storyService.activeStory,
               ).progressOfFrame(
                 currentFrame,
@@ -588,7 +589,10 @@ export default defineComponent({
                 : null;
 
               // spotlightBackground.material.opacity = Measurements().spotLight.opacity;
-              console.log('onloadedmetadata spotlightbackground', spotlightBackground);
+              console.log(
+                'onloadedmetadata spotlightbackground',
+                globals.spotlightBackground,
+              );
               timing();
             }
           };
@@ -605,12 +609,12 @@ export default defineComponent({
             zoneService,
             taggingService,
             playBook,
-            spotlight,
+            globals.spotlight as Mesh<BufferGeometry, any>,
             storyService.activeStory,
           ).setActiveStoryCircleToBackground(true);
-          MoveObject().startMoving(spotlight, zoneService.middleZoneCenter);
+          MoveObject().startMoving(globals.spotlight as Mesh<BufferGeometry, any>, zoneService.middleZoneCenter);
           CustomAnimation().shrink(
-            spotlight as Mesh<any, MeshBasicMaterial>,
+            globals.spotlight as Mesh<any, MeshBasicMaterial>,
             Measurements().storyCircle.radius,
             AnimationDefaults.values.scaleStep,
           );
@@ -637,7 +641,7 @@ export default defineComponent({
               zoneService,
               taggingService,
               playBook,
-              spotlight,
+              globals.spotlight as Mesh<BufferGeometry, any>,
               storyService.activeStory,
             )
               .endOfSession()
@@ -654,7 +658,7 @@ export default defineComponent({
             } as SensorObject);
             emit('restartSession', true);
             garbageHelper.pauseScreen();
-            spotlight.scale.set(
+            globals.spotlight?.scale.set(
               Measurements().storyCircle.outerCircle,
               Measurements().storyCircle.outerCircle,
               Measurements().storyCircle.outerCircle,
@@ -665,7 +669,7 @@ export default defineComponent({
               zoneService,
               taggingService,
               playBook,
-              spotlight,
+              globals.spotlight as Mesh<BufferGeometry, any>,
               storyService.activeStory,
             ).storyPaused();
             stateService.canChooseNextStory = true;
