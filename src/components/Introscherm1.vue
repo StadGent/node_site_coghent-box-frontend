@@ -1,6 +1,10 @@
 <template>
   <div class="background" />
-  <div class="w-screen h-screen flex flex-col justify-center" @click="nextStep">
+  <div
+    oncontextmenu="return false;"
+    class="w-screen h-screen flex flex-col justify-center"
+    @click="nextStep"
+  >
     <div class="w-full h-48 mb-8 flex justify-center mb-24">
       <img src="/images_entrance/qr_intro1.svg" alt="" />
     </div>

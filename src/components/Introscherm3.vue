@@ -1,5 +1,6 @@
 <template>
   <div
+    oncontextmenu="return false;"
     class="
       flex
       grid-cols-1
@@ -154,7 +155,7 @@ export default defineComponent({
       }
     };
     const naarStart = () => {
-      router.push({ name: 'entrance.step1'});
+      router.push({ name: 'entrance.step1' });
     };
 
     onMounted(() => {

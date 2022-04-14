@@ -1,31 +1,33 @@
 <template>
-  <div class="black"></div>
-  <label
-    class="absolute left-0 top-0 z-50"
-    :class="[showInputField ? '' : ' opacity-0']"
-    :v-if="visitercode == null"
-    for=""
-  >
-    <input
-      ref="qrInput"
-      v-model="inputValue"
-      class="z-50 relative"
+  <div oncontextmenu="return false;">
+    <div class="black"></div>
+    <label
+      class="absolute left-0 top-0 z-50"
       :class="[showInputField ? '' : ' opacity-0']"
-      type="text"
-      autofocus
+      :v-if="visitercode == null"
+      for=""
+    >
+      <input
+        ref="qrInput"
+        v-model="inputValue"
+        class="z-50 relative"
+        :class="[showInputField ? '' : ' opacity-0']"
+        type="text"
+        autofocus
+      />
+    </label>
+    <ViewPort
+      :stories="stories"
+      :story-selected="storySelected"
+      :story-service="storyService"
+      :state-service="stateService"
+      :current-state="currentState"
+      :show-pause-overview="showPauseOverview"
+      @restartSession="restartSession"
+      @resetSelectedStory="resetSelectedStory"
     />
-  </label>
-  <ViewPort
-    :stories="stories"
-    :story-selected="storySelected"
-    :story-service="storyService"
-    :state-service="stateService"
-    :current-state="currentState"
-    :show-pause-overview="showPauseOverview"
-    @restartSession="restartSession"
-    @resetSelectedStory="resetSelectedStory"
-  />
-  <mqtt @selectStory="setSelectStory" @mqttEnabled="toggleShowInputField" />
+    <mqtt @selectStory="setSelectStory" @mqttEnabled="toggleShowInputField" />
+  </div>
 </template>
 <script lang="ts">
 import { defineComponent, ref, watch } from 'vue';
