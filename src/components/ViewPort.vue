@@ -98,7 +98,6 @@ export default defineComponent({
     const taggingService = new TaggingService();
 
     let textService: TextService;
-    let threeSvc: ThreeService;
     let storyService: StoryService;
     let zoneService: ZoneService;
     let subtitleService: SubtitleService;
@@ -115,7 +114,7 @@ export default defineComponent({
     let subtitles = ref<string>('');
 
     const initState = () => {
-      threeSvc.ClearScene();
+      globals.threeService?.ClearScene();
       playBook.clearPlaybook(true);
       taggingService.clearTaggedObjects();
       setup();
@@ -225,7 +224,7 @@ export default defineComponent({
             garbageHelper.startOfSession();
             storyService.setStoryPausedPositions(zoneService.zonesInnerToOuter);
             PlayBookBuild(
-              threeSvc,
+              globals.threeService as ThreeService,
               storyService,
               zoneService,
               taggingService,
@@ -248,7 +247,7 @@ export default defineComponent({
       currentFrame = next.frame;
 
       await PlayBookBuild(
-        threeSvc,
+        globals.threeService as ThreeService,
         storyService,
         zoneService,
         taggingService,
@@ -260,7 +259,7 @@ export default defineComponent({
       currentStoryID.value = storyService.activeStoryData.storyId;
 
       await PlayBookBuild(
-        threeSvc,
+        globals.threeService as ThreeService,
         storyService,
         zoneService,
         taggingService,
@@ -271,12 +270,12 @@ export default defineComponent({
       if (props.showPauseOverview) {
         stateService.changeState(FlowState.storyOverview);
         garbageHelper.newStorySelectedWithNoActive();
-        TimerCountdown(threeSvc).start(
+        TimerCountdown(globals.threeService as ThreeService).start(
           Timing.pauseMenu.countdown,
           Positions().timerCountdown(),
           FlowState.storySelected,
         );
-        audioHelper = AudioHelper(threeSvc);
+        audioHelper = AudioHelper(globals.threeService as ThreeService);
       } else {
         await garbageHelper.newStorySelected();
       }
@@ -287,7 +286,7 @@ export default defineComponent({
         storyService.activeStoryData.totalOfFrames,
         storyService.activeStoryData.storyColor,
       );
-      await SceneHelper(threeSvc, storyService).addFrameProgressDotsToScene(
+      await SceneHelper(globals.threeService as ThreeService, storyService).addFrameProgressDotsToScene(
         progressDots,
         storyService.activeStoryData.storyId,
         storyService.activeStoryData.totalOfFramesSeen,
@@ -313,7 +312,7 @@ export default defineComponent({
           0,
           AnimationDefaults.values.fadeStep,
         );
-        threeSvc.RemoveFromScene(groupOfAssetsTags[0].object);
+        globals.threeService?.RemoveFromScene(groupOfAssetsTags[0].object);
       } else {
         console.log('no assets found');
       }
@@ -335,10 +334,9 @@ export default defineComponent({
       _storySelected: number,
       _count: number,
     ) => {
-      console.log(taggingService.getByTag(Tags.Spotlight));
       const pausePosition = storyService.getStoryData()[_storySelected].pausedPosition;
       await CustomAnimation().circularLoader(
-        threeSvc,
+        globals.threeService as ThreeService,
         new Vector3(
           pausePosition.x,
           -(zoneService.sceneZone().height / 2) +
@@ -371,7 +369,7 @@ export default defineComponent({
     };
 
     const setData = async () => {
-      audioHelper = AudioHelper(threeSvc);
+      audioHelper = AudioHelper(globals.threeService as ThreeService);
       storyData = storyService.stories;
       showProgressOfFrame = false;
       audio = null;
@@ -381,7 +379,7 @@ export default defineComponent({
       playBook.clearPlaybook(true);
       storyService.setStoryPausedPositions(zoneService.zonesInnerToOuter);
       const resultStoryData = await PlayBookBuild(
-        threeSvc,
+        globals.threeService as ThreeService,
         storyService,
         zoneService,
         taggingService,
@@ -394,7 +392,7 @@ export default defineComponent({
         useDMX().lightsOff();
         stateService.changeState(FlowState.countdownToFrame);
         await PlayBookBuild(
-          threeSvc,
+          globals.threeService as ThreeService,
           storyService,
           zoneService,
           taggingService,
@@ -433,7 +431,7 @@ export default defineComponent({
           time = audio.currentTime;
         } else if (Defaults().showplayHeadWhenNoAudio()) {
           progress = PlayBookBuild(
-            threeSvc,
+            globals.threeService as ThreeService,
             storyService,
             zoneService,
             taggingService,
@@ -479,17 +477,15 @@ export default defineComponent({
     };
 
     const buildStory = async (_currenStoryId: string) => {
-      globals.getGlobalData();
       garbageHelper.removeCountdown();
       useDMX().lightsOff();
-      console.log('material', globals.spotlightBackground?.material);
       globals.spotlightBackground
         ? (globals.spotlightBackground.material.opacity = 0)
         : null;
       if (stateService.getCurrentState() != FlowState[4]) {
         stateService.changeState(FlowState.buildFrame);
 
-        const subtitleLink = useFrame(threeSvc).getSubtitleForFrame(
+        const subtitleLink = useFrame(globals.threeService as ThreeService).getSubtitleForFrame(
           storyService.activeStory.frames?.[currentFrame] as unknown as Frame,
         );
         await subtitleService.downloadSRTFile(subtitleLink as string);
@@ -500,7 +496,7 @@ export default defineComponent({
         const framePlaybook = PlayBook();
 
         await PlayBookBuild(
-          threeSvc,
+          globals.threeService as ThreeService,
           storyService,
           zoneService,
           taggingService,
@@ -514,7 +510,7 @@ export default defineComponent({
         );
 
         PlayBookBuild(
-          threeSvc,
+          globals.threeService as ThreeService,
           storyService,
           zoneService,
           taggingService,
@@ -524,7 +520,7 @@ export default defineComponent({
         ).setActiveStoryCircleToBackground(false);
 
         await PlayBookBuild(
-          threeSvc,
+          globals.threeService as ThreeService,
           storyService,
           zoneService,
           taggingService,
@@ -539,7 +535,7 @@ export default defineComponent({
 
         playBook.mergeActionsWithPlaybook(framePlaybook.getSortedPlayBookActions());
 
-        audio = AudioHelper(threeSvc).setAudioTrack(
+        audio = AudioHelper(globals.threeService as ThreeService).setAudioTrack(
           storyService.activeStory,
           currentFrame,
         );
@@ -555,7 +551,7 @@ export default defineComponent({
           audio.ontimeupdate = () => {
             if (audio && showProgressOfFrame) {
               progress = PlayBookBuild(
-                threeSvc,
+                globals.threeService as ThreeService,
                 storyService,
                 zoneService,
                 taggingService,
@@ -604,7 +600,7 @@ export default defineComponent({
       playBook.addToPlayBook(
         () => {
           PlayBookBuild(
-            threeSvc,
+            globals.threeService as ThreeService,
             storyService,
             zoneService,
             taggingService,
@@ -636,7 +632,7 @@ export default defineComponent({
             garbageHelper.endOfSessionScreen();
             useDMX().sequence();
             PlayBookBuild(
-              threeSvc,
+              globals.threeService as ThreeService,
               storyService,
               zoneService,
               taggingService,
@@ -664,7 +660,7 @@ export default defineComponent({
               Measurements().storyCircle.outerCircle,
             );
             PlayBookBuild(
-              threeSvc,
+              globals.threeService as ThreeService,
               storyService,
               zoneService,
               taggingService,
@@ -691,27 +687,24 @@ export default defineComponent({
     };
 
     onMounted(async () => {
-      threeSvc = new ThreeService(viewport, threeDefaultsWall, taggingService);
-      textService = new TextService(threeSvc);
+      globals.threeService = new ThreeService(viewport, threeDefaultsWall, taggingService);
+      textService = new TextService(globals.threeService as ThreeService);
       zoneService = new ZoneService(
-        threeSvc.state.sceneDimensions,
+        globals.threeService?.state.sceneDimensions,
         Defaults().screenZones(),
       );
-      globals.threeService = threeSvc;
       globals.zoneService = zoneService;
-      // scenery.addThreeService(threeSvc);
-      // scenery.addZoneService(zoneService);
-      garbageHelper = WallGarbageHelper(threeSvc, taggingService);
+      garbageHelper = WallGarbageHelper(globals.threeService as ThreeService, taggingService);
       subtitleService = new SubtitleService();
-      threeSvc.ClearScene();
+      globals.threeService?.ClearScene();
 
       if (!stories.value) {
         const text = await MetadataLabel(new Vector3(0, 0, 0)).label('Loading...');
         text.text.position.x -= text.dimensions.x / 2;
-        threeSvc.AddToScene(text.text, Tags.Testing);
+        globals.threeService?.AddToScene(text.text, Tags.Testing);
       }
 
-      threeSvc.Animate();
+      globals.threeService?.Animate();
     });
     return { viewport, videoElement, subtitles };
   },

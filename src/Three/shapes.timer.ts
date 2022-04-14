@@ -108,7 +108,6 @@ const TimerCountdown = (_threeService: ThreeService): {
       }
       updateTime(times, currentTime, initial);
       await Common().awaitTimeout(1000);
-      // }
       if (currentTime != 0) {
         _threeService.RemoveFromScene(times.secondsOne);
         _threeService.RemoveFromScene(times.secondsTwo);
