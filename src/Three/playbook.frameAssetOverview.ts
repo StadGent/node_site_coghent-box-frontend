@@ -252,7 +252,6 @@ const useFrameAssetOverview = (
         currentFrame,
       );
       moveAllAssetsToFront(group.children as Array<Mesh<BoxBufferGeometry, any>>)
-      console.log('group.children', group.children)
       group.children.forEach((asset, index) => {
         const relationMetadata = useAsset(threeService).connectRelationMetadata(
           activeStory.frames?.[currentFrame] as unknown as Frame,

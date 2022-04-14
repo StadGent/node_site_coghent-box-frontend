@@ -7,7 +7,14 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, PropType, ref, watch } from 'vue';
-import { BoxGeometry, Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
+import {
+  BoxGeometry,
+  BufferGeometry,
+  Group,
+  Mesh,
+  MeshBasicMaterial,
+  Vector3,
+} from 'three';
 import { Entity as _Entity, Frame } from '@/models/GraphqlModel';
 
 import ThreeService from '@/services/ThreeService';
@@ -48,6 +55,7 @@ import stateService from '@/services/StateService';
 import scenery from '@/composables/useScenery';
 import TimerCountdown from '@/Three/shapes.timer';
 import Positions from '@/Three/defaults.positions';
+import globals from '@/services/GlobalData';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -348,23 +356,21 @@ export default defineComponent({
     };
 
     const setup = async (initial: boolean = true) => {
-      threeSvc.ClearScene();
-      useDMX().sequence();
-      if (initial) {
-        spotlight = Spot().create(
-          zoneService.zones[0].center,
-          Measurements().storyCircle.radius,
-        );
-        
-        spotlightBackground = Spot().spotLightBackground();
-        threeSvc.AddToScene(spotlight, Tags.Spotlight, 'InitialSpotlight');
-        threeSvc.AddToScene(
-          spotlightBackground,
-          Tags.Spotlight,
-          'Initial background Spotlight',
-        );
-      }
-      scenery.addSpotlight(spotlight);
+      // threeSvc.ClearScene();
+      // useDMX().sequence();
+      // if (initial) {
+      //   spotlight = Spot().create(
+      //     zoneService.zones[0].center,
+      //     Measurements().storyCircle.radius,
+      //   );
+
+      //   spotlightBackground = Spot().spotLightBackground();
+      //   threeSvc.AddToScene(spotlight, Tags.Spotlight, 'InitialSpotlight');
+      //   threeSvc.AddToScene(spotlightBackground, Tags.Spotlight, 'InitialSpotlightBackground');
+      // }
+
+      // useStartOfSession(threeSvc, zoneService, spotlight).showScanImage();
+      // stateService.changeState(FlowState.welcome);
       scenery.welcomeScene();
     };
 
@@ -477,9 +483,11 @@ export default defineComponent({
     };
 
     const buildStory = async (_currenStoryId: string) => {
+      globals.getGlobalData();
       garbageHelper.removeCountdown();
       useDMX().lightsOff();
-      spotlightBackground.material.opacity = 0;
+      console.log('material', globals.spotlightBackground?.material);
+      globals.spotlightBackground ? (globals.spotlightBackground.material.opacity = 0) : null;
       if (stateService.getCurrentState() != FlowState[4]) {
         stateService.changeState(FlowState.buildFrame);
 
@@ -574,7 +582,13 @@ export default defineComponent({
               );
               audio.play();
               setAfterFrameScreen();
-              spotlightBackground.material.opacity = Measurements().spotLight.opacity;
+              globals.spotlightBackground
+                ? (globals.spotlightBackground.material.opacity =
+                    Measurements().spotLight.opacity)
+                : null;
+
+              // spotlightBackground.material.opacity = Measurements().spotLight.opacity;
+              console.log('onloadedmetadata spotlightbackground', spotlightBackground);
               timing();
             }
           };
@@ -679,8 +693,10 @@ export default defineComponent({
         threeSvc.state.sceneDimensions,
         Defaults().screenZones(),
       );
-      scenery.addThreeService(threeSvc);
-      scenery.addZoneService(zoneService);
+      globals.threeService = threeSvc;
+      globals.zoneService = zoneService;
+      // scenery.addThreeService(threeSvc);
+      // scenery.addZoneService(zoneService);
       garbageHelper = WallGarbageHelper(threeSvc, taggingService);
       subtitleService = new SubtitleService();
       threeSvc.ClearScene();

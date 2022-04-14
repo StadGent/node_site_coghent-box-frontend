@@ -52,7 +52,7 @@ const Spot = (): SpotlightFunctions => {
         height: 1080,
       },
     } as CubeSchema);
-    cube.material.color = new Color(Colors().black);
+    cube.material.color = new Color(Colors().pink);
     cube.material.color.convertSRGBToLinear();
     cube.material.opacity = 0;
     cube.renderOrder = 3;

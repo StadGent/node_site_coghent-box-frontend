@@ -20,21 +20,21 @@ const useStartOfSession = (
   create: () => Promise<true | false>;
 } => {
   const setSpotlightOnPosition = () => {
-    threeService.AddToScene(
-      spotlight,
-      Tags.Spotlight,
-      'Spotlight for the start of the session.',
-    );
-    spotlight.scale.set(
-      Measurements().spotLight.radius,
-      Measurements().spotLight.radius,
-      0,
-    );
-    spotlight.position.set(
-      zoneService.zoneCenters[0].x + 2,
-      zoneService.zoneCenters[0].y,
-      zoneService.zoneCenters[0].z,
-    );
+    // threeService.AddToScene(
+    //   spotlight,
+    //   Tags.Spotlight,
+    //   'Spotlight for the start of the session.',
+    // );
+    // spotlight.scale.set(
+    //   Measurements().spotLight.radius,
+    //   Measurements().spotLight.radius,
+    //   0,
+    // );
+    // spotlight.position.set(
+    //   zoneService.zoneCenters[0].x + 2,
+    //   zoneService.zoneCenters[0].y,
+    //   zoneService.zoneCenters[0].z,
+    // );
   };
 
   const showScanImage = async () => {

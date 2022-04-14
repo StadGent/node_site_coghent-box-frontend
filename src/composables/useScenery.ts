@@ -1,64 +1,61 @@
+import globals from '@/services/GlobalData'
 import stateService, { FlowState } from '@/services/StateService'
+import { Tags } from '@/services/TaggingService'
 import ThreeService from '@/services/ThreeService'
 import ZoneService from '@/services/ZoneService'
+import Measurements from '@/Three/defaults.measurements'
 import useStartOfSession from '@/Three/playbook.startOfSession'
-import { Mesh, BufferGeometry } from 'three'
+import Spot from '@/Three/shapes.spotlight'
+import { Mesh, BufferGeometry, BoxGeometry, MeshBasicMaterial } from 'three'
+import useDMX from './useDMX'
 
 const useScenery = (): {
-  addSpotlight: (_spotlight: Mesh<BufferGeometry, any>) => void
-  addThreeService: (_threeService: ThreeService) => void
-  addZoneService: (_zoneService: ZoneService) => void
+  setup: () => void
   welcomeScene: () => void
 } => {
-  let spotlight: Mesh<BufferGeometry, any> | null = null
-  let threeService: ThreeService | null = null
-  let zoneService: ZoneService | null = null
 
   const checkAllResources = () => {
-    return threeService != null && spotlight != null && zoneService != null
+    return globals.threeService != null && globals.spotlight != null && globals.zoneService != null
   }
-  const addSpotlight = (_spotlight: Mesh<BufferGeometry, any>) => {
-    if (spotlight === null) {
-      spotlight = _spotlight
-    } else {
-      console.log('You have overide the single spotlight in the 180 wall', _spotlight)
-      // threeService?.RemoveFromScene(_spotlight)
-      spotlight = _spotlight
+
+  const setup = () => {
+    if (globals.zoneService) {
+      globals.spotlight = Spot().create(
+        globals.zoneService.zones[0].center,
+        Measurements().storyCircle.radius,
+      );
     }
-  }
-  const addThreeService = (_threeService: ThreeService) => {
-    if (threeService === null) {
-      threeService = _threeService
-    } else console.log('You wanted to overide the threeService in the 180 wall')
-  }
-  const addZoneService = (_zoneService: ZoneService) => {
-    if (zoneService === null) {
-      zoneService = _zoneService
-    } else console.log('You wanted to overide the zoneService in the 180 wall')
+
+    globals.spotlightBackground = Spot().spotLightBackground();
+    globals.spotlightBackground.material.opacity = 0;
+    globals.threeService?.AddToScene(globals.spotlight, Tags.Spotlight, 'InitialSpotlight');
+    globals.threeService?.AddToScene(globals.spotlightBackground, Tags.Spotlight, 'InitialSpotlightBackground mask');
   }
 
   const welcomeScene = () => {
-    if (checkAllResources()) {
-      stateService.changeState(FlowState.welcome)
-      useStartOfSession(
-        threeService as ThreeService,
-        zoneService as ZoneService,
-        spotlight as Mesh<BufferGeometry, any>
-      ).showScanImage();
-      stateService.canScanTicket = true
-    } else console.log(`Could't find alls the components`, {
-      threeService: threeService,
-      spotlight: spotlight,
-      zoneService: zoneService
-    })
+    globals.threeService?.ClearScene();
+    useDMX().sequence();
+    if (globals.zoneService) {
+      globals.spotlight = Spot().create(
+        globals.zoneService.zones[0].center,
+        Measurements().storyCircle.radius,
+      );
+    }
+
+    globals.spotlightBackground = Spot().spotLightBackground();
+    globals.threeService?.AddToScene(globals.spotlight, Tags.Spotlight, 'InitialSpotlight');
+    globals.threeService?.AddToScene(globals.spotlightBackground, Tags.Spotlight, 'InitialSpotlightBackground');
+
+
+    useStartOfSession(globals.threeService as ThreeService, globals.zoneService as ZoneService, globals.spotlight as Mesh<BufferGeometry, any>).showScanImage();
+    stateService.changeState(FlowState.welcome);
   }
 
   return {
-    addSpotlight,
-    addThreeService,
-    addZoneService,
+    setup,
     welcomeScene,
   }
+
 }
 const scenery = useScenery()
 export default scenery
