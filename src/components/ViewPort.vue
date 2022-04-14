@@ -117,7 +117,7 @@ export default defineComponent({
       globals.threeService?.ClearScene();
       playBook.clearPlaybook(true);
       taggingService.clearTaggedObjects();
-      setup();
+      scenery.welcomeScene();
     };
 
     watch(
@@ -286,7 +286,10 @@ export default defineComponent({
         storyService.activeStoryData.totalOfFrames,
         storyService.activeStoryData.storyColor,
       );
-      await SceneHelper(globals.threeService as ThreeService, storyService).addFrameProgressDotsToScene(
+      await SceneHelper(
+        globals.threeService as ThreeService,
+        storyService,
+      ).addFrameProgressDotsToScene(
         progressDots,
         storyService.activeStoryData.storyId,
         storyService.activeStoryData.totalOfFramesSeen,
@@ -347,25 +350,6 @@ export default defineComponent({
         10,
         [Tags.SmallCountdownRing, Tags.SmallCountdownProgressRing],
       );
-    };
-
-    const setup = async (initial: boolean = true) => {
-      // threeSvc.ClearScene();
-      // useDMX().sequence();
-      // if (initial) {
-      //   spotlight = Spot().create(
-      //     zoneService.zones[0].center,
-      //     Measurements().storyCircle.radius,
-      //   );
-
-      //   spotlightBackground = Spot().spotLightBackground();
-      //   threeSvc.AddToScene(spotlight, Tags.Spotlight, 'InitialSpotlight');
-      //   threeSvc.AddToScene(spotlightBackground, Tags.Spotlight, 'InitialSpotlightBackground');
-      // }
-
-      // useStartOfSession(threeSvc, zoneService, spotlight).showScanImage();
-      // stateService.changeState(FlowState.welcome);
-      scenery.welcomeScene();
     };
 
     const setData = async () => {
@@ -485,7 +469,9 @@ export default defineComponent({
       if (stateService.getCurrentState() != FlowState[4]) {
         stateService.changeState(FlowState.buildFrame);
 
-        const subtitleLink = useFrame(globals.threeService as ThreeService).getSubtitleForFrame(
+        const subtitleLink = useFrame(
+          globals.threeService as ThreeService,
+        ).getSubtitleForFrame(
           storyService.activeStory.frames?.[currentFrame] as unknown as Frame,
         );
         await subtitleService.downloadSRTFile(subtitleLink as string);
@@ -583,12 +569,6 @@ export default defineComponent({
                 ? (globals.spotlightBackground.material.opacity =
                     Measurements().spotLight.opacity)
                 : null;
-
-              // spotlightBackground.material.opacity = Measurements().spotLight.opacity;
-              console.log(
-                'onloadedmetadata spotlightbackground',
-                globals.spotlightBackground,
-              );
               timing();
             }
           };
@@ -608,7 +588,10 @@ export default defineComponent({
             globals.spotlight as Mesh<BufferGeometry, any>,
             storyService.activeStory,
           ).setActiveStoryCircleToBackground(true);
-          MoveObject().startMoving(globals.spotlight as Mesh<BufferGeometry, any>, zoneService.middleZoneCenter);
+          MoveObject().startMoving(
+            globals.spotlight as Mesh<BufferGeometry, any>,
+            zoneService.middleZoneCenter,
+          );
           CustomAnimation().shrink(
             globals.spotlight as Mesh<any, MeshBasicMaterial>,
             Measurements().storyCircle.radius,
@@ -642,7 +625,7 @@ export default defineComponent({
             )
               .endOfSession()
               .then((_start) => {
-                setup();
+                scenery.welcomeScene();
               });
           } else {
             useDMX().lightsOn();
@@ -687,14 +670,21 @@ export default defineComponent({
     };
 
     onMounted(async () => {
-      globals.threeService = new ThreeService(viewport, threeDefaultsWall, taggingService);
+      globals.threeService = new ThreeService(
+        viewport,
+        threeDefaultsWall,
+        taggingService,
+      );
       textService = new TextService(globals.threeService as ThreeService);
       zoneService = new ZoneService(
         globals.threeService?.state.sceneDimensions,
         Defaults().screenZones(),
       );
       globals.zoneService = zoneService;
-      garbageHelper = WallGarbageHelper(globals.threeService as ThreeService, taggingService);
+      garbageHelper = WallGarbageHelper(
+        globals.threeService as ThreeService,
+        taggingService,
+      );
       subtitleService = new SubtitleService();
       globals.threeService?.ClearScene();
 
