@@ -210,7 +210,7 @@
               },
             },
             updateQuery: (previousData, { fetchMoreResult: queryResult }) => {
-              console.log(queryResult);
+              console.log({ queryResult });
               console.log('Relation result');
               if (queryResult.Entities && fabricService.value) {
                 const relationEntities: Entity[] = queryResult.Entities?.results;

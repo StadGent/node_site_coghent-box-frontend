@@ -32,6 +32,7 @@ type State = {
   selectedImage: any;
   positions: Array<Position>;
   takenPositions: Array<Position>;
+  canvasEntities: string[];
 };
 
 export type Scale = {
@@ -59,14 +60,13 @@ export default class FabricService {
       selectedImage: undefined,
       positions: initialAvailablePositionHelper(),
       takenPositions: [],
+      canvasEntities: [],
     };
     this.setMainImageOnClick();
-    this.generateRelationOnFrameAdd();
   }
 
   setupFabric() {
     const canvasElement = document.querySelector('.upper-canvas');
-    console.log({ canvasElement });
     if (canvasElement) {
       canvasElement.remove();
     }
@@ -81,8 +81,8 @@ export default class FabricService {
 
   generateMainImageFrame(entity: Entity) {
     ImageUrlHelper([entity]).then((images: string[]) => {
-      const image = images[0];
-      const frame = new fabric.Image.fromURL(image, (image: any) => {
+      const imageurl = images[0];
+      new fabric.Image.fromURL(imageurl, (image: any) => {
         image.top = fabricdefaults.canvas.selectedImage.canvasPosition.top;
         image.left = fabricdefaults.canvas.selectedImage.canvasPosition.left;
         image.originX = fabricdefaults.canvas.selectedImage.origin.originX;
@@ -95,10 +95,11 @@ export default class FabricService {
         };
         lockObjectMovementHelper(image);
         image.hoverCursor = 'pointer';
-        image.objectType = 'frame';
+        image.objectType = 'mainFrame';
         image.setCoords();
         image.id = entity.id;
         image.entity = entity;
+        this.state.canvasEntities.push(image.id);
         this.state.canvas.add(image);
         this.state.selectedImage = image;
         const underline = underlineHelper(image);
@@ -108,8 +109,6 @@ export default class FabricService {
   }
 
   generateInfoBar(startEntity: Entity, historyEntities: Entity[]) {
-    console.log({ startEntity, historyEntities });
-
     const backgroundRect = new fabric.Rect({
       width: fabricdefaults.canvas.dimensions.width,
       height: fabricdefaults.canvas.infoBar.height,
@@ -190,15 +189,15 @@ export default class FabricService {
     }
   }
 
-  async generateSecondaryImageFrames(
+  generateSecondaryImageFrames(
     entities: Array<any>,
     subRelationOriginEntityId: string,
-  ) {
+  ): Promise<Entity[]> {
     // Get positions around main entity, if none left increase the range
     let range: number = fabricdefaults.canvas.secondaryImage.positions.range;
     const canvasFrames: any[] = getObjectsByObjectTypeHelper(
       this.state.canvas.getObjects(),
-      'frame',
+      ['frame', 'mainFrame'],
     );
 
     const originEntityPosition: Position = getPositionByIdHelper(
@@ -225,8 +224,8 @@ export default class FabricService {
       // Frame object
       ImageUrlHelper(entities, fabricdefaults.canvas.secondaryImage.height).then(
         (images: string[]) => {
-          images.forEach((image, index) => {
-            new fabric.Image.fromURL(image, (image: any) => {
+          images.forEach((imageUrl, index) => {
+            new fabric.Image.fromURL(imageUrl, (image: any) => {
               const randomNumber = getRandomNumberInRangeHelper(
                 0,
                 closeAvailablePositions.length - 1,
@@ -251,30 +250,33 @@ export default class FabricService {
               image.relationOriginId = subRelationOriginEntityId;
               image.objectType = 'frame';
               lockObjectMovementHelper(image);
-              if (!isDuplicateFrameHelper(image, canvasFrames)) {
-                // Add to canvas and remove position from list
+              const originFrame: any = getFrameByEntityIdHelper(
+                image.relationOriginId,
+                this.state.canvas.getObjects(),
+              );
+              if (!isDuplicateFrameHelper(image.id, this.state.canvasEntities)) {
+                this.state.canvasEntities.push(image.id);
                 this.state.canvas.add(image);
-                closeAvailablePositions = closeAvailablePositions.filter(
-                  (pos: any) => pos != closeAvailablePositions[randomNumber],
-                );
-                console.log(image.id);
                 this.state.takenPositions.push(image.positionIndexes);
+                if (originFrame) {
+                  this.generateRelationBetweenFrames(originFrame, image);
+                }
               } else {
-                // Generate relation instead of frame
-                const existingFrame = getFrameByEntityIdHelper(image.id, canvasFrames);
-                const relationOriginFrame = getFrameByEntityIdHelper(
-                  image.relationOriginId,
-                  canvasFrames,
+                const duplicateFrame: any = getFrameByEntityIdHelper(
+                  image.id,
+                  this.state.canvas.getObjects(),
                 );
-                this.generateRelationBetweenFrames(existingFrame, relationOriginFrame);
+                if (originFrame && duplicateFrame) {
+                  this.generateRelationBetweenFrames(originFrame, duplicateFrame);
+                }
               }
             });
           });
           this.state.canvas.requestRenderAll();
-          return Promise.resolve();
         },
       );
     }
+    return Promise.resolve(entities);
   }
 
   setMainImageOnClick() {
@@ -305,7 +307,9 @@ export default class FabricService {
     const relation: Relation = relations[selectedFilterIndex];
 
     const canvasObjects: Array<any> = this.state.canvas.getObjects();
-    const canvasFrames: Array<any> = getObjectsByObjectTypeHelper(canvasObjects, 'frame');
+    const canvasFrames: Array<any> = getObjectsByObjectTypeHelper(canvasObjects, [
+      'frame',
+    ]);
 
     unHighlightCanvasObjectsHelper(this.state.canvas.getObjects());
     if (relation) {
@@ -317,10 +321,9 @@ export default class FabricService {
           objectOpacityHelper(canvasFrame, 0.4);
         }
       });
-      const canvasRelations: Array<any> = getObjectsByObjectTypeHelper(
-        canvasObjects,
+      const canvasRelations: Array<any> = getObjectsByObjectTypeHelper(canvasObjects, [
         'line',
-      );
+      ]);
       canvasRelations.forEach((canvasRelation: any) => {
         const endFrame: any = getFrameByEntityIdHelper(
           canvasRelation.toId,
@@ -335,23 +338,6 @@ export default class FabricService {
       });
     }
     this.state.canvas.renderAll();
-  }
-
-  generateRelationOnFrameAdd() {
-    this.state.canvas.on('object:added', (newObject: any) => {
-      if (
-        this.state.canvas.getObjects().length > 0 &&
-        objectIsTypeHelper('frame', newObject.target)
-      ) {
-        const originFrame: any = getFrameByEntityIdHelper(
-          newObject.target.relationOriginId,
-          this.state.canvas.getObjects(),
-        );
-        if (originFrame) {
-          this.generateRelationBetweenFrames(originFrame, newObject.target);
-        }
-      }
-    });
   }
 
   generateRelationBetweenFrames(frame1: any, frame2: any) {
@@ -375,10 +361,9 @@ export default class FabricService {
       });
       this.state.canvas.add(relation);
       moveObjectOnZAxisHelper(relation, 'back');
-      const infoContainer = getObjectsByObjectTypeHelper(
-        this.state.canvas.getObjects(),
+      const infoContainer = getObjectsByObjectTypeHelper(this.state.canvas.getObjects(), [
         'infoContainer',
-      )[0];
+      ])[0];
       if (infoContainer) {
         moveObjectOnZAxisHelper(infoContainer, 'back');
       }

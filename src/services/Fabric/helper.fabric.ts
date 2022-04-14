@@ -15,20 +15,28 @@ const changeFrameScaleHelper = (frame: any, scale: Scale) => {
 
 const getFrameByEntityIdHelper = (frameId: string, canvasObjects: Array<any>): any => {
   const foundFrame: any = canvasObjects.find(
-    (object: any) => object.id == frameId && object.objectType == 'frame',
+    (object: any) =>
+      object.id == frameId &&
+      (object.objectType == 'frame' || object.objectType == 'mainFrame'),
   );
   return foundFrame;
 };
 
-const getObjectsByObjectTypeHelper = (canvasObjects: Array<any>, objectType: string) => {
-  const foundObjects: any = canvasObjects.filter(
-    (object: any) => object.objectType == objectType,
+const getObjectsByObjectTypeHelper = (
+  canvasObjects: Array<any>,
+  objectType: string[],
+) => {
+  const foundObjects: any = canvasObjects.filter((object: any) =>
+    objectType.includes(object.objectType),
   );
   return foundObjects;
 };
 
-const isDuplicateFrameHelper = (newObject: any, canvasObjects: Array<any>): Boolean => {
-  if (canvasObjects.find((object: any) => object.id == newObject.id)) {
+const isDuplicateFrameHelper = (
+  newObjectId: any,
+  canvasObjectIds: Array<string>,
+): Boolean => {
+  if (canvasObjectIds.includes(newObjectId)) {
     return true;
   } else {
     return false;
@@ -77,8 +85,15 @@ const ImageUrlHelper = (
     const imageUrls: Array<string> = [];
 
     entities.forEach((entity: any) => {
-      if (entity.primary_mediafile || entity.mediafiles[0]?.filename) {
-        const image = entity.primary_mediafile || entity.mediafiles[0].filename;
+      if (
+        entity.primary_transcode ||
+        entity.primary_mediafile ||
+        entity.mediafiles[0]?.filename
+      ) {
+        const image =
+          entity.primary_transcode ||
+          entity.primary_mediafile ||
+          entity.mediafiles[0].filename;
         const requestHeight =
           height instanceof Array
             ? height[getRandomNumberInRangeHelper(0, height.length)]
@@ -98,7 +113,10 @@ const ImageUrlHelper = (
 
 const IIIFImageUrlHelper = (entity: any): string => {
   const { generateInfoUrl } = iiiF;
-  const filename = entity.primary_mediafile || entity.mediafiles[0]?.filename;
+  const filename =
+    entity.primary_transcode ||
+    entity.primary_mediafile ||
+    entity.mediafiles[0]?.filename;
 
   return generateInfoUrl(filename);
 };
