@@ -15,6 +15,9 @@
       const route = useRoute();
       const { t } = useI18n();
 
+      // Disable rightclick
+      document.addEventListener('contextmenu', (event) => event.preventDefault());
+
       return { route, t };
     },
   });
