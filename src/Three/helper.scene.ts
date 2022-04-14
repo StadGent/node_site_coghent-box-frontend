@@ -83,7 +83,7 @@ const SceneHelper = (
       new Vector3(
         0,
         -(_sceneZone.height / 2) + Measurements().pauseScreen.bannerHeight / 2,
-        Layers.background,
+        -0.1,
       ),
     );
     _threeService.AddGroupsToScene(_objects.text, Tags.PauseScreenCenterText);
