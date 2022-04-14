@@ -134,7 +134,6 @@
       const relationStringArray = ref<string[]>([]);
       const relationsLabelArray = ref<string[]>([]);
       const relationsArray = ref<Relation[]>([]);
-      const subRelations = ref<SecondaryRelation[]>([]);
       const entity = ref<any>();
       const basketItems = ref<Array<Relation>>(
         boxVisiter.value
@@ -247,13 +246,18 @@
                                 originId: relationEntity.id,
                                 relatedEntities: fetchMoreResult.Entities.results,
                               };
-                              subRelations.value.push(newRelation);
+                              fabricService.value?.generateSecondaryImageFrames(
+                                newRelation.relatedEntities,
+                                newRelation.originId,
+                              );
                             },
                           });
                         }
                       });
                     });
                 }
+              } else {
+                alert('This item does not have relations');
               }
             },
           });
@@ -332,21 +336,6 @@
           }
         },
         { deep: true },
-      );
-
-      watch(
-        () => subRelations.value.length,
-        () => {
-          subRelations.value.forEach((relation: SecondaryRelation) => {
-            fabricService.value?.generateSecondaryImageFrames(
-              relation.relatedEntities,
-              relation.originId,
-            );
-            subRelations.value = subRelations.value.filter(
-              (subrelation: any) => subrelation != relation,
-            );
-          });
-        },
       );
 
       const addToBasket = () => {
