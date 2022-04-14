@@ -34,6 +34,7 @@ import Positions from './defaults.positions';
 import Timing from './defaults.timing';
 import TimerCountdown from './shapes.timer';
 import { FlowState } from '@/services/StateService';
+import scenery from '@/composables/useScenery';
 
 const PlayBookBuild = (
   threeService: ThreeService,
@@ -256,7 +257,7 @@ const PlayBookBuild = (
 
     TaggingHelper(taggingService).tagActiveStorycircleAsStoryCircle();
     presenceService.overviewStoryCircles(storyService.getStoryData().map(_data => _data.storyId))
-    TimerCountdown(threeService).start(Timing.pauseMenu.countdown, Positions().timerCountdown(), FlowState.storySelected)
+    TimerCountdown(threeService).start(Timing.pauseMenu.countdown, Positions().timerCountdown(), FlowState.storySelected, scenery.welcomeScene)
   };
 
   const storyPausedWithNoActiveStory = async () => {
