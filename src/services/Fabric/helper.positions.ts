@@ -1,5 +1,6 @@
 import { fabricdefaults } from './defaults.fabric';
-import { Coordinate, Scale, Position } from './FabricService';
+import { Position } from './FabricService';
+import { getRandomNumberInRangeHelper } from './helper.fabric';
 
 const getPositionByIdHelper = (entityId: string, objectsOnCanvas: Array<any>) => {
   const positionIndexEntity = objectsOnCanvas.find(
@@ -66,20 +67,14 @@ const availablePositionsInRangeHelper = (
   positionsInRange.forEach((position: Position) => {
     const blockedPositions =
       fabricdefaults.canvas.secondaryImage.positions.blockedPositions;
-    if (
-      blockedPositions.length &&
-      blockedPositions.find(
-        (blockedPosition: Position) =>
-          blockedPosition.xIndex == position.xIndex &&
-          blockedPosition.yIndex == position.yIndex,
-      )
-    ) {
+    if (blockedPositions.length && blockedPositions.includes(position)) {
       positionsInRange = positionsInRange.filter(
         (positionInRange: Position) => positionInRange != position,
       );
-    } else if (
+    }
+    if (
       takenPositions.find(
-        (takenPosition: Position) =>
+        (takenPosition: any) =>
           takenPosition.xIndex == position.xIndex &&
           takenPosition.yIndex == position.yIndex,
       )
@@ -101,9 +96,35 @@ const availablePositionsInRangeHelper = (
   return positionsInRange;
 };
 
+const getPositionForImageHelper = (
+  originEntityPosition: Position,
+  takenPositions: Position[],
+): Position => {
+  let range: number = fabricdefaults.canvas.secondaryImage.positions.range;
+  let closeAvailablePositions: Array<Position> = [];
+
+  closeAvailablePositions = availablePositionsInRangeHelper(
+    originEntityPosition,
+    range,
+    takenPositions,
+  );
+  while (!closeAvailablePositions.length) {
+    range = range + 1;
+    closeAvailablePositions = availablePositionsInRangeHelper(
+      originEntityPosition,
+      range,
+      takenPositions,
+    );
+  }
+
+  return closeAvailablePositions[
+    getRandomNumberInRangeHelper(0, closeAvailablePositions.length)
+  ];
+};
+
 export {
-  availablePositionsInRangeHelper,
   getPositionByIdHelper,
   indexedPositionsInRangeHelper,
   initialAvailablePositionHelper,
+  getPositionForImageHelper,
 };

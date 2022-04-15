@@ -18,7 +18,7 @@ import {
 } from './helper.fabric';
 import { underlineHelper } from './helper.lines';
 import {
-  availablePositionsInRangeHelper,
+  getPositionForImageHelper,
   getPositionByIdHelper,
   initialAvailablePositionHelper,
 } from './helper.positions';
@@ -50,6 +50,14 @@ export type Coordinate = {
   x: number;
   y: number;
 };
+
+export type CanvasObjectType =
+  | 'mainFrame'
+  | 'frame'
+  | 'startFrame'
+  | 'historyFrame'
+  | 'infoContainer'
+  | 'line';
 
 export default class FabricService {
   state: State;
@@ -193,8 +201,6 @@ export default class FabricService {
     entities: Array<any>,
     subRelationOriginEntityId: string,
   ): Promise<Entity[]> {
-    // Get positions around main entity, if none left increase the range
-    let range: number = fabricdefaults.canvas.secondaryImage.positions.range;
     const canvasFrames: any[] = getObjectsByObjectTypeHelper(
       this.state.canvas.getObjects(),
       ['frame', 'mainFrame'],
@@ -205,77 +211,56 @@ export default class FabricService {
       canvasFrames,
     );
 
-    let closeAvailablePositions: Array<Position> = [];
-    if (originEntityPosition) {
-      closeAvailablePositions = availablePositionsInRangeHelper(
-        originEntityPosition,
-        range,
-        this.state.takenPositions,
-      );
-      while (closeAvailablePositions.length <= entities.length) {
-        range = range + 1;
-        closeAvailablePositions = availablePositionsInRangeHelper(
-          originEntityPosition,
-          range,
-          this.state.takenPositions,
-        );
-      }
-
-      // Frame object
-      ImageUrlHelper(entities, fabricdefaults.canvas.secondaryImage.height).then(
-        (images: string[]) => {
-          images.forEach((imageUrl, index) => {
-            new fabric.Image.fromURL(imageUrl, (image: any) => {
-              const randomNumber = getRandomNumberInRangeHelper(
-                0,
-                closeAvailablePositions.length - 1,
-              );
-              image.positionNumber = randomNumber;
-              image.top =
-                fabricdefaults.canvas.secondaryImage.positions.yAxis[
-                  closeAvailablePositions[randomNumber].yIndex
-                ];
-              image.left =
-                fabricdefaults.canvas.secondaryImage.positions.xAxis[
-                  closeAvailablePositions[randomNumber].xIndex
-                ];
-              image.positionIndexes = {
-                xIndex: closeAvailablePositions[randomNumber].xIndex,
-                yIndex: closeAvailablePositions[randomNumber].yIndex,
-              };
-              image.hoverCursor = 'pointer';
-              image.id = entities[index].id;
-              image.entity = entities[index];
-              image.setCoords();
-              image.relationOriginId = subRelationOriginEntityId;
-              image.objectType = 'frame';
-              lockObjectMovementHelper(image);
-              const originFrame: any = getFrameByEntityIdHelper(
-                image.relationOriginId,
+    // Frame object
+    ImageUrlHelper(entities, fabricdefaults.canvas.secondaryImage.height).then(
+      (images: string[]) => {
+        images.forEach((imageUrl, index) => {
+          new fabric.Image.fromURL(imageUrl, (image: any) => {
+            console.log(this.state.takenPositions);
+            image.positionIndexes = getPositionForImageHelper(
+              originEntityPosition,
+              this.state.takenPositions,
+            );
+            image.top =
+              fabricdefaults.canvas.secondaryImage.positions.yAxis[
+                image.positionIndexes.yIndex
+              ];
+            image.left =
+              fabricdefaults.canvas.secondaryImage.positions.xAxis[
+                image.positionIndexes.xIndex
+              ];
+            image.hoverCursor = 'pointer';
+            image.id = entities[index].id;
+            image.entity = entities[index];
+            image.setCoords();
+            image.relationOriginId = subRelationOriginEntityId;
+            image.objectType = 'frame';
+            lockObjectMovementHelper(image);
+            const originFrame: any = getFrameByEntityIdHelper(
+              image.relationOriginId,
+              this.state.canvas.getObjects(),
+            );
+            if (!isDuplicateFrameHelper(image.id, this.state.canvasEntities)) {
+              this.state.canvasEntities.push(image.id);
+              this.state.canvas.add(image);
+              this.state.takenPositions.push(image.positionIndexes);
+              if (originFrame) {
+                this.generateRelationBetweenFrames(originFrame, image);
+              }
+            } else {
+              const duplicateFrame: any = getFrameByEntityIdHelper(
+                image.id,
                 this.state.canvas.getObjects(),
               );
-              if (!isDuplicateFrameHelper(image.id, this.state.canvasEntities)) {
-                this.state.canvasEntities.push(image.id);
-                this.state.canvas.add(image);
-                this.state.takenPositions.push(image.positionIndexes);
-                if (originFrame) {
-                  this.generateRelationBetweenFrames(originFrame, image);
-                }
-              } else {
-                const duplicateFrame: any = getFrameByEntityIdHelper(
-                  image.id,
-                  this.state.canvas.getObjects(),
-                );
-                if (originFrame && duplicateFrame) {
-                  this.generateRelationBetweenFrames(originFrame, duplicateFrame);
-                }
+              if (originFrame && duplicateFrame) {
+                this.generateRelationBetweenFrames(originFrame, duplicateFrame);
               }
-            });
+            }
           });
-          this.state.canvas.requestRenderAll();
-        },
-      );
-    }
+        });
+        this.state.canvas.requestRenderAll();
+      },
+    );
     return Promise.resolve(entities);
   }
 

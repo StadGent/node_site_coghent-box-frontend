@@ -211,7 +211,7 @@
             updateQuery: (previousData, { fetchMoreResult: queryResult }) => {
               console.log({ queryResult });
               console.log('Relation result');
-              if (queryResult.Entities && fabricService.value) {
+              if (queryResult.Entities.results.length && fabricService.value) {
                 const relationEntities: Entity[] = queryResult.Entities?.results;
                 if (relationEntities.length) {
                   fabricService.value

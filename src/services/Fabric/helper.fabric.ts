@@ -1,11 +1,11 @@
 import { fabricdefaults } from './defaults.fabric';
 import { changeLineColorHelper } from './helper.lines';
-import { Coordinate, Scale, Position } from './FabricService';
+import { Coordinate, Scale, Position, CanvasObjectType } from './FabricService';
 import { fabric } from 'fabric';
 import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
 import { iiiF } from '@/main';
 
-const objectIsTypeHelper = (type: string, object: any): boolean =>
+const objectIsTypeHelper = (type: CanvasObjectType, object: any): boolean =>
   object.objectType == type ? true : false;
 
 const changeFrameScaleHelper = (frame: any, scale: Scale) => {
@@ -24,8 +24,8 @@ const getFrameByEntityIdHelper = (frameId: string, canvasObjects: Array<any>): a
 
 const getObjectsByObjectTypeHelper = (
   canvasObjects: Array<any>,
-  objectType: string[],
-) => {
+  objectType: CanvasObjectType[],
+): any[] => {
   const foundObjects: any = canvasObjects.filter((object: any) =>
     objectType.includes(object.objectType),
   );
@@ -43,7 +43,7 @@ const isDuplicateFrameHelper = (
   }
 };
 
-const moveObjectOnZAxisHelper = (object: any, move: string) => {
+const moveObjectOnZAxisHelper = (object: any, move: string): void => {
   if (move === 'front') {
     object.bringToFront();
   }
@@ -121,7 +121,7 @@ const IIIFImageUrlHelper = (entity: any): string => {
   return generateInfoUrl(filename);
 };
 
-const frameBorderHighlightHelper = (frame: any, highlight: boolean) => {
+const frameBorderHighlightHelper = (frame: any, highlight: boolean): void => {
   frame.stroke = highlight
     ? fabricdefaults.canvas.relationBrowser.selectedRelationBorder.color
     : undefined;
@@ -130,12 +130,12 @@ const frameBorderHighlightHelper = (frame: any, highlight: boolean) => {
     : 0;
 };
 
-const relationHighlightHelper = (relation: any) => {
+const relationHighlightHelper = (relation: any): void => {
   changeLineColorHelper(relation, '#b65099');
   relation.opacity = 1;
 };
 
-const unHighlightCanvasObjectsHelper = (canvasObjects: Array<any>) => {
+const unHighlightCanvasObjectsHelper = (canvasObjects: Array<any>): void => {
   canvasObjects.forEach((canvasObject: any) => {
     objectOpacityHelper(canvasObject, 1);
     if (objectIsTypeHelper('frame', canvasObject)) {
@@ -144,8 +144,8 @@ const unHighlightCanvasObjectsHelper = (canvasObjects: Array<any>) => {
   });
 };
 
-const isRelationOnFrameHelper = (frame: any, relation: any): Boolean => {
-  const relationOnFrame: Boolean = frame.entity.relations.find(
+const isRelationOnFrameHelper = (frame: any, relation: any): boolean => {
+  const relationOnFrame: boolean = frame.entity.relations.find(
     (canvasRelation: Relation) => canvasRelation.key == relation.key,
   )
     ? true
@@ -158,7 +158,7 @@ const objectOpacityHelper = (canvasObject: any, opacity: number) => {
   canvasObject.opacity = opacity;
 };
 
-const getRandomNumberInRangeHelper = (min: number, max: number) => {
+const getRandomNumberInRangeHelper = (min: number, max: number): number => {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min) + min);
