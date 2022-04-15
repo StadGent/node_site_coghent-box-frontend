@@ -112,7 +112,7 @@
 
   type SecondaryRelation = {
     originId: string;
-    relatedEntities: Array<Relation>;
+    relatedEntities: Array<Entity>;
   };
 
   export default defineComponent({
@@ -246,6 +246,11 @@
                                 originId: relationEntity.id,
                                 relatedEntities: fetchMoreResult.Entities.results,
                               };
+                              newRelation.relatedEntities.forEach(
+                                (relatedEntity: Entity) => {
+                                  getRelations(relatedEntity);
+                                },
+                              );
                               fabricService.value?.generateSecondaryImageFrames(
                                 newRelation.relatedEntities,
                                 newRelation.originId,
