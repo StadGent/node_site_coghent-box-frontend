@@ -19,28 +19,6 @@
       "
     >
       <svg
-        v-if="stories.length === 0"
-        class="animate-spin -ml-1 mr-3 h-36 w-36 text-white"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-      >
-        <circle
-          class="opacity-25"
-          cx="12"
-          cy="12"
-          r="10"
-          stroke="currentColor"
-          stroke-width="4"
-        />
-        <path
-          class="opacity-75"
-          fill="currentColor"
-          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-        />
-      </svg>
-      <svg
-        v-if="stories.length !== 0"
         width="120"
         height="74"
         viewBox="0 0 120 74"
@@ -70,12 +48,11 @@
           stroke-linejoin="round"
         />
       </svg>
-      <p v-if="stories.length !== 0" class="text-3xl p-2 w-full text-5xl font-bold mt-10">
+      <p class="text-3xl p-2 w-full text-5xl font-bold mt-10">
         {{ t('intro.screen-2.sub-title-1') }}<br />
         {{ t('intro.screen-2.sub-title-2') }}
       </p>
       <svg
-        v-if="stories.length !== 0"
         class="mt-10"
         width="48"
         height="101"
@@ -97,10 +74,7 @@
         />
       </svg>
 
-      <div
-        v-if="stories.length !== 0"
-        class="grid grid-cols-4 mt-12 flex-wrap justify-evenly w-full mt-10"
-      >
+      <div class="grid grid-cols-4 mt-12 flex-wrap justify-evenly w-full mt-10">
         <div
           v-for="(item, index) in stories"
           :key="index"
@@ -125,10 +99,7 @@
           </p>
         </div>
       </div>
-      <div
-        v-if="stories.length !== 0"
-        class="text-left pl-20 w-full mb-32 mt-10 justify-between flex pr-20"
-      >
+      <div class="text-left pl-20 w-full mb-32 mt-10 justify-between flex pr-20">
         <button
           class="
             flex
