@@ -63,6 +63,22 @@
       "info-1": "Druk hier een ticket af en",
       "info-2": "Start je bezoek in de box",
       "button": "Druk hier om verder te gaan"
+    },
+    "screen-2": {
+      "title-1": "Maak je keuze uit",
+      "title-2": "deze vier verhalen",
+      "sub-title-1": "Selecteer een verhaal",
+      "sub-title-2": "voor meer informatie",
+      "button-back": "Terug",
+      "button-next": "Kiezen en printen"
+    },
+    "screen-3": {
+      "title-1": "Je ticket wordt",
+      "title-2": "geprint",
+      "title-3": "Je bent er helemaal",
+      "title-4": "klaar voor!",
+      "button-back": "Sluiten en terug naar startscherm",
+      "info": "Neem je ticket uit de tafel. Ga naar de 180° wall en scan je ticket. Vergaat daarna niet langs de tafel te gaan."
     }
   },
   "wall": {}

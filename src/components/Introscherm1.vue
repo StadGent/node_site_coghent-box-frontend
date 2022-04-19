@@ -1,5 +1,5 @@
 <template>
-  <div class="background overflow-hidden" />
+  <div class="background custom-light overflow-hidden" />
   <div class="w-screen h-screen flex flex-col px-32" @click="nextStep">
     <CardComponent
       :large="true"
@@ -77,7 +77,7 @@
             mt-28
             py-11
             px-24
-            rounded
+            rounded-2xl
           "
         >
           {{ t('intro.screen-1.button') }}
@@ -136,7 +136,18 @@
     left: 0;
     top: 0;
     display: block;
-    background: rgba(246, 245, 241, 0.8);
     backdrop-filter: blur(5px);
+  }
+
+  .background.custom-dark::after {
+    background: rgba(33, 33, 33, 0.85);
+  }
+
+  .background.custom-light::after {
+    background: rgba(246, 245, 241, 0.8);
+  }
+
+  .custom-container {
+    min-height: 1032px;
   }
 </style>
