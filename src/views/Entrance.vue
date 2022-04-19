@@ -35,6 +35,7 @@
   </div>
 </template>
 <script lang="ts">
+  import Common from '@/composables/common';
   import { Entity } from '@/models/GraphqlModel';
   import { useQuery } from '@vue/apollo-composable';
   import { GetActiveBoxDocument } from 'coghent-vue-3-component-library';
@@ -47,6 +48,8 @@
     setup() {
       const router = useRouter();
       const stories = ref<Array<Entity>>([]);
+      const showCodePopup = ref<string | null>(null);
+      provide('showCodePopup', showCodePopup);
       provide('stories', stories);
 
       const { refetch: updatedStories, loading } = useQuery(
@@ -61,6 +64,10 @@
         updatedStories()?.then((value: any) => {
           stories.value = value.data.ActiveBox.results;
         });
+
+        if (showCodePopup.value === null) {
+          showCodePopup.value = Common().getUrlParamValue('popup');
+        }
       });
 
       return { loading };

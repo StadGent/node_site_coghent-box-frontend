@@ -221,7 +221,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, onMounted, ref } from 'vue';
+  import { defineComponent, inject, onMounted, ref } from 'vue';
   import { useRouter } from 'vue-router';
   import { useBoxVisiter } from 'coghent-vue-3-component-library';
   import Colors from '@/Three/defaults.color';
@@ -230,7 +230,6 @@
   import { PrintBoxTicketDocument } from 'coghent-vue-3-component-library';
   import useTicket from '@/composables/useTicket';
   import Development from '@/Three/defaults.development';
-  import { showCodePopup } from './Introscherm1.vue';
   import { useI18n } from 'vue-i18n';
 
   export default defineComponent({
@@ -241,9 +240,9 @@
       const router = useRouter();
       let currentVisiter: any = null;
       const { print } = useTicket();
-      const showPopup = ref<Boolean>(false);
       const { selectedStory } = useBoxVisiter(apolloClient);
       const colors = Colors().storyCssOnlyColor();
+      const showPopup = inject<any>('stories');
 
       const getNumberByColor = (color: string) => {
         const index = colors.findIndex((element) => color === element);
@@ -281,12 +280,6 @@
       const naarStart = () => {
         router.push({ name: 'entrance.step1' });
       };
-
-      onMounted(() => {
-        if (showCodePopup && showCodePopup === 'true') {
-          showPopup.value = true;
-        }
-      });
 
       return { t, naarStart, selectedStory, getNumberByColor };
     },

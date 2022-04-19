@@ -94,8 +94,6 @@
   import { useI18n } from 'vue-i18n';
   import { useRouter } from 'vue-router';
 
-  export let showCodePopup: string | null = null;
-
   export default defineComponent({
     name: 'Introscherm1',
     components: { CardComponent },
@@ -106,10 +104,6 @@
       const nextStep = () => {
         router.push({ name: 'entrance.step2' });
       };
-
-      onMounted(() => {
-        if (showCodePopup === null) showCodePopup = Common().getUrlParamValue('popup');
-      });
 
       return { t, nextStep };
     },
