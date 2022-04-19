@@ -1,61 +1,69 @@
 {
-  "touchtable":{
-    "codeScreen":{
+  "touchtable": {
+    "codeScreen": {
       "noCode": "Ik heb nog geen code",
       "noCodePopUp": {
         "title": "Geen paniek!",
         "description": "Je kan jouw persoonlijke code laten afdrukken via het scherm aan de ingang. Veel succes!"
       },
-      "wrongCode":{
+      "wrongCode": {
         "title": "Deze code werd helaas niet gevonden!",
         "description": "Probeer het nogmaals"
       }
-
     },
-    "header":{
+    "header": {
       "basket": "Mijn verhalenbox",
       "storyOverviewTitle": "Ontdek alle verhalen",
       "buttons": {
-          "overview": "Overzicht alle verhalen",
-          "shutdown": "Afsluiten"
-      }
-  },
-  "network":{
-    "infoCard":{
-      "noDescription": "Dit item heeft geen beschrijving",
-      "buttons":{
-        "zoom": "Afbeelding vergroten",
-        "add": "Aan verhalenbox toevoegen"
+        "overview": "Overzicht alle verhalen",
+        "shutdown": "Afsluiten"
       }
     },
-    "basketOverlay":{
-      "empty": "Er zitten nog geen werken in jouw verhalenbox",
-      "close": "Sluiten"
-    }
-  },
-  "onBoarding": {
-      "goToTouchTable":{
-          "title": "Alle verhalen op een rij",
-          "description": "Selecteer een afbeelding om te starten. Ga naar het netwerk en duik in de geschiedenis."
+    "network": {
+      "infoCard": {
+        "noDescription": "Dit item heeft geen beschrijving",
+        "buttons": {
+          "zoom": "Afbeelding vergroten",
+          "add": "Aan verhalenbox toevoegen"
+        }
       },
-      "fillStoryBasket":{
+      "basketOverlay": {
+        "empty": "Er zitten nog geen werken in jouw verhalenbox",
+        "close": "Sluiten"
+      }
+    },
+    "onBoarding": {
+      "goToTouchTable": {
+        "title": "Alle verhalen op een rij",
+        "description": "Selecteer een afbeelding om te starten. Ga naar het netwerk en duik in de geschiedenis."
+      },
+      "fillStoryBasket": {
         "title": "Vul je verhalen box",
         "description": "Voeg interessante afbeeldingen toe aan je verhalenbox om deze op te slaan, deze kan je dan later herbekijken in de box of op de website."
       },
-      "lookAtOtherPictures":{
+      "lookAtOtherPictures": {
         "title": "Bekijk andere foto's",
         "description": "Selecteer foto's in het netwerk om ze te bekijken en meer informatie te weten te komen."
       },
-      "backToOverview":{
+      "backToOverview": {
         "title": "Alle verhalen op een rij",
         "description": "Via deze knop kan je steeds terug naar het overzicht van de afbeeldingen van alle verhalen."
       },
-      "buttons":{
-          "next": "Volgende",
-          "previous": "Vorige",
-          "end": "Ik ben er klaar voor!"
+      "buttons": {
+        "next": "Volgende",
+        "previous": "Vorige",
+        "end": "Ik ben er klaar voor!"
       }
-  }
+    }
+  },
+  "intro": {
+    "screen-1": {
+      "title-1": "Welkom in de",
+      "title-2": "CoGent box!",
+      "info-1": "Druk hier een ticket af en",
+      "info-2": "Start je bezoek in de box",
+      "button": "Druk hier om verder te gaan"
+    }
   },
   "wall": {}
 }
