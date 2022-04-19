@@ -242,7 +242,7 @@
       const { print } = useTicket();
       const { selectedStory } = useBoxVisiter(apolloClient);
       const colors = Colors().storyCssOnlyColor();
-      const showPopup = inject<any>('stories');
+      const showPopup = inject<any>('showCodePopup');
 
       const getNumberByColor = (color: string) => {
         const index = colors.findIndex((element) => color === element);
@@ -260,7 +260,7 @@
           if (currentVisiter.code) {
             printTicket();
           }
-          if (Development().showVisiterCodePopUp() || showPopup.value) {
+          if (Development().showVisiterCodePopUp() || showPopup.value !== null) {
             alert(visiter.code);
           }
         });
@@ -281,7 +281,7 @@
         router.push({ name: 'entrance.step1' });
       };
 
-      return { t, naarStart, selectedStory, getNumberByColor };
+      return { t, naarStart, selectedStory, getNumberByColor, showPopup };
     },
   });
 </script>
