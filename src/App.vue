@@ -18,6 +18,15 @@
       // Disable rightclick
       document.addEventListener('contextmenu', (event) => event.preventDefault());
 
+      // Disable pinch to zoom
+      document.addEventListener(
+        'touchstart',
+        function (event) {
+          event.preventDefault();
+        },
+        { passive: false },
+      );
+
       return { route, t };
     },
   });
