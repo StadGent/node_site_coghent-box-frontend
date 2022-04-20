@@ -184,7 +184,7 @@ export default defineComponent({
       (storySelected.value = JSON.stringify(_resetTo));
 
     window.onkeydown = async (key: KeyboardEvent) => {
-      if (Defaults().keyboardSelect() || showInputField.value) {
+      if (Defaults().keyboardSelect() || showInputField.value && stateService.canChooseNextStory) {
         switch (key.code) {
           case 'Digit1' || '97':
             console.log('pressed 1');
@@ -276,7 +276,7 @@ export default defineComponent({
           selected = 3;
           break;
       }
-      if (selected) {
+      if (selected && stateService.canChooseNextStory) {
         storySelected.value = JSON.stringify({
           topic: sensorValue.topic,
           id: selected,
