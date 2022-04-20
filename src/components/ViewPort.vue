@@ -621,7 +621,6 @@ export default defineComponent({
                 scenery.welcomeScene();
               });
           } else {
-            useDMX().lightsOn();
             stateService.changeState(FlowState.storyOverview);
             emit('resetSelectedStory', {
               topic: 'sensors/0/present',
@@ -644,6 +643,7 @@ export default defineComponent({
               globals.spotlight as Mesh<BufferGeometry, any>,
               storyService.activeStory,
             ).storyPaused();
+            useDMX().lightsOn();
           }
         },
         playBook.lastAction().time + Timing.delayForNext,
