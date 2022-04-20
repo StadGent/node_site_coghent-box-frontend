@@ -69,7 +69,7 @@ const SceneHelper = (
       storyCircle.progress.dots,
       storyId,
       _storyService.getStoryDataOfStory(storyId).totalOfFramesSeen,
-      true,
+      false,
     );
   };
 
@@ -108,7 +108,7 @@ const SceneHelper = (
         );
         if (_animation) {
           _dots[index].dot.material.opacity = 0;
-          await CustomAnimation().fadeIn(_dots[index].dot, 1, 0.1);
+          CustomAnimation().fadeIn(_dots[index].dot, 1, 0.1);
         }
         if (index + 1 == _progress && _storyService.storyIsActive(_storyId)) {
           _threeService.AddToScene(
@@ -119,7 +119,7 @@ const SceneHelper = (
           );
           if (_animation) {
             _dots[index].innerDot.material.opacity = 0;
-            await CustomAnimation().fadeIn(_dots[index].innerDot, 1, 0.1);
+            CustomAnimation().fadeIn(_dots[index].innerDot, 1, 0.1);
           }
         }
         if (_dots[index].checkmark) {
@@ -131,10 +131,10 @@ const SceneHelper = (
           );
           if (_animation) {
             _dots[index].checkmark.material.opacity = 0;
-            await CustomAnimation().fadeIn(_dots[index].checkmark, 1, 0.1);
+            CustomAnimation().fadeIn(_dots[index].checkmark, 1, 0.1);
           }
         }
-        await Common().awaitTimeout(AnimationDefaults.timing.fadeIn);
+        // await Common().awaitTimeout(AnimationDefaults.timing.fadeIn);
       } else {
         console.info('WARN | Missing dot for frame progress');
       }
