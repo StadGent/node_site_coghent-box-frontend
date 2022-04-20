@@ -83,7 +83,7 @@ const Measurements = (): {
 
   const text = {
     size: {
-      smaller: 20,
+      smaller: 15,
       small: 30,
       medium: 40,
       big: 50,
