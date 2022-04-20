@@ -33,7 +33,7 @@ import PresenceService from '@/services/PresenceService';
 import Positions from './defaults.positions';
 import Timing from './defaults.timing';
 import TimerCountdown from './shapes.timer';
-import { FlowState } from '@/services/StateService';
+import stateService, { FlowState } from '@/services/StateService';
 import scenery from '@/composables/useScenery';
 
 const PlayBookBuild = (
@@ -202,6 +202,7 @@ const PlayBookBuild = (
   };
 
   const storyPaused = async () => {
+    stateService.canChooseNextStory = false
     logBuild('storyPaused');
     const resultOfTaggedAssets = taggingService.getByTag(Tags.GroupOfAssets)
 
@@ -258,9 +259,11 @@ const PlayBookBuild = (
     TaggingHelper(taggingService).tagActiveStorycircleAsStoryCircle();
     presenceService.overviewStoryCircles(storyService.getStoryData().map(_data => _data.storyId))
     TimerCountdown(threeService).start(Timing.pauseMenu.countdown, Positions().timerCountdown(), FlowState.storySelected, scenery.welcomeScene)
+    stateService.canChooseNextStory = true
   };
 
   const storyPausedWithNoActiveStory = async () => {
+    stateService.canChooseNextStory = false
     logBuild('storyPausedWithNoActiveStory');
     CustomAnimation().grow(
       spotlight as Mesh<any, MeshBasicMaterial>,
@@ -282,6 +285,7 @@ const PlayBookBuild = (
       ),
     );
     TimerCountdown(threeService).start(Timing.pauseMenu.countdown, Positions().timerCountdown(), FlowState.storySelected, scenery.welcomeScene)
+    stateService.canChooseNextStory = true
   };
 
   const storyData = async (
