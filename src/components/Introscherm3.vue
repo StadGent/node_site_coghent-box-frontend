@@ -43,7 +43,7 @@
         </span>
         <div class="circle-wrapper">
           <svg class="watch__border-animated">
-            <circle cx="100" cy="100" r="95" />
+            <circle cx="200" cy="200" r="190" />
           </svg>
           <div class="inner-circle rounded-full flex items-center justify-center">
             <span class="text-text-white text-8xl font-bold">{{
@@ -83,8 +83,8 @@
       </div>
       <div class="w-full absolute bottom-0 hide-things">
         <svg
-          width="230"
-          height="411"
+          width="460"
+          height="822"
           viewBox="0 0 230 411"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -190,8 +190,8 @@
             @click="naarStart"
           >
             <svg
-              width="46"
-              height="31"
+              width="92"
+              height="62"
               viewBox="0 0 46 31"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -293,33 +293,33 @@
     z-index: -1;
     transform: translateY(0px);
     position: relative;
-    animation: ticket-animation 5s linear;
+    animation: ticket-animation 3s linear;
   }
   .circle-wrapper {
-    width: 200px;
-    height: 200px;
+    width: 400px;
+    height: 400px;
     position: relative;
   }
 
   .inner-circle {
-    width: 160px;
-    height: 160px;
+    width: 320px;
+    height: 320px;
     /* flex-basis: 200px; */
     background-color: rgb(255 255 255 / 50%);
-    left: 20px;
-    top: 20px;
+    left: 40px;
+    top: 40px;
     position: absolute;
   }
   .watch__border-animated circle {
-    animation: border-animation 5s linear;
+    animation: border-animation 3s linear;
   }
 
   @keyframes border-animation {
     0% {
-      stroke-dashoffset: 703;
+      stroke-dashoffset: 1406;
     }
     100% {
-      stroke-dashoffset: 103;
+      stroke-dashoffset: 206;
       stroke: white;
       display: none;
     }
@@ -327,10 +327,10 @@
 
   @keyframes ticket-animation {
     0% {
-      transform: translateY(260px);
+      transform: translateY(520px);
     }
     100% {
-      transform: translateY(25px);
+      transform: translateY(50px);
     }
   }
 
@@ -351,12 +351,12 @@
   }
 
   .hide-things {
-    animation: hideAnimation 0s ease-in 5s;
+    animation: hideAnimation 0s ease-in 3s;
     animation-fill-mode: forwards;
   }
 
   .show-things {
-    animation: showAnimation 0s ease-in 5s;
+    animation: showAnimation 0s ease-in 3s;
     animation-fill-mode: forwards;
     visibility: hidden;
     height: 0;
@@ -364,17 +364,17 @@
 
   [class^='watch__border-animated'] {
     position: relative;
-    width: 200px;
-    height: 200px;
+    width: 400px;
+    height: 400px;
   }
 
   [class^='watch__border-animated'] circle {
     fill: none;
     stroke: white;
-    stroke-width: 10;
+    stroke-width: 20;
     stroke-linecap: round;
-    stroke-dasharray: 703, 644;
-    stroke-dashoffset: 103;
+    stroke-dasharray: 1406, 1288;
+    stroke-dashoffset: 206;
     transform-origin: center;
     transform: rotate(-90deg);
   }

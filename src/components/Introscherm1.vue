@@ -17,8 +17,8 @@
     <div class="w-full flex flex-col justify-center text-text-black">
       <div class="flex justify-center my-20">
         <svg
-          width="148"
-          height="175"
+          width="296"
+          height="350"
           viewBox="0 0 148 175"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -142,6 +142,6 @@
   }
 
   .custom-container {
-    min-height: 1032px;
+    min-height: 2064px;
   }
 </style>

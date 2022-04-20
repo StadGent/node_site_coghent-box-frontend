@@ -19,8 +19,8 @@
       "
     >
       <svg
-        width="120"
-        height="74"
+        width="240"
+        height="148"
         viewBox="0 0 120 74"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -54,8 +54,8 @@
       </p>
       <svg
         class="mt-10"
-        width="48"
-        height="101"
+        width="96"
+        height="202"
         viewBox="0 0 48 101"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -115,8 +115,8 @@
           @click="prevStep"
         >
           <svg
-            width="46"
-            height="31"
+            width="92"
+            height="62"
             viewBox="0 0 46 31"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -161,8 +161,8 @@
         >
           {{ t('intro.screen-2.button-next') }}
           <svg
-            width="46"
-            height="31"
+            width="92"
+            height="62"
             viewBox="0 0 46 31"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -247,13 +247,13 @@
 
 <style scoped>
   .circle {
-    width: 162px;
-    height: 162px;
+    width: 324px;
+    height: 324px;
     opacity: 1;
     border-radius: 50%;
     /* background: black; */
     color: white;
-    border-width: 8px;
+    border-width: 16px;
     border-style: solid;
   }
 
