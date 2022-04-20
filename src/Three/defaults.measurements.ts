@@ -70,7 +70,7 @@ const Measurements = (): {
 
   const spotLight = {
     radius: 350,
-    spaceAroundObject: 0,
+    spaceAroundObject: 25,
     opacity: 0.6,
   };
 
