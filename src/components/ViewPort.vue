@@ -488,15 +488,15 @@ export default defineComponent({
           !taggingService.idAlreadyInList(storyService.activeStory.id),
         );
 
-        PlayBookBuild(
-          globals.threeService as ThreeService,
-          storyService,
-          zoneService,
-          taggingService,
-          framePlaybook,
-          globals.spotlight as Mesh<BufferGeometry, any>,
-          storyService.activeStory,
-        ).setActiveStoryCircleToBackground(false);
+        // PlayBookBuild(
+        //   globals.threeService as ThreeService,
+        //   storyService,
+        //   zoneService,
+        //   taggingService,
+        //   framePlaybook,
+        //   globals.spotlight as Mesh<BufferGeometry, any>,
+        //   storyService.activeStory,
+        // ).setActiveStoryCircleToBackground(false);
 
         await PlayBookBuild(
           globals.threeService as ThreeService,
@@ -572,15 +572,15 @@ export default defineComponent({
     const setAfterFrameScreen = () => {
       playBook.addToPlayBook(
         () => {
-          PlayBookBuild(
-            globals.threeService as ThreeService,
-            storyService,
-            zoneService,
-            taggingService,
-            playBook,
-            globals.spotlight as Mesh<BufferGeometry, any>,
-            storyService.activeStory,
-          ).setActiveStoryCircleToBackground(true);
+          // PlayBookBuild(
+          //   globals.threeService as ThreeService,
+          //   storyService,
+          //   zoneService,
+          //   taggingService,
+          //   playBook,
+          //   globals.spotlight as Mesh<BufferGeometry, any>,
+          //   storyService.activeStory,
+          // ).setActiveStoryCircleToBackground(true);
           MoveObject().startMoving(
             globals.spotlight as Mesh<BufferGeometry, any>,
             zoneService.middleZoneCenter,
