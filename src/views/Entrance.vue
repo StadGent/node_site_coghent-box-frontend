@@ -65,7 +65,12 @@
         router.push({ name: 'entrance.step1' });
         console.log(updatedStories());
         updatedStories()?.then((value: any) => {
-          stories.value = value.data.ActiveBox.results;
+          stories.value = [
+            value.data.ActiveBox.results[2],
+            value.data.ActiveBox.results[0],
+            value.data.ActiveBox.results[1],
+            value.data.ActiveBox.results[3],
+          ];
         });
 
         if (showCodePopup.value === null) {
