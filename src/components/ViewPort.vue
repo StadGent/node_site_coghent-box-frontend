@@ -182,6 +182,7 @@ export default defineComponent({
             _storySelected.msg &&
             _storySelected.id === countingStory.value
           ) {
+            stateService.canChooseNextStory = false;
             counter.value = 0;
             isCounting.value = false;
             countingStory.value = null;
@@ -238,7 +239,6 @@ export default defineComponent({
     );
 
     const setNewStoryWhenSelected = async (_storySelected: number) => {
-      stateService.canChooseNextStory = false;
       garbageHelper.removeCountdown();
       storyService.setActiveStory(storyData[_storySelected].id);
       const _storyData = storyService.getStoryDataOfStory(storyData[_storySelected].id);
@@ -644,7 +644,6 @@ export default defineComponent({
               globals.spotlight as Mesh<BufferGeometry, any>,
               storyService.activeStory,
             ).storyPaused();
-            stateService.canChooseNextStory = true;
           }
         },
         playBook.lastAction().time + Timing.delayForNext,

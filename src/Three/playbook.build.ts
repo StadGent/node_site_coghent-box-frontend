@@ -202,7 +202,6 @@ const PlayBookBuild = (
   };
 
   const storyPaused = async () => {
-    stateService.canChooseNextStory = false
     logBuild('storyPaused');
     const resultOfTaggedAssets = taggingService.getByTag(Tags.GroupOfAssets)
 
@@ -263,7 +262,6 @@ const PlayBookBuild = (
   };
 
   const storyPausedWithNoActiveStory = async () => {
-    stateService.canChooseNextStory = false
     logBuild('storyPausedWithNoActiveStory');
     CustomAnimation().grow(
       spotlight as Mesh<any, MeshBasicMaterial>,
