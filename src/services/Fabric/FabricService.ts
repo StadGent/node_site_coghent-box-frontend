@@ -114,6 +114,7 @@ export default class FabricService {
         this.state.canvas.add(underline);
       });
     });
+    return Promise.resolve(entity);
   }
 
   generateInfoBar(startEntity: Entity, historyEntities: Entity[]) {
@@ -211,56 +212,58 @@ export default class FabricService {
       canvasFrames,
     );
 
-    // Frame object
-    ImageUrlHelper(entities, fabricdefaults.canvas.secondaryImage.height).then(
-      (images: string[]) => {
-        images.forEach((imageUrl, index) => {
-          new fabric.Image.fromURL(imageUrl, (image: any) => {
-            console.log(this.state.takenPositions);
-            image.positionIndexes = getPositionForImageHelper(
-              originEntityPosition,
-              this.state.takenPositions,
-            );
-            image.top =
-              fabricdefaults.canvas.secondaryImage.positions.yAxis[
-                image.positionIndexes.yIndex
-              ];
-            image.left =
-              fabricdefaults.canvas.secondaryImage.positions.xAxis[
-                image.positionIndexes.xIndex
-              ];
-            image.hoverCursor = 'pointer';
-            image.id = entities[index].id;
-            image.entity = entities[index];
-            image.setCoords();
-            image.relationOriginId = subRelationOriginEntityId;
-            image.objectType = 'frame';
-            lockObjectMovementHelper(image);
-            const originFrame: any = getFrameByEntityIdHelper(
-              image.relationOriginId,
-              this.state.canvas.getObjects(),
-            );
-            if (!isDuplicateFrameHelper(image.id, this.state.canvasEntities)) {
-              this.state.canvasEntities.push(image.id);
-              this.state.canvas.add(image);
-              this.state.takenPositions.push(image.positionIndexes);
-              if (originFrame) {
-                this.generateRelationBetweenFrames(originFrame, image);
-              }
-            } else {
-              const duplicateFrame: any = getFrameByEntityIdHelper(
-                image.id,
+    if (originEntityPosition) {
+      // Frame object
+      ImageUrlHelper(entities, fabricdefaults.canvas.secondaryImage.height).then(
+        (images: string[]) => {
+          images.forEach((imageUrl, index) => {
+            new fabric.Image.fromURL(imageUrl, (image: any) => {
+              console.log(this.state.takenPositions);
+              image.positionIndexes = getPositionForImageHelper(
+                originEntityPosition,
+                this.state.takenPositions,
+              );
+              image.top =
+                fabricdefaults.canvas.secondaryImage.positions.yAxis[
+                  image.positionIndexes.yIndex
+                ];
+              image.left =
+                fabricdefaults.canvas.secondaryImage.positions.xAxis[
+                  image.positionIndexes.xIndex
+                ];
+              image.hoverCursor = 'pointer';
+              image.id = entities[index].id;
+              image.entity = entities[index];
+              image.setCoords();
+              image.relationOriginId = subRelationOriginEntityId;
+              image.objectType = 'frame';
+              lockObjectMovementHelper(image);
+              const originFrame: any = getFrameByEntityIdHelper(
+                image.relationOriginId,
                 this.state.canvas.getObjects(),
               );
-              if (originFrame && duplicateFrame) {
-                this.generateRelationBetweenFrames(originFrame, duplicateFrame);
+              if (!isDuplicateFrameHelper(image.id, this.state.canvasEntities)) {
+                this.state.canvasEntities.push(image.id);
+                this.state.canvas.add(image);
+                this.state.takenPositions.push(image.positionIndexes);
+                if (originFrame) {
+                  this.generateRelationBetweenFrames(originFrame, image);
+                }
+              } else {
+                const duplicateFrame: any = getFrameByEntityIdHelper(
+                  image.id,
+                  this.state.canvas.getObjects(),
+                );
+                if (originFrame && duplicateFrame) {
+                  this.generateRelationBetweenFrames(originFrame, duplicateFrame);
+                }
               }
-            }
+            });
           });
-        });
-        this.state.canvas.requestRenderAll();
-      },
-    );
+          this.state.canvas.requestRenderAll();
+        },
+      );
+    }
     return Promise.resolve(entities);
   }
 

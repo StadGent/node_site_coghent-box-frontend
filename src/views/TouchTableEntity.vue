@@ -312,21 +312,23 @@
         }
         fabricService.value = new FabricService();
 
-        fabricService.value.generateMainImageFrame(primaryEntity);
+        fabricService.value
+          .generateMainImageFrame(primaryEntity)
+          .then((entityOnCanvas: Entity) => {
+            getRelations(primaryEntity);
+            entity.value = primaryEntity;
+            IIIFImageUrl.value = IIIFImageUrlHelper(primaryEntity);
 
-        getRelations(primaryEntity);
-        entity.value = primaryEntity;
-        IIIFImageUrl.value = IIIFImageUrlHelper(primaryEntity);
-
-        if (startAsset.value) {
-          const startEntity = startAsset.value;
-          const historyEntities = historyAssets.value;
-          console.log({ historyEntities });
-          if (startEntity) {
-            fabricService.value?.generateInfoBar(startEntity, historyEntities);
-          }
-        }
-        loadRelations(primaryEntity);
+            if (startAsset.value) {
+              const startEntity = startAsset.value;
+              const historyEntities = historyAssets.value;
+              console.log({ historyEntities });
+              if (startEntity) {
+                fabricService.value?.generateInfoBar(startEntity, historyEntities);
+              }
+            }
+            loadRelations(primaryEntity);
+          });
       };
 
       if (startEntityResult.value) {
