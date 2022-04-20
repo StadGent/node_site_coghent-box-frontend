@@ -52,6 +52,9 @@
       provide('showCodePopup', showCodePopup);
       provide('stories', stories);
 
+      const root = document.getElementsByTagName('html')[0];
+      root.className += ' bigger-font';
+
       const { refetch: updatedStories, loading } = useQuery(
         GetActiveBoxDocument,
         {},
@@ -76,7 +79,7 @@
 </script>
 
 <style>
-  html {
+  .bigger-font {
     font-size: 32px;
   }
 </style>
