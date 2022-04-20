@@ -22,7 +22,7 @@ class StateService {
     this.currentState = FlowState[_intitalState]
     this.states = Object.keys(FlowState).filter(_k => isNaN(Number(_k)))
     this.canScanTicket = true
-    this.canChooseNextStory = true
+    this.canChooseNextStory = false
   }
 
   changeState(_state: FlowState) {
