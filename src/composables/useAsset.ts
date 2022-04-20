@@ -190,6 +190,7 @@ const useAsset = (
       metadataInfo.position.x -= labelText.dimensions.y
       metadataInfo.position.x -= Measurements().spacing
     }
+    metadataInfo.position.y += (labelText.dimensions.y + Measurements().text.paddingAround)
     return metadataInfo;
   };
 
