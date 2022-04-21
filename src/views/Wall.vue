@@ -22,7 +22,6 @@
     :state-service="stateService"
     :current-state="currentState"
     :show-pause-overview="showPauseOverview"
-    @restartSession="restartSession"
     @resetSelectedStory="resetSelectedStory"
   />
   <mqtt @selectStory="setSelectStory" @mqttEnabled="toggleShowInputField" />
@@ -132,10 +131,6 @@ export default defineComponent({
       return tmpStoryService;
     };
 
-    const restartSession = async (start: boolean) => {
-      stateService.canScanTicket = start;
-    };
-
     watch(inputValue, (value: string) => {
       console.log('input value', value);
       let code = Common().getCodeFromString(value);
@@ -145,8 +140,7 @@ export default defineComponent({
       if (
         stateService.canScanTicket &&
         code &&
-        code.length === 8 &&
-        stateService.getCurrentState() === FlowState[0]
+        code.length === 8
       ) {
         console.log('code:', code);
         getCode(code);
@@ -163,9 +157,8 @@ export default defineComponent({
         stateService.getCurrentState() != FlowState[2] &&
         stateService.getCurrentState() != FlowState[3] &&
         stateService.getCurrentState() != FlowState[4] &&
-        stateService.getCurrentState() != FlowState[6]
+        stateService.canScanTicket === true
       ) {
-        stateService.canScanTicket = true;
         currentState.value = stateService.getCurrentState();
         storyService.value = null;
         const visiterByCode = await useBoxVisiter(apolloClient).getByCode(String(code));
@@ -295,7 +288,6 @@ export default defineComponent({
       storySelected,
       setSelectStory,
       storyService,
-      restartSession,
       resetSelectedStory,
       inputValue,
       showPauseOverview,

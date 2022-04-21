@@ -23,6 +23,7 @@ import ZoneService from '@/services/ZoneService';
 import TextService from '@/services/TextService';
 import TaggingService, { Tags } from '@/services/TaggingService';
 import SubtitleService from '@/services/SubtitleService';
+import globals from '@/services/GlobalData';
 
 import AudioHelper, { AudioHelperFunctions } from '@/Three/helper.audio';
 import WallGarbageHelper, { GarabageHelperForWall } from '@/Three/helper.wall.garbage';
@@ -51,9 +52,6 @@ import { FlowState } from '@/services/StateService';
 import MetadataLabel from '@/Three/shapes.metadataLabel';
 import stateService from '@/services/StateService';
 import scenery from '@/composables/useScenery';
-import TimerCountdown from '@/Three/shapes.timer';
-import Positions from '@/Three/defaults.positions';
-import globals from '@/services/GlobalData';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -118,6 +116,7 @@ export default defineComponent({
       playBook.clearPlaybook(true);
       taggingService.clearTaggedObjects();
       scenery.welcomeScene();
+      stateService.canScanTicket = true
     };
 
     watch(
@@ -603,7 +602,6 @@ export default defineComponent({
           showProgressOfFrame = false;
           storyService.setStoryColor();
           if (storyService.isEndOfSession()) {
-            emit('restartSession', true);
             stateService.changeState(FlowState.endCountdown);
             garbageHelper.endOfSessionScreen();
             useDMX().sequence();
@@ -617,9 +615,6 @@ export default defineComponent({
               storyService.activeStory,
             )
               .endOfSession()
-              .then((_start) => {
-                scenery.welcomeScene();
-              });
           } else {
             stateService.changeState(FlowState.storyOverview);
             emit('resetSelectedStory', {
@@ -627,7 +622,6 @@ export default defineComponent({
               id: 0,
               msg: true,
             } as SensorObject);
-            emit('restartSession', true);
             garbageHelper.pauseScreen();
             globals.spotlight?.scale.set(
               Measurements().storyCircle.outerCircle,

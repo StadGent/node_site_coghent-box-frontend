@@ -198,7 +198,7 @@ const PlayBookBuild = (
         zoneService.middleZoneCenter.z,
       ),
     );
-    return useEndOfSession(threeService, zoneService).create();
+    return await useEndOfSession(threeService, zoneService).create();
   };
 
   const storyPaused = async () => {
