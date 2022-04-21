@@ -18,6 +18,7 @@ export type GarabageHelperForWall = {
   activeStoryCircle: () => void;
   smallCountdownTimer: () => void;
   removeCountdown: () => void;
+  storyCircle: () => void;
 };
 
 const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingService): GarabageHelperForWall => {
@@ -151,7 +152,8 @@ const WallGarbageHelper = (threeService: ThreeService, taggingService: TaggingSe
     removeActiveFrameDots,
     activeStoryCircle,
     smallCountdownTimer,
-    removeCountdown
+    removeCountdown,
+    storyCircle
   }
 };
 

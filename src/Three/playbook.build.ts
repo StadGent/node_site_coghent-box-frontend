@@ -19,7 +19,7 @@ import ZoneService from '@/services/ZoneService';
 import TaggingService, { Tags } from '@/services/TaggingService';
 import CustomAnimation from '@/composables/animation';
 import AnimationDefaults from './defaults.animation';
-import { GarabageHelperForWall } from './helper.wall.garbage';
+import WallGarbageHelper, { GarabageHelperForWall } from './helper.wall.garbage';
 import TaggingHelper from './helper.tagging';
 import MoveHelper from './helper.move';
 import SceneHelper from './helper.scene';
@@ -317,6 +317,32 @@ const PlayBookBuild = (
     TaggingHelper(taggingService).tagStorycircleAsActiveStoryCircle(
       storyService.activeStoryData.storyId,
     );
+
+    WallGarbageHelper(threeService,taggingService).storyCircle()
+    // TMP:
+    // // The only ring to be displayed needs tio be the one from the active story
+    // const storyids = storyService.getStoryData().map(_data => _data.storyId).filter(_id => _id != storyService.activeStoryData.storyId)
+    // console.log({storyids})
+    // for(const id of storyids){
+    //   console.log('For id', id)
+    //   // Array of meshes or groups
+    //   const nonvisibleElements = taggingService.getByTagsId(id)
+    //   console.log({nonvisibleElements}) 
+    //   if(nonvisibleElements.length >= 0){
+    //     for(const element of nonvisibleElements){
+    //       if(element.object.length){
+    //         console.log('element is array', element)
+    //         threeService.RemoveGroupsFromScene(element.object)
+    //       }else{
+    //         threeService.RemoveFromScene(element.object)
+    //       }
+    //     }
+    //   }
+
+
+    // }
+    console.log('tagged after removing inactive elements',taggingService.taggedObjects)
+
     presenceService.activeStoryCircle()
 
     await CustomAnimation().shrink(
