@@ -29,14 +29,14 @@ const HelperText = (): {
 
   const scanYourTicketAgain = (position: Vector3) => {
     return {
-      'Scan je ticket': new Vector3(position.x + 20, position.y + 100, 0),
+      'Scan je ticket': new Vector3(position.x + 60, position.y + 100, 0),
       'opnieuw aan de zuil': new Vector3(position.x, position.y + 50, 0),
-      'om verder te gaan': new Vector3(position.x, position.y, 0),
+      'om verder te gaan': new Vector3(position.x + 20, position.y, 0),
     };
   };
   const goToWebPortal = (position: Vector3) => {
     return {
-      'Neem je ticket mee': new Vector3(position.x + 30, position.y + 150, 0),
+      'Neem je ticket mee': new Vector3(position.x + 25, position.y + 150, 0),
       'naar huis en ontdek de': new Vector3(position.x, position.y + 100, 0),
       'collectie verder online': new Vector3(position.x, position.y + 50, 0),
       'wwwcoghentbox.be': new Vector3(position.x, position.y, 0),

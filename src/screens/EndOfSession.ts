@@ -54,8 +54,8 @@ const EndOfSession = (
         Colors().white,
         Images.endOfSession['touchtable'],
         new Vector3(
-          zoneService.middleZoneCenter.x - 100,
-          zoneService.middleZoneCenter.y - 200,
+          zoneService.middleZoneCenter.x,
+          zoneService.middleZoneCenter.y - 140,
           zoneService.middleZoneCenter.z,
         ),
         new Vector3(400, 300, 0),
@@ -70,9 +70,9 @@ const EndOfSession = (
       [
         Spot().create(
           new Vector3(
-            zoneService.zoneCenters[zoneService.zoneCenters.length - 1].x,
-            zoneService.zoneCenters[zoneService.zoneCenters.length - 1].y,
-            zoneService.zoneCenters[zoneService.zoneCenters.length - 1].z,
+            zoneService.zoneCenters[5].x,
+            zoneService.zoneCenters[5].y,
+            zoneService.zoneCenters[5].z,
           ),
           Measurements().spotLight.radius,
         ),
@@ -83,17 +83,17 @@ const EndOfSession = (
       await TextHelper().displayTextFromRecordWithIcon(
         HelperText().goToWebPortal(
           new Vector3(
-            zoneService.zoneCenters[zoneService.zoneCenters.length - 1].x - 200,
-            zoneService.zoneCenters[zoneService.zoneCenters.length - 1].y ,
-            zoneService.zoneCenters[zoneService.zoneCenters.length - 1].z,
+            zoneService.zoneCenters[5].x - 200,
+            zoneService.zoneCenters[5].y,
+            zoneService.zoneCenters[5].z,
           ),
         ),
         Colors().white,
         Images.endOfSession['webPortal'],
         new Vector3(
-          zoneService.zoneCenters[zoneService.zoneCenters.length - 1].x - 100,
-          zoneService.zoneCenters[zoneService.zoneCenters.length - 1].y - 200,
-          zoneService.zoneCenters[zoneService.zoneCenters.length - 1].z,
+          zoneService.zoneCenters[5].x,
+          zoneService.zoneCenters[5].y - 200,
+          zoneService.zoneCenters[5].z,
         ),
         new Vector3(300, 300, 0),
       ),
@@ -127,9 +127,9 @@ const EndOfSession = (
     );
     const or2 = await orOption(
       new Vector3(
-        zoneService.zoneCenters[zoneService.zoneCenters.length - 2].x - 120,
-        zoneService.zoneCenters[zoneService.zoneCenters.length - 2].y - 50,
-        zoneService.zoneCenters[zoneService.zoneCenters.length - 2].z,
+        zoneService.zoneCenters[4].x - 120,
+        zoneService.zoneCenters[4].y - 50,
+        zoneService.zoneCenters[4].z,
       ),
     );
 
