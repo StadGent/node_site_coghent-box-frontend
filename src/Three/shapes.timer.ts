@@ -101,6 +101,7 @@ const TimerCountdown = (_threeService: ThreeService): {
     let currentTime = _timeInMiliseconds;
     let initial = true;
     do {
+      console.log('*')
       const times = await create(_position, currentTime);
       if (initial) {
         updateTime(times, currentTime, initial);
@@ -115,7 +116,9 @@ const TimerCountdown = (_threeService: ThreeService): {
       currentTime -= 1000;
       stateService.getCurrentState() === FlowState[_stopState] ? stop = true : stop = false
     } while (currentTime > -1 && stop === false)
+    console.log('* timer STOPPED')
     if(stop === false && _nextScene){
+      console.log('* SHOW NEXT SCENE')
       _nextScene()
     }
   }
