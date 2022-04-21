@@ -7,19 +7,19 @@ export type srtObject = {
   startTime: string;
   endTime: string;
   text: string;
-}
+};
 
 export default class SubtitleService {
   private parser: Parser;
-  private readonly defaultSrtIndex = 1
+  private readonly defaultSrtIndex = 1;
 
-  public currentSubtitle = ''
-  public currentSubtitleIndex = 1
+  public currentSubtitle = '';
+  public currentSubtitleIndex = 1;
 
   subtitles: Array<srtObject> | null = null;
 
   constructor() {
-    this.parser = new SRT.default()
+    this.parser = new SRT.default();
   }
 
   srtToJsonObjects(_srtFile: string) {
@@ -30,7 +30,7 @@ export default class SubtitleService {
     let data: string | Array<srtObject> | null = null;
     if (_url) {
       if (!_url.includes('https')) {
-        _url = _url.replace('http', 'https')
+        _url = _url.replace('http', 'https');
       }
       try {
         const response = await axios.get(_url);
@@ -40,13 +40,13 @@ export default class SubtitleService {
           this.setSRTObjects(data);
         }
       } catch (error) {
-        data = null
-        console.error({ error })
+        data = null;
+        console.error({ error });
       }
     } else {
       data = null;
     }
-    if (Development().showSubtitleLogs()) console.log('subtitles', data)
+    if (Development().showSubtitleLogs()) console.log('subtitles', data);
     return data;
   }
 
@@ -64,55 +64,59 @@ export default class SubtitleService {
     if (this.checkTime(_time)) {
       const hours = _time.slice(0, _time.indexOf(':', 1));
       convertedTime += parseInt(hours) * 3600;
-      _time = _time.slice(_time.indexOf(':', 1))
+      _time = _time.slice(_time.indexOf(':', 1));
       const minutes = _time.slice(1, _time.indexOf(':', 1));
       convertedTime += parseInt(minutes) * 60;
-      _time = _time.slice(_time.indexOf(':', 1))
+      _time = _time.slice(_time.indexOf(':', 1));
       const seconds = _time.slice(1, _time.indexOf(',', 1));
-      convertedTime += parseInt(seconds)
-      _time = _time.slice(_time.indexOf(',', 1))
+      convertedTime += parseInt(seconds);
+      _time = _time.slice(_time.indexOf(',', 1));
       const miliseconds = _time.slice(1, _time.length);
       convertedTime += parseInt(miliseconds) / 1000;
     }
-    return convertedTime
+    return convertedTime;
   }
 
   getSrtForTime(_currentTime: number) {
-    let srtLineToDisplay = null
+    let srtLineToDisplay = null;
     if (this.subtitles) {
       for (const srt of this.subtitles) {
-        if (_currentTime > this.timeToSeconds(srt.startTime) - 0.25 &&
+        if (
+          _currentTime > this.timeToSeconds(srt.startTime) - 0.25 &&
           _currentTime <= this.timeToSeconds(srt.endTime) + 0.25
         ) {
-          srtLineToDisplay = srt
-          if (Development().showSubtitleLogs()) console.log(`${srt.id}. `, srt.text)
+          console.log(srt);
+          srtLineToDisplay = srt;
+          if (Development().showSubtitleLogs()) console.log(`${srt.id}. `, srt.text);
         }
       }
     }
-    return srtLineToDisplay
+    return srtLineToDisplay;
   }
 
   getCurrentSubtitleText(_currentTime: number) {
-    const srtSection = this.getSrtForTime(_currentTime)
+    const srtSection = this.getSrtForTime(_currentTime);
     if (srtSection) {
-      this.currentSubtitle = srtSection.text
-      this.currentSubtitleIndex = Number(srtSection.id)
-    } else this.currentSubtitle = ''
-    return this.currentSubtitle
+      this.currentSubtitle = srtSection.text;
+      this.currentSubtitleIndex = Number(srtSection.id);
+    } else this.currentSubtitle = '';
+    return this.currentSubtitle;
   }
 
   returnPreviousSubtitle(_index: number) {
     let previousText = '';
     if (_index > 1 && this.subtitles) {
       _index -= 1;
-      const action = this.subtitles.filter(_action => _index == parseInt(_action.id))[0];
+      const action = this.subtitles.filter(
+        (_action) => _index == parseInt(_action.id),
+      )[0];
       previousText = action.text;
     }
     return previousText;
   }
 
   reset() {
-    this.subtitles = null
-    this.currentSubtitleIndex = this.defaultSrtIndex
+    this.subtitles = null;
+    this.currentSubtitleIndex = this.defaultSrtIndex;
   }
 }
