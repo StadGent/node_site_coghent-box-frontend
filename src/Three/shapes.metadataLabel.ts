@@ -13,27 +13,35 @@ import { FontParams } from './schema.text';
 import DotWithinDot from './shapes.dotWithinDot';
 
 type MetadataLabelWithConnection = {
-  metadata: Group,
-  connection?: Group,
+  metadata: Group;
+  connection?: Group;
 };
 
 type Label = {
-  text: Mesh<BoxGeometry, any>,
-  dimensions: Vector3
-}
+  text: Mesh<BoxGeometry, any>;
+  dimensions: Vector3;
+};
 
-const MetadataLabel = (_position: Vector3): {
-  label: (text: string) => Promise<Label>
+const MetadataLabel = (
+  _position: Vector3,
+): {
+  label: (text: string) => Promise<Label>;
   create: (text: Label, _color: number) => Promise<MetadataLabelWithConnection>;
 } => {
   let dotWidth = 0;
   const label = async (text: string) => {
-    const labelText = await TextHelper().CreateText(text, new Vector3(_position.x, _position.y, _position.z + Layers.fraction), { width: 0, height: 0 } as CubeParams, { color: Colors().white, size: Measurements().text.size.smaller } as FontParams, 1) as Mesh<BoxGeometry, any>;
+    const labelText = (await TextHelper().CreateText(
+      text,
+      new Vector3(_position.x, _position.y, _position.z + Layers.fraction),
+      { width: 0, height: 0 } as CubeParams,
+      { color: Colors().white, size: Measurements().text.size.smaller } as FontParams,
+      1,
+    )) as Mesh<BoxGeometry, any>;
     return { text: labelText, dimensions: getSizeStoryText(labelText) };
-  }
+  };
 
   const labelBox = (_width: number, _height: number, _color: number) => {
-    const position = _position
+    const position = _position;
     const cube = schemaCube().CreateCube({
       position: position,
       params: { width: _width, height: _height, color: _color },
@@ -42,7 +50,7 @@ const MetadataLabel = (_position: Vector3): {
   };
 
   const circles = (box: Mesh<BoxGeometry, MeshBasicMaterial>, color: number) => {
-    dotWidth = box.geometry.parameters.height / 2
+    dotWidth = box.geometry.parameters.height / 2;
     const schema = CircleHelper().CreateSchema(
       new Vector3(
         box.position.x - box.geometry.parameters.width / 2,
@@ -106,20 +114,53 @@ const MetadataLabel = (_position: Vector3): {
   //   };
   // }
 
+  // const create = async (_label: Label, _color: number) => {
+  //   _label.text.position.y = _label.text.position.y - (_label.dimensions.y / 2)
+  //   _label.text.position.x = _position.x - (_label.dimensions.x / 2)
 
+  //   const box = labelBox(_label.dimensions.x, _label.dimensions.y + Measurements().text.paddingAround, _color);
+  //   // const connect = connection(box, _color);
+  //   const endCircles = circles(box, _color)
+  //   const metadataLabel = GroupHelper().CreateGroup([
+  //     box,
+  //     _label.text,
+  //     endCircles.left,
+  //     endCircles.right,
+  //   ]);
+  //   return {
+  //     metadata: metadataLabel,
+  //   };
+  // };
   const create = async (_label: Label, _color: number) => {
-    _label.text.position.y = _label.text.position.y - (_label.dimensions.y / 2)
-    _label.text.position.x = _position.x - (_label.dimensions.x / 2)
+    _label.text.position.y = _label.text.position.y - _label.dimensions.y / 2;
+    _label.text.position.x = _position.x - _label.dimensions.x / 2;
 
-
-    const box = labelBox(_label.dimensions.x, _label.dimensions.y + Measurements().text.paddingAround, _color);
+    const shadebox = labelBox(
+      _label.dimensions.x + 7,
+      _label.dimensions.y + Measurements().text.paddingAround + 7,
+      Colors().white,
+    );
+    const box = labelBox(
+      _label.dimensions.x,
+      _label.dimensions.y + Measurements().text.paddingAround,
+      _color,
+    );
     // const connect = connection(box, _color);
-    const endCircles = circles(box, _color)
+    const endCircles = circles(box, _color);
+    const endShadeCircles = circles(shadebox, Colors().white);
+    endShadeCircles.left.position.z = 0.09;
+    endShadeCircles.right.position.z = 0.09;
+    endShadeCircles.left.position.x = endShadeCircles.left.position.x + 2.5;
+    endShadeCircles.right.position.x = endShadeCircles.right.position.x - 2.5;
+
     const metadataLabel = GroupHelper().CreateGroup([
       box,
+      shadebox,
       _label.text,
       endCircles.left,
       endCircles.right,
+      endShadeCircles.left,
+      endShadeCircles.right,
     ]);
     return {
       metadata: metadataLabel,
@@ -127,7 +168,6 @@ const MetadataLabel = (_position: Vector3): {
   };
 
   return { label, create };
-
 };
 
 export default MetadataLabel;
