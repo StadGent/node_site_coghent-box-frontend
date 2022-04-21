@@ -25,6 +25,7 @@ import { Entity } from 'coghent-vue-3-component-library/lib';
 import { tweenPromise } from './helper.tweenPromise';
 import TWEEN from '@tweenjs/tween.js';
 import VideoHelper from './helper.video';
+import globals from '@/services/GlobalData';
 
 const useFrameAssetOverview = (
   threeService: ThreeService,
@@ -182,8 +183,14 @@ const useFrameAssetOverview = (
   };
 
   const calculateZoomSettingsOfAsset = (asset: Mesh<BoxBufferGeometry, any>) => {
-    const inZone = zoneService.objectIsInZone(asset);
-    const zoomPosition = inZone.center
+    // const inZone = zoneService.objectIsInZone(asset);
+
+    let zoomPosition = asset.position
+    if(asset.position.x > 0){
+      zoomPosition = globals.zoneService?.zoomPositionRight as Vector3
+    }else{
+      zoomPosition = globals.zoneService?.zoomPositionLeft as Vector3
+    }
 
     let scale = 1000 / asset.geometry.parameters.height;
 
@@ -191,16 +198,16 @@ const useFrameAssetOverview = (
       scale = 1;
     }
 
-    const outerZone = zoneService.isInOuterZone(inZone)
-    if (outerZone) {
-      const zoneWidth = inZone.end.x - inZone.start.x
-      const assetWidth = scale * asset.geometry.parameters.width
-      if (assetWidth > zoneWidth) {
-        const diff = (assetWidth / 2) - (zoneWidth / 2)
-        outerZone === 1 ? zoomPosition.x += diff : zoomPosition.x
-        outerZone === 6 ? zoomPosition.x -= diff : zoomPosition.x
-      }
-    }
+    // const outerZone = zoneService.isInOuterZone(inZone)
+    // if (outerZone) {
+    //   const zoneWidth = inZone.end.x - inZone.start.x
+    //   const assetWidth = scale * asset.geometry.parameters.width
+    //   if (assetWidth > zoneWidth) {
+    //     const diff = (assetWidth / 2) - (zoneWidth / 2)
+    //     outerZone === 1 ? zoomPosition.x += diff : zoomPosition.x
+    //     outerZone === 6 ? zoomPosition.x -= diff : zoomPosition.x
+    //   }
+    // }
 
     return { scale: scale, zoomPosition: zoomPosition };
   };

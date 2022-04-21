@@ -18,11 +18,15 @@ export default class ZoneService {
   public middleZoneCenter: Vector3;
   public zones: Array<Zone>;
   public zoneDimensions = new Vector3(0, 0, 0);
+  public zoomPositionLeft = new Vector3(0,0,0)
+  public zoomPositionRight = new Vector3(0,0,0)
 
   constructor(_screen: Vector3, _zones: number) {
     this.screen = _screen;
     this.zones = this.createZones(_zones);
     this.zoneCenters = this.centerOfZones();
+    this.zoomPositionLeft = this.zoneCenters[1]
+    this.zoomPositionRight = this.zoneCenters[4]
     this.middleZoneCenter = new Vector3(0, 0, Layers.scene);
     this.zonesInnerToOuter = this.orderZoneCentersFromInnerToOuterPosition();
   }
