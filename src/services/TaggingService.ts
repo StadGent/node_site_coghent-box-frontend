@@ -35,6 +35,7 @@ export enum Tags {
   EndOfSession,
   Testing,
   FrameProgressbar,
+  startSessionVideo,
   startSessionText,
   StartOfSessionRing,
   StartOfSessionProgressRing,

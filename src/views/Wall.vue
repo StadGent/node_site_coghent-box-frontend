@@ -27,7 +27,7 @@
   <mqtt @selectStory="setSelectStory" @mqttEnabled="toggleShowInputField" />
 </template>
 <script lang="ts">
-import { defineComponent, ref, watch } from 'vue';
+import { defineComponent, onMounted, ref, watch } from 'vue';
 import ViewPort from '@/components/ViewPort.vue';
 import { useQuery } from '@vue/apollo-composable';
 import mqtt from '@/components/mqtt.vue';
@@ -41,6 +41,9 @@ import { Relation } from 'coghent-vue-3-component-library/lib/queries';
 import { getFirstStoryToSee, getUnseenStories } from '@/composables/useBox';
 import Defaults from '@/Three/defaults.config';
 import stateService from '@/services/StateService';
+import Videos from '@/Three/defaults.videos';
+import VideoHelper from '@/Three/helper.video';
+import { Vector3 } from 'three';
 
 export default defineComponent({
   name: 'Wall',
@@ -137,11 +140,7 @@ export default defineComponent({
       if (showInputField.value && value.length === 8) {
         code = value;
       }
-      if (
-        stateService.canScanTicket &&
-        code &&
-        code.length === 8
-      ) {
+      if (stateService.canScanTicket && code && code.length === 8) {
         console.log('code:', code);
         getCode(code);
         inputValue.value = '';
@@ -177,7 +176,10 @@ export default defineComponent({
       (storySelected.value = JSON.stringify(_resetTo));
 
     window.onkeydown = async (key: KeyboardEvent) => {
-      if (Defaults().keyboardSelect() || showInputField.value && stateService.canChooseNextStory) {
+      if (
+        Defaults().keyboardSelect() ||
+        (showInputField.value && stateService.canChooseNextStory)
+      ) {
         switch (key.code) {
           case 'Digit1' || '97':
             console.log('pressed 1');
@@ -281,6 +283,15 @@ export default defineComponent({
       // }
       //5-4-3-2-1
     };
+
+    onMounted(() => {
+      VideoHelper().videoElementAsCube(
+        Videos.startVideoId,
+        Videos.startOfSession,
+        new Vector3(300, 300, 0),
+        new Vector3(0, 0, 0),
+      );
+    });
 
     return {
       qrInput,

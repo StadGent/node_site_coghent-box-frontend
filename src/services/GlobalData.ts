@@ -7,12 +7,14 @@ class GlobalData {
   spotlightBackground: Mesh<BoxGeometry, MeshBasicMaterial> | null
   threeService: ThreeService | null
   zoneService: ZoneService | null
+  startVideoElement: HTMLVideoElement | null
 
   constructor(){
     this.spotlight = null
     this.spotlightBackground = null
     this.threeService = null
     this.zoneService = null
+    this.startVideoElement= null
   }
   getGlobalData(){
     console.log(`/ spotlight`, this.spotlight)

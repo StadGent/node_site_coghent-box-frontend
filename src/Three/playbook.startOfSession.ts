@@ -2,14 +2,15 @@ import CustomAnimation from '@/composables/animation';
 import Common from '@/composables/common';
 import MoveObject from '@/composables/moveObject';
 import ScanQR from '@/screens/ScanQR';
+import globals from '@/services/GlobalData';
 import { Tags } from '@/services/TaggingService';
 import ThreeService from '@/services/ThreeService';
 import ZoneService from '@/services/ZoneService';
-import { Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
-import AnimationDefaults from './defaults.animation';
+import { Group, Mesh, Vector3 } from 'three';
 import Layers from './defaults.layers';
 import Measurements from './defaults.measurements';
-import Timing from './defaults.timing';
+import Videos from './defaults.videos';
+import VideoHelper from './helper.video';
 
 const useStartOfSession = (
   threeService: ThreeService,
@@ -55,8 +56,19 @@ const useStartOfSession = (
     return scanText;
   };
 
-  const create = async () => {
-    await MoveObject().startMoving(spotlight, new Vector3(0, 0, Layers.scene));
+  const startVideo = async () => {
+    if (globals.startVideoElement != null) {
+      const videoCube = VideoHelper().videoElementAsCube(Videos.startVideoId, Videos.startOfSession, new Vector3(1920, 1080, 0), new Vector3(0, 0, 0))
+      globals.threeService?.AddToScene(videoCube, Tags.startSessionVideo)
+      globals.startVideoElement.play()
+      await Common().awaitTimeout((globals.startVideoElement.duration * 1000) + 100)
+      globals.threeService?.RemoveFromScene(videoCube)
+    } else {
+      await countdown()
+    }
+  }
+
+  const countdown = async () => {
     await CustomAnimation().circularCountdown(
       threeService,
       new Vector3(0, 0, Layers.scene),
@@ -70,6 +82,12 @@ const useStartOfSession = (
       new Vector3(-50, -50, 0),
       Measurements().text.size.veryBig,
     );
+  }
+
+  const create = async () => {
+    await MoveObject().startMoving(spotlight, new Vector3(0, 0, Layers.scene));
+    await startVideo()
+
     return true;
   };
 
