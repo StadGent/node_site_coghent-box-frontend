@@ -183,8 +183,8 @@ const useFrameAssetOverview = (
   };
 
   const calculateZoomSettingsOfAsset = (asset: Mesh<BoxBufferGeometry, any>) => {
-    // const inZone = zoneService.objectIsInZone(asset);
-
+    // Zoom in zone 2 and 5 of 6 zones 
+    // No overlap with center storyicircle
     let zoomPosition = asset.position
     if(asset.position.x > 0){
       zoomPosition = globals.zoneService?.zoomPositionRight as Vector3
@@ -197,6 +197,10 @@ const useFrameAssetOverview = (
     if (scale > 1) {
       scale = 1;
     }
+
+    // Zoom in nearest zone and correct when at the side of the screen
+    // const inZone = zoneService.objectIsInZone(asset);
+    // const zoomPosition = inZone.center
 
     // const outerZone = zoneService.isInOuterZone(inZone)
     // if (outerZone) {
