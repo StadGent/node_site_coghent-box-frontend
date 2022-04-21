@@ -156,7 +156,7 @@ const useAsset = (
     const newScale = {
       x: scale,
       y: scale,
-      z: 0.12
+      z: 0.3
       // z: assetImageCube.scale.z,
     };
     new TWEEN.Tween(assetImageCube.scale)
@@ -192,7 +192,7 @@ const useAsset = (
       metadataInfo.position.x -= Measurements().spacing
     }
     metadataInfo.position.y += (labelText.dimensions.y + Measurements().text.paddingAround)
-    metadataInfo.position.setZ(0.12)
+    metadataInfo.position.setZ(0.3)
     console.log('position metaInfo', metadataInfo.position)
     return metadataInfo;
   };
