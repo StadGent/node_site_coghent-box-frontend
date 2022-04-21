@@ -112,6 +112,7 @@ export default defineComponent({
 
     const initState = () => {
       globals.startVideoElement != null ? globals.startVideoElement.load() : null;
+      globals.menuVideoElement != null ? globals.menuVideoElement.load() : null;
       globals.threeService?.ClearScene();
       playBook.clearPlaybook(true);
       globals.taggingService?.clearTaggedObjects();
@@ -206,12 +207,18 @@ export default defineComponent({
         globals.startVideoElement = document.getElementById(
           Videos.startVideoId,
         ) as HTMLVideoElement;
+        globals.menuVideoElement = document.getElementById(
+          Videos.menuVideoId,
+        ) as HTMLVideoElement;
         globals.startVideoElement.onloadedmetadata = () => {
-          console.log('metadata loaded');
+          console.log('metadata loaded for start video');
+        };
+        globals.menuVideoElement.onloadedmetadata = () => {
+          console.log('metadata loaded for menu video');
         };
         console.log(globals.startVideoElement);
+        console.log(globals.menuVideoElement);
         initState();
-        // globals.startVideoElement.load();
       },
     );
 

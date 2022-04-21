@@ -10,6 +10,7 @@ class GlobalData {
   taggingService: TaggingService
   zoneService: ZoneService | null
   startVideoElement: HTMLVideoElement | null
+  menuVideoElement: HTMLVideoElement | null
 
   constructor(){
     this.spotlight = null
@@ -18,6 +19,7 @@ class GlobalData {
     this.taggingService = new TaggingService()
     this.zoneService = null
     this.startVideoElement= null
+    this.menuVideoElement= null
   }
   getGlobalData(){
     console.log(`/ spotlight`, this.spotlight)

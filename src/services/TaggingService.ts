@@ -24,6 +24,7 @@ export enum Tags {
   GroupOfAssets,
   Video,
   Countdown,
+  menuVideo,
   PauseScreenStoryCircle,
   PauseScreenCenterText,
   PauseScreenBanner,

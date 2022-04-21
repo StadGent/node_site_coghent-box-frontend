@@ -291,6 +291,12 @@ export default defineComponent({
         new Vector3(300, 300, 0),
         new Vector3(0, 0, 0),
       );
+      VideoHelper().videoElementAsCube(
+        Videos.menuVideoId,
+        Videos.menu,
+        new Vector3(300, 300, 0),
+        new Vector3(0, 0, 0),
+      );
     });
 
     return {

@@ -20,6 +20,11 @@ import Measurements from '@/Three/defaults.measurements';
 import Defaults from '@/Three/defaults.config';
 import { Entity } from 'coghent-vue-3-component-library/lib';
 import { threeDefaultsWall } from '@/Three/defaults.three';
+import Common from '@/composables/common';
+import globals from '@/services/GlobalData';
+import Videos from '@/Three/defaults.videos';
+import VideoHelper from '@/Three/helper.video';
+import SchemaCircle from '@/Three/schema.circle';
 
 export type PauseScreenObjects = {
   text: Array<Group>;
@@ -63,14 +68,30 @@ const StoryPaused = (
       HelperText().EndOfStory(new Vector3(-140, bannerCenterPosition, 0)),
       Colors().white,
     );
-    const manSchema = CubeHelper().CreateSchema(
-      new Vector3(0, -125, 0),
-      Images.pauseScreen.man,
-      new Vector3(500, 250, 0),
-    );
-    const man = SchemaCube().CreateImageCube(manSchema);
+    const schema = CircleHelper().CreateSchema(new Vector3(0, 0, -1), 350, Colors().black, 1)
+    const blackspotlight = SchemaCircle().CreateCircle(schema)
+    GroupHelper().AddObjectsTogroups([blackspotlight], groups);
+
+    if (globals.menuVideoElement != null) {
+      const videoCube = VideoHelper().videoElementAsCube(Videos.menuVideoId, Videos.menu, new Vector3(1080, 1080, 0), new Vector3(0, -120, 0))
+      videoCube.scale.set(0.4, 0.4, 1)
+      globals.threeService?.AddToScene(videoCube, Tags.menuVideo)
+      globals.menuVideoElement?.setAttribute('loop', 'true')
+      console.log('loop video?', globals.menuVideoElement?.loop)
+      globals.menuVideoElement?.play()
+      GroupHelper().AddObjectsTogroups([videoCube], groups);
+
+    } else {
+      const manSchema = CubeHelper().CreateSchema(
+        new Vector3(0, -125, 0),
+        Images.pauseScreen.man,
+        new Vector3(500, 250, 0),
+      );
+      const man = SchemaCube().CreateImageCube(manSchema);
+      GroupHelper().AddObjectsTogroups([man], groups);
+    }
+
     GroupHelper().AddObjectsTogroups(text, groups);
-    GroupHelper().AddObjectsTogroups([man], groups);
     taggingService.tag(
       Tags.PauseScreenCenterText,
       groups,
