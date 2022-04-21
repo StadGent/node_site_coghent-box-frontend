@@ -115,7 +115,7 @@ const EndOfSession = (
 
   const create = async () => {
     const groups: Array<Group> = [];
-    GroupHelper().AddObjectsTogroups(await scanTicket(), groups);
+    // GroupHelper().AddObjectsTogroups(await scanTicket(), groups);
     GroupHelper().AddObjectsTogroups(await goToTouchtable(), groups);
     GroupHelper().AddObjectsTogroups(await goOnline(), groups);
     const or1 = await orOption(

@@ -15,9 +15,9 @@ const useEndOfSession = (
   create: () => Promise<void>;
 } => {
   const create = async () => {
-    stateService.canScanTicket = true
     threeService.AddGroupsToScene(await EndOfSession(zoneService).create(), Tags.EndOfSession, 'The endOfSession screen.');
-    TimerCountdown(threeService).start(Timing.endOfSession.countdown,Positions().timerCountdown(), FlowState.welcome, scenery.welcomeScene)
+    await TimerCountdown(threeService).start(Timing.endOfSession.countdown, Positions().timerCountdown(), FlowState.welcome)
+    scenery.welcomeScene()
   };
 
   return { create };
