@@ -94,8 +94,6 @@ export default defineComponent({
 
     const playBook = PlayBook();
 
-    const taggingService = new TaggingService();
-
     let textService: TextService;
     let storyService: StoryService;
     let zoneService: ZoneService;
@@ -116,7 +114,7 @@ export default defineComponent({
       globals.startVideoElement != null ? globals.startVideoElement.load() : null;
       globals.threeService?.ClearScene();
       playBook.clearPlaybook(true);
-      taggingService.clearTaggedObjects();
+      globals.taggingService?.clearTaggedObjects();
       scenery.welcomeScene();
       stateService.canScanTicket = true;
     };
@@ -208,9 +206,12 @@ export default defineComponent({
         globals.startVideoElement = document.getElementById(
           Videos.startVideoId,
         ) as HTMLVideoElement;
+        globals.startVideoElement.onloadedmetadata = () => {
+          console.log('metadata loaded');
+        };
         console.log(globals.startVideoElement);
-        // globals.startVideoElement.load();
         initState();
+        // globals.startVideoElement.load();
       },
     );
 
@@ -233,7 +234,7 @@ export default defineComponent({
               globals.threeService as ThreeService,
               storyService,
               zoneService,
-              taggingService,
+              globals.taggingService as TaggingService,
               playBook,
               globals.spotlight as Mesh<BufferGeometry, any>,
               {} as Entity,
@@ -255,7 +256,7 @@ export default defineComponent({
         globals.threeService as ThreeService,
         storyService,
         zoneService,
-        taggingService,
+        globals.taggingService as TaggingService,
         playBook,
         globals.spotlight as Mesh<BufferGeometry, any>,
         storyService.activeStory,
@@ -267,7 +268,7 @@ export default defineComponent({
         globals.threeService as ThreeService,
         storyService,
         zoneService,
-        taggingService,
+        globals.taggingService as TaggingService,
         playBook,
         globals.spotlight as Mesh<BufferGeometry, any>,
         storyService.activeStory,
@@ -295,19 +296,22 @@ export default defineComponent({
         storyService.activeStoryData.totalOfFramesSeen,
         true,
       );
-      taggingService.retag(Tags.StoryCircleFrameDot, Tags.ActiveStoryCircleFrameDot);
-      taggingService.retag(
+      globals.taggingService?.retag(
+        Tags.StoryCircleFrameDot,
+        Tags.ActiveStoryCircleFrameDot,
+      );
+      globals.taggingService?.retag(
         Tags.StoryCircleFrameDotCheckmark,
         Tags.ActiveStoryCircleFrameDotCheckmark,
       );
-      taggingService.retag(
+      globals.taggingService?.retag(
         Tags.StoryCircleFrameInnerDot,
         Tags.ActiveStoryCircleFrameInnerDot,
       );
       // BUG introduction?
       await checkPositionOfProgressRing();
       //
-      const groupOfAssetsTags = taggingService.getByTag(Tags.GroupOfAssets);
+      const groupOfAssetsTags = globals.taggingService?.getByTag(Tags.GroupOfAssets);
       if (groupOfAssetsTags && groupOfAssetsTags[0] && groupOfAssetsTags[0].object) {
         console.log('assets on screen', groupOfAssetsTags[0].object);
         await CustomAnimation().fadeOutGroups(
@@ -324,8 +328,8 @@ export default defineComponent({
     };
 
     const checkPositionOfProgressRing = async () => {
-      const frameRing = taggingService.getByTag(Tags.ActiveStoryCircleFrameRing);
-      if (frameRing[0] && frameRing[0].object) {
+      const frameRing = globals.taggingService?.getByTag(Tags.ActiveStoryCircleFrameRing);
+      if (frameRing && frameRing[0] && frameRing[0].object) {
         const ring = frameRing[0].object[0] as Group;
         if (ring.position.x != zoneService.middleZoneCenter.x) {
           await MoveObject().startMoving(ring, zoneService.middleZoneCenter);
@@ -361,7 +365,7 @@ export default defineComponent({
         globals.threeService as ThreeService,
         storyService,
         zoneService,
-        taggingService,
+        globals.taggingService as TaggingService,
         playBook,
         globals.spotlight as Mesh<BufferGeometry, any>,
         storyService.activeStory,
@@ -374,7 +378,7 @@ export default defineComponent({
           globals.threeService as ThreeService,
           storyService,
           zoneService,
-          taggingService,
+          globals.taggingService as TaggingService,
           playBook,
           globals.spotlight as Mesh<BufferGeometry, any>,
           storyService.activeStory,
@@ -413,7 +417,7 @@ export default defineComponent({
             globals.threeService as ThreeService,
             storyService,
             zoneService,
-            taggingService,
+            globals.taggingService as TaggingService,
             playBook,
             globals.spotlight as Mesh<BufferGeometry, any>,
             storyService.activeStory,
@@ -480,21 +484,21 @@ export default defineComponent({
           globals.threeService as ThreeService,
           storyService,
           zoneService,
-          taggingService,
+          globals.taggingService as TaggingService,
           framePlaybook,
           globals.spotlight as Mesh<BufferGeometry, any>,
           storyService.activeStory,
         ).storyCircle(
           currentFrame,
           storyService.getStoryColor(storyService.activeStory.id),
-          !taggingService.idAlreadyInList(storyService.activeStory.id),
+          !globals.taggingService?.idAlreadyInList(storyService.activeStory.id),
         );
 
         // PlayBookBuild(
         //   globals.threeService as ThreeService,
         //   storyService,
         //   zoneService,
-        //   taggingService,
+        //   globals.globals.taggingService as TaggingService,
         //   framePlaybook,
         //   globals.spotlight as Mesh<BufferGeometry, any>,
         //   storyService.activeStory,
@@ -504,7 +508,7 @@ export default defineComponent({
           globals.threeService as ThreeService,
           storyService,
           zoneService,
-          taggingService,
+          globals.taggingService as TaggingService,
           framePlaybook,
           globals.spotlight as Mesh<BufferGeometry, any>,
           storyService.activeStory,
@@ -535,7 +539,7 @@ export default defineComponent({
                 globals.threeService as ThreeService,
                 storyService,
                 zoneService,
-                taggingService,
+                globals.taggingService as TaggingService,
                 framePlaybook,
                 globals.spotlight as Mesh<BufferGeometry, any>,
                 storyService.activeStory,
@@ -578,7 +582,7 @@ export default defineComponent({
           //   globals.threeService as ThreeService,
           //   storyService,
           //   zoneService,
-          //   taggingService,
+          //   globals.globals.taggingService as TaggingService,
           //   playBook,
           //   globals.spotlight as Mesh<BufferGeometry, any>,
           //   storyService.activeStory,
@@ -612,7 +616,7 @@ export default defineComponent({
               globals.threeService as ThreeService,
               storyService,
               zoneService,
-              taggingService,
+              globals.taggingService as TaggingService,
               playBook,
               globals.spotlight as Mesh<BufferGeometry, any>,
               storyService.activeStory,
@@ -634,7 +638,7 @@ export default defineComponent({
               globals.threeService as ThreeService,
               storyService,
               zoneService,
-              taggingService,
+              globals.taggingService as TaggingService,
               playBook,
               globals.spotlight as Mesh<BufferGeometry, any>,
               storyService.activeStory,
@@ -661,7 +665,7 @@ export default defineComponent({
       globals.threeService = new ThreeService(
         viewport,
         threeDefaultsWall,
-        taggingService,
+        globals.taggingService as TaggingService,
       );
       textService = new TextService(globals.threeService as ThreeService);
       zoneService = new ZoneService(
@@ -671,7 +675,7 @@ export default defineComponent({
       globals.zoneService = zoneService;
       garbageHelper = WallGarbageHelper(
         globals.threeService as ThreeService,
-        taggingService,
+        globals.taggingService as TaggingService,
       );
       subtitleService = new SubtitleService();
       globals.threeService?.ClearScene();

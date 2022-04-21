@@ -1,4 +1,5 @@
 import { Mesh, BufferGeometry, BoxGeometry, MeshBasicMaterial } from 'three'
+import TaggingService from './TaggingService'
 import ThreeService from './ThreeService'
 import ZoneService from './ZoneService'
 
@@ -6,6 +7,7 @@ class GlobalData {
   spotlight: Mesh<BufferGeometry, any> | null
   spotlightBackground: Mesh<BoxGeometry, MeshBasicMaterial> | null
   threeService: ThreeService | null
+  taggingService: TaggingService
   zoneService: ZoneService | null
   startVideoElement: HTMLVideoElement | null
 
@@ -13,6 +15,7 @@ class GlobalData {
     this.spotlight = null
     this.spotlightBackground = null
     this.threeService = null
+    this.taggingService = new TaggingService()
     this.zoneService = null
     this.startVideoElement= null
   }

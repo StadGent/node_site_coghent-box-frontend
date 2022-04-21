@@ -11,6 +11,7 @@ import Layers from './defaults.layers';
 import Measurements from './defaults.measurements';
 import Videos from './defaults.videos';
 import VideoHelper from './helper.video';
+import WallGarbageHelper from './helper.wall.garbage';
 
 const useStartOfSession = (
   threeService: ThreeService,
@@ -57,6 +58,7 @@ const useStartOfSession = (
   };
 
   const startVideo = async () => {
+    WallGarbageHelper(threeService, globals.taggingService).startOfSession()
     if (globals.startVideoElement != null) {
       const videoCube = VideoHelper().videoElementAsCube(Videos.startVideoId, Videos.startOfSession, new Vector3(1920, 1080, 0), new Vector3(0, 0, 0))
       globals.threeService?.AddToScene(videoCube, Tags.startSessionVideo)
