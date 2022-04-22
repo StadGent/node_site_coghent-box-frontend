@@ -59,18 +59,18 @@
   "intro": {
     "screen-1": {
       "title-1": "Welkom in de",
-      "title-2": "CoGent box!",
-      "info-1": "Druk hier een ticket af en",
-      "info-2": "Start je bezoek in de box",
-      "button": "Druk hier om verder te gaan"
+      "title-2": "CoGent-box!",
+      "info-1": "Neem hier je ticket",
+      "info-2": "om te starten.",
+      "button": "Verder"
     },
     "screen-2": {
-      "title-1": "Maak je keuze uit",
-      "title-2": "deze vier verhalen",
+      "title-1": "Kies een verhaal",
+      "title-2": "",
       "sub-title-1": "Selecteer een verhaal",
       "sub-title-2": "voor meer informatie",
       "button-back": "Terug",
-      "button-next": "Kiezen en printen"
+      "button-next": "Ik kies dit verhaal"
     },
     "screen-3": {
       "title-1": "Je ticket wordt",
@@ -78,7 +78,7 @@
       "title-3": "Je bent er helemaal",
       "title-4": "klaar voor!",
       "button-back": "Sluiten en terug naar startscherm",
-      "info": "Neem je ticket uit de tafel. Ga naar de 180° wall en scan je ticket. Vergaat daarna niet langs de tafel te gaan."
+      "info": "Neem je ticket.\nGa naar het grote scherm en scan je ticket aan de gele zuil.\nGeniet van het verhaal.\nGa erna nog even langs de tafel.\nVeel plezier!"
     }
   },
   "wall": {}
