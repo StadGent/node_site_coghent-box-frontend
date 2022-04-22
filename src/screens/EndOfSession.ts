@@ -50,13 +50,13 @@ const EndOfSession = (
     const groups: Array<Group> = [];
     GroupHelper().AddObjectsTogroups(
       await TextHelper().displayTextFromRecordWithIcon(
-        HelperText().WalkToTouchtable(new Vector3(-150, 50, 0)),
+        HelperText().WalkToTouchtable(new Vector3(zoneService.zoneCenters[1].x - 110, 50, 0)),
         Colors().white,
         Images.endOfSession['touchtable'],
         new Vector3(
-          zoneService.middleZoneCenter.x,
-          zoneService.middleZoneCenter.y - 140,
-          zoneService.middleZoneCenter.z,
+          zoneService.zoneCenters[1].x - 10,
+          zoneService.zoneCenters[1].y - 140,
+          zoneService.zoneCenters[1].z,
         ),
         new Vector3(400, 300, 0),
       ),
@@ -70,9 +70,9 @@ const EndOfSession = (
       [
         Spot().create(
           new Vector3(
-            zoneService.zoneCenters[5].x,
-            zoneService.zoneCenters[5].y,
-            zoneService.zoneCenters[5].z,
+            zoneService.zoneCenters[4].x,
+            zoneService.zoneCenters[4].y,
+            zoneService.zoneCenters[4].z,
           ),
           Measurements().spotLight.radius,
         ),
@@ -83,17 +83,17 @@ const EndOfSession = (
       await TextHelper().displayTextFromRecordWithIcon(
         HelperText().goToWebPortal(
           new Vector3(
-            zoneService.zoneCenters[5].x - 200,
-            zoneService.zoneCenters[5].y,
-            zoneService.zoneCenters[5].z,
+            zoneService.zoneCenters[4].x - 200,
+            zoneService.zoneCenters[4].y,
+            zoneService.zoneCenters[4].z,
           ),
         ),
         Colors().white,
         Images.endOfSession['webPortal'],
         new Vector3(
-          zoneService.zoneCenters[5].x,
-          zoneService.zoneCenters[5].y - 200,
-          zoneService.zoneCenters[5].z,
+          zoneService.zoneCenters[4].x,
+          zoneService.zoneCenters[4].y - 200,
+          zoneService.zoneCenters[4].z,
         ),
         new Vector3(300, 300, 0),
       ),
@@ -127,13 +127,13 @@ const EndOfSession = (
     );
     const or2 = await orOption(
       new Vector3(
-        zoneService.zoneCenters[4].x - 120,
-        zoneService.zoneCenters[4].y - 50,
-        zoneService.zoneCenters[4].z,
+        zoneService.middleZoneCenter.x -110,
+        zoneService.middleZoneCenter.y - 50,
+        zoneService.middleZoneCenter.z,
       ),
     );
 
-    GroupHelper().AddObjectsTogroups([or1, or2], groups);
+    GroupHelper().AddObjectsTogroups([or2], groups);
     return groups;
   };
 

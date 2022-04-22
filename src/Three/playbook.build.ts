@@ -194,9 +194,9 @@ const PlayBookBuild = (
     await MoveObject().startMoving(
       spotlight,
       new Vector3(
-        zoneService.middleZoneCenter.x,
-        zoneService.middleZoneCenter.y - 1,
-        zoneService.middleZoneCenter.z,
+        zoneService.zoneCenters[1].x,
+        zoneService.zoneCenters[1].y - 1,
+        zoneService.zoneCenters[1].z,
       ),
     );
     return await useEndOfSession(threeService, zoneService).create();
