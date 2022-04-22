@@ -170,7 +170,7 @@
           py-20
         "
       >
-        <span class="font-light mb-5 text-4xl px-20 text-center">{{
+        <span class="font-light mb-5 text-4xl px-20 text-center whitespace-pre-line">{{
           t('intro.screen-3.info')
         }}</span>
         <img src="/box-map.png" class="w-9/12" />
