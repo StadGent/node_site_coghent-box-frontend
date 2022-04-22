@@ -239,7 +239,7 @@ const useFrameAssetOverview = (
     const metadataInfo = await useAsset(threeService).addMetadata(
       asset,
       storyColor,
-      `${title} ${collections[0] ? `, (${collections[0].value}0` : ''}`,
+      `${title} ${collections[0] ? `, ${collections[0].value}` : ''}`,
       zoomSettings
     );
     threeService.AddGroupsToScene(
