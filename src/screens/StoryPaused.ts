@@ -71,15 +71,13 @@ const StoryPaused = (
     const schema = CircleHelper().CreateSchema(new Vector3(0, 0, -1), 350, Colors().black, 1)
     const blackspotlight = SchemaCircle().CreateCircle(schema)
     GroupHelper().AddObjectsTogroups([blackspotlight], groups);
+    const video = document.getElementById(Videos.menuVideoId) as HTMLVideoElement;
 
-    if (globals.menuVideoElement != null) {
-      const videoCube = VideoHelper().videoElementAsCube(Videos.menuVideoId, Videos.menu, new Vector3(1080, 1080, 0), new Vector3(0, -120, 0))
-      videoCube.scale.set(0.4, 0.4, 1)
-      globals.threeService?.AddToScene(videoCube, Tags.menuVideo)
-      globals.menuVideoElement?.setAttribute('loop', 'true')
-      console.log('loop video?', globals.menuVideoElement?.loop)
-      globals.menuVideoElement?.play()
-      GroupHelper().AddObjectsTogroups([videoCube], groups);
+    if (globals.menuVideoElement != null && video) {
+      globals.threeService?.AddToScene(globals.menuVideoElement, Tags.menuVideo)
+      video.setAttribute('loop', 'true')
+      video.play();
+      GroupHelper().AddObjectsTogroups([globals.menuVideoElement], groups);
 
     } else {
       const manSchema = CubeHelper().CreateSchema(

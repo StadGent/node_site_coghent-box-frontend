@@ -1,4 +1,4 @@
-import { Mesh, BufferGeometry, BoxGeometry, MeshBasicMaterial } from 'three'
+import { Mesh, BufferGeometry, BoxGeometry, MeshBasicMaterial, Material } from 'three'
 import TaggingService from './TaggingService'
 import ThreeService from './ThreeService'
 import ZoneService from './ZoneService'
@@ -9,8 +9,8 @@ class GlobalData {
   threeService: ThreeService | null
   taggingService: TaggingService
   zoneService: ZoneService | null
-  startVideoElement: HTMLVideoElement | null
-  menuVideoElement: HTMLVideoElement | null
+  startVideoElement: Mesh<BufferGeometry, Material | Material[]> | null
+  menuVideoElement: Mesh<BufferGeometry, Material | Material[]> | null
 
   constructor(){
     this.spotlight = null

@@ -44,6 +44,7 @@ import stateService from '@/services/StateService';
 import Videos from '@/Three/defaults.videos';
 import VideoHelper from '@/Three/helper.video';
 import { Vector3 } from 'three';
+import globals from '@/services/GlobalData';
 
 export default defineComponent({
   name: 'Wall',
@@ -285,18 +286,9 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      VideoHelper().videoElementAsCube(
-        Videos.startVideoId,
-        Videos.startOfSession,
-        new Vector3(300, 300, 0),
-        new Vector3(0, 0, 0),
-      );
-      VideoHelper().videoElementAsCube(
-        Videos.menuVideoId,
-        Videos.menu,
-        new Vector3(300, 300, 0),
-        new Vector3(0, 0, 0),
-      );
+      globals.startVideoElement = VideoHelper().videoElementAsCube(Videos.startVideoId, Videos.startOfSession, new Vector3(1920, 1080, 0), new Vector3(0, 0, 0))
+      globals.menuVideoElement = VideoHelper().videoElementAsCube(Videos.menuVideoId, Videos.menu, new Vector3(1080, 1080, 0), new Vector3(0, -120, 0))
+      globals.menuVideoElement.scale.set(0.4, 0.4, 1)
     });
 
     return {

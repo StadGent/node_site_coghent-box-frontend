@@ -52,7 +52,6 @@ import { FlowState } from '@/services/StateService';
 import MetadataLabel from '@/Three/shapes.metadataLabel';
 import stateService from '@/services/StateService';
 import scenery from '@/composables/useScenery';
-import Videos from '@/Three/defaults.videos';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -111,8 +110,6 @@ export default defineComponent({
     let subtitles = ref<string>('');
 
     const initState = () => {
-      globals.startVideoElement != null ? globals.startVideoElement.load() : null;
-      globals.menuVideoElement != null ? globals.menuVideoElement.load() : null;
       globals.threeService?.ClearScene();
       playBook.clearPlaybook(true);
       globals.taggingService?.clearTaggedObjects();
@@ -204,20 +201,6 @@ export default defineComponent({
       () => props.stories,
       (value) => {
         stories.value = value;
-        globals.startVideoElement = document.getElementById(
-          Videos.startVideoId,
-        ) as HTMLVideoElement;
-        globals.menuVideoElement = document.getElementById(
-          Videos.menuVideoId,
-        ) as HTMLVideoElement;
-        globals.startVideoElement.onloadedmetadata = () => {
-          console.log('metadata loaded for start video');
-        };
-        globals.menuVideoElement.onloadedmetadata = () => {
-          console.log('metadata loaded for menu video');
-        };
-        console.log(globals.startVideoElement);
-        console.log(globals.menuVideoElement);
         initState();
       },
     );

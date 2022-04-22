@@ -59,12 +59,12 @@ const useStartOfSession = (
 
   const startVideo = async () => {
     WallGarbageHelper(threeService, globals.taggingService).startOfSession()
-    if (globals.startVideoElement != null) {
-      const videoCube = VideoHelper().videoElementAsCube(Videos.startVideoId, Videos.startOfSession, new Vector3(1920, 1080, 0), new Vector3(0, 0, 0))
-      globals.threeService?.AddToScene(videoCube, Tags.startSessionVideo)
-      globals.startVideoElement.play()
-      await Common().awaitTimeout((globals.startVideoElement.duration * 1000) + 100)
-      globals.threeService?.RemoveFromScene(videoCube)
+    const video = document.getElementById(Videos.startVideoId) as HTMLVideoElement;
+    if (globals.startVideoElement != null && video ) {
+      globals.threeService?.AddToScene(globals.startVideoElement, Tags.startSessionVideo)
+      video.play();
+      await Common().awaitTimeout((video.duration * 1000))
+      globals.threeService?.RemoveFromScene(globals.startVideoElement)
     } else {
       await countdown()
     }
