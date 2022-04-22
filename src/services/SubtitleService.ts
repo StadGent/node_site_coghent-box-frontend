@@ -85,7 +85,6 @@ export default class SubtitleService {
           _currentTime > this.timeToSeconds(srt.startTime) - 0.25 &&
           _currentTime <= this.timeToSeconds(srt.endTime) + 0.25
         ) {
-          console.log(srt);
           srtLineToDisplay = srt;
           if (Development().showSubtitleLogs()) console.log(`${srt.id}. `, srt.text);
         }

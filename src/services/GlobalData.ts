@@ -1,4 +1,4 @@
-import { Mesh, BufferGeometry, BoxGeometry, MeshBasicMaterial, Material } from 'three'
+import { Mesh, BufferGeometry, BoxGeometry, MeshBasicMaterial, Material, Vector3 } from 'three'
 import TaggingService from './TaggingService'
 import ThreeService from './ThreeService'
 import ZoneService from './ZoneService'

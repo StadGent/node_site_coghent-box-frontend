@@ -83,7 +83,7 @@ export default defineComponent({
       default: FlowState[0],
     },
   },
-  emits: ['restartSession', 'resetSelectedStory'],
+  emits: ['restartSession', 'resetSelectedStory', 'showPauseOverview'],
   setup(props, { emit }) {
     let storySelected = JSON.parse(props.storySelected) as SensorObject;
     const viewport = ref(null);
@@ -210,6 +210,7 @@ export default defineComponent({
       (value) => {
         if (value) {
           storyService = value;
+          console.log('props.showPauseOverview', props.showPauseOverview)
           if (!props.showPauseOverview) {
             setData();
           } else {
@@ -577,13 +578,14 @@ export default defineComponent({
           //   globals.spotlight as Mesh<BufferGeometry, any>,
           //   storyService.activeStory,
           // ).setActiveStoryCircleToBackground(true);
+
           MoveObject().startMoving(
             globals.spotlight as Mesh<BufferGeometry, any>,
-            zoneService.middleZoneCenter,
+            new Vector3(0,-210,globals.spotlight?.position.z),
           );
-          CustomAnimation().shrink(
+          CustomAnimation().grow(
             globals.spotlight as Mesh<any, MeshBasicMaterial>,
-            Measurements().storyCircle.radius,
+            10000,
             AnimationDefaults.values.scaleStep,
           );
         },

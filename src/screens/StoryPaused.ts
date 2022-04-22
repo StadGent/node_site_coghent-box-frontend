@@ -65,10 +65,10 @@ const StoryPaused = (
   const storyEndText = async () => {
     const groups: Array<Group> = [];
     const text = await TextHelper().CreateTextFromRecord(
-      HelperText().EndOfStory(new Vector3(-140, bannerCenterPosition, 0)),
+      HelperText().EndOfStory(new Vector3(-140, bannerCenterPosition + 80, 0)),
       Colors().white,
     );
-    const schema = CircleHelper().CreateSchema(new Vector3(0, 0, -1), 350, Colors().black, 1)
+    const schema = CircleHelper().CreateSchema(new Vector3(0, -210, -1), 400, Colors().black, 1)
     const blackspotlight = SchemaCircle().CreateCircle(schema)
     GroupHelper().AddObjectsTogroups([blackspotlight], groups);
     const video = document.getElementById(Videos.menuVideoId) as HTMLVideoElement;

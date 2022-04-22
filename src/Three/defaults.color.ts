@@ -16,7 +16,8 @@ const Colors = (): {
   const yellow = 0xca9b09;
   const lightBlue = 0x3596db;
   const white = 0xffffff;
-  const black = 0x00f00;
+    //@ts-ignore
+  const black = 'Black' as number;
   const grey = 0xb0b0b0;
   const progressGrey = 0x9e9e9e;
 

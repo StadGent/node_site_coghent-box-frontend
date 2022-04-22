@@ -35,6 +35,7 @@ import Timing from './defaults.timing';
 import TimerCountdown from './shapes.timer';
 import stateService, { FlowState } from '@/services/StateService';
 import scenery from '@/composables/useScenery';
+import globals from '@/services/GlobalData';
 
 const PlayBookBuild = (
   threeService: ThreeService,
@@ -209,11 +210,11 @@ const PlayBookBuild = (
       const assetsOnScreen = resultOfTaggedAssets[0].object as Group;
       assetsOnScreen.position.setZ(Layers.background);
     }
-    CustomAnimation().grow(
-      spotlight as Mesh<any, MeshBasicMaterial>,
-      Measurements().pauseScreen.spotLightRadius,
-      AnimationDefaults.values.scaleStep,
-    );
+    // CustomAnimation().grow(
+    //   spotlight as Mesh<any, MeshBasicMaterial>,
+    //   Measurements().pauseScreen.spotLightRadius,
+    //   AnimationDefaults.values.scaleStep,
+    // );
     const shadedStoryCircle = taggingService.getByTag(Tags.ActiveStoryCircleShade)
     if (shadedStoryCircle && shadedStoryCircle[0] && shadedStoryCircle[0].object) {
       await CustomAnimation().fadeOut(
@@ -318,7 +319,7 @@ const PlayBookBuild = (
       storyService.activeStoryData.storyId,
     );
 
-    WallGarbageHelper(threeService,taggingService).storyCircle()
+    WallGarbageHelper(threeService, taggingService).storyCircle()
     // TMP:
     // // The only ring to be displayed needs tio be the one from the active story
     // const storyids = storyService.getStoryData().map(_data => _data.storyId).filter(_id => _id != storyService.activeStoryData.storyId)
@@ -341,10 +342,8 @@ const PlayBookBuild = (
 
 
     // }
-    console.log('tagged after removing inactive elements',taggingService.taggedObjects)
 
     presenceService.activeStoryCircle()
-
     await CustomAnimation().shrink(
       spotlight as Mesh<any, MeshBasicMaterial>,
       Measurements().storyCircle.radius,

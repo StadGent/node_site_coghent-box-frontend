@@ -287,7 +287,7 @@ export default defineComponent({
 
     onMounted(() => {
       globals.startVideoElement = VideoHelper().videoElementAsCube(Videos.startVideoId, Videos.startOfSession, new Vector3(1920, 1080, 0), new Vector3(0, 0, 0))
-      globals.menuVideoElement = VideoHelper().videoElementAsCube(Videos.menuVideoId, Videos.menu, new Vector3(1080, 1080, 0), new Vector3(0, -120, 0))
+      globals.menuVideoElement = VideoHelper().videoElementAsCube(Videos.menuVideoId, Videos.menu, new Vector3(1080, 1080, 0), new Vector3(0, -90, 0))
       globals.menuVideoElement.scale.set(0.4, 0.4, 1)
     });
 
