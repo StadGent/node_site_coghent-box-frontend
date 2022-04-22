@@ -85,6 +85,7 @@ export default defineComponent({
     });
 
     const setVisiterData = async () => {
+      showPauseOverview.value = false
       if (stateService.canScanTicket) {
         const storyRelations = (await useBoxVisiter(apolloClient).getRelationsByType(
           visitercode.value,
