@@ -269,4 +269,12 @@
   .shadow-green {
     box-shadow: 0px 0px 50px 20px rgba(2, 167, 127, 0.5);
   }
+
+  .border-stories-blue {
+    border-color: #3596db;
+  }
+
+  .border-stories-yellow {
+    border-color: #ca9b09;
+  }
 </style>
