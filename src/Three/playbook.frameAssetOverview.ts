@@ -52,7 +52,6 @@ const useFrameAssetOverview = (
     const images: Array<Mesh> = [];
     const scaleTo: Array<number> = [];
     for (const [i, asset] of assets.entries()) {
-
       const relationMetadata = useAsset(threeService).connectRelationMetadata(
         frame,
         asset,
@@ -63,33 +62,43 @@ const useFrameAssetOverview = (
         position.y = relationMetadata.position.y;
       }
 
-      const mediafile = useAsset(threeService).getMediaInfoForAsset(asset.id, asset.primary_mediafile_location, frame.assets)
+      const mediafile = useAsset(threeService).getMediaInfoForAsset(
+        asset.id,
+        asset.primary_mediafile_location,
+        frame.assets,
+      );
       if (mediafile) {
         data[relationMetadata.timestamp_start] = position;
         positions.push(position);
         let image;
-        let dimensions: Vector3 = new Vector3(0, 0, 0)
+        let dimensions: Vector3 = new Vector3(0, 0, 0);
         if (asset.primary_height != null && asset.primary_width != null) {
-          dimensions.setX(asset.primary_width)
-          dimensions.setY(asset.primary_height)
+          dimensions.setX(asset.primary_width);
+          dimensions.setY(asset.primary_height);
         } else if (mediafile.mediatype) {
-          dimensions = new Vector3(Number(mediafile.mediainfo?.width), Number(mediafile.mediainfo?.height), 0)
+          dimensions = new Vector3(
+            Number(mediafile.mediainfo?.width),
+            Number(mediafile.mediainfo?.height),
+            0,
+          );
         }
         if (mediafile?.original_file_location && mediafile.mediatype?.video) {
-          if (Development().showVideoLogs()) console.log('| Asset is video', mediafile.original_file_location)
+          if (Development().showVideoLogs())
+            console.log('| Asset is video', mediafile.original_file_location);
           image = VideoHelper().videoElementAsCube(
             asset.id,
             mediafile.original_file_location,
-            new Vector3(
-              dimensions.x,
-              dimensions.y,
-              dimensions.z,
-            ),
+            new Vector3(dimensions.x, dimensions.y, dimensions.z),
             position,
           );
-          image.scale.set(0.0001, 0.0001, 0.0001)
+          image.scale.set(0.0001, 0.0001, 0.0001);
         } else {
-          image = await FrameOverview(threeService).addImage(mediafile, 0, position, dimensions);
+          image = await FrameOverview(threeService).addImage(
+            mediafile,
+            0,
+            position,
+            dimensions,
+          );
         }
         scaleTo[i] = relationMetadata.scale;
         if (image) {
@@ -97,8 +106,6 @@ const useFrameAssetOverview = (
           group.add(image);
         }
       }
-
-
     }
 
     threeService.AddToScene(
@@ -111,6 +118,7 @@ const useFrameAssetOverview = (
       const _mesh = _child as Mesh<any, MeshBasicMaterial>;
       _mesh.scale.set(0, 0, 0);
       _mesh.material.opacity = 0.9;
+      _mesh.rotateZ(Math.random() < 0.5 ? 0.05 : -0.05);
       const tween = new TWEEN.Tween(_mesh.scale)
         .to(
           {
@@ -126,6 +134,12 @@ const useFrameAssetOverview = (
 
       await tweenPromise(tween);
     }
+  };
+
+  const getRandomFloat = (min: number, max: number, decimals: number) => {
+    const str = (Math.random() * (max - min) + min).toFixed(decimals);
+
+    return parseFloat(str);
   };
 
   const resetImage = async (
@@ -159,19 +173,23 @@ const useFrameAssetOverview = (
         new Vector3(positions[currentAsset].x, positions[currentAsset].y, 0),
       ),
     ]);
-    setToFront(asset as unknown as Mesh<BoxBufferGeometry, any>)
+    asset.rotateZ(Math.random() < 0.5 ? 0.05 : -0.05);
+    setToFront(asset as unknown as Mesh<BoxBufferGeometry, any>);
   };
 
   const setToFront = (displayedAsset: Mesh<BoxBufferGeometry, any>, _toFront = true) => {
     const inactiveAssets = group.children.filter((_asset) => _asset != displayedAsset);
     inactiveAssets.forEach((_asset) => {
-      const asset = _asset as Mesh<BoxBufferGeometry, any>
-      _toFront ? asset.position.setZ(0.2) : asset.position.setZ(-2)
+      const asset = _asset as Mesh<BoxBufferGeometry, any>;
+      _toFront ? asset.position.setZ(0.2) : asset.position.setZ(-2);
     });
   };
-  const moveAllAssetsToFront = (assets: Array<Mesh<BoxBufferGeometry, any>>, _toFront = true) => {
+  const moveAllAssetsToFront = (
+    assets: Array<Mesh<BoxBufferGeometry, any>>,
+    _toFront = true,
+  ) => {
     assets.forEach((_asset: Mesh<BoxBufferGeometry, any>) => {
-      _toFront ? _asset.position.setZ(0.2) : _asset.position.setZ(-2)
+      _toFront ? _asset.position.setZ(0.2) : _asset.position.setZ(-2);
     });
   };
 
@@ -183,13 +201,13 @@ const useFrameAssetOverview = (
   };
 
   const calculateZoomSettingsOfAsset = (asset: Mesh<BoxBufferGeometry, any>) => {
-    // Zoom in zone 2 and 5 of 6 zones 
+    // Zoom in zone 2 and 5 of 6 zones
     // No overlap with center storyicircle
-    let zoomPosition = asset.position
-    if(asset.position.x > 0){
-      zoomPosition = globals.zoneService?.zoomPositionRight as Vector3
-    }else{
-      zoomPosition = globals.zoneService?.zoomPositionLeft as Vector3
+    let zoomPosition = asset.position;
+    if (asset.position.x > 0) {
+      zoomPosition = globals.zoneService?.zoomPositionRight as Vector3;
+    } else {
+      zoomPosition = globals.zoneService?.zoomPositionLeft as Vector3;
     }
 
     let scale = 1000 / asset.geometry.parameters.height;
@@ -222,6 +240,7 @@ const useFrameAssetOverview = (
     isVideo: string | undefined = undefined,
   ) => {
     const zoomSettings = calculateZoomSettingsOfAsset(asset);
+
     await useAsset(threeService).zoom(
       asset as Mesh<BoxBufferGeometry, any>,
       zoomSettings.zoomPosition,
@@ -230,7 +249,7 @@ const useFrameAssetOverview = (
     );
 
     if (isVideo) {
-      const video = document.getElementById(isVideo) as HTMLVideoElement
+      const video = document.getElementById(isVideo) as HTMLVideoElement;
       video.play();
     }
 
@@ -240,7 +259,7 @@ const useFrameAssetOverview = (
       asset,
       storyColor,
       `${title} ${collections[0] ? `, ${collections[0].value}` : ''}`,
-      zoomSettings
+      zoomSettings,
     );
     threeService.AddGroupsToScene(
       [metadataInfo],
@@ -254,7 +273,7 @@ const useFrameAssetOverview = (
       activeStory,
       currentFrame,
     ) as unknown as Array<Asset>;
-    assets = assets.filter(_asset => _asset.mediafiles.length > 0)
+    assets = assets.filter((_asset) => _asset.mediafiles.length > 0);
     storyColor = _storyColor;
     if (assets && assets.length > 0) {
       await displayAllAssets(
@@ -262,7 +281,7 @@ const useFrameAssetOverview = (
         timestamp,
         currentFrame,
       );
-      moveAllAssetsToFront(group.children as Array<Mesh<BoxBufferGeometry, any>>)
+      moveAllAssetsToFront(group.children as Array<Mesh<BoxBufferGeometry, any>>);
       group.children.forEach((asset, index) => {
         const relationMetadata = useAsset(threeService).connectRelationMetadata(
           activeStory.frames?.[currentFrame] as unknown as Frame,
@@ -297,13 +316,9 @@ const useFrameAssetOverview = (
         if (relationMetadata.timestamp_zoom) {
           playBook.addToPlayBook(
             async () => {
-              setToFront(asset as Mesh<BoxBufferGeometry, any>, false)
-              const theAsset = asset as Mesh<BoxBufferGeometry, any>
-              await zoomAndHighlightAsset(
-                theAsset,
-                index,
-                theAsset.name,
-              );
+              setToFront(asset as Mesh<BoxBufferGeometry, any>, false);
+              const theAsset = asset as Mesh<BoxBufferGeometry, any>;
+              await zoomAndHighlightAsset(theAsset, index, theAsset.name);
             },
             relationMetadata.timestamp_zoom,
             `Zoom and highlight asset + set other assets inactive`,
@@ -325,7 +340,7 @@ const useFrameAssetOverview = (
         } else {
           playBook.addToPlayBook(
             () => {
-              setToFront(asset as Mesh<BoxBufferGeometry, any>)
+              setToFront(asset as Mesh<BoxBufferGeometry, any>);
             },
             relationMetadata.timestamp_end,
             `Timestamp added when image has no timestamp_zoom.`,

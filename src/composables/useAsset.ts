@@ -2,13 +2,7 @@ import { Metadata } from '@/models/CollectionModel';
 import { Asset, ComponentMetadata, Frame, Story } from '@/models/GraphqlModel';
 import ThreeService from '@/services/ThreeService';
 import Measurements from '@/Three/defaults.measurements';
-import {
-  BoxBufferGeometry,
-  Mesh,
-  Vector3,
-  Group,
-  MeshBasicMaterial,
-} from 'three';
+import { BoxBufferGeometry, Mesh, Vector3, Group, MeshBasicMaterial } from 'three';
 import MoveObject from './moveObject';
 import CustomAnimation from './animation';
 import AnimationDefaults from '@/Three/defaults.animation';
@@ -42,14 +36,18 @@ const useAsset = (
     object: Mesh<BoxBufferGeometry, any>,
     color: number,
     text: string,
-    zoomSettings: any
+    zoomSettings: any,
   ) => Promise<Group>;
   getAssetsFromFrame: (activeStory: Entity, frame: number) => Array<Entity>;
   connectRelationMetadata: (
     parent: Frame | Story,
     child: Asset | Frame,
   ) => ComponentMetadata;
-  getMediaInfoForAsset: (_assetID: string, _primaryMediafile: string, _assets: Array<Asset>) => null | MediaFile
+  getMediaInfoForAsset: (
+    _assetID: string,
+    _primaryMediafile: string,
+    _assets: Array<Asset>,
+  ) => null | MediaFile;
 } => {
   const getTitle = (asset: Asset) => {
     return asset.title[0]?.value;
@@ -71,19 +69,17 @@ const useAsset = (
     _scale: number,
   ) => {
     let scale = 1;
-    const height = Number(_asset.geometry.parameters.height)
-    const width = Number(_asset.geometry.parameters.width)
+    const height = Number(_asset.geometry.parameters.height);
+    const width = Number(_asset.geometry.parameters.width);
 
     if (height > width) {
-      const diagonalOfSquare = Math.SQRT2 * _asset.geometry.parameters.height
+      const diagonalOfSquare = Math.SQRT2 * _asset.geometry.parameters.height;
       scale =
-        (diagonalOfSquare / 2) * _scale +
-        Measurements().spotLight.spaceAroundObject;
+        (diagonalOfSquare / 2) * _scale + Measurements().spotLight.spaceAroundObject;
     } else {
-      const diagonalOfSquare = Math.SQRT2 * _asset.geometry.parameters.width
+      const diagonalOfSquare = Math.SQRT2 * _asset.geometry.parameters.width;
       scale =
-        (diagonalOfSquare / 2) * _scale +
-        Measurements().spotLight.spaceAroundObject;
+        (diagonalOfSquare / 2) * _scale + Measurements().spotLight.spaceAroundObject;
     }
     return scale;
   };
@@ -117,10 +113,7 @@ const useAsset = (
     // } else if (!widest) {
     const scaleForSpotlight = getAssetSpotlightScale(asset, scale);
     // if (scaleForSpotlight > scale) {
-    CustomAnimation().scale(
-      spotlight as Mesh<any, MeshBasicMaterial>,
-      scaleForSpotlight,
-    );
+    CustomAnimation().scale(spotlight as Mesh<any, MeshBasicMaterial>, scaleForSpotlight);
     // } else {
     //   CustomAnimation().shrink(
     //     spotlight as Mesh<any, MeshBasicMaterial>,
@@ -142,6 +135,8 @@ const useAsset = (
     spotlight: Mesh,
   ) => {
     assetImageCube.material.opacity = 1;
+    console.log(assetImageCube.rotation.z);
+    assetImageCube.rotateZ(assetImageCube.rotation.z > 0 ? -0.05 : 0.05);
     await new TWEEN.Tween(assetImageCube.position)
       .to(
         {
@@ -169,30 +164,35 @@ const useAsset = (
     object: Mesh<BoxBufferGeometry, any>,
     color: number,
     text: string,
-    zoomSettings: any
+    zoomSettings: any,
   ) => {
-    const labelPosition: Vector3 = zoomSettings.zoomPosition
+    const labelPosition: Vector3 = zoomSettings.zoomPosition;
 
-    const labelText = await MetadataLabel(new Vector3(labelPosition.x, labelPosition.y, 0.1)).label(text)
+    const labelText = await MetadataLabel(
+      new Vector3(labelPosition.x, labelPosition.y, 0.1),
+    ).label(text);
 
     const metadataInfo = (
-      await MetadataLabel(new Vector3(labelPosition.x, labelPosition.y, 0.1)).create(labelText, color)
+      await MetadataLabel(new Vector3(labelPosition.x, labelPosition.y, 0.1)).create(
+        labelText,
+        color,
+      )
     ).metadata;
-    const correction = (object.geometry.parameters.width / 2) * zoomSettings.scale
+    const correction = (object.geometry.parameters.width / 2) * zoomSettings.scale;
     if (zoomSettings.zoomPosition.x < 0) {
-      metadataInfo.position.x += correction
-      metadataInfo.position.x += labelText.dimensions.x / 2
-      metadataInfo.position.x += labelText.dimensions.y
-      metadataInfo.position.x += Measurements().spacing
+      metadataInfo.position.x += correction;
+      metadataInfo.position.x += labelText.dimensions.x / 2;
+      metadataInfo.position.x += labelText.dimensions.y;
+      metadataInfo.position.x += Measurements().spacing;
     } else {
-      metadataInfo.position.x -= correction
-      metadataInfo.position.x -= labelText.dimensions.x / 2
-      metadataInfo.position.x -= labelText.dimensions.y
-      metadataInfo.position.x -= Measurements().spacing
+      metadataInfo.position.x -= correction;
+      metadataInfo.position.x -= labelText.dimensions.x / 2;
+      metadataInfo.position.x -= labelText.dimensions.y;
+      metadataInfo.position.x -= Measurements().spacing;
     }
-    metadataInfo.position.y += (labelText.dimensions.y + Measurements().text.paddingAround)
-    metadataInfo.position.setZ(0.3)
-    console.log('position metaInfo', metadataInfo.position)
+    metadataInfo.position.y += labelText.dimensions.y + Measurements().text.paddingAround;
+    metadataInfo.position.setZ(0.3);
+    console.log('position metaInfo', metadataInfo.position);
     return metadataInfo;
   };
 
@@ -223,23 +223,30 @@ const useAsset = (
     return metadataForAsset;
   };
 
-  const getMediaInfoForAsset = (_assetID: string, _primaryMediafile: string, _assets: Array<Asset>) => {
-    let mediafile: null | MediaFile = null
+  const getMediaInfoForAsset = (
+    _assetID: string,
+    _primaryMediafile: string,
+    _assets: Array<Asset>,
+  ) => {
+    let mediafile: null | MediaFile = null;
     if (_assets.length >= 0) {
       for (const asset of _assets) {
         if (asset.id === _assetID) {
           if (asset.mediafiles.length >= 0) {
             for (const file of asset.mediafiles) {
-              if (file.original_file_location && file.original_file_location === _primaryMediafile) {
-                mediafile = file as MediaFile
+              if (
+                file.original_file_location &&
+                file.original_file_location === _primaryMediafile
+              ) {
+                mediafile = file as MediaFile;
               }
             }
           }
         }
       }
     }
-    return mediafile
-  }
+    return mediafile;
+  };
 
   return {
     getTitle,
