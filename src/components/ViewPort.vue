@@ -702,6 +702,7 @@ export default defineComponent({
   -webkit-text-stroke: black 1px;
   color: white;
   font-weight: 700;
+  white-space: pre-line;
 }
 
 .viewport {
