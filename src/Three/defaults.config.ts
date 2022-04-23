@@ -31,7 +31,7 @@ const Defaults = (): {
   const maxFrames = () => 5;
   const countdown = () => 3;
 
-  const fontPath = () => '/Fonts/myFont.json';
+  const fontPath = () => '/Fonts/poppins.json';
 
   const keyboardSelect = () => false;
   const showplayHeadWhenNoAudio = () => true;
@@ -71,7 +71,7 @@ const Defaults = (): {
       fontParams: {
         color: Colors().white,
         size: 0.3,
-        path: '/Fonts/myFont.json',
+        path: '/Fonts/poppins.json',
       },
       textBoxParams: {
         height: 1,
