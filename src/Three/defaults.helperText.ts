@@ -11,11 +11,11 @@ const HelperText = (): {
   const EndOfStory = (position: Vector3) => {
     return {
       'Je hebt het hele hoofdstuk gezien.': new Vector3(
-        position.x - 190,
+        position.x - 210,
         position.y + 50,
         0,
       ),
-      'Maak een nieuwe keuze door op de': new Vector3(position.x - 200, position.y, 0),
+      'Maak een nieuwe keuze door op de': new Vector3(position.x - 220, position.y, 0),
       'bol te gaan staan.': new Vector3(position.x - 50, position.y - 50, 0),
     };
   };
