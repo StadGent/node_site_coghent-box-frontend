@@ -48,11 +48,18 @@
           stroke-linejoin="round"
         />
       </svg>
-      <p class="text-3xl p-2 w-full text-5xl font-bold mt-10">
+      <p
+        v-if="description === false"
+        class="text-3xl p-2 w-full text-5xl font-bold mt-10"
+      >
         {{ t('intro.screen-2.sub-title-1') }}<br />
         {{ t('intro.screen-2.sub-title-2') }}
       </p>
+      <p v-else class="text-3xl py-2 px-5 w-full text-4xl mt-10 min-h-description">
+        {{ description }}
+      </p>
       <svg
+        :class="description !== false ? 'hidden' : ''"
         class="mt-10"
         width="96"
         height="202"
@@ -207,9 +214,15 @@
       const selectedIndex = ref();
       const { setSelectedStory } = useBoxVisiter();
       const colors = Colors().storyCssOnlyColor();
+      const description = ref<string | false>(false);
 
       const selectStory = async (_entity: any, index: number) => {
         selectedIndex.value = index;
+        const findDescription = _entity.metadata.find(
+          (value: any) => value.key === 'description',
+        );
+        console.log(findDescription);
+        description.value = findDescription ? findDescription.value : false;
       };
 
       const nextStep = async (_entity: any, index: number) => {
@@ -240,6 +253,7 @@
         prevStep,
         selectStory,
         selectedIndex,
+        description,
       };
     },
   });
@@ -276,5 +290,9 @@
 
   .border-stories-yellow {
     border-color: #ca9b09;
+  }
+
+  .min-h-description {
+    min-height: 500px;
   }
 </style>
