@@ -2,7 +2,7 @@ import Common from '@/composables/common';
 import stateService, { FlowState } from '@/services/StateService';
 import { Tags } from '@/services/TaggingService';
 import ThreeService from '@/services/ThreeService';
-import { BufferGeometry, Mesh, Vector3 } from 'three';
+import { BufferGeometry, Material, Mesh, Vector3 } from 'three';
 import Colors from './defaults.color';
 import Measurements from './defaults.measurements';
 import TextHelper from './helper.text';
@@ -10,11 +10,11 @@ import { CubeParams } from './schema.cube';
 import { FontParams } from './schema.text';
 
 type TimeObjects = {
-  minutesOne: Promise<Mesh>,
-  minutesTwo: Promise<Mesh>,
-  secondsOne: Promise<Mesh>,
-  secondsTwo: Promise<Mesh>,
-  semiColon: Promise<Mesh>,
+  minutesOne: Mesh,
+  minutesTwo: Mesh,
+  secondsOne: Mesh,
+  secondsTwo: Mesh,
+  semiColon: Mesh,
 }
 
 const TimerCountdown = (_threeService: ThreeService): {
@@ -92,9 +92,16 @@ const TimerCountdown = (_threeService: ThreeService): {
     _threeService.AddToScene(_objects.minutesOne, Tags.Countdown, 'EndOfSession countdown timer');
     _threeService.AddToScene(_objects.minutesTwo, Tags.Countdown, 'EndOfSession countdown timer');
     _threeService.AddToScene(_objects.semiColon, Tags.Countdown, 'EndOfSession countdown timer');
+    correctionWhenNumerberIsOne(_currentTime, _objects.secondsOne)
     _threeService.AddToScene(_objects.secondsOne, Tags.Countdown, 'EndOfSession countdown timer');
     _threeService.AddToScene(_objects.secondsTwo, Tags.Countdown, 'EndOfSession countdown timer');
   };
+
+  const correctionWhenNumerberIsOne = (_currentTime: number, _secondOne: Mesh<BufferGeometry, Material | Material[]>) => {
+    if (Number(getSeconds(_currentTime)[0]) === 1) {
+      _secondOne.position.x += 25
+    }
+  }
 
   const start = async (_timeInMiliseconds: number, _position: Vector3, _stopState: FlowState, _nextScene?: Function) => {
     let stop = false
@@ -117,7 +124,7 @@ const TimerCountdown = (_threeService: ThreeService): {
       stateService.getCurrentState() === FlowState[_stopState] ? stop = true : stop = false
     } while (currentTime > -1 && stop === false)
     console.log('* timer STOPPED')
-    if(stop === false && _nextScene){
+    if (stop === false && _nextScene) {
       console.log('* SHOW NEXT SCENE')
       _nextScene()
     }
