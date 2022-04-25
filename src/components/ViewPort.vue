@@ -130,7 +130,16 @@ export default defineComponent({
     const countingStory = ref<number | null>(null);
 
     setInterval(async () => {
-      if (countingStory.value != null && isCounting.value) {
+      if (stateService.canScanTicket === true && isCounting.value === true) {
+        counter.value = 0;
+        isCounting.value = false;
+        countingStory.value = null;
+      }
+      if (
+        stateService.canScanTicket === false &&
+        countingStory.value != null &&
+        isCounting.value
+      ) {
         if (counter.value > 0)
           startCountdownForSelectedStory(countingStory.value - 1, counter.value);
       }
@@ -210,7 +219,6 @@ export default defineComponent({
       (value) => {
         if (value) {
           storyService = value;
-          console.log('props.showPauseOverview', props.showPauseOverview)
           if (!props.showPauseOverview) {
             setData();
           } else {
@@ -581,7 +589,7 @@ export default defineComponent({
 
           MoveObject().startMoving(
             globals.spotlight as Mesh<BufferGeometry, any>,
-            new Vector3(0,-210,globals.spotlight?.position.z),
+            new Vector3(0, -210, globals.spotlight?.position.z),
           );
           CustomAnimation().grow(
             globals.spotlight as Mesh<any, MeshBasicMaterial>,
