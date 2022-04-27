@@ -90,42 +90,12 @@ const useAsset = (
     scale: number,
     position?: Vector3,
   ) => {
-    const widest = asset.geometry.parameters.width > asset.geometry.parameters.height;
-    // if (widest) {
-    //   const scaleForSpotlight = getAssetSpotlightScale(asset, scale);
-    //   if (scaleForSpotlight > scale) {
-    //     CustomAnimation().grow(
-    //       spotlight as Mesh<any, MeshBasicMaterial>,
-    //       scaleForSpotlight,
-    //       AnimationDefaults.values.scaleStep,
-    //     );
-    //   } else {
-    //     CustomAnimation().shrink(
-    //       spotlight as Mesh<any, MeshBasicMaterial>,
-    //       scaleForSpotlight,
-    //       AnimationDefaults.values.scaleStep,
-    //     );
-    //   }
-    //   await MoveObject().startMoving(
-    //     spotlight,
-    //     new Vector3(asset.position.x, asset.position.y, 0),
-    //   );
-    // } else if (!widest) {
     const scaleForSpotlight = getAssetSpotlightScale(asset, scale);
-    // if (scaleForSpotlight > scale) {
     CustomAnimation().scale(spotlight as Mesh<any, MeshBasicMaterial>, scaleForSpotlight);
-    // } else {
-    //   CustomAnimation().shrink(
-    //     spotlight as Mesh<any, MeshBasicMaterial>,
-    //     scaleForSpotlight,
-    //     AnimationDefaults.values.scaleStep,
-    //   );
-    // }
     await MoveObject().startMoving(
       spotlight,
       position ? position : new Vector3(asset.position.x, asset.position.y, 0),
     );
-    // }
   };
 
   const zoom = async (
@@ -135,7 +105,6 @@ const useAsset = (
     spotlight: Mesh,
   ) => {
     assetImageCube.material.opacity = 1;
-    console.log(assetImageCube.rotation.z);
     assetImageCube.rotateZ(assetImageCube.rotation.z > 0 ? -0.05 : 0.05);
     await new TWEEN.Tween(assetImageCube.position)
       .to(
@@ -192,7 +161,6 @@ const useAsset = (
     }
     metadataInfo.position.y += labelText.dimensions.y + Measurements().text.paddingAround;
     metadataInfo.position.setZ(0.3);
-    console.log('position metaInfo', metadataInfo.position);
     return metadataInfo;
   };
 

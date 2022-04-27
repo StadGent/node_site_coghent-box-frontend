@@ -1,8 +1,8 @@
 import useFrame from '@/composables/useFrame';
 import { PlayBookFunctions } from '@/composables/playbook';
-import { Frame, Story } from '@/models/GraphqlModel';
+import { Frame } from '@/models/GraphqlModel';
 import ThreeService from '@/services/ThreeService';
-import { CircleGeometry, Color, Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
+import { CircleGeometry, Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
 import AudioHelper from './helper.audio';
 import Layers from './defaults.layers';
 import Spot from './shapes.spotlight';
@@ -35,7 +35,6 @@ import Timing from './defaults.timing';
 import TimerCountdown from './shapes.timer';
 import stateService, { FlowState } from '@/services/StateService';
 import scenery from '@/composables/useScenery';
-import globals from '@/services/GlobalData';
 
 const PlayBookBuild = (
   threeService: ThreeService,
@@ -79,7 +78,6 @@ const PlayBookBuild = (
   ) => Promise<Array<StoryData> | null>;
   startOfSession: () => Promise<true | false>;
   setSelectedStory: () => Promise<void>;
-  setActiveStoryCircleToBackground: (_moveToFront: boolean) => void
 } => {
   const presenceService = new PresenceService(threeService, taggingService)
 
@@ -320,28 +318,6 @@ const PlayBookBuild = (
     );
 
     WallGarbageHelper(threeService, taggingService).storyCircle()
-    // TMP:
-    // // The only ring to be displayed needs tio be the one from the active story
-    // const storyids = storyService.getStoryData().map(_data => _data.storyId).filter(_id => _id != storyService.activeStoryData.storyId)
-    // console.log({storyids})
-    // for(const id of storyids){
-    //   console.log('For id', id)
-    //   // Array of meshes or groups
-    //   const nonvisibleElements = taggingService.getByTagsId(id)
-    //   console.log({nonvisibleElements}) 
-    //   if(nonvisibleElements.length >= 0){
-    //     for(const element of nonvisibleElements){
-    //       if(element.object.length){
-    //         console.log('element is array', element)
-    //         threeService.RemoveGroupsFromScene(element.object)
-    //       }else{
-    //         threeService.RemoveFromScene(element.object)
-    //       }
-    //     }
-    //   }
-
-
-    // }
 
     presenceService.activeStoryCircle()
     await CustomAnimation().shrink(
@@ -369,10 +345,10 @@ const PlayBookBuild = (
     presenceService.activeStoryCircle()
     await StoryCircleCorrections(threeService, storyService, taggingService).ringprogressToCenterOfScreen(storyService.activeStoryData)
     presenceService.activeFrameRingPosition(storyService.activeStoryData.pausedPosition, zoneService.middleZoneCenter)
-    // WallGarbageHelper(threeService, taggingService).removeActiveFrameDots();
 
   };
 
+  //FIXME:
   const setActiveStoryCircleToBackground = (_moveToFront: boolean) => {
     logBuild('setActiveStoryCircleToBackground')
     const difference = Math.abs(Layers.background) - 0.1
@@ -405,7 +381,6 @@ const PlayBookBuild = (
     storyData,
     startOfSession,
     setSelectedStory,
-    setActiveStoryCircleToBackground
   };
 };
 

@@ -8,7 +8,6 @@
 <script lang="ts">
 import { defineComponent, onMounted, PropType, ref, watch } from 'vue';
 import {
-  BoxGeometry,
   BufferGeometry,
   Group,
   Mesh,
@@ -20,10 +19,11 @@ import { Entity as _Entity, Frame } from '@/models/GraphqlModel';
 import ThreeService from '@/services/ThreeService';
 import StoryService, { StoryData } from '@/services/StoryService';
 import ZoneService from '@/services/ZoneService';
-import TextService from '@/services/TextService';
 import TaggingService, { Tags } from '@/services/TaggingService';
 import SubtitleService from '@/services/SubtitleService';
 import globals from '@/services/GlobalData';
+import stateService from '@/services/StateService';
+import { FlowState } from '@/services/StateService';
 
 import AudioHelper, { AudioHelperFunctions } from '@/Three/helper.audio';
 import WallGarbageHelper, { GarabageHelperForWall } from '@/Three/helper.wall.garbage';
@@ -44,14 +44,13 @@ import CustomAnimation from '@/composables/animation';
 import { SensorObject } from '@/composables/common';
 import useFrame from '@/composables/useFrame';
 import useDMX from '@/composables/useDMX';
+import scenery from '@/composables/useScenery';
 
 import PauseProgressbar from '@/Three/shapes.pauseProgressbar';
 import Template from '@/Three/template.shapes';
-import { Entity } from 'coghent-vue-3-component-library/lib';
-import { FlowState } from '@/services/StateService';
 import MetadataLabel from '@/Three/shapes.metadataLabel';
-import stateService from '@/services/StateService';
-import scenery from '@/composables/useScenery';
+
+import { Entity } from 'coghent-vue-3-component-library/lib';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -85,7 +84,6 @@ export default defineComponent({
   },
   emits: ['restartSession', 'resetSelectedStory', 'showPauseOverview'],
   setup(props, { emit }) {
-    let storySelected = JSON.parse(props.storySelected) as SensorObject;
     const viewport = ref(null);
     const stories = ref<Array<Entity> | null>(null);
     const currentStoryID = ref<string>('');
@@ -93,7 +91,6 @@ export default defineComponent({
 
     const playBook = PlayBook();
 
-    let textService: TextService;
     let storyService: StoryService;
     let zoneService: ZoneService;
     let subtitleService: SubtitleService;
@@ -152,7 +149,6 @@ export default defineComponent({
         let storyDataOfSelected: StoryData | null = null;
         if (storyService) {
           storyDataOfSelected = storyService.getStoryData()[_storySelected.id - 1];
-          // storyService.updateStoryStatus(storyDataOfSelected);
         }
         if (
           stateService.canChooseNextStory &&
@@ -160,7 +156,6 @@ export default defineComponent({
           storyDataOfSelected &&
           !storyDataOfSelected.storySeen &&
           stateService.getCurrentState() === FlowState[5]
-          // storyDataOfSelected.totalOfFrames > storyDataOfSelected.totalOfFramesSeen
         ) {
           if (
             !isCounting.value &&
@@ -493,16 +488,6 @@ export default defineComponent({
           !globals.taggingService?.idAlreadyInList(storyService.activeStory.id),
         );
 
-        // PlayBookBuild(
-        //   globals.threeService as ThreeService,
-        //   storyService,
-        //   zoneService,
-        //   globals.globals.taggingService as TaggingService,
-        //   framePlaybook,
-        //   globals.spotlight as Mesh<BufferGeometry, any>,
-        //   storyService.activeStory,
-        // ).setActiveStoryCircleToBackground(false);
-
         await PlayBookBuild(
           globals.threeService as ThreeService,
           storyService,
@@ -577,16 +562,6 @@ export default defineComponent({
     const setAfterFrameScreen = () => {
       playBook.addToPlayBook(
         () => {
-          // PlayBookBuild(
-          //   globals.threeService as ThreeService,
-          //   storyService,
-          //   zoneService,
-          //   globals.globals.taggingService as TaggingService,
-          //   playBook,
-          //   globals.spotlight as Mesh<BufferGeometry, any>,
-          //   storyService.activeStory,
-          // ).setActiveStoryCircleToBackground(true);
-
           MoveObject().startMoving(
             globals.spotlight as Mesh<BufferGeometry, any>,
             new Vector3(0, -210, globals.spotlight?.position.z),
@@ -667,7 +642,6 @@ export default defineComponent({
         threeDefaultsWall,
         globals.taggingService as TaggingService,
       );
-      textService = new TextService(globals.threeService as ThreeService);
       zoneService = new ZoneService(
         globals.threeService?.state.sceneDimensions,
         Defaults().screenZones(),
