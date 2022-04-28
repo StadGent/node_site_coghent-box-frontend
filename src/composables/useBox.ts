@@ -3,7 +3,6 @@ import { StoryData } from '@/services/StoryService'
 export const getUnseenStories = (_storyData: Array<StoryData>) => {
   const storiesToSee: Array<StoryData> = []
   for (const story of _storyData) {
-    console.log('story in usebox', story)
     let totalOfFrames = 0
     if(story && story.totalOfFrames ){
       totalOfFrames = story.totalOfFrames

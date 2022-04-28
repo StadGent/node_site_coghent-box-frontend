@@ -85,7 +85,7 @@ export default defineComponent({
     });
 
     const setVisiterData = async () => {
-      showPauseOverview.value = false
+      showPauseOverview.value = false;
       if (stateService.canScanTicket) {
         const storyRelations = (await useBoxVisiter(apolloClient).getRelationsByType(
           visitercode.value,
@@ -99,13 +99,13 @@ export default defineComponent({
           ),
         );
         if (storiesToSee.length != 0) {
+          stateService.canScanTicket = false;
           const storyToSet = getFirstStoryToSee(storiesToSee);
           if (storyToSet) {
             tmpStoryService.setActiveStory(storyToSet.storyId);
             storyService.value = tmpStoryService;
           }
         } else {
-          console.log('no stories to see going to overview');
           const storiesSeen = storyRelations.map((_rel) =>
             _rel.key.replace('entities/', ''),
           ) as Array<string>;
@@ -113,6 +113,8 @@ export default defineComponent({
           stories.value?.forEach((_story) => {
             if (!storiesSeen.includes(_story.id)) {
               storyToSetActive = _story.id as string;
+            } else {
+              stateService.canScanTicket = true;
             }
           });
           if (storyToSetActive) {
@@ -122,8 +124,8 @@ export default defineComponent({
             storyService.value = tmpStoryService;
           }
         }
-        stateService.canScanTicket = false;
       }
+      stateService.allStateStatus();
     };
 
     const createTempStoryService = (_storyRelations: Array<Relation>) => {
@@ -137,8 +139,8 @@ export default defineComponent({
     };
 
     watch(inputValue, (value: string) => {
-      console.log('input value', value);
       let code = Common().getCodeFromString(value);
+      console.log('Code from inputfield', code);
       if (showInputField.value && value.length === 8) {
         code = value;
       }
@@ -146,7 +148,6 @@ export default defineComponent({
         console.log('code:', code);
         getCode(code);
         inputValue.value = '';
-        console.log('inputvalue', inputValue.value);
       }
       // inputValue.value = '';
     });
@@ -160,6 +161,7 @@ export default defineComponent({
         stateService.getCurrentState() != FlowState[4] &&
         stateService.canScanTicket === true
       ) {
+        console.log('Getting visiter with code:', code);
         currentState.value = stateService.getCurrentState();
         storyService.value = null;
         const visiterByCode = await useBoxVisiter(apolloClient).getByCode(String(code));
@@ -287,9 +289,19 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      globals.startVideoElement = VideoHelper().videoElementAsCube(Videos.startVideoId, Videos.startOfSession, new Vector3(1920, 1080, 0), new Vector3(0, 0, 0))
-      globals.menuVideoElement = VideoHelper().videoElementAsCube(Videos.menuVideoId, Videos.menu, new Vector3(1080, 1080, 0), new Vector3(0, -90, 0))
-      globals.menuVideoElement.scale.set(0.4, 0.4, 1)
+      globals.startVideoElement = VideoHelper().videoElementAsCube(
+        Videos.startVideoId,
+        Videos.startOfSession,
+        new Vector3(1920, 1080, 0),
+        new Vector3(0, 0, 0),
+      );
+      globals.menuVideoElement = VideoHelper().videoElementAsCube(
+        Videos.menuVideoId,
+        Videos.menu,
+        new Vector3(1080, 1080, 0),
+        new Vector3(0, -90, 0),
+      );
+      globals.menuVideoElement.scale.set(0.4, 0.4, 1);
     });
 
     return {

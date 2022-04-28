@@ -25,6 +25,14 @@ class StateService {
     this.canChooseNextStory = false
   }
 
+  allStateStatus() {
+    if (Development().stateLogs()) {
+      console.log('currentState', this.currentState)
+      console.log('canScanTicket', this.canScanTicket)
+      console.log('canChooseNextStory', this.canChooseNextStory)
+    }
+  }
+
   changeState(_state: FlowState) {
     this.currentState = FlowState[_state]
     if (Development().stateLogs()) {
