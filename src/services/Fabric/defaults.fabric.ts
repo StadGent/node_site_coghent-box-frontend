@@ -16,6 +16,7 @@ type FabricDefaults = {
       };
     };
     relationLimit: number;
+    relationIterations: number;
     dimensions: {
       width: number;
       height: number;
@@ -122,6 +123,7 @@ const fabricdefaults: FabricDefaults = {
         color: '#B65099',
       },
     },
+    relationIterations: 3,
     relationLimit: 5,
     dimensions: {
       width: 1920,

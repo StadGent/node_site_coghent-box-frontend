@@ -210,59 +210,55 @@
             },
             updateQuery: (previousData, { fetchMoreResult: queryResult }) => {
               console.log({ queryResult });
-              console.log('Relation result');
-              if (queryResult.Entities.results.length && fabricService.value) {
-                const relationEntities: Entity[] = queryResult.Entities?.results;
-                if (relationEntities.length) {
-                  fabricService.value
-                    .generateSecondaryImageFrames(relationEntities, entity.id)
-                    .then(() => {
-                      relationEntities.forEach((relationEntity: Entity) => {
-                        const entityRelations: Array<string> = [];
-
-                        getRelations(relationEntity);
-                        if (relationEntity.relations) {
-                          relationEntity.relations.forEach((relation: any) => {
-                            entityRelations.push(relation.key);
-                          });
-                        }
-                        if (entityRelations.length) {
+              let relatedEntities: Entity[] = queryResult.Entities.results;
+              if (relatedEntities && fabricService.value) {
+                fabricService.value
+                  .generateSecondaryImageFrames(relatedEntities, entity.id)
+                  .then(() => {
+                    let refetchAmount: number = 0;
+                    while (refetchAmount <= fabricdefaults.canvas.relationIterations) {
+                      relatedEntities.forEach((relatedEntity: Entity) => {
+                        const entityRelatedIds = relatedEntity?.relations?.map(
+                          (relation: any) => {
+                            return relation.key;
+                          },
+                        );
+                        refetchAmount++;
+                        if (entityRelatedIds) {
                           fetchMoreRelations({
                             variables: {
                               limit: fabricdefaults.canvas.relationLimit,
-                              skip: relationResult ? 0 : 1,
+                              skip: 0,
                               searchValue: {
                                 value: '',
                                 isAsc: false,
-                                relation_filter: entityRelations,
+                                relation_filter: entityRelatedIds,
                                 randomize: false,
                                 key: 'title',
                                 has_mediafile: true,
                               },
                             },
-                            updateQuery: (previousData, { fetchMoreResult }) => {
-                              console.log({ fetchMoreResult });
-                              const newRelation: SecondaryRelation = {
-                                originId: relationEntity.id,
-                                relatedEntities: fetchMoreResult.Entities.results,
-                              };
-                              newRelation.relatedEntities.forEach(
-                                (relatedEntity: Entity) => {
-                                  getRelations(relatedEntity);
-                                },
-                              );
-                              fabricService.value?.generateSecondaryImageFrames(
-                                newRelation.relatedEntities,
-                                newRelation.originId,
-                              );
+                            updateQuery: (
+                              previousData,
+                              { fetchMoreResult: relatedEntitiesResult },
+                            ) => {
+                              if (
+                                relatedEntitiesResult.Entities.results &&
+                                fabricService.value
+                              ) {
+                                fabricService.value.generateSecondaryImageFrames(
+                                  relatedEntities,
+                                  relatedEntity.id,
+                                );
+                                relatedEntities = relatedEntitiesResult.Entities.results;
+                                console.log({ refetchAmount });
+                              }
                             },
                           });
                         }
                       });
-                    });
-                }
-              } else {
-                alert('This item does not have relations');
+                    }
+                  });
               }
             },
           });
