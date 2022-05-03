@@ -21,7 +21,7 @@
                 custom-style="secondary-round"
                 :icon-shown="true"
                 custom-icon="fullscreen"
-                @click="openIIIFOverlay(entity)"
+                @click="openMediaOverlay(entity)"
               />
               <base-button
                 class="w-0"
@@ -73,7 +73,7 @@
   import { iiiF } from '@/main';
   import Spinner from './Spinner.vue';
   import { useI18n } from 'vue-i18n';
-  import { useIIIFModal } from '@/components/IIIFModal.vue';
+  import { useMediaModal } from '@/components/MediaModal.vue';
   import { IIIFImageUrlHelper } from '../services/Fabric/helper.fabric';
 
   export type OverlayState = 'show' | 'hide' | 'loading';
@@ -131,7 +131,7 @@
       const { generateUrl, noImageUrl } = iiiF;
       const basketEntities = ref<Entity[]>([]);
       const { t } = useI18n();
-      const { openIIIFModal, setIIIFImage } = useIIIFModal();
+      const { openMediaModal, setMediaModalFile } = useMediaModal();
       const masonry = ref<any>(null);
 
       const { loading: loadingEntity, fetchMore: fetchMoreEntities } = useQuery(
@@ -183,8 +183,8 @@
       // Todo: fix masonry collapse
 
       const openIIIFOverlay = (entity: any) => {
-        setIIIFImage(IIIFImageUrlHelper(entity));
-        openIIIFModal();
+        setMediaModalFile(entity.mediafiles[0]);
+        openMediaModal();
       };
 
       return {

@@ -111,13 +111,8 @@ const ImageUrlHelper = (
   }
 };
 
-const IIIFImageUrlHelper = (entity: any): string => {
+const IIIFImageUrlHelper = (filename: string): string => {
   const { generateInfoUrl } = iiiF;
-  const filename =
-    entity.primary_transcode ||
-    entity.primary_mediafile ||
-    entity.mediafiles[0]?.filename;
-
   return generateInfoUrl(filename);
 };
 

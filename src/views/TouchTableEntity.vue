@@ -2,7 +2,7 @@
   <div class="touchtable">
     <basket-overlay :basketItems="basketItems" />
     <shutdown-modal :code="code" @disposeCanvas="disposeCanvas" />
-    <IIIF-modal />
+    <media-modal />
     <touch-header :basket-amount="basketItems.length" />
     <div>
       <on-boarding-card
@@ -101,8 +101,7 @@
   import RelationBrowser from '@/components/RelationBrowser.vue';
   import { fabricdefaults } from '../services/Fabric/defaults.fabric';
   import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
-  import IIIFModal, { useIIIFModal } from '@/components/IIIFModal.vue';
-  import { IIIFImageUrlHelper } from '../services/Fabric/helper.fabric';
+  import MediaModal, { useMediaModal } from '@/components/MediaModal.vue';
   import { apolloClient } from '@/main';
   import OnBoardingCard from '@/components/OnBoardingCard.vue';
   import { useOnBoarding } from '@/composables/useOnBoarding';
@@ -123,7 +122,7 @@
       RelationBrowser,
       BaseButton,
       ShutdownModal,
-      IIIFModal,
+      MediaModal,
       BasketOverlay,
       OnBoardingCard,
     },
@@ -142,9 +141,8 @@
             )
           : undefined,
       );
-      const IIIFImageUrl = ref<string>();
       let fabricService = ref<FabricService | undefined>(undefined);
-      const { openIIIFModal, setIIIFImage } = useIIIFModal();
+      const { openMediaModal, setMediaModalFile } = useMediaModal();
       const { onBoardingState } = useOnBoarding();
       const { t } = useI18n();
 
@@ -223,7 +221,6 @@
                             return relation.key;
                           },
                         );
-                        refetchAmount++;
                         if (entityRelatedIds) {
                           fetchMoreRelations({
                             variables: {
@@ -257,6 +254,7 @@
                           });
                         }
                       });
+                      refetchAmount++;
                     }
                   });
               }
@@ -313,7 +311,6 @@
           .then((entityOnCanvas: Entity) => {
             getRelations(primaryEntity);
             entity.value = primaryEntity;
-            IIIFImageUrl.value = IIIFImageUrlHelper(primaryEntity);
 
             if (startAsset.value) {
               const startEntity = startAsset.value;
@@ -352,9 +349,9 @@
       };
 
       const showPictureModal = () => {
-        if (IIIFImageUrl.value) {
-          setIIIFImage(IIIFImageUrl.value);
-          openIIIFModal();
+        if (entity.value) {
+          setMediaModalFile(entity.value.mediafiles[0]);
+          openMediaModal();
         }
       };
 
@@ -373,7 +370,6 @@
         basketItems,
         code,
         showPictureModal,
-        IIIFImageUrl,
         disposeCanvas,
         onBoardingState,
         t,
