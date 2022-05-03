@@ -182,7 +182,7 @@
 
       // Todo: fix masonry collapse
 
-      const openIIIFOverlay = (entity: any) => {
+      const openMediaOverlay = (entity: any) => {
         setMediaModalFile(entity.mediafiles[0]);
         openMediaModal();
       };
@@ -195,7 +195,7 @@
         noImageUrl,
         basketEntities,
         loadingEntity,
-        openIIIFOverlay,
+        openMediaOverlay,
         masonry,
         t,
       };
