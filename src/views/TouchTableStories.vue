@@ -98,7 +98,7 @@
         useQuery(GetActiveBoxDocument);
 
       if (!boxVisiter.value) {
-        router.push('/touchtable/start');
+        window.location.href = '/touchtable/start';
       }
 
       const getLastSeenFrame = (seenFrames: any) => {

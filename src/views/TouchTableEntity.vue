@@ -1,9 +1,9 @@
 <template>
   <div class="touchtable">
-    <basket-overlay :basketItems="basketItems" />
+    <basket-overlay :boxVisitorCode="code" />
     <shutdown-modal :code="code" @disposeCanvas="disposeCanvas" />
     <media-modal />
-    <touch-header :basket-amount="basketItems.length" />
+    <touch-header :basket-amount="BasketOverlayState.overlayItems.length" />
     <div>
       <on-boarding-card
         :showCard="
@@ -82,7 +82,7 @@
 <script lang="ts">
   import { defineComponent, onUnmounted, ref, watch } from 'vue';
   import FabricService from '../services/Fabric/FabricService';
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
   import { useQuery, useMutation } from '@vue/apollo-composable';
   import {
     GetTouchTableEntityByIdDocument,
@@ -95,7 +95,7 @@
     historyAssets,
     useBoxVisiter,
   } from 'coghent-vue-3-component-library';
-  import BasketOverlay from '@/components/BasketOverlay.vue';
+  import BasketOverlay, { useBasketOverlay } from '@/components/BasketOverlay.vue';
   import TouchHeader from '@/components/TouchHeader.vue';
   import ShutdownModal from '@/components/ShutdownModal.vue';
   import RelationBrowser from '@/components/RelationBrowser.vue';
@@ -108,11 +108,6 @@
   import { useI18n } from 'vue-i18n';
 
   const asString = (x: string | string[]) => (Array.isArray(x) ? x[0] : x);
-
-  type SecondaryRelation = {
-    originId: string;
-    relatedEntities: Array<Entity>;
-  };
 
   export default defineComponent({
     name: 'TouchTableEntity',
@@ -128,22 +123,18 @@
     },
     setup: () => {
       const route = useRoute();
+      const router = useRouter();
       let id = asString(route.params.entityID);
       const code = ref<string>(boxVisiter.value ? boxVisiter.value.code : undefined);
       const relationStringArray = ref<string[]>([]);
       const relationsLabelArray = ref<string[]>([]);
       const relationsArray = ref<Relation[]>([]);
       const entity = ref<any>();
-      const basketItems = ref<Array<Relation>>(
-        boxVisiter.value
-          ? boxVisiter.value.relations.filter(
-              (relation: Relation) => relation.type == 'inBasket',
-            )
-          : undefined,
-      );
       let fabricService = ref<FabricService | undefined>(undefined);
       const { openMediaModal, setMediaModalFile } = useMediaModal();
       const { onBoardingState } = useOnBoarding();
+      const { addBasketOverlayItems, updateBasketOverlayItems, BasketOverlayState } =
+        useBasketOverlay();
       const { t } = useI18n();
 
       const {
@@ -179,6 +170,13 @@
             relationsLabelArray.value = [];
             relationStringArray.value = [];
             id = asString(route.params.entityID);
+            if (boxVisiter.value) {
+              updateBasketOverlayItems(
+                boxVisiter.value.relations.filter(
+                  (relation: Relation) => relation.type == 'inBasket',
+                ),
+              );
+            }
             refetchEntity({
               id: asString(route.params.entityID),
             });
@@ -215,6 +213,7 @@
                   .then(() => {
                     let refetchAmount: number = 0;
                     while (refetchAmount <= fabricdefaults.canvas.relationIterations) {
+                      console.log({ refetchAmount });
                       relatedEntities.forEach((relatedEntity: Entity) => {
                         const entityRelatedIds = relatedEntity?.relations?.map(
                           (relation: any) => {
@@ -248,7 +247,6 @@
                                   relatedEntity.id,
                                 );
                                 relatedEntities = relatedEntitiesResult.Entities.results;
-                                console.log({ refetchAmount });
                               }
                             },
                           });
@@ -340,11 +338,10 @@
 
       const addToBasket = () => {
         const { addAssetToBoxVisiter } = useBoxVisiter(apolloClient);
-        addAssetToBoxVisiter(code.value, id, 'inBasket').then(
-          (relations: Relation[]) =>
-            (basketItems.value = relations.filter(
-              (relation: Relation) => relation.type == 'inBasket',
-            )),
+        addAssetToBoxVisiter(code.value, id, 'inBasket').then((relations: Relation[]) =>
+          updateBasketOverlayItems(
+            relations.filter((relation: Relation) => relation.type == 'inBasket'),
+          ),
         );
       };
 
@@ -359,6 +356,10 @@
         fabricService.value?.highlightRelatedFrames(filterIndex, relationsArray.value);
       };
 
+      if (!boxVisiter.value) {
+        window.location.href = '/touchtable/start';
+      }
+
       return {
         entity,
         relationStringArray,
@@ -367,11 +368,11 @@
         route,
         highlightSelectedFilter,
         addToBasket,
-        basketItems,
         code,
         showPictureModal,
         disposeCanvas,
         onBoardingState,
+        BasketOverlayState,
         t,
       };
     },
