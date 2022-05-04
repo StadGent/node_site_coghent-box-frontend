@@ -124,7 +124,7 @@ const fabricdefaults: FabricDefaults = {
       },
     },
     relationIterations: 3,
-    relationLimit: 7,
+    relationLimit: 6,
     dimensions: {
       width: 1920,
       height: 900,

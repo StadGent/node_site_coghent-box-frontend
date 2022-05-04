@@ -5,7 +5,10 @@
         class="w-full flex justify-center overflow-y-scroll overflow-x-hidden overlay"
       >
         <the-masonry
-          v-if="basketEntities.length == basketItems.length && basketItems.length"
+          v-if="
+            basketEntities.length == BasketOverlayState.overlayItems.length &&
+            BasketOverlayState.overlayItems.length
+          "
           ref="masonry"
           :entities="{ results: basketEntities }"
           :loading="loadingEntity"
@@ -33,7 +36,7 @@
             </div>
           </template>
         </the-masonry>
-        <div v-else-if="basketItems.length"><spinner /></div>
+        <div v-else-if="BasketOverlayState.overlayItems.length"><spinner /></div>
         <h3 class="text-lg" v-else>
           {{ t('touchtable.network.basketOverlay.empty') }}
         </h3>
@@ -67,45 +70,53 @@
     BaseIcon,
     GetEntityByIdDocument,
     BaseButton,
+    DeleteRelationFromBoxVisiterDocument,
   } from 'coghent-vue-3-component-library';
-  import { useQuery } from '@vue/apollo-composable';
+  import { useQuery, useMutation } from '@vue/apollo-composable';
   import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
   import { iiiF } from '@/main';
   import Spinner from './Spinner.vue';
   import { useI18n } from 'vue-i18n';
   import { useMediaModal } from '@/components/MediaModal.vue';
-  import { IIIFImageUrlHelper } from '../services/Fabric/helper.fabric';
 
   export type OverlayState = 'show' | 'hide' | 'loading';
 
   export type BasketOverlayType = {
     state: OverlayState;
+    overlayItems: Relation[];
   };
 
   const BasketOverlayState = ref<BasketOverlayType>({
     state: 'hide',
+    overlayItems: [],
   });
 
   export const useBasketOverlay = () => {
-    const updateBasketOverlay = (BasketOverlayInput: BasketOverlayType) => {
-      BasketOverlayState.value = BasketOverlayInput;
+    const updateBasketOverlayState = (BasketOverlayInput: OverlayState) => {
+      BasketOverlayState.value.state = BasketOverlayInput;
+    };
+
+    const addBasketOverlayItems = (basketOverlayItems: Relation[]) => {
+      BasketOverlayState.value.overlayItems.push(...basketOverlayItems);
+    };
+
+    const updateBasketOverlayItems = (basketOverlayItems: Relation[]) => {
+      BasketOverlayState.value.overlayItems = basketOverlayItems;
     };
 
     const closeBasketOverlay = () => {
-      updateBasketOverlay({
-        state: 'hide',
-      });
+      updateBasketOverlayState('hide');
     };
 
     const openBasketOverlay = () => {
-      updateBasketOverlay({
-        state: 'show',
-      });
+      updateBasketOverlayState('show');
     };
 
     return {
       closeBasketOverlay,
       openBasketOverlay,
+      addBasketOverlayItems,
+      updateBasketOverlayItems,
       BasketOverlayState,
     };
   };
@@ -120,14 +131,18 @@
       BaseButton,
     },
     props: {
-      basketItems: {
-        type: Array as PropType<Relation[]>,
+      boxVisitorCode: {
+        type: String,
         required: true,
       },
     },
     setup(props) {
-      const { closeBasketOverlay, openBasketOverlay, BasketOverlayState } =
-        useBasketOverlay();
+      const {
+        closeBasketOverlay,
+        openBasketOverlay,
+        BasketOverlayState,
+        updateBasketOverlayItems,
+      } = useBasketOverlay();
       const { generateUrl, noImageUrl } = iiiF;
       const basketEntities = ref<Entity[]>([]);
       const { t } = useI18n();
@@ -138,6 +153,20 @@
         GetEntityByIdDocument,
         { id: '' },
       );
+
+      const { mutate: deleteRelationById, onDone } = useMutation(
+        DeleteRelationFromBoxVisiterDocument,
+        { variables: { code: '', relationId: '' } },
+      );
+
+      onDone((result) => {
+        const newBasketArray: Relation[] = result.data.DeleteBoxVisiterRelation.filter(
+          (relation: Relation) => relation.type == 'inBasket',
+        );
+        if (newBasketArray) {
+          updateBasketOverlayItems(newBasketArray);
+        }
+      });
 
       const getEntitiesForRelations = (entitiesToAdd: any[] = []) => {
         const tempEntityArray: any[] = [];
@@ -163,12 +192,13 @@
       };
 
       watch(
-        () => props.basketItems.length,
+        () => BasketOverlayState.value.overlayItems.length,
         () => {
+          console.log('refetchbasket');
           if (!basketEntities.value.length) {
-            getEntitiesForRelations(props.basketItems);
+            getEntitiesForRelations(BasketOverlayState.value.overlayItems);
           } else {
-            const newEntities = props.basketItems.filter(
+            const newEntities = BasketOverlayState.value.overlayItems.filter(
               (item: any) =>
                 !basketEntities.value.find(
                   (basketItem: any) => basketItem.id == item.key.replace('entities/', ''),
@@ -181,6 +211,10 @@
       );
 
       // Todo: fix masonry collapse
+
+      const removeFromBasket = (entityId: string) => {
+        deleteRelationById({ code: props.boxVisitorCode, relationId: entityId });
+      };
 
       const openMediaOverlay = (entity: any) => {
         setMediaModalFile(entity.mediafiles[0]);
@@ -196,6 +230,7 @@
         basketEntities,
         loadingEntity,
         openMediaOverlay,
+        removeFromBasket,
         masonry,
         t,
       };
