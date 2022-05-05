@@ -35,6 +35,10 @@
         :image-url="IIIFImageUrlHelper(getFileNameByMimeType(MediaModalState.mediafile))"
         :canGoFullScreen="false"
       />
+      <video-player
+        v-if="simpleFileType == 'video'"
+        :mediaFile="MediaModalState.mediafile"
+      />
     </section>
   </BaseModal>
 </template>
@@ -48,6 +52,7 @@
     BaseIcon,
     getSimpleFileTypeByMimeType,
     getFileNameByMimeType,
+    VideoPlayer,
   } from 'coghent-vue-3-component-library';
   import { MediaFile } from 'coghent-vue-3-component-library/lib/queries';
 
@@ -93,6 +98,7 @@
       BaseModal,
       IIIFViewer,
       BaseIcon,
+      VideoPlayer,
     },
     props: {},
     setup: (props) => {
@@ -104,6 +110,8 @@
         (mediafile) => {
           if (mediafile) {
             simpleFileType.value = getSimpleFileTypeByMimeType(mediafile.mimetype);
+            console.log(mediafile.mimetype);
+            console.log(simpleFileType.value);
           }
         },
       );

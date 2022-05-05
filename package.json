@@ -13,7 +13,7 @@
     "@tweenjs/tween.js": "^18.6.4",
     "@vue/apollo-composable": "^4.0.0-alpha.14",
     "axios": "^0.21.1",
-    "coghent-vue-3-component-library": "^0.1.52",
+    "coghent-vue-3-component-library": "^0.1.54",
     "core-js": "^3.6.5",
     "d3": "^7.2.1",
     "fabric": "^5.2.1",
