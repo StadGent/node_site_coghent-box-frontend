@@ -204,15 +204,19 @@
                   (basketItem: any) => basketItem.id == item.key.replace('entities/', ''),
                 ),
             );
-            getEntitiesForRelations(newEntities);
+            if (newEntities.length) {
+              getEntitiesForRelations(newEntities);
+            }
           }
         },
         { immediate: true },
       );
 
-      // Todo: fix masonry collapse
-
       const removeFromBasket = (entityId: string) => {
+        console.log(basketEntities.value, entityId);
+        basketEntities.value = basketEntities.value.filter(
+          (basketEntity: Entity) => basketEntity.id != entityId,
+        );
         deleteRelationById({ code: props.boxVisitorCode, relationId: entityId });
       };
 
