@@ -171,6 +171,11 @@
             relationStringArray.value = [];
             id = asString(route.params.entityID);
             if (boxVisiter.value) {
+              console.log(
+                boxVisiter.value.relations.filter(
+                  (relation: Relation) => relation.type == 'inBasket',
+                ),
+              );
               updateBasketOverlayItems(
                 boxVisiter.value.relations.filter(
                   (relation: Relation) => relation.type == 'inBasket',
@@ -187,7 +192,7 @@
         { deep: true, immediate: true },
       );
 
-      const loadRelations = (entity: Entity) => {
+      const fetchRelatedEntities = (entity: Entity) => {
         if (entity) {
           console.log('refetch relations');
           console.log(entity);
@@ -238,15 +243,14 @@
                               previousData,
                               { fetchMoreResult: relatedEntitiesResult },
                             ) => {
-                              if (
-                                relatedEntitiesResult.Entities.results &&
-                                fabricService.value
-                              ) {
+                              relatedEntitiesResult =
+                                relatedEntitiesResult?.Entities?.results;
+                              if (relatedEntitiesResult && fabricService.value) {
                                 fabricService.value.generateSecondaryImageFrames(
                                   relatedEntities,
                                   relatedEntity.id,
                                 );
-                                relatedEntities = relatedEntitiesResult.Entities.results;
+                                relatedEntities = relatedEntitiesResult;
                               }
                             },
                           });
@@ -318,7 +322,7 @@
                 fabricService.value?.generateInfoBar(startEntity, historyEntities);
               }
             }
-            loadRelations(primaryEntity);
+            fetchRelatedEntities(primaryEntity);
           });
       };
 
