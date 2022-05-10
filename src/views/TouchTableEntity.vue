@@ -46,7 +46,11 @@
           custom-style="touchtable-black"
           custom-icon="zoomIn"
           :icon-shown="true"
-          :text="t('touchtable.network.infoCard.buttons.zoom')"
+          :text="
+            entity.mediafiles[0].mediatype.image
+              ? t('touchtable.network.infoCard.buttons.zoom.image')
+              : t('touchtable.network.infoCard.buttons.zoom.video')
+          "
           @click="showPictureModal"
         />
         <on-boarding-card
@@ -243,6 +247,7 @@
                               previousData,
                               { fetchMoreResult: relatedEntitiesResult },
                             ) => {
+                              console.log({ relatedEntitiesResult });
                               relatedEntitiesResult =
                                 relatedEntitiesResult?.Entities?.results;
                               if (relatedEntitiesResult && fabricService.value) {
@@ -322,6 +327,7 @@
                 fabricService.value?.generateInfoBar(startEntity, historyEntities);
               }
             }
+            console.log(entityOnCanvas);
             fetchRelatedEntities(primaryEntity);
           });
       };

@@ -5,7 +5,7 @@
     custom-styles="z-50"
     @hide-modal="closeMediaModal"
   >
-    <section class="h-large flex relative w-full">
+    <section v-if="MediaModalState.mediafile" class="h-large flex relative w-full">
       <a
         class="
           right-2
@@ -31,13 +31,13 @@
         />
       </a>
       <IIIFViewer
-        v-if="simpleFileType == 'image'"
+        v-if="MediaModalState.mediafile.mediatype.image"
         :image-url="IIIFImageUrlHelper(getFileNameByMimeType(MediaModalState.mediafile))"
         :canGoFullScreen="false"
       />
       <video-player
-        v-if="simpleFileType == 'video'"
-        :mediaFile="MediaModalState.mediafile"
+        v-if="MediaModalState.mediafile.mediatype.video"
+        :mediaFile="[MediaModalState.mediafile]"
       />
     </section>
   </BaseModal>
@@ -103,24 +103,11 @@
     props: {},
     setup: (props) => {
       const { closeMediaModal, openMediaModal, MediaModalState } = useMediaModal();
-      const simpleFileType = ref<string>('');
-
-      watch(
-        () => MediaModalState.value.mediafile,
-        (mediafile) => {
-          if (mediafile) {
-            simpleFileType.value = getSimpleFileTypeByMimeType(mediafile.mimetype);
-            console.log(mediafile.mimetype);
-            console.log(simpleFileType.value);
-          }
-        },
-      );
 
       return {
         closeMediaModal,
         openMediaModal,
         MediaModalState,
-        simpleFileType,
         getFileNameByMimeType,
         IIIFImageUrlHelper,
       };
