@@ -276,7 +276,6 @@
 
       const getRelations = (entity: Entity) => {
         const metaDataInLabel: string[] = [
-          'objectnaam',
           'object_category',
           'MensgemaaktObject.draagt',
           'Entiteit.maaktDeelUitVan',
