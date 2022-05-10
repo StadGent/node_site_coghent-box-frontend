@@ -60,7 +60,7 @@ const canvasTextHelper = (
   fontFamily: string,
   fontWeight: string,
 ) => {
-  const textbox = new fabric.Textbox(text, {
+  const textbox = new fabric.Text(text, {
     top: coordinate.y,
     left: coordinate.x,
     fontSize: size,

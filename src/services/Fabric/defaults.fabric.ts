@@ -160,11 +160,11 @@ const fabricdefaults: FabricDefaults = {
       startFrame: {
         text: {
           position: {
-            x: 1920 / 2 - 300,
-            y: 880 - 200,
+            x: 1920 / 2 - 450,
+            y: 880 - 175,
           },
           origin: {
-            originX: 'right',
+            originX: 'left',
             originY: 'bottom',
           },
           fontSize: 20,
@@ -172,22 +172,22 @@ const fabricdefaults: FabricDefaults = {
         },
         position: {
           top: 880 - 10,
-          left: 1920 / 2 - 250,
+          left: 1920 / 2 - 450,
         },
         scale: {
           scaleX: 1,
           scaleY: 1,
         },
         origin: {
-          originX: 'right',
+          originX: 'left',
           originY: 'bottom',
         },
       },
       historyFrame: {
         text: {
           position: {
-            x: 1920 / 2 + 300,
-            y: 880 - 200,
+            x: 1920 / 2 + 250,
+            y: 880 - 175,
           },
           origin: {
             originX: 'left',
