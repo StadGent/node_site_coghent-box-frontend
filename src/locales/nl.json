@@ -23,7 +23,10 @@
       "infoCard": {
         "noDescription": "Dit item heeft geen beschrijving",
         "buttons": {
-          "zoom": "Afbeelding vergroten",
+          "zoom": {
+            "image": "Afbeelding vergroten",
+            "video": "Video bekijken"
+          },
           "add": "Aan verhalenbox toevoegen"
         }
       },
