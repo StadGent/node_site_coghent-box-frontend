@@ -71,10 +71,12 @@
     GetEntityByIdDocument,
     BaseButton,
     DeleteRelationFromBoxVisiterDocument,
+    boxVisiter,
+    useBoxVisiter,
   } from 'coghent-vue-3-component-library';
   import { useQuery, useMutation } from '@vue/apollo-composable';
   import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
-  import { iiiF } from '@/main';
+  import { iiiF, apolloClient } from '@/main';
   import Spinner from './Spinner.vue';
   import { useI18n } from 'vue-i18n';
   import { useMediaModal } from '@/components/MediaModal.vue';
@@ -154,20 +156,6 @@
         { id: '' },
       );
 
-      const { mutate: deleteRelationById, onDone } = useMutation(
-        DeleteRelationFromBoxVisiterDocument,
-        { variables: { code: '', relationId: '' } },
-      );
-
-      onDone((result) => {
-        const newBasketArray: Relation[] = result.data.DeleteBoxVisiterRelation.filter(
-          (relation: Relation) => relation.type == 'inBasket',
-        );
-        if (newBasketArray) {
-          updateBasketOverlayItems(newBasketArray);
-        }
-      });
-
       const getEntitiesForRelations = (entitiesToAdd: any[] = []) => {
         const tempEntityArray: any[] = [];
         let basketEntityIds: string[] = [];
@@ -213,11 +201,22 @@
       );
 
       const removeFromBasket = (entityId: string) => {
-        console.log(basketEntities.value, entityId);
-        basketEntities.value = basketEntities.value.filter(
+        const newBasket = basketEntities.value.filter(
           (basketEntity: Entity) => basketEntity.id != entityId,
         );
-        deleteRelationById({ code: props.boxVisitorCode, relationId: entityId });
+        basketEntities.value = newBasket;
+        const { deleteRelationFromBoxVisiter } = useBoxVisiter(apolloClient);
+        deleteRelationFromBoxVisiter(props.boxVisitorCode, entityId).then(
+          (result: Relation[]) => {
+            console.log({ result });
+            const newBasketArray: Relation[] = result.filter(
+              (relation: Relation) => relation.type == 'inBasket',
+            );
+            if (newBasketArray) {
+              updateBasketOverlayItems(newBasketArray);
+            }
+          },
+        );
       };
 
       const openMediaOverlay = (entity: any) => {

@@ -218,7 +218,6 @@ export default class FabricService {
         (images: string[]) => {
           images.forEach((imageUrl, index) => {
             new fabric.Image.fromURL(imageUrl, (image: any) => {
-              console.log(this.state.takenPositions);
               image.positionIndexes = getPositionForImageHelper(
                 originEntityPosition,
                 this.state.takenPositions,
@@ -329,8 +328,6 @@ export default class FabricService {
   }
 
   generateRelationBetweenFrames(frame1: any, frame2: any) {
-    console.log('Generating relation');
-    // const relation = createDynamicLineHelper(frame1, frame2);
     if (frame1 && frame2) {
       const line = [
         frame1.getCenterPoint().x,
