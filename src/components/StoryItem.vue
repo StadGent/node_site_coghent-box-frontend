@@ -28,7 +28,7 @@
         :has-custom-image-overlay="true"
         @navigateWithRouter="navigateToTouchtable"
       >
-        <template #tile="entity">
+        <template #tile="{ entity }">
           <div
             v-if="entity.seen"
             :class="`
