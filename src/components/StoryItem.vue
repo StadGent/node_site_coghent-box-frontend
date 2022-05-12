@@ -67,7 +67,7 @@
                 :cardDescription="t('touchtable.onBoarding.goToTouchTable.description')"
                 :showPreviousButton="false"
                 placement="right"
-                @nextButtonClicked="navigateToTouchtable(entity)"
+                @nextButtonClicked="handleTouchtableNavigation(entity, true)"
               ></on-boarding-card>
             </div>
           </router-link>
@@ -92,6 +92,7 @@
   import { useOnBoarding } from '@/composables/useOnBoarding';
   import OnBoardingCard from '@/components/OnBoardingCard.vue';
   import { useI18n } from 'vue-i18n';
+  import { from } from '@apollo/client/core';
 
   type EntityData = {
     results: any[];
@@ -192,7 +193,10 @@
 
       entityData.value.results = tempAssetArray;
 
-      const handleTouchtableNavigation = (entity: Entity) => {
+      const handleTouchtableNavigation = (
+        entity: Entity,
+        fromOnboarding: boolean = false,
+      ) => {
         updateIsFirstStoryOverview(false);
         setStartAsset(entity);
         setSelectedStory({
@@ -200,6 +204,9 @@
           color: props.storyColor,
           title: props.story.title[0].value,
         });
+        if (fromOnboarding) {
+          router.push('/touchtable/' + entity.id);
+        }
       };
 
       return {
