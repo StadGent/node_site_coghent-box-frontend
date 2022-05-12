@@ -29,9 +29,14 @@
         @navigateWithRouter="navigateToTouchtable"
       >
         <template #tile="{ entity }">
-          <div
-            v-if="entity.seen"
-            :class="`
+          <router-link
+            :to="{ path: '/touchtable/' + entity.id }"
+            class="absolute top-0 left-0 w-full h-full"
+            @click="handleTouchtableNavigation(entity)"
+          >
+            <div
+              v-if="entity.seen"
+              :class="`
               absolute
               top-4
               left-4
@@ -44,27 +49,28 @@
               bg-${storyColor}
               text-text-white text-3xl
             `"
-          >
-            <base-icon icon="check" class="stroke-current fill-current stroke-2" />
-          </div>
-          <div
-            v-if="
-              onBoardingEntityId == entity.id &&
-              isLastSeenStory &&
-              onBoardingState.status == 'started' &&
-              onBoardingState.currentStepName == 'goToTouchTable'
-            "
-            class="text-4xl"
-          >
-            <on-boarding-card
-              :showCard="true"
-              :cardTitle="t('touchtable.onBoarding.goToTouchTable.title')"
-              :cardDescription="t('touchtable.onBoarding.goToTouchTable.description')"
-              :showPreviousButton="false"
-              placement="right"
-              @nextButtonClicked="navigateToTouchtable(entity)"
-            ></on-boarding-card>
-          </div>
+            >
+              <base-icon icon="check" class="stroke-current fill-current stroke-2" />
+            </div>
+            <div
+              v-if="
+                onBoardingEntityId == entity.id &&
+                isLastSeenStory &&
+                onBoardingState.status == 'started' &&
+                onBoardingState.currentStepName == 'goToTouchTable'
+              "
+              class="text-4xl"
+            >
+              <on-boarding-card
+                :showCard="true"
+                :cardTitle="t('touchtable.onBoarding.goToTouchTable.title')"
+                :cardDescription="t('touchtable.onBoarding.goToTouchTable.description')"
+                :showPreviousButton="false"
+                placement="right"
+                @nextButtonClicked="navigateToTouchtable(entity)"
+              ></on-boarding-card>
+            </div>
+          </router-link>
         </template>
       </the-masonry>
     </section>
@@ -186,10 +192,9 @@
 
       entityData.value.results = tempAssetArray;
 
-      const navigateToTouchtable = (entity: Entity) => {
+      const handleTouchtableNavigation = (entity: Entity) => {
         updateIsFirstStoryOverview(false);
         setStartAsset(entity);
-        router.push('/touchtable/' + entity.id);
         setSelectedStory({
           id: props.story.id,
           color: props.storyColor,
@@ -203,7 +208,7 @@
         noImageUrl,
         masonry,
         router,
-        navigateToTouchtable,
+        handleTouchtableNavigation,
         onBoardingEntityId,
         onBoardingState,
         t,

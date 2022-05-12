@@ -50,7 +50,6 @@
     BaseModal,
     IIIFViewer,
     BaseIcon,
-    getSimpleFileTypeByMimeType,
     getFileNameByMimeType,
     VideoPlayer,
   } from 'coghent-vue-3-component-library';

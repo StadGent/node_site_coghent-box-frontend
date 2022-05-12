@@ -224,7 +224,7 @@ const fabricdefaults: FabricDefaults = {
         blockedPositions: [{ yIndex: 3, xIndex: 3 }],
         range: 1,
       },
-      height: [150, 125, 100],
+      height: [175, 150, 125, 100],
     },
   },
 };
