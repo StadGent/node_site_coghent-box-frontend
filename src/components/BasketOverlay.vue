@@ -17,7 +17,7 @@
           :show-load-more="false"
           :hasCustomImageOverlay="true"
         >
-          <template #tile="entity">
+          <template #tile="{ entity }">
             <div class="flex absolute p-4 justify-between w-full">
               <base-button
                 class="w-0"
