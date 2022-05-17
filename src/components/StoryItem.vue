@@ -24,9 +24,6 @@
         :no-image-url="noImageUrl"
         :show-load-more="false"
         :items-each-load="entityData.length"
-        :use-router-navigation="true"
-        :has-custom-image-overlay="true"
-        @navigateWithRouter="navigateToTouchtable"
       >
         <template #tile="{ entity }">
           <router-link
