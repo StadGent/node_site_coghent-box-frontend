@@ -99,6 +99,7 @@
     historyAssets,
     useBoxVisiter,
   } from 'coghent-vue-3-component-library';
+  import { excludeUnusedRelations } from '@/services/Fabric/helper.fabric';
   import BasketOverlay, { useBasketOverlay } from '@/components/BasketOverlay.vue';
   import TouchHeader from '@/components/TouchHeader.vue';
   import ShutdownModal from '@/components/ShutdownModal.vue';
@@ -221,7 +222,7 @@
                   .generateSecondaryImageFrames(relatedEntities, entity.id)
                   .then(() => {
                     let refetchAmount: number = 0;
-                    while (refetchAmount <= fabricdefaults.canvas.relationIterations) {
+                    while (refetchAmount != fabricdefaults.canvas.relationIterations) {
                       console.log({ refetchAmount });
                       relatedEntities.forEach((relatedEntity: Entity) => {
                         const entityRelatedIds = relatedEntity?.relations?.map(
@@ -251,10 +252,22 @@
                               relatedEntitiesResult =
                                 relatedEntitiesResult?.Entities?.results;
                               if (relatedEntitiesResult && fabricService.value) {
-                                fabricService.value.generateSecondaryImageFrames(
-                                  relatedEntities,
-                                  relatedEntity.id,
-                                );
+                                fabricService.value
+                                  .generateSecondaryImageFrames(
+                                    relatedEntities,
+                                    relatedEntity.id,
+                                  )
+                                  .then(() => {
+                                    if (
+                                      refetchAmount ==
+                                      fabricdefaults.canvas.relationIterations
+                                    ) {
+                                      relationsArray.value = excludeUnusedRelations(
+                                        fabricService.value?.state.canvas,
+                                        relationsArray.value,
+                                      );
+                                    }
+                                  });
                                 relatedEntities = relatedEntitiesResult;
                               }
                             },
@@ -321,7 +334,6 @@
             if (startAsset.value) {
               const startEntity = startAsset.value;
               const historyEntities = historyAssets.value;
-              console.log({ historyEntities });
               if (startEntity) {
                 fabricService.value?.generateInfoBar(startEntity, historyEntities);
               }

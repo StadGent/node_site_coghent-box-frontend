@@ -149,6 +149,22 @@ const isRelationOnFrameHelper = (frame: any, relation: any): boolean => {
   return relationOnFrame;
 };
 
+const excludeUnusedRelations = (canvas: any, relations: Relation[]): Relation[] => {
+  const canvasFrames: any[] = getObjectsByObjectTypeHelper(canvas.getObjects(), [
+    'frame',
+  ]);
+  const relationsPresentOnCanvas: Relation[] = [];
+  canvasFrames.map((frame: any) => [
+    relationsPresentOnCanvas.push(...frame.entity.relations),
+  ]);
+  const resultArray: Relation[] = relations.filter((relation: Relation) =>
+    relationsPresentOnCanvas
+      .map((presentRelation: Relation) => presentRelation.key)
+      .includes(relation.key),
+  );
+  return resultArray;
+};
+
 const objectOpacityHelper = (canvasObject: any, opacity: number) => {
   canvasObject.opacity = opacity;
 };
@@ -184,4 +200,5 @@ export {
   IIIFImageUrlHelper,
   unHighlightCanvasObjectsHelper,
   isRelationOnFrameHelper,
+  excludeUnusedRelations,
 };

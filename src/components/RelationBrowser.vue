@@ -52,7 +52,7 @@
         }
         emit(
           'selected',
-          selectedTagIndex.value
+          selectedTagIndex.value != undefined
             ? props.relations[selectedTagIndex.value]
             : selectedTagIndex.value,
         );
