@@ -75,8 +75,8 @@
       </div>
     </CardComponent>
     <relationBrowser
-      v-if="relationsLabelArray"
-      :relations="relationsLabelArray"
+      v-if="relationsArray"
+      :relations="relationsArray"
       :loading="loading"
       @selected="highlightSelectedFilter"
     />
@@ -361,8 +361,8 @@
         }
       };
 
-      const highlightSelectedFilter = (filterIndex: number) => {
-        fabricService.value?.highlightRelatedFrames(filterIndex, relationsArray.value);
+      const highlightSelectedFilter = (relation: Relation) => {
+        fabricService.value?.highlightRelatedFrames(relation);
       };
 
       if (!boxVisiter.value) {
@@ -373,6 +373,7 @@
         entity,
         relationStringArray,
         relationsLabelArray,
+        relationsArray,
         loading,
         route,
         highlightSelectedFilter,
