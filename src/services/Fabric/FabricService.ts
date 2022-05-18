@@ -290,9 +290,7 @@ export default class FabricService {
     this.state.selectedImage = undefined;
   }
 
-  highlightRelatedFrames(selectedFilterIndex: number, relations: Array<Relation>) {
-    const relation: Relation = relations[selectedFilterIndex];
-
+  highlightRelatedFrames(relation: Relation) {
     const canvasObjects: Array<any> = this.state.canvas.getObjects();
     const canvasFrames: Array<any> = getObjectsByObjectTypeHelper(canvasObjects, [
       'frame',
