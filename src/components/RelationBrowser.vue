@@ -1,12 +1,9 @@
 <template>
-  <div
-    id="browser"
-    class="relation_browser_container no-scrollbar"
-  >
+  <div id="browser" class="relation_browser_container no-scrollbar">
     <FilterTag
       v-for="(item, index) in relations"
       :key="index"
-      :filter="item"
+      :filter="item.value"
       :is-selected="index == selectedTagIndex ? true : false"
       :icon="'check'"
       :small="false"
@@ -53,7 +50,12 @@
         } else {
           selectedTagIndex.value = tagIndex;
         }
-        emit('selected', [selectedTagIndex.value]);
+        emit(
+          'selected',
+          selectedTagIndex.value
+            ? props.relations[selectedTagIndex.value]
+            : selectedTagIndex.value,
+        );
       };
 
       return { selectTag, selectedTagIndex };
