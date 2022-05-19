@@ -49,7 +49,9 @@
           :text="
             entity.mediafiles[0].mediatype.image
               ? t('touchtable.network.infoCard.buttons.zoom.image')
-              : t('touchtable.network.infoCard.buttons.zoom.video')
+              : entity.mediafiles[0].mediatype.video
+              ? t('touchtable.network.infoCard.buttons.zoom.video')
+              : t('touchtable.network.infoCard.buttons.zoom.other')
           "
           @click="showPictureModal"
         />

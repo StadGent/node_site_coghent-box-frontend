@@ -25,7 +25,8 @@
         "buttons": {
           "zoom": {
             "image": "Afbeelding vergroten",
-            "video": "Video bekijken"
+            "video": "Video bekijken",
+            "other": "Mediafile bekijken"
           },
           "add": "Aan verhalenbox toevoegen"
         }
