@@ -27,7 +27,7 @@ import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
 import { useBoxVisiter } from 'coghent-vue-3-component-library';
 import { apolloClient } from '@/main';
 
-type State = {
+export type State = {
   canvas: any;
   selectedImage: any;
   positions: Array<Position>;
@@ -206,18 +206,20 @@ export default class FabricService {
       this.state.canvas.getObjects(),
       ['frame', 'mainFrame'],
     );
+    let originEntityPosition: Position | undefined = undefined;
+    if (this.state.takenPositions.length <= this.state.positions.length - 1) {
+      originEntityPosition = getPositionByIdHelper(
+        subRelationOriginEntityId,
+        canvasFrames,
+      );
+    }
 
-    const originEntityPosition: Position = getPositionByIdHelper(
-      subRelationOriginEntityId,
-      canvasFrames,
-    );
-
-    if (originEntityPosition) {
-      // Frame object
-      ImageUrlHelper(entities, fabricdefaults.canvas.secondaryImage.height).then(
-        (images: string[]) => {
-          images.forEach((imageUrl, index) => {
-            new fabric.Image.fromURL(imageUrl, (image: any) => {
+    // Frame object
+    ImageUrlHelper(entities, fabricdefaults.canvas.secondaryImage.height).then(
+      (images: string[]) => {
+        images.forEach((imageUrl, index) => {
+          new fabric.Image.fromURL(imageUrl, (image: any) => {
+            if (originEntityPosition) {
               image.positionIndexes = getPositionForImageHelper(
                 originEntityPosition,
                 this.state.takenPositions,
@@ -257,12 +259,14 @@ export default class FabricService {
                   this.generateRelationBetweenFrames(originFrame, duplicateFrame);
                 }
               }
-            });
+            } else {
+              return Promise.reject('No available positions found');
+            }
           });
-          this.state.canvas.requestRenderAll();
-        },
-      );
-    }
+        });
+        this.state.canvas.requestRenderAll();
+      },
+    );
     return Promise.resolve(entities);
   }
 
