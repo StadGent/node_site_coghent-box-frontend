@@ -178,11 +178,6 @@
             relationStringArray.value = [];
             id = asString(route.params.entityID);
             if (boxVisiter.value) {
-              console.log(
-                boxVisiter.value.relations.filter(
-                  (relation: Relation) => relation.type == 'inBasket',
-                ),
-              );
               updateBasketOverlayItems(
                 boxVisiter.value.relations.filter(
                   (relation: Relation) => relation.type == 'inBasket',
@@ -202,7 +197,6 @@
       const fetchRelatedEntities = (entity: Entity) => {
         if (entity) {
           console.log('refetch relations');
-          console.log(entity);
           fetchMoreRelations({
             variables: {
               limit: fabricdefaults.canvas.relationLimit,
