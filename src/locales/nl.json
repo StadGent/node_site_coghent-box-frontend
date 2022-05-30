@@ -32,7 +32,7 @@
         }
       },
       "basketOverlay": {
-        "empty": "Er zitten nog geen werken in jouw verhalenbox",
+        "empty": "Je verhalenbox is momenteel nog leeg. Je kan werken toevoegen door deze te selecteren in het netwerk en de knoppen links te gebruiken.",
         "close": "Sluiten"
       }
     },

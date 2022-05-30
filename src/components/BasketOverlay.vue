@@ -37,22 +37,17 @@
           </template>
         </the-masonry>
         <div v-else-if="BasketOverlayState.overlayItems.length"><spinner /></div>
-        <h3 class="text-lg" v-else>
-          {{ t('touchtable.network.basketOverlay.empty') }}
-        </h3>
+        <div
+          class="w-1/4 text-center flex flex-wrap justify-center call-background"
+          v-else
+        >
+          <h3 class="mt-48 text-xl">
+            {{ t('touchtable.network.basketOverlay.empty') }}
+          </h3>
+        </div>
       </section>
       <section
-        class="
-          w-full
-          flex
-          justify-center
-          flex-wrap
-          items-center
-          p-12
-          font-bold
-          cursor-pointer
-          flex-col
-        "
+        class="w-full flex justify-center flex-wrap items-center p-12 font-bold cursor-pointer flex-col"
         @click="closeBasketOverlay"
       >
         <base-icon icon="downwardArrows" class="transform rotate-180 mb-4" />
@@ -244,5 +239,11 @@
 <style scoped>
   .overlay {
     height: 850px;
+  }
+  .call-background {
+    background: linear-gradient(180deg, #f6f5f1 40%, rgba(255, 255, 255, 0) 97.65%),
+      url(/basketCallToAction.png);
+    background-repeat: no-repeat;
+    background-size: contain;
   }
 </style>
