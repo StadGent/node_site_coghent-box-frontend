@@ -1,5 +1,5 @@
 ### Development stage
-FROM node:14.17.6 as development-stage
+FROM node:14-alpine as development-stage
 
 ARG NPM_AUTH_TOKEN
 
@@ -16,7 +16,7 @@ RUN npm install
 EXPOSE 8080
 
 ### Build stage
-FROM node:14.17.6-alpine3.12 as build-stage
+FROM node:14-alpine as build-stage
 
 ARG NPM_AUTH_TOKEN
 
