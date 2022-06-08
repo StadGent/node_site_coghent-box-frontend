@@ -95,20 +95,24 @@
     CardComponent,
     GetTouchTableEntityDocument,
     BaseButton,
-    AddAssetToBoxVisiterDocument,
     boxVisiter,
     startAsset,
     historyAssets,
     useBoxVisiter,
+    useMediaModal,
+    MediaModal,
+    getFileNameByMimeType,
   } from 'coghent-vue-3-component-library';
-  import { excludeUnusedRelations } from '@/services/Fabric/helper.fabric';
+  import {
+    excludeUnusedRelations,
+    IIIFImageUrlHelper,
+  } from '@/services/Fabric/helper.fabric';
   import BasketOverlay, { useBasketOverlay } from '@/components/BasketOverlay.vue';
   import TouchHeader from '@/components/TouchHeader.vue';
   import ShutdownModal from '@/components/ShutdownModal.vue';
   import RelationBrowser from '@/components/RelationBrowser.vue';
   import { fabricdefaults } from '../services/Fabric/defaults.fabric';
   import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
-  import MediaModal, { useMediaModal } from '@/components/MediaModal.vue';
   import { apolloClient } from '@/main';
   import OnBoardingCard from '@/components/OnBoardingCard.vue';
   import { useOnBoarding } from '@/composables/useOnBoarding';
@@ -138,11 +142,12 @@
       const relationsArray = ref<Relation[]>([]);
       const entity = ref<any>();
       let fabricService = ref<FabricService | undefined>(undefined);
-      const { openMediaModal, setMediaModalFile } = useMediaModal();
       const { onBoardingState } = useOnBoarding();
       const { addBasketOverlayItems, updateBasketOverlayItems, BasketOverlayState } =
         useBasketOverlay();
       const { t } = useI18n();
+      const { setMediaModalFile, setMediaModalImageUrl, openMediaModal } =
+        useMediaModal();
 
       const {
         result: startEntityResult,
@@ -365,6 +370,9 @@
       const showPictureModal = () => {
         if (entity.value) {
           setMediaModalFile(entity.value.mediafiles[0]);
+          setMediaModalImageUrl(
+            IIIFImageUrlHelper(getFileNameByMimeType(entity.value.mediafiles[0])),
+          );
           openMediaModal();
         }
       };

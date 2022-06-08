@@ -68,13 +68,15 @@
     DeleteRelationFromBoxVisiterDocument,
     boxVisiter,
     useBoxVisiter,
+    useMediaModal,
   } from 'coghent-vue-3-component-library';
   import { useQuery, useMutation } from '@vue/apollo-composable';
   import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
   import { iiiF, apolloClient } from '@/main';
   import Spinner from './Spinner.vue';
   import { useI18n } from 'vue-i18n';
-  import { useMediaModal } from '@/components/MediaModal.vue';
+  import { IIIFImageUrlHelper } from '@/services/Fabric/helper.fabric';
+  import { getFileNameByMimeType } from 'coghent-vue-3-component-library';
 
   export type OverlayState = 'show' | 'hide' | 'loading';
 
@@ -143,7 +145,8 @@
       const { generateUrl, noImageUrl } = iiiF;
       const basketEntities = ref<Entity[]>([]);
       const { t } = useI18n();
-      const { openMediaModal, setMediaModalFile } = useMediaModal();
+      const { openMediaModal, setMediaModalFile, setMediaModalImageUrl } =
+        useMediaModal();
       const masonry = ref<any>(null);
 
       const { loading: loadingEntity, fetchMore: fetchMoreEntities } = useQuery(
@@ -216,6 +219,9 @@
 
       const openMediaOverlay = (entity: any) => {
         setMediaModalFile(entity.mediafiles[0]);
+        setMediaModalImageUrl(
+          IIIFImageUrlHelper(getFileNameByMimeType(entity.mediafiles[0])),
+        );
         openMediaModal();
       };
 
