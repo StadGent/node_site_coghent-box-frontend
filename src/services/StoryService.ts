@@ -28,7 +28,7 @@ export default class StoryService {
   visiter: any;
   activeStory!: typeof Entity;
   activeStoryData!: StoryData;
-
+  hasScannedCode: boolean;
 
   constructor(_stories: Array<typeof Entity>, _visiter: any) {
     this.stories = _stories;
@@ -36,6 +36,7 @@ export default class StoryService {
     this.storyIds = [];
     this.storyData = [];
     this.totalOfSeenFrames = 0;
+    this.hasScannedCode = false;
   }
 
   getStoryData() {
@@ -147,6 +148,8 @@ export default class StoryService {
   }
 
   fillUpDataSources() {
+    const data = this.storyData
+    console.log('storydata before fillupDatasources => ', data)
     if (this.stories && this.stories.length > 0) {
       this.stories.map((story, index) => {
         this.addStoryIdToStoryIds(story);
@@ -154,6 +157,7 @@ export default class StoryService {
       });
     }
     this.assignColorToStories();
+    console.log('storydata at fillupDatasources => ', this.storyData)
   }
 
   mergeVisiterStoryRelationsWithStoryData(_relations: Array<typeof Relation>) {
@@ -185,6 +189,13 @@ export default class StoryService {
       storyId: nextStory,
       frame: nextFrame
     }
+  }
+
+  hasAlreadyScannedCode() {
+    for (const story of this.storyData) {
+      if (story.totalOfFramesSeen > 0) this.hasScannedCode = true;
+    }
+    return this.hasScannedCode;
   }
 
   private createStoryDataObject(story: typeof Entity, index: number) {

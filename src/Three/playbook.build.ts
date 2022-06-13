@@ -303,7 +303,7 @@ const PlayBookBuild = (
 
   const startOfSession = async () => {
     logBuild('startOfSession');
-    return await useStartOfSession(threeService, zoneService, spotlight).create();
+    return await useStartOfSession(threeService, zoneService, spotlight).create(storyService.hasScannedCode);
   };
 
   const setSelectedStory = async () => {

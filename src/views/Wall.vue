@@ -98,6 +98,7 @@ export default defineComponent({
             tmpStoryService.getStoryDataOfStory(_relation.key.replace('entities/', '')),
           ),
         );
+        tmpStoryService.hasScannedCode = tmpStoryService.hasAlreadyScannedCode();
         if (storiesToSee.length != 0) {
           stateService.canScanTicket = false;
           const storyToSet = getFirstStoryToSee(storiesToSee);

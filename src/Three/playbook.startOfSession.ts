@@ -19,7 +19,7 @@ const useStartOfSession = (
   spotlight: Mesh,
 ): {
   showScanImage: () => Promise<Array<Group>>;
-  create: () => Promise<true | false>;
+  create: (_showVideo: boolean) => Promise<true | false>;
 } => {
   const setSpotlightOnPosition = () => {
     // threeService.AddToScene(
@@ -60,7 +60,7 @@ const useStartOfSession = (
   const startVideo = async () => {
     WallGarbageHelper(threeService, globals.taggingService).startOfSession()
     const video = document.getElementById(Videos.startVideoId) as HTMLVideoElement;
-    if (globals.startVideoElement != null && video ) {
+    if (globals.startVideoElement != null && video) {
       globals.threeService?.AddToScene(globals.startVideoElement, Tags.startSessionVideo)
       video.play();
       await Common().awaitTimeout((video.duration * 1000))
@@ -86,10 +86,9 @@ const useStartOfSession = (
     );
   }
 
-  const create = async () => {
+  const create = async (_showVideo: boolean) => {
     await MoveObject().startMoving(spotlight, new Vector3(0, 0, Layers.scene));
-    await startVideo()
-
+    _showVideo === false ? await startVideo() : null;
     return true;
   };
 
