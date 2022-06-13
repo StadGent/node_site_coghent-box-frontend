@@ -102,7 +102,7 @@
             {{ index + 1 }}
           </div>
           <p class="p-4 text-center text-2xl mb-10">
-            {{ item.title[0] ? item.title[0].value : '' }}
+            {{ item && item.title[0] ? item.title[0].value : '' }}
           </p>
         </div>
       </div>
