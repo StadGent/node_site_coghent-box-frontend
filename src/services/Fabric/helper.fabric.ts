@@ -81,11 +81,13 @@ const ImageUrlHelper = (
 ): Promise<string[]> => {
   try {
     const { generateUrl } = iiiF;
-    const noImageUrl = '/no-image-150.png';
+    const noImageUrl: string = '/no-image-150.png';
     const imageUrls: Array<string> = [];
 
     entities.forEach((entity: any) => {
-      if (
+      if (entity.mediafiles[0]?.mediatype.audio) {
+        imageUrls.push('/audiothumbnail-150.png');
+      } else if (
         entity.primary_transcode ||
         entity.primary_mediafile ||
         entity.mediafiles[0]?.filename
