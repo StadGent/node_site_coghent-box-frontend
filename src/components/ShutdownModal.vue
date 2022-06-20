@@ -38,8 +38,12 @@
 
 <script lang="ts">
   import { defineComponent, onMounted, ref, watch } from 'vue';
-  import { BaseModal, BaseButton, useBoxVisiter } from 'coghent-vue-3-component-library';
-  import BoxVisitCode from '@/components/BoxVisitCode.vue';
+  import {
+    BaseModal,
+    BaseButton,
+    useBoxVisiter,
+    BoxVisitCode,
+  } from 'coghent-vue-3-component-library';
   import { apolloClient } from '@/main';
   import { useRoute, useRouter } from 'vue-router';
 
