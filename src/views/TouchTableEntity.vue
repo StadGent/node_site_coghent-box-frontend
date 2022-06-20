@@ -285,6 +285,7 @@
       };
 
       const disposeCanvas = () => {
+        console.log('dispose');
         fabricService.value?.state.canvas.dispose();
       };
 
@@ -318,7 +319,6 @@
       };
 
       const generateCanvas = (primaryEntity: any) => {
-        console.log({ primaryEntity });
         console.log('Entity result');
         if (fabricService.value) {
           // Dispose canvas (destroy it) before creating a new one and filling it up
@@ -344,18 +344,16 @@
           });
       };
 
-      if (startEntityResult.value) {
-        generateCanvas(startEntityResult.value.Entity);
-      }
-
       watch(
         () => startEntityResult.value,
         (entityResult) => {
-          if (entityResult) {
-            generateCanvas(entityResult.Entity);
-          }
+          setTimeout(() => {
+            if (entityResult) {
+              generateCanvas(entityResult.Entity);
+            }
+          }, 100);
         },
-        { deep: true },
+        { immediate: true },
       );
 
       const addToBasket = () => {
