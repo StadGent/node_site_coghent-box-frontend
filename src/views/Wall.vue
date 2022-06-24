@@ -172,7 +172,10 @@ export default defineComponent({
         if (visiterByCode.code) {
           visiter.value = visiterByCode;
           visitercode.value = String(code);
-          isCustomStory.value = await useCustomStory().isCustom(visiterByCode);
+          isCustomStory.value = await useCustomStory(
+            stories.value,
+            visiterByCode,
+          ).isCustom();
           console.log(`FLOWS | current`, useFlow().current());
           console.log(`FLOWS | current flow stages`, useFlow().currentFlowStages());
           console.log(`FLOWS | current showAction`, useFlow().showAction(FlowStage.MENU));
