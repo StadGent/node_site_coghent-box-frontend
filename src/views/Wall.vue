@@ -34,6 +34,8 @@ import mqtt from '@/components/mqtt.vue';
 import StoryService from '@/services/StoryService';
 import { FlowState } from '@/services/StateService';
 import Common, { SensorObject } from '@/composables/common';
+import useCustomStory from '@/composables/customStory';
+import useFlow, { FlowStage } from '@/composables/flows';
 import { GetActiveBoxDocument, RelationType } from 'coghent-vue-3-component-library';
 import { useBoxVisiter } from 'coghent-vue-3-component-library';
 import { apolloClient } from '@/main';
@@ -60,6 +62,7 @@ export default defineComponent({
     const inputValue = ref<string>('');
     const currentState = ref<string>(FlowState[0]);
     const showPauseOverview = ref<boolean>(false);
+    const isCustomStory = ref<boolean>(false);
     const { getByCode, getRelationsByType } = useBoxVisiter(apolloClient);
     const qrInput = ref<any>(null);
     window.addEventListener('focus', () => {
@@ -169,7 +172,12 @@ export default defineComponent({
         if (visiterByCode.code) {
           visiter.value = visiterByCode;
           visitercode.value = String(code);
-          await setVisiterData();
+          isCustomStory.value = await useCustomStory().isCustom(visiterByCode);
+          console.log(`FLOWS | current`, useFlow().current());
+          console.log(`FLOWS | current flow stages`, useFlow().currentFlowStages());
+          console.log(`FLOWS | current showAction`, useFlow().showAction(FlowStage.MENU));
+          console.log(`isCustomStory`, isCustomStory);
+          // await setVisiterData();
         }
       } else {
         stateService.changeState(FlowState.storyOverview);
