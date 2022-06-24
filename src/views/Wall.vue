@@ -34,7 +34,7 @@ import mqtt from '@/components/mqtt.vue';
 import StoryService from '@/services/StoryService';
 import { FlowState } from '@/services/StateService';
 import Common, { SensorObject } from '@/composables/common';
-import useCustomStory from '@/composables/customStory';
+import useCustomStory from '@/composables/useCustomStory';
 import useFlow, { FlowStage } from '@/composables/flows';
 import { GetActiveBoxDocument, RelationType } from 'coghent-vue-3-component-library';
 import { useBoxVisiter } from 'coghent-vue-3-component-library';
