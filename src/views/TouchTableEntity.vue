@@ -217,7 +217,9 @@
             },
             updateQuery: (previousData, { fetchMoreResult: queryResult }) => {
               console.log({ queryResult });
-              let relatedEntities: Entity[] = queryResult.Entities.results;
+              let relatedEntities: Entity[] = queryResult.Entities.results.filter(
+                (entity: Entity) => !entity?.mediafiles?.[0]?.mediatype?.audio,
+              );
               if (relatedEntities && fabricService.value) {
                 fabricService.value
                   .generateSecondaryImageFrames(relatedEntities, entity.id)
@@ -251,7 +253,10 @@
                             ) => {
                               console.log({ relatedEntitiesResult });
                               relatedEntitiesResult =
-                                relatedEntitiesResult?.Entities?.results;
+                                relatedEntitiesResult?.Entities?.results.filter(
+                                  (entity: Entity) =>
+                                    !entity?.mediafiles?.[0]?.mediatype?.audio,
+                                );
                               if (relatedEntitiesResult && fabricService.value) {
                                 fabricService.value
                                   .generateSecondaryImageFrames(
