@@ -71,9 +71,10 @@ export default defineComponent({
       if (qrInput.value) qrInput.value.focus();
     });
 
+    const param_activeBoxId = Common().getUrlParamValue('box');
     const { onResult, fetchMore } = useQuery(
       GetActiveBoxDocument,
-      {},
+      { id: param_activeBoxId ? param_activeBoxId : null },
       { fetchPolicy: 'cache-first' },
     );
 
