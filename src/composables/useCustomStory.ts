@@ -1,8 +1,11 @@
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import { provideApolloClient } from '@vue/apollo-composable'
 import { BoxVisiter, Entity } from 'coghent-vue-3-component-library'
 
 const useCustomStory = (_stories: Array<typeof Entity>, _boxVisiter: typeof BoxVisiter) => {
 
   const isCustom = async (): Promise<boolean> => {
+    console.log(`_boxvisiter`, _boxVisiter)
     const checks: Array<boolean> = []
     const oneStory = await hasOneStory()
     checks.push(oneStory)
@@ -38,8 +41,18 @@ const useCustomStory = (_stories: Array<typeof Entity>, _boxVisiter: typeof BoxV
     })
   }
 
+  const getStoryId = async (): Promise<string> => {
+    const hasSingleStory = await hasOneStory()
+    let id = ''
+    if (hasSingleStory) {
+      _boxVisiter.relations[0].key ? id = _boxVisiter.relations[0].key.replaceAll(`entities/`, '') : ''
+    }
+    return id
+  }
+
   return {
     isCustom,
+    getStoryId,
   }
 }
 

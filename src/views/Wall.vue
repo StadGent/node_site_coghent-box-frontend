@@ -47,6 +47,8 @@ import Videos from '@/Three/defaults.videos';
 import VideoHelper from '@/Three/helper.video';
 import { Vector3 } from 'three';
 import globals from '@/services/GlobalData';
+import { useStorybox } from 'coghent-vue-3-component-library';
+import { Entity } from 'coghent-vue-3-component-library';
 
 export default defineComponent({
   name: 'Wall',
@@ -95,7 +97,6 @@ export default defineComponent({
           RelationType.Stories,
         )) as Array<Relation>;
         const tmpStoryService = createTempStoryService(storyRelations);
-
         const storiesToSee = getUnseenStories(
           storyRelations.map((_relation) =>
             tmpStoryService.getStoryDataOfStory(_relation.key.replace('entities/', '')),
@@ -130,6 +131,15 @@ export default defineComponent({
         }
       }
       stateService.allStateStatus();
+    };
+
+    const setCustomStoryData = async (_visiterByCode: any, _storyId: string) => {
+      const storydata = await useStorybox(apolloClient).getStoryData(_storyId);
+      const tmpStoryService = new StoryService([storydata] as Array<any>, visiter.value);
+      tmpStoryService.fillUpDataSources();
+      tmpStoryService.setActiveStory(_storyId);
+      tmpStoryService.hasScannedCode = true;
+      storyService.value = tmpStoryService;
     };
 
     const createTempStoryService = (_storyRelations: Array<Relation>) => {
@@ -172,15 +182,16 @@ export default defineComponent({
         if (visiterByCode.code) {
           visiter.value = visiterByCode;
           visitercode.value = String(code);
-          isCustomStory.value = await useCustomStory(
-            stories.value,
-            visiterByCode,
-          ).isCustom();
+          const customStory = useCustomStory(stories.value, visiterByCode);
+          isCustomStory.value = await customStory.isCustom();
+          const customStoryId = await customStory.getStoryId();
           console.log(`FLOWS | current`, useFlow().current());
           console.log(`FLOWS | current flow stages`, useFlow().currentFlowStages());
           console.log(`FLOWS | current showAction`, useFlow().showAction(FlowStage.MENU));
           console.log(`isCustomStory`, isCustomStory);
-          // await setVisiterData();
+          isCustomStory.value === true
+            ? await setCustomStoryData(visiterByCode, customStoryId)
+            : await setVisiterData();
         }
       } else {
         stateService.changeState(FlowState.storyOverview);
