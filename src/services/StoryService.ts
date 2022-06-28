@@ -149,7 +149,7 @@ export default class StoryService {
 
   fillUpDataSources() {
     const data = this.storyData
-    console.log('storydata before fillupDatasources => ', data)
+    // console.log('storydata before fillupDatasources => ', data)
     if (this.stories && this.stories.length > 0) {
       this.stories.map((story, index) => {
         this.addStoryIdToStoryIds(story);
@@ -157,7 +157,7 @@ export default class StoryService {
       });
     }
     this.assignColorToStories();
-    console.log('storydata at fillupDatasources => ', this.storyData)
+    // console.log('storydata at fillupDatasources => ', this.storyData)
   }
 
   mergeVisiterStoryRelationsWithStoryData(_relations: Array<typeof Relation>) {

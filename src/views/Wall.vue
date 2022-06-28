@@ -35,7 +35,7 @@ import StoryService from '@/services/StoryService';
 import { FlowState } from '@/services/StateService';
 import Common, { SensorObject } from '@/composables/common';
 import useCustomStory from '@/composables/useCustomStory';
-import useFlow, { FlowStage } from '@/composables/flows';
+import useFlow from '@/composables/flows';
 import { GetActiveBoxDocument, RelationType } from 'coghent-vue-3-component-library';
 import { useBoxVisiter } from 'coghent-vue-3-component-library';
 import { apolloClient } from '@/main';
@@ -48,7 +48,6 @@ import VideoHelper from '@/Three/helper.video';
 import { Vector3 } from 'three';
 import globals from '@/services/GlobalData';
 import { useStorybox } from 'coghent-vue-3-component-library';
-import { Entity } from 'coghent-vue-3-component-library';
 
 export default defineComponent({
   name: 'Wall',
@@ -91,6 +90,7 @@ export default defineComponent({
     });
 
     const setVisiterData = async () => {
+      useFlow().setCurrent('normal');
       showPauseOverview.value = false;
       if (stateService.canScanTicket) {
         const storyRelations = (await useBoxVisiter(apolloClient).getRelationsByType(
@@ -121,6 +121,7 @@ export default defineComponent({
               storyToSetActive = _story.id as string;
             } else {
               stateService.canScanTicket = true;
+              console.log(`INFO | no stories to see on this ticket`)
             }
           });
           if (storyToSetActive) {
@@ -135,6 +136,7 @@ export default defineComponent({
     };
 
     const setCustomStoryData = async (_visiterByCode: any, _storyId: string) => {
+      useFlow().setCurrent('customStory');
       const storydata = await useStorybox(apolloClient).getStoryData(_storyId);
       const tmpStoryService = new StoryService([storydata] as Array<any>, visiter.value);
       tmpStoryService.fillUpDataSources();
@@ -186,10 +188,6 @@ export default defineComponent({
           const customStory = useCustomStory(stories.value, visiterByCode);
           isCustomStory.value = await customStory.isCustom();
           const customStoryId = await customStory.getStoryId();
-          console.log(`FLOWS | current`, useFlow().current());
-          console.log(`FLOWS | current flow stages`, useFlow().currentFlowStages());
-          console.log(`FLOWS | current showAction`, useFlow().showAction(FlowStage.MENU));
-          console.log(`isCustomStory`, isCustomStory);
           isCustomStory.value === true
             ? await setCustomStoryData(visiterByCode, customStoryId)
             : await setVisiterData();

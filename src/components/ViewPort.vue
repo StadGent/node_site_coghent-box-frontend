@@ -7,13 +7,7 @@
 
 <script lang="ts">
 import { defineComponent, onMounted, PropType, ref, watch } from 'vue';
-import {
-  BufferGeometry,
-  Group,
-  Mesh,
-  MeshBasicMaterial,
-  Vector3,
-} from 'three';
+import { BufferGeometry, Group, Mesh, MeshBasicMaterial, Vector3 } from 'three';
 import { Entity as _Entity, Frame } from '@/models/GraphqlModel';
 
 import ThreeService from '@/services/ThreeService';
@@ -51,6 +45,7 @@ import Template from '@/Three/template.shapes';
 import MetadataLabel from '@/Three/shapes.metadataLabel';
 
 import { Entity } from 'coghent-vue-3-component-library/lib';
+import useFlow, { FlowStage } from '@/composables/flows';
 
 export default defineComponent({
   name: 'ViewPort',
@@ -213,6 +208,7 @@ export default defineComponent({
       () => props.storyService,
       (value) => {
         if (value) {
+          console.log(`FLOW:`, useFlow().current());
           storyService = value;
           if (!props.showPauseOverview) {
             setData();
@@ -575,7 +571,7 @@ export default defineComponent({
         playBook.lastAction().time + Timing.delayForNext,
         'Move the spotlight to the center of the screen until the frame ends',
       );
-
+      if (useFlow().showAction(FlowStage.AFTERFRAME)) {
       playBook.addToPlayBook(
         () => {
           if (audio) {
@@ -624,6 +620,15 @@ export default defineComponent({
         playBook.lastAction().time + Timing.delayForNext,
         `Update storyData & show endOfSessions screen or the storyOverview`,
       );
+      } else {
+        playBook.addToPlayBook(
+          () => {
+            scenery.welcomeScene();
+          },
+          playBook.lastAction().time + Timing.delayForNext,
+          `Show the welcome scene because the AFTERFRAME action is not allowed in the flow`,
+        );
+      }
       if (Development().showplayBookLogs()) {
         console.log('Audio Duration', audio ? audio?.duration : null);
         console.log('MASTER playbook', playBook.getPlayBookActions());

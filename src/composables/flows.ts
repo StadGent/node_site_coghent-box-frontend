@@ -2,7 +2,8 @@ export const enum FlowStage {
   VIDEO = 'video',
   MENU = 'menu',
   FRAME = 'frame',
-  ENDSESSION = 'endsession'
+  ENDSESSION = 'endsession',
+  AFTERFRAME = "AFTERFRAME",
 }
 
 export const Flow = {
@@ -11,11 +12,13 @@ export const Flow = {
     FlowStage.FRAME,
     FlowStage.MENU,
     FlowStage.ENDSESSION,
+    FlowStage.AFTERFRAME,
   ],
   normal: [
     FlowStage.MENU,
     FlowStage.FRAME,
     FlowStage.ENDSESSION,
+    FlowStage.AFTERFRAME,
   ],
   seenFullStory: [
     FlowStage.MENU,
