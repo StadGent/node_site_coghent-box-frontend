@@ -402,7 +402,7 @@ export default defineComponent({
         let time = timingCount;
         if (audio != null && !isNaN(audio.duration)) {
           time = audio.currentTime;
-        } else if (Defaults().showplayHeadWhenNoAudio()) {
+        } else if (Defaults().showplayHeadWhenNoAudio() && timingCount <= audioDuration) {
           progress = PlayBookBuild(
             globals.threeService as ThreeService,
             storyService,
@@ -415,7 +415,7 @@ export default defineComponent({
             currentFrame,
             storyService.getStoryColor(storyService.activeStory.id),
             timingCount,
-            playBook.lastAction().time,
+            audioDuration,
             progress,
           );
         }
@@ -505,6 +505,7 @@ export default defineComponent({
           currentFrame,
         );
         if (audio === null) {
+          audioDuration = playBook.lastAction().time;
           setAfterFrameScreen();
           globals.spotlightBackground
             ? (globals.spotlightBackground.material.opacity =
@@ -572,54 +573,54 @@ export default defineComponent({
         'Move the spotlight to the center of the screen until the frame ends',
       );
       if (useFlow().showAction(FlowStage.AFTERFRAME)) {
-      playBook.addToPlayBook(
-        () => {
-          if (audio) {
-            audio.pause();
-          }
-          showProgressOfFrame = false;
-          storyService.setStoryColor();
-          if (storyService.isEndOfSession()) {
-            stateService.changeState(FlowState.endCountdown);
-            garbageHelper.endOfSessionScreen();
-            useDMX().sequence();
-            PlayBookBuild(
-              globals.threeService as ThreeService,
-              storyService,
-              zoneService,
-              globals.taggingService as TaggingService,
-              playBook,
-              globals.spotlight as Mesh<BufferGeometry, any>,
-              storyService.activeStory,
-            ).endOfSession();
-          } else {
-            stateService.changeState(FlowState.storyOverview);
-            emit('resetSelectedStory', {
-              topic: 'sensors/0/present',
-              id: 0,
-              msg: true,
-            } as SensorObject);
-            garbageHelper.pauseScreen();
-            globals.spotlight?.scale.set(
-              Measurements().storyCircle.outerCircle,
-              Measurements().storyCircle.outerCircle,
-              Measurements().storyCircle.outerCircle,
-            );
-            PlayBookBuild(
-              globals.threeService as ThreeService,
-              storyService,
-              zoneService,
-              globals.taggingService as TaggingService,
-              playBook,
-              globals.spotlight as Mesh<BufferGeometry, any>,
-              storyService.activeStory,
-            ).storyPaused();
-            useDMX().lightsOn();
-          }
-        },
-        playBook.lastAction().time + Timing.delayForNext,
-        `Update storyData & show endOfSessions screen or the storyOverview`,
-      );
+        playBook.addToPlayBook(
+          () => {
+            if (audio) {
+              audio.pause();
+            }
+            showProgressOfFrame = false;
+            storyService.setStoryColor();
+            if (storyService.isEndOfSession()) {
+              stateService.changeState(FlowState.endCountdown);
+              garbageHelper.endOfSessionScreen();
+              useDMX().sequence();
+              PlayBookBuild(
+                globals.threeService as ThreeService,
+                storyService,
+                zoneService,
+                globals.taggingService as TaggingService,
+                playBook,
+                globals.spotlight as Mesh<BufferGeometry, any>,
+                storyService.activeStory,
+              ).endOfSession();
+            } else {
+              stateService.changeState(FlowState.storyOverview);
+              emit('resetSelectedStory', {
+                topic: 'sensors/0/present',
+                id: 0,
+                msg: true,
+              } as SensorObject);
+              garbageHelper.pauseScreen();
+              globals.spotlight?.scale.set(
+                Measurements().storyCircle.outerCircle,
+                Measurements().storyCircle.outerCircle,
+                Measurements().storyCircle.outerCircle,
+              );
+              PlayBookBuild(
+                globals.threeService as ThreeService,
+                storyService,
+                zoneService,
+                globals.taggingService as TaggingService,
+                playBook,
+                globals.spotlight as Mesh<BufferGeometry, any>,
+                storyService.activeStory,
+              ).storyPaused();
+              useDMX().lightsOn();
+            }
+          },
+          playBook.lastAction().time + Timing.delayForNext,
+          `Update storyData & show endOfSessions screen or the storyOverview`,
+        );
       } else {
         playBook.addToPlayBook(
           () => {
