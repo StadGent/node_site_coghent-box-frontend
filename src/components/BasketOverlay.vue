@@ -1,9 +1,7 @@
 <template>
   <base-overlay :overlay-state="BasketOverlayState.state" class="p-24">
     <main>
-      <section
-        class="w-full flex justify-center overflow-y-scroll overflow-x-hidden overlay"
-      >
+      <section class="w-full flex justify-center overflow-x-hidden overlay">
         <the-masonry
           v-if="
             basketEntities.length == BasketOverlayState.overlayItems.length &&
