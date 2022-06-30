@@ -126,8 +126,8 @@ const fabricdefaults: FabricDefaults = {
     relationIterations: 3,
     relationLimit: 6,
     dimensions: {
-      width: 1920,
-      height: 900,
+      width: 1919,
+      height: 890,
     },
     selectedImage: {
       canvasPosition: {

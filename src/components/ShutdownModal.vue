@@ -131,5 +131,3 @@
     box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.2);
   }
 </style>
-
-function emit(arg0: string, value: any) { throw new Error('Function not implemented.'); }

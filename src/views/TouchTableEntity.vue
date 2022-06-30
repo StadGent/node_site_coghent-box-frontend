@@ -185,7 +185,7 @@
             if (boxVisiter.value) {
               updateBasketOverlayItems(
                 boxVisiter.value.relations.filter(
-                  (relation: Relation) => relation.type == 'inBasket',
+                  (relation: Relation) => relation.type == 'components',
                 ),
               );
             }
@@ -216,7 +216,6 @@
               },
             },
             updateQuery: (previousData, { fetchMoreResult: queryResult }) => {
-              console.log({ queryResult });
               let relatedEntities: Entity[] = queryResult.Entities.results.filter(
                 (entity: Entity) => !entity?.mediafiles?.[0]?.mediatype?.audio,
               );
@@ -226,7 +225,6 @@
                   .then(() => {
                     let refetchAmount: number = 0;
                     while (refetchAmount != fabricdefaults.canvas.relationIterations) {
-                      console.log({ refetchAmount });
                       relatedEntities.forEach((relatedEntity: Entity) => {
                         const entityRelatedIds = relatedEntity?.relations?.map(
                           (relation: any) => {
@@ -251,7 +249,6 @@
                               previousData,
                               { fetchMoreResult: relatedEntitiesResult },
                             ) => {
-                              console.log({ relatedEntitiesResult });
                               relatedEntitiesResult =
                                 relatedEntitiesResult?.Entities?.results.filter(
                                   (entity: Entity) =>
@@ -363,9 +360,9 @@
 
       const addToBasket = () => {
         const { addAssetToBoxVisiter } = useBoxVisiter(apolloClient);
-        addAssetToBoxVisiter(code.value, id, 'inBasket').then((relations: Relation[]) =>
+        addAssetToBoxVisiter(code.value, id, 'components').then((relations: Relation[]) =>
           updateBasketOverlayItems(
-            relations.filter((relation: Relation) => relation.type == 'inBasket'),
+            relations.filter((relation: Relation) => relation.type == 'components'),
           ),
         );
       };
@@ -414,15 +411,15 @@
     height: 100%;
   }
   .touchtable {
-    width: 1920px;
-    height: 1080px;
+    width: 1919px;
+    height: 1070px;
   }
   .infocard {
     position: absolute;
     top: 100px;
     left: 25px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-    width: 425px;
+    width: 450px;
     height: calc(1080px - 250px);
   }
   #canvas {
