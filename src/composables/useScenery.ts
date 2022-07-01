@@ -5,12 +5,15 @@ import ThreeService from '@/services/ThreeService'
 import ZoneService from '@/services/ZoneService'
 import Measurements from '@/Three/defaults.measurements'
 import useStartOfSession from '@/Three/playbook.startOfSession'
+import MetadataLabel from '@/Three/shapes.metadataLabel'
 import Spot from '@/Three/shapes.spotlight'
-import { Mesh, BufferGeometry } from 'three'
+import { Mesh, BufferGeometry, Vector3 } from 'three'
+import CustomAnimation from './animation'
 import useDMX from './useDMX'
 
 const useScenery = (): {
   welcomeScene: () => void
+  generateStoryScene: () => void
 } => {
   const welcomeScene = () => {
     globals.threeService?.ClearScene();
@@ -32,8 +35,32 @@ const useScenery = (): {
     stateService.canScanTicket = true
   }
 
+  const generateStoryScene = async () => {
+    stateService.canScanTicket = false
+    stateService.changeState(FlowState.generateStory);
+    globals.garbageHelper?.startOfSession();
+    const widthLoader = 20
+
+    const generateText = await MetadataLabel(new Vector3(0, -Measurements().generateLoaderRadius - (widthLoader * 3), 0)).label('we genereren jou verhaal');
+    generateText.text.position.x -= generateText.dimensions.x / 2;
+    generateText.text.position.y -= generateText.dimensions.y;
+    globals.threeService?.AddToScene(generateText.text, Tags.Testing);
+
+    while (stateService.getCurrentState() == FlowState[7]) {
+      await CustomAnimation().circularLoader(
+        globals.threeService as ThreeService,
+        new Vector3(0, 0, 0),
+        Measurements().generateLoaderRadius,
+        widthLoader,
+        [Tags.SmallCountdownRing, Tags.SmallCountdownProgressRing],
+      );
+    }
+    globals.threeService?.RemoveFromScene(generateText.text)
+  }
+
   return {
     welcomeScene,
+    generateStoryScene,
   }
 
 }

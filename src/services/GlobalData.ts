@@ -1,4 +1,5 @@
-import { Mesh, BufferGeometry, BoxGeometry, MeshBasicMaterial, Material, Vector3 } from 'three'
+import { GarabageHelperForWall } from '@/Three/helper.wall.garbage'
+import { Mesh, BufferGeometry, BoxGeometry, MeshBasicMaterial, Material } from 'three'
 import TaggingService from './TaggingService'
 import ThreeService from './ThreeService'
 import ZoneService from './ZoneService'
@@ -11,17 +12,19 @@ class GlobalData {
   zoneService: ZoneService | null
   startVideoElement: Mesh<BufferGeometry, Material | Material[]> | null
   menuVideoElement: Mesh<BufferGeometry, Material | Material[]> | null
+  garbageHelper: GarabageHelperForWall | null
 
-  constructor(){
+  constructor() {
     this.spotlight = null
     this.spotlightBackground = null
     this.threeService = null
     this.taggingService = new TaggingService()
     this.zoneService = null
-    this.startVideoElement= null
-    this.menuVideoElement= null
+    this.garbageHelper = null
+    this.startVideoElement = null
+    this.menuVideoElement = null
   }
-  getGlobalData(){
+  getGlobalData() {
     console.log(`/ spotlight`, this.spotlight)
     console.log(`/ spotlightBackground`, this.spotlightBackground)
     console.log(`/ threeService`, this.threeService)

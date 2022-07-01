@@ -8,6 +8,7 @@ export enum FlowState {
   framePlaying,
   storyOverview,
   endCountdown,
+  generateStory,
 }
 
 class StateService {

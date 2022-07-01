@@ -48,6 +48,7 @@ import VideoHelper from '@/Three/helper.video';
 import { Vector3 } from 'three';
 import globals from '@/services/GlobalData';
 import { useStorybox } from 'coghent-vue-3-component-library';
+import scenery from '@/composables/useScenery';
 
 export default defineComponent({
   name: 'Wall',
@@ -121,7 +122,7 @@ export default defineComponent({
               storyToSetActive = _story.id as string;
             } else {
               stateService.canScanTicket = true;
-              console.log(`INFO | no stories to see on this ticket`)
+              console.log(`INFO | no stories to see on this ticket`);
             }
           });
           if (storyToSetActive) {
@@ -137,6 +138,8 @@ export default defineComponent({
 
     const setCustomStoryData = async (_visiterByCode: any, _storyId: string) => {
       useFlow().setCurrent('customStory');
+      stateService.changeState(FlowState.generateStory);
+      scenery.generateStoryScene();
       const storydata = await useStorybox(apolloClient).getStoryData(_storyId);
       const tmpStoryService = new StoryService([storydata] as Array<any>, visiter.value);
       tmpStoryService.fillUpDataSources();

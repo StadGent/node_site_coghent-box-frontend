@@ -208,7 +208,6 @@ export default defineComponent({
       () => props.storyService,
       (value) => {
         if (value) {
-          console.log(`FLOW:`, useFlow().current());
           storyService = value;
           if (!props.showPauseOverview) {
             setData();
@@ -657,6 +656,7 @@ export default defineComponent({
         globals.threeService as ThreeService,
         globals.taggingService as TaggingService,
       );
+      globals.garbageHelper = garbageHelper
       subtitleService = new SubtitleService();
       globals.threeService?.ClearScene();
 

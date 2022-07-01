@@ -42,6 +42,7 @@ type StartOfSessionScreenParams = {
 };
 
 const Measurements = (): {
+  generateLoaderRadius: number
   storyCircle: StoryCircleParams;
   progressBar: ProgressbarParams;
   spotLight: SpotLightParams;
@@ -50,6 +51,8 @@ const Measurements = (): {
   startOfSession: StartOfSessionScreenParams;
   spacing: number
 } => {
+  const generateLoaderRadius = 100;
+
   const storyCircle = {
     radius: 180,
     progressRadius: 230,
@@ -100,6 +103,7 @@ const Measurements = (): {
   const spacing = 30
 
   return {
+    generateLoaderRadius,
     storyCircle,
     progressBar,
     spotLight,
