@@ -41,12 +41,13 @@ const useScenery = (): {
     globals.garbageHelper?.startOfSession();
     const widthLoader = 20
 
-    const generateText = await MetadataLabel(new Vector3(0, -Measurements().generateLoaderRadius - (widthLoader * 3), 0)).label('we genereren jou verhaal');
+    const generateText = await MetadataLabel(new Vector3(0, -Measurements().generateLoaderRadius - (widthLoader * 3), 0)).label('we creëren jouw verhaal');
     generateText.text.position.x -= generateText.dimensions.x / 2;
     generateText.text.position.y -= generateText.dimensions.y;
     globals.threeService?.AddToScene(generateText.text, Tags.Testing);
 
     while (stateService.getCurrentState() == FlowState[7]) {
+      globals.threeService?.AddToScene(generateText.text, Tags.Testing);
       await CustomAnimation().circularLoader(
         globals.threeService as ThreeService,
         new Vector3(0, 0, 0),
@@ -54,8 +55,8 @@ const useScenery = (): {
         widthLoader,
         [Tags.SmallCountdownRing, Tags.SmallCountdownProgressRing],
       );
+      globals.threeService?.RemoveFromScene(generateText.text)
     }
-    globals.threeService?.RemoveFromScene(generateText.text)
   }
 
   return {
