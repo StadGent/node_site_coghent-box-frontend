@@ -144,6 +144,10 @@ export default defineComponent({
       const tmpStoryService = new StoryService([storydata] as Array<any>, visiter.value);
       tmpStoryService.fillUpDataSources();
       tmpStoryService.setActiveStory(_storyId);
+      tmpStoryService.activeStory = await useCustomStory(
+        stories.value!,
+        _visiterByCode,
+      ).setTitleOfFrameAsStoryTitle(tmpStoryService.activeStory);
       tmpStoryService.hasScannedCode = true;
       storyService.value = tmpStoryService;
     };
