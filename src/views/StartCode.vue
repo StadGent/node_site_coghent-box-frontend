@@ -13,21 +13,23 @@
         <VDropdown
           :shown="displayWrongCodeMessage"
           placement="right-start"
-          :showTriggers="[]"
+          :show-triggers="[]"
         >
           <number-display
             :code="NumberPadState.state"
             :max-amount-of-characters="maxAmountOfNumbers"
             class="mb-12"
           />
-          <template #popper
-            ><div class="p-4">
+          <template
+            #popper
+          >
+            <div class="p-4">
               <h3 class="text-lg">
                 <b>{{ t('touchtable.codeScreen.wrongCode.title') }}</b>
               </h3>
               <p>{{ t('touchtable.codeScreen.wrongCode.description') }}</p>
-            </div></template
-          >
+            </div>
+          </template>
         </VDropdown>
         <number-pad />
       </section>
@@ -39,16 +41,16 @@
             :icon-shown="false"
             :text="t('touchtable.codeScreen.noCode')"
           />
-          <template #popper
-            ><div class="p-4">
+          <template
+            #popper
+          >
+            <div class="p-4">
               <h3 class="text-lg">
                 <b>{{ t('touchtable.codeScreen.noCodePopUp.title') }}</b>
               </h3>
-              <p>
-                {{ t('touchtable.codeScreen.noCodePopUp.description') }}
-              </p>
-            </div></template
-          >
+              <p v-html="t('touchtable.codeScreen.noCodePopUp.description')" />
+            </div>
+          </template>
         </VDropdown>
       </section>
     </CardComponent>

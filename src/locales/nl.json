@@ -4,7 +4,7 @@
       "noCode": "Ik heb nog geen code",
       "noCodePopUp": {
         "title": "Geen paniek!",
-        "description": "Je kan jouw persoonlijke code laten afdrukken via het scherm aan de ingang. Veel succes!"
+        "description": "Je kan jouw persoonlijke code laten afdrukken via het scherm aan de ingang of via deze <a class='underline font-medium' href='https://data.collectie.gent/?touch=true'>link</a> zonder code door de collectie bladeren. Veel succes!"
       },
       "wrongCode": {
         "title": "Deze code werd helaas niet gevonden!",
