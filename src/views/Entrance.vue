@@ -35,56 +35,57 @@
   </div>
 </template>
 <script lang="ts">
-  import Common from '@/composables/common';
-  import { Entity } from '@/models/GraphqlModel';
-  import { useQuery } from '@vue/apollo-composable';
-  import { GetActiveBoxDocument } from 'coghent-vue-3-component-library';
-  import { defineComponent, onMounted, provide, ref } from 'vue';
-  import { useRouter } from 'vue-router';
+import Common from '@/composables/common';
+import { Entity } from '@/models/GraphqlModel';
+import { useQuery } from '@vue/apollo-composable';
+import { GetActiveBoxDocument } from 'coghent-vue-3-component-library';
+import { defineComponent, onMounted, provide, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-  export default defineComponent({
-    name: 'Entrance',
-    components: {},
-    setup() {
-      const router = useRouter();
-      const stories = ref<Array<Entity>>([]);
-      const showCodePopup = ref<string | null>(null);
-      provide('showCodePopup', showCodePopup);
-      provide('stories', stories);
+export default defineComponent({
+  name: 'Entrance',
+  components: {},
+  setup() {
+    const router = useRouter();
+    const stories = ref<Array<Entity>>([]);
+    const showCodePopup = ref<string | null>(null);
+    provide('showCodePopup', showCodePopup);
+    provide('stories', stories);
 
-      const root = document.getElementsByTagName('html')[0];
-      root.className += ' bigger-font';
+    const root = document.getElementsByTagName('html')[0];
+    root.className += ' bigger-font';
 
-      const { refetch: updatedStories, loading } = useQuery(
-        GetActiveBoxDocument,
-        {},
-        { fetchPolicy: 'cache-first' },
-      );
+    const param_activeBoxId = Common().getUrlParamValue('box');
 
-      onMounted(() => {
-        router.push({ name: 'entrance.step1' });
-        console.log(updatedStories());
-        updatedStories()?.then((value: any) => {
-          stories.value = [
-            value.data.ActiveBox.results[2],
-            value.data.ActiveBox.results[0],
-            value.data.ActiveBox.results[1],
-            value.data.ActiveBox.results[3],
-          ];
-        });
+    const { refetch: updatedStories, loading } = useQuery(
+      GetActiveBoxDocument,
+      { id: param_activeBoxId ? param_activeBoxId : null },
+      { fetchPolicy: 'cache-first' },
+    );
 
-        if (showCodePopup.value === null) {
-          showCodePopup.value = Common().getUrlParamValue('popup');
-        }
+    onMounted(() => {
+      if (showCodePopup.value === null) {
+        showCodePopup.value = Common().getUrlParamValue('popup');
+      }
+      router.push({ name: 'entrance.step1' });
+      console.log(updatedStories());
+      updatedStories()?.then((value: any) => {
+        stories.value = [
+          value.data.ActiveBox.results[2],
+          value.data.ActiveBox.results[0],
+          value.data.ActiveBox.results[1],
+          value.data.ActiveBox.results[3],
+        ];
       });
+    });
 
-      return { loading };
-    },
-  });
+    return { loading };
+  },
+});
 </script>
 
 <style>
-  .bigger-font {
-    font-size: 32px;
-  }
+.bigger-font {
+  font-size: 32px;
+}
 </style>
