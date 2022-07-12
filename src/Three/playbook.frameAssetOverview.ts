@@ -51,6 +51,8 @@ const useFrameAssetOverview = (
     const data: Record<number, Vector3> = {};
     const images: Array<Mesh> = [];
     const scaleTo: Array<number> = [];
+    console.log('');
+    console.log(`assets.length()`, assets.length)
     for (const [i, asset] of assets.entries()) {
       const relationMetadata = useAsset(threeService).connectRelationMetadata(
         frame,
@@ -67,6 +69,8 @@ const useFrameAssetOverview = (
         asset.primary_mediafile_location,
         frame.assets,
       );
+      console.log(`\n`);
+      console.log(`MEDIAFILE`, mediafile)
       if (mediafile) {
         data[relationMetadata.timestamp_start] = position;
         positions.push(position);
@@ -83,6 +87,7 @@ const useFrameAssetOverview = (
           );
         }
         if (mediafile?.original_file_location && mediafile.mediatype?.video) {
+          console.log(`=> VIDEO`)
           if (Development().showVideoLogs())
             console.log('| Asset is video', mediafile.original_file_location);
           image = VideoHelper().videoElementAsCube(
