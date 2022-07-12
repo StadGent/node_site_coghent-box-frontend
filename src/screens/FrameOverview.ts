@@ -23,7 +23,6 @@ const FrameOverview = (
 
   const addImage = async (_mediafile: MediaFile, scale: number, position: Vector3, _dimensions: Vector3) => {
     let cube: Mesh<BoxGeometry, MeshBasicMaterial> | null = null
-    console.log(`_mendiafile`, _mediafile)
     if (_mediafile.original_file_location && _mediafile.mediainfo) {
       const schema = CubeHelper().CreateSchema(
         position,
@@ -39,23 +38,12 @@ const FrameOverview = (
         'download/',
       );
 
-      // _mediafile.transcode_filename ? schema.params.url = generateUrl(encodeURI(_mediafile.transcode_filename), 'full', 'max') : schema.params.url = generateUrl(filename, 'full', 'max');
       if (_mediafile.transcode_filename != null) {
-        console.log(`USING TRANSCODE`, _mediafile.transcode_filename)
-        console.log(`filename transcode encodeURI(_mediafile.transcode_filename)`, encodeURI(_mediafile.transcode_filename ? _mediafile.transcode_filename : ''))
-        console.log(`generatenurl transcode encodeURI(_mediafile.transcode_filename)`, generateUrl(encodeURI(_mediafile.transcode_filename ? _mediafile.transcode_filename : ''), 'full', 'max'))
         schema.params.url = generateUrl(encodeURI(_mediafile.transcode_filename), 'full', 'max')
       } else {
-        console.log(`USING ORIGINAL`, _mediafile.original_file_location)
-        console.log(`filename`, filename)
-        console.log(`generate orginal url`, generateUrl(filename, 'full', 'max'))
         schema.params.url = generateUrl(filename, 'full', 'max');
       }
 
-      // console.log(`ALWAYS USING ORIGINAL FILENAME `)
-      // schema.params.url = generateUrl(filename, 'full', 'max')
-      // console.log(`filename`, schema.params.url);
-      console.log(`\n`);
       cube = await SchemaCube().CreateImageCubeAsync(
         schema,
         threeService.cachedTextures,
