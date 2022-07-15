@@ -42,6 +42,7 @@ const useAsset = (
   connectRelationMetadata: (
     parent: Frame | Story,
     child: Asset | Frame,
+    _currentAssetIndex: number,
   ) => ComponentMetadata;
   getMediaInfoForAsset: (
     _assetID: string,
@@ -184,10 +185,25 @@ const useAsset = (
     return activeStory.frames?.[frame]?.assets as Array<Entity>;
   };
 
-  const connectRelationMetadata = (parent: Frame | Story, child: Asset | Frame) => {
-    const metadataForAsset = parent.relationMetadata.filter(
+  const connectRelationMetadata = (parent: Frame | Story, child: Asset | Frame, _currentAssetIndex: number) => {
+    const frame = parent as Frame
+    const assets = frame.assets as Array<Asset>
+    const assetDuplicates = assets.filter(_asset => _asset.id === child.id)
+    const indexes: Array<number> = []
+    let setMetadata = 0
+    if (assetDuplicates.length > 1) {
+      for (const [index, asset] of assets.entries()) {
+        if (asset.id === child.id) {
+          indexes.push(index)
+        }
+      }
+
+      const itemToMatch = indexes.indexOf(_currentAssetIndex)
+      itemToMatch != -1 ? setMetadata = itemToMatch : null
+    }
+    const metadataForAsset = frame.relationMetadata.filter(
       (metadata) => Common().FilterOutIdAfterSlash(metadata.key) == child.id,
-    )[0];
+    )[setMetadata];
     return metadataForAsset;
   };
 

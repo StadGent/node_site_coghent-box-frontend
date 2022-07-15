@@ -55,6 +55,7 @@ const useFrameAssetOverview = (
       const relationMetadata = useAsset(threeService).connectRelationMetadata(
         frame,
         asset,
+        i
       );
       const position = new Vector3(0, 0, -1);
       if (relationMetadata?.position != null || undefined) {
@@ -286,6 +287,7 @@ const useFrameAssetOverview = (
         const relationMetadata = useAsset(threeService).connectRelationMetadata(
           activeStory.frames?.[currentFrame] as unknown as Frame,
           assets[index],
+          index
         );
         if (relationMetadata.timestamp_start) {
           playBook.addToPlayBook(

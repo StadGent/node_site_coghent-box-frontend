@@ -67,16 +67,18 @@ const useFrame = (
     let relationMetadata = useAsset(_threeService).connectRelationMetadata(
       activeStory.frames?.[currentFrameIndex] as unknown as Frame,
       activeStory.frames[currentFrameIndex]?.assets[0] as unknown as Asset,
+      -1
     );
-    activeStory.frames[currentFrameIndex].assets.forEach((asset: Frame | Asset) => {
+    for (const [index, asset] of activeStory.frames[currentFrameIndex].assets.entries()) {
       const data = useAsset(_threeService).connectRelationMetadata(
         activeStory.frames[currentFrameIndex],
         asset,
+        index
       );
       if (data.timestamp_end > relationMetadata.timestamp_end) {
         relationMetadata = data;
       }
-    });
+    }
     return relationMetadata;
   };
 
