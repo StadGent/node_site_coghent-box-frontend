@@ -149,6 +149,7 @@ export default defineComponent({
         _visiterByCode,
       ).setTitleOfFrameAsStoryTitle(tmpStoryService.activeStory);
       tmpStoryService.hasScannedCode = true;
+      await useBoxVisiter(apolloClient).updateScannedTimesOfVisiter(_visiterByCode.code);
       storyService.value = tmpStoryService;
     };
 
