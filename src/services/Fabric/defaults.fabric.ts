@@ -104,6 +104,7 @@ type FabricDefaults = {
         range: number;
       };
       height: Array<number>;
+      maxAmount: number;
     };
   };
 };
@@ -225,6 +226,7 @@ const fabricdefaults: FabricDefaults = {
         range: 1,
       },
       height: [175, 150, 125, 100],
+      maxAmount: 20,
     },
   },
 };

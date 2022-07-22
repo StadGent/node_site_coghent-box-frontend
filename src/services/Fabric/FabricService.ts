@@ -33,6 +33,7 @@ export type State = {
   positions: Array<Position>;
   takenPositions: Array<Position>;
   canvasEntities: string[];
+  secondaryImageAmount: number;
 };
 
 export type Scale = {
@@ -69,6 +70,7 @@ export default class FabricService {
       positions: initialAvailablePositionHelper(),
       takenPositions: [],
       canvasEntities: [],
+      secondaryImageAmount: 0,
     };
     this.setMainImageOnClick();
   }
@@ -243,7 +245,12 @@ export default class FabricService {
                 image.relationOriginId,
                 this.state.canvas.getObjects(),
               );
-              if (!isDuplicateFrameHelper(image.id, this.state.canvasEntities)) {
+              if (
+                !isDuplicateFrameHelper(image.id, this.state.canvasEntities) &&
+                this.state.secondaryImageAmount <=
+                  fabricdefaults.canvas.secondaryImage.maxAmount
+              ) {
+                this.state.secondaryImageAmount++;
                 this.state.canvasEntities.push(image.id);
                 this.state.canvas.add(image);
                 this.state.takenPositions.push(image.positionIndexes);
