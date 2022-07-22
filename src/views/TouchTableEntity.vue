@@ -178,8 +178,8 @@
         () => {
           if (route.params.entityID) {
             console.log('Refetch entity');
-            relationsLabelArray.value = [];
             relationStringArray.value = [];
+            relationsArray.value = [];
             id = asString(route.params.entityID);
             if (boxVisiter.value) {
               updateBasketOverlayItems(
