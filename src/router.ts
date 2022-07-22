@@ -14,6 +14,7 @@ export const routes: RouteRecordRaw[] = [
     path: '/',
     redirect: '/entrance',
     component: Entrance,
+    children: [],
   },
   {
     path: '/entrance',
@@ -52,6 +53,7 @@ export const routes: RouteRecordRaw[] = [
     path: '/touchtable',
     redirect: '/touchtable/start',
     component: StartCode,
+    children: [],
   },
   {
     path: '/touchtable/start',
