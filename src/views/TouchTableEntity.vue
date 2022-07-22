@@ -138,7 +138,6 @@
       let id = asString(route.params.entityID);
       const code = ref<string>(boxVisiter.value ? boxVisiter.value.code : undefined);
       const relationStringArray = ref<string[]>([]);
-      const relationsLabelArray = ref<string[]>([]);
       const relationsArray = ref<Relation[]>([]);
       const entity = ref<any>();
       let fabricService = ref<FabricService | undefined>(undefined);
@@ -159,7 +158,7 @@
         GetTouchTableEntityDocument,
         () => ({
           limit: fabricdefaults.canvas.relationLimit,
-          skip: startEntityResult ? 0 : 1,
+          skip: 0,
           searchValue: {
             value: '',
             isAsc: false,
@@ -205,7 +204,7 @@
           fetchMoreRelations({
             variables: {
               limit: fabricdefaults.canvas.relationLimit,
-              skip: startEntityResult ? 0 : 1,
+              skip: 0,
               searchValue: {
                 value: '',
                 isAsc: false,
@@ -314,7 +313,6 @@
             ) {
               relationsArray.value.push(relation);
               relationStringArray.value.push(relation.key);
-              relationsLabelArray.value.push(relation.value);
             }
           });
         }
@@ -388,7 +386,6 @@
       return {
         entity,
         relationStringArray,
-        relationsLabelArray,
         relationsArray,
         loading,
         route,
