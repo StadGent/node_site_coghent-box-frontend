@@ -1,5 +1,9 @@
 <template>
-  <base-overlay :overlay-state="BasketOverlayState.state" class="p-24">
+  <base-overlay
+    v-if="BasketOverlayState.overlayItems"
+    :overlay-state="BasketOverlayState.state"
+    class="p-24"
+  >
     <main>
       <section class="w-full flex justify-center overflow-x-hidden overlay">
         <the-masonry
@@ -63,8 +67,6 @@
     BaseIcon,
     GetEntityByIdDocument,
     BaseButton,
-    DeleteRelationFromBoxVisiterDocument,
-    boxVisiter,
     useBoxVisiter,
     useMediaModal,
   } from 'coghent-vue-3-component-library';
@@ -176,20 +178,25 @@
       };
 
       watch(
-        () => BasketOverlayState.value.overlayItems.length,
+        () => BasketOverlayState?.value?.overlayItems?.length,
         () => {
-          console.log('refetchbasket');
-          if (!basketEntities.value.length) {
-            getEntitiesForRelations(BasketOverlayState.value.overlayItems);
-          } else {
-            const newEntities = BasketOverlayState.value.overlayItems.filter(
-              (item: any) =>
-                !basketEntities.value.find(
-                  (basketItem: any) => basketItem.id == item.key.replace('entities/', ''),
-                ),
-            );
-            if (newEntities.length) {
-              getEntitiesForRelations(newEntities);
+          if (
+            BasketOverlayState.value.overlayItems &&
+            BasketOverlayState.value.overlayItems.length
+          ) {
+            if (!basketEntities.value.length) {
+              getEntitiesForRelations(BasketOverlayState.value.overlayItems);
+            } else {
+              const newEntities = BasketOverlayState.value.overlayItems.filter(
+                (item: any) =>
+                  !basketEntities.value.find(
+                    (basketItem: any) =>
+                      basketItem.id == item.key.replace('entities/', ''),
+                  ),
+              );
+              if (newEntities.length) {
+                getEntitiesForRelations(newEntities);
+              }
             }
           }
         },
@@ -201,16 +208,10 @@
           (basketEntity: Entity) => basketEntity.id != entityId,
         );
         basketEntities.value = newBasket;
-        const { deleteRelationFromBoxVisiter } = useBoxVisiter(apolloClient);
-        deleteRelationFromBoxVisiter(props.boxVisitorCode, entityId).then(
+        const { deleteBasketItemFromBoxVisiter } = useBoxVisiter(apolloClient);
+        deleteBasketItemFromBoxVisiter(props.boxVisitorCode, entityId).then(
           (result: Relation[]) => {
-            console.log({ result });
-            const newBasketArray: Relation[] = result.filter(
-              (relation: Relation) => relation.type == 'inBasket',
-            );
-            if (newBasketArray) {
-              updateBasketOverlayItems(newBasketArray);
-            }
+            updateBasketOverlayItems(result);
           },
         );
       };

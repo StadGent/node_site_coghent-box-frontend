@@ -94,6 +94,7 @@
     GetTouchTableEntityByIdDocument,
     CardComponent,
     GetTouchTableEntityDocument,
+    BasketByCustomFrameIdDocument,
     BaseButton,
     boxVisiter,
     startAsset,
@@ -112,7 +113,11 @@
   import ShutdownModal from '@/components/ShutdownModal.vue';
   import RelationBrowser from '@/components/RelationBrowser.vue';
   import { fabricdefaults } from '../services/Fabric/defaults.fabric';
-  import { Relation, Entity } from 'coghent-vue-3-component-library/lib/queries';
+  import {
+    Relation,
+    Entity,
+    RelationType,
+  } from 'coghent-vue-3-component-library/lib/queries';
   import { apolloClient } from '@/main';
   import OnBoardingCard from '@/components/OnBoardingCard.vue';
   import { useOnBoarding } from '@/composables/useOnBoarding';
@@ -181,12 +186,8 @@
             relationStringArray.value = [];
             relationsArray.value = [];
             id = asString(route.params.entityID);
-            if (boxVisiter.value) {
-              updateBasketOverlayItems(
-                boxVisiter.value.relations.filter(
-                  (relation: Relation) => relation.type == 'components',
-                ),
-              );
+            if (boxVisiter.value && boxVisiter?.value?.storyboxes[0]?.relations) {
+              updateBasketOverlayItems(boxVisiter.value.storyboxes[0].relations);
             }
             refetchEntity({
               id: asString(route.params.entityID),
@@ -359,9 +360,7 @@
       const addToBasket = () => {
         const { addAssetToBoxVisiter } = useBoxVisiter(apolloClient);
         addAssetToBoxVisiter(code.value, id, 'components').then((relations: Relation[]) =>
-          updateBasketOverlayItems(
-            relations.filter((relation: Relation) => relation.type == 'components'),
-          ),
+          updateBasketOverlayItems(relations),
         );
       };
 
