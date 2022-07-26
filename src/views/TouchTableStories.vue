@@ -1,5 +1,6 @@
 <template>
   <div v-if="boxVisiter" :key="boxVisiter.code">
+    <inactivity-modal />
     <shutdown-modal :code="boxVisiter.code" />
     <nav class="px-24 py-8 flex justify-between items-center">
       <div class="">
@@ -68,6 +69,8 @@
   import Colors from '@/Three/defaults.color';
   import { useI18n } from 'vue-i18n';
   import { useOnBoarding } from '@/composables/useOnBoarding';
+  import { useInactiveTimer } from '@/composables/useInactiveTimer';
+  import inactivityModal, { useInactivityModal } from '@/components/InactivityModal.vue';
 
   type StoryResult = {
     story: Entity;
@@ -81,6 +84,7 @@
       ShutdownModal,
       StoryItem,
       Spinner,
+      inactivityModal,
     },
     props: {},
     setup(props) {
@@ -92,6 +96,8 @@
       const router = useRouter();
       const { isFirstStoryOverview, updateIsFirstStoryOverview } = useTouchTable();
       const { resetOnBoardingState } = useOnBoarding();
+      const { timerSettings } = useInactiveTimer();
+      const { openInactivityModal, closeInactivityModal } = useInactivityModal();
       const { t } = useI18n();
 
       const { result: activeBoxResult, loading: loadingActiveBoxResult } =
@@ -171,6 +177,17 @@
           scrollToStory();
         }
       });
+
+      watch(
+        () => timerSettings.value.timeLeft,
+        (timeLeft) => {
+          if (timeLeft && timeLeft <= timerSettings.value.showModalTime) {
+            openInactivityModal();
+          } else {
+            closeInactivityModal();
+          }
+        },
+      );
 
       return {
         openShutdownModal,

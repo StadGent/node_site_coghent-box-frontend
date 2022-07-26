@@ -22,7 +22,6 @@ export let apolloClient: ApolloClient<NormalizedCacheObject>;
 export let iiiF: any;
 
 async function main() {
-  console.log(`box-frontend>component-library v0.1.103`)
   const configStore = StoreFactory.get(ConfigStore);
   const config = await fetch('../config.json').then((r) => r.json());
   configStore.setConfig(config);

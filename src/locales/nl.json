@@ -58,6 +58,12 @@
         "previous": "Vorige",
         "end": "Ik ben er klaar voor!"
       }
+    },
+    "inactivityModal": {
+      "title": "Door inactiviteit wordt de touchtafel binnenkort afgesloten",
+      "shutdown": "Sessie nu afsluiten",
+      "keepGoing": "Verder gaan"
+
     }
   },
   "intro": {

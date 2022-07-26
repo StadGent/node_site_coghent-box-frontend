@@ -20,9 +20,7 @@
             :max-amount-of-characters="maxAmountOfNumbers"
             class="mb-12"
           />
-          <template
-            #popper
-          >
+          <template #popper>
             <div class="p-4">
               <h3 class="text-lg">
                 <b>{{ t('touchtable.codeScreen.wrongCode.title') }}</b>
@@ -41,9 +39,7 @@
             :icon-shown="false"
             :text="t('touchtable.codeScreen.noCode')"
           />
-          <template
-            #popper
-          >
+          <template #popper>
             <div class="p-4">
               <h3 class="text-lg">
                 <b>{{ t('touchtable.codeScreen.noCodePopUp.title') }}</b>
@@ -72,6 +68,7 @@
   import { useTouchTable } from '@/composables/useTouchTable';
   import { useOnBoarding } from '@/composables/useOnBoarding';
   import { useI18n } from 'vue-i18n';
+  import { useInactiveTimer } from '../composables/useInactiveTimer';
 
   export default defineComponent({
     name: 'StartCode',
@@ -85,6 +82,7 @@
     setup: (props) => {
       const { updateNumberPad, undoNumberPad, resetNumberPad, NumberPadState } =
         useNumberPad();
+      const { initiateTimer } = useInactiveTimer();
       const maxAmountOfNumbers = 8;
       const router = useRouter();
       const displayWrongCodeMessage = ref<boolean>(false);
@@ -111,7 +109,7 @@
 
       const checkCode = () => {
         let code: string = NumberPadState.value.state.join('');
-        // code = '81453243'; // 81453243, 37898122, 15747469
+        // code = '40344452'; // 81453243, 37898122, 15747469
         const { getByCode } = useBoxVisiter(apolloClient);
         const resolvedBoxVisit = getByCode(code);
         resolvedBoxVisit.then((boxVisit: any) => {
@@ -119,6 +117,7 @@
             resetOnBoardingState();
             updateIsFirstStoryOverview(true);
             router.push('/touchtable/stories');
+            initiateTimer();
             resetNumberPad();
           } else {
             showWrongCodeMessage();

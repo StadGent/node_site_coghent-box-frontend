@@ -1,5 +1,6 @@
 <template>
   <div class="touchtable">
+    <inactivity-modal />
     <basket-overlay :boxVisitorCode="code" />
     <shutdown-modal :code="code" @disposeCanvas="disposeCanvas" />
     <media-modal />
@@ -122,6 +123,8 @@
   import OnBoardingCard from '@/components/OnBoardingCard.vue';
   import { useOnBoarding } from '@/composables/useOnBoarding';
   import { useI18n } from 'vue-i18n';
+  import inactivityModal, { useInactivityModal } from '../components/InactivityModal.vue';
+  import { useInactiveTimer } from '../composables/useInactiveTimer';
 
   const asString = (x: string | string[]) => (Array.isArray(x) ? x[0] : x);
 
@@ -136,6 +139,7 @@
       MediaModal,
       BasketOverlay,
       OnBoardingCard,
+      inactivityModal,
     },
     setup: () => {
       const route = useRoute();
@@ -152,6 +156,8 @@
       const { t } = useI18n();
       const { setMediaModalFile, setMediaModalImageUrl, openMediaModal } =
         useMediaModal();
+      const { timerSettings } = useInactiveTimer();
+      const { openInactivityModal, closeInactivityModal } = useInactivityModal();
 
       const {
         result: startEntityResult,
@@ -382,6 +388,17 @@
         window.location.href = '/touchtable/start';
       }
 
+      watch(
+        () => timerSettings.value.timeLeft,
+        (timeLeft) => {
+          if (timeLeft && timeLeft <= timerSettings.value.showModalTime) {
+            openInactivityModal();
+          } else {
+            closeInactivityModal();
+          }
+        },
+      );
+
       return {
         entity,
         relationStringArray,
@@ -395,6 +412,7 @@
         disposeCanvas,
         onBoardingState,
         BasketOverlayState,
+        timerSettings,
         t,
       };
     },

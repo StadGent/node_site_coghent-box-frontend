@@ -2,7 +2,6 @@
   <BaseModal
     :scroll="false"
     :modal-state="ShutdownModalState.state"
-    class="w-1/2"
     @hide-modal="closeShutdownModal"
   >
     <section class="flex flex-wrap justify-center items-center w-full p-24">
