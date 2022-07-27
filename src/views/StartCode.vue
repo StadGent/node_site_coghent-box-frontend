@@ -116,6 +116,7 @@
           if (boxVisit) {
             resetOnBoardingState();
             updateIsFirstStoryOverview(true);
+            useBoxVisiter(apolloClient).addTouchTableTime(code);
             router.push('/touchtable/stories');
             initiateTimer();
             resetNumberPad();
