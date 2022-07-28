@@ -22,7 +22,7 @@ export type TimerState = {
 };
 
 const timerSettings = ref<TimerSettings>({
-  timerSeconds: 30,
+  timerSeconds: 120,
   showModalTime: 20,
   enableActivityTracker: true,
   timerFunction: logOut,
