@@ -1,38 +1,59 @@
 import { ref } from 'vue';
 import { useBoxVisiter } from 'coghent-vue-3-component-library';
 import { apolloClient } from '@/main';
-import { timer } from 'd3';
+
+export const logOut = () => {
+  const { resetBoxVisiter } = useBoxVisiter(apolloClient);
+  resetBoxVisiter();
+  window.location.href = '/touchtable/start';
+};
 
 export type TimerSettings = {
-  timer: any;
   timerSeconds: number;
+  showModalTime: number;
+  enableActivityTracker: Boolean;
+  timerFunction: Function;
+};
+
+export type TimerState = {
+  timer: any;
   timeLeft: undefined | number;
   tracker: any;
-  showModalTime: number;
 };
 
 const timerSettings = ref<TimerSettings>({
+  timerSeconds: 30,
+  showModalTime: 20,
+  enableActivityTracker: true,
+  timerFunction: logOut,
+});
+
+const timerState = ref<TimerState>({
   timer: undefined,
-  timerSeconds: 120,
   timeLeft: undefined,
   tracker: undefined,
-  showModalTime: 20,
 });
 
 export const useInactiveTimer = () => {
+  const overwriteTimerSettings = (settings: TimerSettings) => {
+    timerSettings.value = settings;
+  };
+
   const initiateTimer = () => {
-    initiateActivityTracker();
-    timerSettings.value.timer = setTimeout(() => {
-      logOut();
+    if (timerSettings.value.enableActivityTracker) {
+      initiateActivityTracker();
+    }
+    timerState.value.timer = setTimeout(() => {
+      timerSettings.value.timerFunction();
     }, timerSettings.value.timerSeconds * 1000);
     trackTimeLeft();
   };
 
   const trackTimeLeft = () => {
-    timerSettings.value.timeLeft = timerSettings.value.timerSeconds;
-    timerSettings.value.tracker = setInterval(() => {
-      if (timerSettings.value.timeLeft) {
-        timerSettings.value.timeLeft = timerSettings.value.timeLeft - 1;
+    timerState.value.timeLeft = timerSettings.value.timerSeconds;
+    timerState.value.tracker = setInterval(() => {
+      if (timerState.value.timeLeft) {
+        timerState.value.timeLeft = timerState.value.timeLeft - 1;
       }
     }, 1000);
   };
@@ -43,16 +64,17 @@ export const useInactiveTimer = () => {
   };
 
   const resetTimer = () => {
-    clearTimeout(timerSettings.value.timer);
-    clearInterval(timerSettings.value.tracker);
+    clearTimeout(timerState.value.timer);
+    clearInterval(timerState.value.tracker);
     initiateTimer();
   };
 
-  const logOut = () => {
-    const { resetBoxVisiter } = useBoxVisiter(apolloClient);
-    resetBoxVisiter();
-    window.location.href = '/touchtable/start';
+  return {
+    overwriteTimerSettings,
+    initiateTimer,
+    initiateActivityTracker,
+    resetTimer,
+    timerSettings,
+    timerState,
   };
-
-  return { initiateTimer, initiateActivityTracker, resetTimer, logOut, timerSettings };
 };
