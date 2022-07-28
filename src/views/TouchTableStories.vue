@@ -71,6 +71,7 @@
   import { useOnBoarding } from '@/composables/useOnBoarding';
   import { useInactiveTimer } from '@/composables/useInactiveTimer';
   import inactivityModal, { useInactivityModal } from '@/components/InactivityModal.vue';
+  import { hideAllPoppers } from 'floating-vue';
 
   type StoryResult = {
     story: Entity;
@@ -96,7 +97,7 @@
       const router = useRouter();
       const { isFirstStoryOverview, updateIsFirstStoryOverview } = useTouchTable();
       const { resetOnBoardingState } = useOnBoarding();
-      const { timerSettings } = useInactiveTimer();
+      const { timerSettings, timerState } = useInactiveTimer();
       const { openInactivityModal, closeInactivityModal } = useInactivityModal();
       const { t } = useI18n();
 
@@ -179,9 +180,10 @@
       });
 
       watch(
-        () => timerSettings.value.timeLeft,
+        () => timerState.value.timeLeft,
         (timeLeft) => {
           if (timeLeft && timeLeft <= timerSettings.value.showModalTime) {
+            hideAllPoppers();
             openInactivityModal();
           } else {
             closeInactivityModal();

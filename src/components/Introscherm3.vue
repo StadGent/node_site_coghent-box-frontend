@@ -12,17 +12,7 @@
       </h1>
     </div>
     <div
-      class="
-        overflow-hidden
-        custom-container
-        rounded-2xl
-        z-10
-        flex flex-wrap
-        text-center
-        bg-background-medium
-        justify-center
-        relative
-      "
+      class="overflow-hidden custom-container rounded-2xl z-10 flex flex-wrap text-center bg-background-medium justify-center relative"
     >
       <div
         :class="`
@@ -157,18 +147,7 @@
         />
       </div>
       <div
-        class="
-          show-things
-          text-left
-          pl-20
-          w-full
-          justify-between
-          flex
-          pr-20
-          flex-col
-          items-center
-          py-20
-        "
+        class="show-things text-left pl-20 w-full justify-between flex pr-20 flex-col items-center py-20"
       >
         <span class="font-light mb-5 text-4xl px-20 text-center whitespace-pre-line">{{
           t('intro.screen-3.info')
@@ -176,17 +155,7 @@
         <img src="/box-map.png" class="w-9/12" />
         <div class="w-full flex justify-center">
           <button
-            class="
-              flex
-              text-3xl
-              font-light
-              bg-text-white
-              text-text-black
-              py-7
-              px-10
-              rounded-2xl
-              shadow-1xl
-            "
+            class="flex text-3xl font-light bg-text-white text-text-black py-7 px-10 rounded-2xl shadow-1xl"
             @click="naarStart"
           >
             <svg
@@ -231,6 +200,7 @@
   import useTicket from '@/composables/useTicket';
   import Development from '@/Three/defaults.development';
   import { useI18n } from 'vue-i18n';
+  import { useInactiveTimer } from '../composables/useInactiveTimer';
 
   export default defineComponent({
     name: 'Introscherm3',
@@ -243,6 +213,7 @@
       const { selectedStory } = useBoxVisiter(apolloClient);
       const colors = Colors().storyCssOnlyColor();
       const showPopup = inject<any>('showCodePopup');
+      const { overwriteTimerSettings, initiateTimer } = useInactiveTimer();
 
       const getNumberByColor = (color: string) => {
         const index = colors.findIndex((element) => color === element);
@@ -280,6 +251,16 @@
       const naarStart = () => {
         router.push({ name: 'entrance.step1' });
       };
+
+      onMounted(() => {
+        overwriteTimerSettings({
+          timerSeconds: 30,
+          showModalTime: 0,
+          enableActivityTracker: false,
+          timerFunction: naarStart,
+        });
+        initiateTimer();
+      });
 
       return { t, naarStart, selectedStory, getNumberByColor, showPopup };
     },

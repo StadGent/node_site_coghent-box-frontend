@@ -125,6 +125,7 @@
   import { useI18n } from 'vue-i18n';
   import inactivityModal, { useInactivityModal } from '../components/InactivityModal.vue';
   import { useInactiveTimer } from '../composables/useInactiveTimer';
+  import { hideAllPoppers } from 'floating-vue';
 
   const asString = (x: string | string[]) => (Array.isArray(x) ? x[0] : x);
 
@@ -156,7 +157,7 @@
       const { t } = useI18n();
       const { setMediaModalFile, setMediaModalImageUrl, openMediaModal } =
         useMediaModal();
-      const { timerSettings } = useInactiveTimer();
+      const { timerState, timerSettings } = useInactiveTimer();
       const { openInactivityModal, closeInactivityModal } = useInactivityModal();
 
       const {
@@ -389,9 +390,10 @@
       }
 
       watch(
-        () => timerSettings.value.timeLeft,
+        () => timerState.value.timeLeft,
         (timeLeft) => {
           if (timeLeft && timeLeft <= timerSettings.value.showModalTime) {
+            hideAllPoppers();
             openInactivityModal();
           } else {
             closeInactivityModal();

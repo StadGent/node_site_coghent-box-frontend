@@ -8,7 +8,7 @@
       <h1 class="text-6xl font-bold text-center pb-24">
         {{ t('touchtable.inactivityModal.title') }}
       </h1>
-      <p class="text-5xl text-center">0:{{ timerSettings.timeLeft }}</p>
+      <p class="text-5xl text-center">0:{{ timerState.timeLeft }}</p>
       <section class="flex justify-center items-center pt-24">
         <base-button
           class="shadow mr-8"
@@ -30,7 +30,7 @@
 
 <script lang="ts">
   import { defineComponent, ref } from 'vue';
-  import { useInactiveTimer } from '../composables/useInactiveTimer';
+  import { useInactiveTimer, logOut } from '../composables/useInactiveTimer';
   import { BaseModal, BaseButton } from 'coghent-vue-3-component-library';
   import { useI18n } from 'vue-i18n';
 
@@ -73,10 +73,10 @@
     components: { BaseModal, BaseButton },
     setup() {
       const { closeInactivityModal, InactivityModalState } = useInactivityModal();
-      const { timerSettings, logOut } = useInactiveTimer();
+      const { timerState } = useInactiveTimer();
       const { t } = useI18n();
 
-      return { closeInactivityModal, InactivityModalState, timerSettings, logOut, t };
+      return { closeInactivityModal, InactivityModalState, timerState, logOut, t };
     },
   });
 </script>
