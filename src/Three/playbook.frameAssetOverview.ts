@@ -26,6 +26,7 @@ import { tweenPromise } from './helper.tweenPromise';
 import TWEEN from '@tweenjs/tween.js';
 import VideoHelper from './helper.video';
 import globals from '@/services/GlobalData';
+import { MediaFile, Relation } from 'coghent-vue-3-component-library/lib/queries';
 
 const useFrameAssetOverview = (
   threeService: ThreeService,
@@ -68,7 +69,9 @@ const useFrameAssetOverview = (
         asset.primary_mediafile_location,
         frame.assets,
       );
-      if (mediafile) {
+      const updatedMediafile = await useAsset(threeService).updateAssetMediafileToSetMediafile(asset, relationMetadata as Relation, mediafile as MediaFile)
+
+      if (updatedMediafile) {
         data[relationMetadata.timestamp_start] = position;
         positions.push(position);
         let image;
@@ -76,26 +79,26 @@ const useFrameAssetOverview = (
         if (asset.primary_height != null && asset.primary_width != null) {
           dimensions.setX(asset.primary_width);
           dimensions.setY(asset.primary_height);
-        } else if (mediafile.mediatype) {
+        } else if (updatedMediafile.mediatype) {
           dimensions = new Vector3(
-            Number(mediafile.mediainfo?.width),
-            Number(mediafile.mediainfo?.height),
+            Number(updatedMediafile.mediainfo?.width),
+            Number(updatedMediafile.mediainfo?.height),
             0,
           );
         }
-        if (mediafile?.original_file_location && mediafile.mediatype?.video) {
+        if (updatedMediafile?.original_file_location && updatedMediafile.mediatype?.video) {
           if (Development().showVideoLogs())
-            console.log('| Asset is video', mediafile.original_file_location);
+            console.log('| Asset is video', updatedMediafile.original_file_location);
           image = VideoHelper().videoElementAsCube(
             asset.id,
-            mediafile.original_file_location,
+            updatedMediafile.original_file_location,
             new Vector3(dimensions.x, dimensions.y, dimensions.z),
             position,
           );
           image.scale.set(0.0001, 0.0001, 0.0001);
         } else {
           image = await FrameOverview(threeService).addImage(
-            mediafile,
+            updatedMediafile,
             0,
             position,
             dimensions,

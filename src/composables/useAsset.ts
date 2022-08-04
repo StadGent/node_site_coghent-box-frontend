@@ -10,7 +10,7 @@ import MetadataLabel from '@/Three/shapes.metadataLabel';
 import Common from './common';
 import { Entity } from 'coghent-vue-3-component-library/lib';
 import TWEEN from '@tweenjs/tween.js';
-import { MediaFile } from 'coghent-vue-3-component-library/lib/queries';
+import { MediaFile, Relation } from 'coghent-vue-3-component-library/lib/queries';
 
 const useAsset = (
   threeService: ThreeService,
@@ -49,6 +49,7 @@ const useAsset = (
     _primaryMediafile: string,
     _assets: Array<Asset>,
   ) => null | MediaFile;
+  updateAssetMediafileToSetMediafile: (_asset: Asset, _relationMetadata: Relation, _originalMediafile: MediaFile) => Promise<MediaFile>;
 } => {
   const getTitle = (asset: Asset) => {
     return asset.title[0]?.value;
@@ -186,9 +187,14 @@ const useAsset = (
   };
 
   const connectRelationMetadata = (parent: Frame | Story, child: Asset | Frame, _currentAssetIndex: number) => {
+    // console.log(`useAsset | connectRelationMetadata | Frame`, parent)
+    // console.log(`useAsset | connectRelationMetadata | Child`, child)
     const frame = parent as Frame
     const assets = frame.assets as Array<Asset>
+    // console.log(`useAsset | connectRelationMetadata | Assets of frame`, assets)
     const assetDuplicates = assets.filter(_asset => _asset.id === child.id)
+    // console.log(`useAsset | connectRelationMetadata | assetDuplicatesof assets`, assetDuplicates)
+
     const indexes: Array<number> = []
     let setMetadata = 0
     if (assetDuplicates.length > 1) {
@@ -201,9 +207,12 @@ const useAsset = (
       const itemToMatch = indexes.indexOf(_currentAssetIndex)
       itemToMatch != -1 ? setMetadata = itemToMatch : null
     }
+    // console.log(`useAsset | connectRelationMetadata | setMetadata`, setMetadata)
     const metadataForAsset = frame.relationMetadata.filter(
       (metadata) => Common().FilterOutIdAfterSlash(metadata.key) == child.id,
     )[setMetadata];
+    // console.log(`useAsset | connectRelationMetadata | metadataForAsset ID`, child.id)
+    // console.log(`useAsset | connectRelationMetadata | metadataForAsset`, metadataForAsset)
     return metadataForAsset;
   };
 
@@ -232,6 +241,19 @@ const useAsset = (
     return mediafile;
   };
 
+  // This overrride the mediafile if property setMediafile is set in the relationdata
+  // Wanted to do this in the graphql by just setting the primary mediafile but this was not possible..
+  const updateAssetMediafileToSetMediafile = async (_asset: Asset, _relationMetadata: Relation, _originalMediafile: MediaFile): Promise<MediaFile> => {
+    return new Promise((resolve, reject) => {
+      if (_relationMetadata.setMediafile && _relationMetadata.setMediafile !== null) {
+        const setMediafileIndex = _relationMetadata.setMediafile - 1
+        if (_asset.mediafiles[setMediafileIndex]) {
+          resolve(_asset.mediafiles[setMediafileIndex])
+        }
+      } else resolve(_originalMediafile)
+    })
+  }
+
   return {
     getTitle,
     getCollections,
@@ -245,6 +267,7 @@ const useAsset = (
     getAssetsFromFrame,
     connectRelationMetadata,
     getMediaInfoForAsset,
+    updateAssetMediafileToSetMediafile,
   };
 };
 
