@@ -49,6 +49,7 @@ import { Vector3 } from 'three';
 import globals from '@/services/GlobalData';
 import { useStorybox } from 'coghent-vue-3-component-library';
 import scenery from '@/composables/useScenery';
+import PrepareWall from '@/composables/prepareWall';
 
 export default defineComponent({
   name: 'Wall',
@@ -66,6 +67,7 @@ export default defineComponent({
     const showPauseOverview = ref<boolean>(false);
     const isCustomStory = ref<boolean>(false);
     const { getByCode, getRelationsByType } = useBoxVisiter(apolloClient);
+    const { prepareStory, prepareStories } = PrepareWall();
     const qrInput = ref<any>(null);
     window.addEventListener('focus', () => {
       if (qrInput.value) qrInput.value.focus();
@@ -85,6 +87,7 @@ export default defineComponent({
     };
 
     onResult((_stories) => {
+      // prepareStories(_stories.data.ActiveBox.results);
       stories.value = _stories.data.ActiveBox.results;
       console.log('stories', stories.value);
       stateService.canScanTicket = true;
@@ -140,7 +143,8 @@ export default defineComponent({
       useFlow().setCurrent('customStory');
       stateService.changeState(FlowState.generateStory);
       scenery.generateStoryScene();
-      const storydata = await useStorybox(apolloClient).getStoryData(_storyId);
+      let storydata = await useStorybox(apolloClient).getStoryData(_storyId);
+      storydata =  await prepareStory(storydata);
       const tmpStoryService = new StoryService([storydata] as Array<any>, visiter.value);
       tmpStoryService.fillUpDataSources();
       tmpStoryService.setActiveStory(_storyId);

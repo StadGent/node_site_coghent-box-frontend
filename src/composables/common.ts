@@ -18,7 +18,8 @@ const Common = (): {
   fillStringToIdealLength: (_title: string) => string
   getCodeFromString: (_string: string) => string | null
   getUrlParamValue: (_searchParam: string) => string | null
-  isVideo: (_url: string) => boolean
+  isVideo: (_url: string) => boolean,
+  removePrefixBeforeSlash: (_string: string) => string
 } => {
   const FilterOutIdAfterSlash = (str: string) => {
     const index = (str.indexOf('/') as number) + 1;
@@ -128,6 +129,17 @@ const Common = (): {
     return includes
   }
 
+  const removePrefixBeforeSlash = (_string: string) => {
+    let stripped = _string
+    if (_string.includes('/')) {
+      const index = stripped.indexOf('/')
+      if (index !== -1) {
+        stripped = _string.substring(index + 1, _string.length)
+      }
+    }
+    return stripped
+  }
+
   return {
     FilterOutIdAfterSlash,
     RemoveEntersFromString,
@@ -140,7 +152,8 @@ const Common = (): {
     fillStringToIdealLength,
     getCodeFromString,
     getUrlParamValue,
-    isVideo
+    isVideo,
+    removePrefixBeforeSlash,
   };
 };
 
