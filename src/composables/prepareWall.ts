@@ -13,12 +13,10 @@ const PrepareWall = () => {
   }
 
   const prepareStory = async (_story: typeof Entity) => {
-    console.log(`PREPARE STORY | story`, _story)
     const theStory: typeof Entity = {}
     Object.assign(theStory, _story)
     theStory.frames = []
     theStory.frames = await prepareFrames(_story.frames)
-    console.log(`PREPARE STORY | updated story`, theStory)
 
     return theStory
   }
