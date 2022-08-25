@@ -109,7 +109,7 @@
 
       const checkCode = () => {
         let code: string = NumberPadState.value.state.join('');
-        // code = '40344452'; // 81453243, 37898122, 15747469
+        // code = '88890355'; // 81453243, 37898122, 15747469
         const { getByCode } = useBoxVisiter(apolloClient);
         const resolvedBoxVisit = getByCode(code);
         resolvedBoxVisit

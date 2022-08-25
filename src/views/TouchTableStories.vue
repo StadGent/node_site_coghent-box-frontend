@@ -37,7 +37,7 @@
             :story="storyAsset"
             :story-number="index + 1"
             :story-entities="storyAsset.frames"
-            :story-color="colors[index].replace('bg-', '')"
+            :story-color="colors[index] ? colors[index].replace('bg-', '') : colors[0]"
             :loading="loadingActiveBoxResult"
             :isLastSeenStory="lastSeenStoryId == storyAsset.id"
             :lastStoryItem="index == storyAssets.length ? true : false"
@@ -58,6 +58,7 @@
     BaseButton,
     boxVisiter,
     GetActiveBoxDocument,
+    GetStoryByIdDocument,
   } from 'coghent-vue-3-component-library';
   import { useRouter } from 'vue-router';
   import ShutdownModal, { useShutdownModal } from '@/components/ShutdownModal.vue';
@@ -72,6 +73,20 @@
   import { useInactiveTimer } from '@/composables/useInactiveTimer';
   import inactivityModal, { useInactivityModal } from '@/components/InactivityModal.vue';
   import { hideAllPoppers } from 'floating-vue';
+
+  const storiesPageState = ref<Entity[]>([]);
+
+  export const useStoriesPage = () => {
+    const setStories = (input: Entity[]) => {
+      storiesPageState.value = input;
+    };
+
+    const resetStories = () => {
+      storiesPageState.value = [];
+    };
+
+    return { storiesPageState, setStories, resetStories };
+  };
 
   type StoryResult = {
     story: Entity;
@@ -91,18 +106,28 @@
     setup(props) {
       const { openShutdownModal, closeShutdownModal } = useShutdownModal();
       const storyResults = ref<Array<StoryResult>>([]);
-      const storyAssets = ref<Array<any>>([]);
+      const storyAssets = ref<Array<Entity>>([]);
       const lastSeenStoryId = ref<any>();
-      const colors = [...Colors().storyCss()];
+      const colors = [...Colors().storyCss(), 'bg-stories-orange'];
       const router = useRouter();
       const { isFirstStoryOverview, updateIsFirstStoryOverview } = useTouchTable();
       const { resetOnBoardingState } = useOnBoarding();
       const { timerSettings, timerState } = useInactiveTimer();
       const { openInactivityModal, closeInactivityModal } = useInactivityModal();
+      const { storiesPageState, setStories } = useStoriesPage();
       const { t } = useI18n();
 
-      const { result: activeBoxResult, loading: loadingActiveBoxResult } =
-        useQuery(GetActiveBoxDocument);
+      const {
+        result: activeBoxResult,
+        loading: loadingActiveBoxResult,
+        refetch: refetchActiveBoxresult,
+      } = useQuery(GetActiveBoxDocument);
+
+      const {
+        result: customStoryResult,
+        loading: loadingCustomStory,
+        refetch: refetchCustomStory,
+      } = useQuery(GetStoryByIdDocument, { id: '' });
 
       if (!boxVisiter.value) {
         window.location.href = '/touchtable/start';
@@ -115,7 +140,7 @@
         return seenFrames[0];
       };
 
-      const getStoryForFrame = (stories: Relation[], frame: any) => {
+      const getStoryForFrame = (stories: Entity[], frame: any) => {
         let storyToReturn: Relation | undefined = undefined;
         stories.forEach((story: any) => {
           const foundFrameInStory = story.frames.find(
@@ -128,6 +153,15 @@
         return storyToReturn;
       };
 
+      const getCustomStories = (customStories: Relation[]) => {
+        const customStoryIds: string[] = customStories.map((story: Relation) =>
+          story.key.replace('entities/', ''),
+        );
+        customStoryIds.forEach((id: string) => {
+          refetchCustomStory({ id });
+        });
+      };
+
       watch(
         () => activeBoxResult.value,
         (boxResult) => {
@@ -136,14 +170,31 @@
             const boxVisitorStories = boxVisiter.value.relations.filter(
               (relation: Relation) => relation.type == 'stories',
             );
+            setStories(storyAssets.value);
             const seenFrames: Array<any> = [];
+            const customStories: Relation[] = [];
             boxVisitorStories.forEach((boxVisitorStory: any) => {
               if (boxVisitorStory.seen_frames) {
                 seenFrames.push(...boxVisitorStory.seen_frames);
               } else {
                 lastSeenStoryId.value = boxVisitorStory.key.replace('entities/', '');
               }
+              if (
+                !storyAssets.value.find(
+                  (storyAsset) =>
+                    storyAsset.id === boxVisitorStory.key.replace('entities/', ''),
+                )
+              ) {
+                customStories.push(boxVisitorStory);
+                lastSeenStoryId.value = boxVisitorStory.key.replace('entities/', '');
+              }
             });
+            if (customStories.length) {
+              console.log(
+                `User created ${customStories.length} stories on coghent webportal `,
+              );
+              getCustomStories(customStories);
+            }
             if (!lastSeenStoryId.value) {
               try {
                 const lastSeenFrame = getLastSeenFrame(seenFrames);
@@ -155,6 +206,24 @@
                 console.warn(e);
               }
             }
+          }
+        },
+      );
+
+      watch(
+        () => customStoryResult.value,
+        () => {
+          console.log(customStoryResult.value);
+          if (
+            !storyAssets.value.find(
+              (asset: Entity) => asset.id === customStoryResult.value.GetStoryById.id,
+            )
+          ) {
+            storyAssets.value = [
+              ...storyAssets.value,
+              customStoryResult.value.GetStoryById,
+            ];
+            setStories(storyAssets.value);
           }
         },
       );
@@ -177,6 +246,10 @@
         if (isFirstStoryOverview.value) {
           scrollToStory();
         }
+      });
+
+      onMounted(() => {
+        storyAssets.value = storiesPageState.value;
       });
 
       watch(
@@ -202,6 +275,7 @@
         loadingActiveBoxResult,
         resetOnBoardingState,
         restartOnBoarding,
+        loadingCustomStory,
         t,
       };
     },
