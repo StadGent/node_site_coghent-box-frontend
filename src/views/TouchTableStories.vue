@@ -162,6 +162,19 @@
         });
       };
 
+      const setFirstFrameTitleAsStoryTitle = (story: Entity): Entity => {
+        let modifiedStory: Entity = JSON.parse(JSON.stringify(story));
+        if (story.frames?.length) {
+          const firstFrameTitle: string = story.frames[0]?.title[0]?.value
+            ? story.frames[0]?.title[0]?.value
+            : '';
+          if (modifiedStory.title[0]) {
+            modifiedStory.title[0].value = firstFrameTitle;
+          }
+        }
+        return modifiedStory;
+      };
+
       watch(
         () => activeBoxResult.value,
         (boxResult) => {
@@ -213,16 +226,10 @@
       watch(
         () => customStoryResult.value,
         () => {
-          console.log(customStoryResult.value);
-          if (
-            !storyAssets.value.find(
-              (asset: Entity) => asset.id === customStoryResult.value.GetStoryById.id,
-            )
-          ) {
-            storyAssets.value = [
-              ...storyAssets.value,
-              customStoryResult.value.GetStoryById,
-            ];
+          let result: Entity = customStoryResult.value.GetStoryById;
+          result = setFirstFrameTitleAsStoryTitle(result);
+          if (!storyAssets.value.find((asset: Entity) => asset.id === result.id)) {
+            storyAssets.value = [...storyAssets.value, result];
             setStories(storyAssets.value);
           }
         },
