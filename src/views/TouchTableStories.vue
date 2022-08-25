@@ -249,7 +249,11 @@
       });
 
       onMounted(() => {
-        storyAssets.value = storiesPageState.value;
+        if (storiesPageState.value) {
+          storyAssets.value = storiesPageState.value;
+        } else {
+          refetchActiveBoxresult();
+        }
       });
 
       watch(
