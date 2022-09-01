@@ -185,6 +185,15 @@ const lockObjectMovementHelper = (object: any) => {
   object.setControlsVisibility(fabricdefaults.canvas.selectedImage.controls);
 };
 
+const getRandomAssetsHelper = (amount: number, assets: Entity[]) => {
+  const assetList: Entity[] = [];
+  for (let i = 0; i < amount; i++) {
+    const randomIndex = getRandomNumberInRangeHelper(0, assets.length);
+    assetList.push(assets[randomIndex]);
+  }
+  return assetList;
+};
+
 export {
   changeFrameScaleHelper,
   ImageUrlHelper,
@@ -203,4 +212,5 @@ export {
   unHighlightCanvasObjectsHelper,
   isRelationOnFrameHelper,
   excludeUnusedRelations,
+  getRandomAssetsHelper,
 };

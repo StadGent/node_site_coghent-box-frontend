@@ -107,6 +107,7 @@
   } from 'coghent-vue-3-component-library';
   import {
     excludeUnusedRelations,
+    getRandomAssetsHelper,
     IIIFImageUrlHelper,
   } from '@/services/Fabric/helper.fabric';
   import BasketOverlay, { useBasketOverlay } from '@/components/BasketOverlay.vue';
@@ -178,6 +179,7 @@
             randomize: false,
             key: 'title',
             has_mediafile: true,
+            skip_relations: true,
           },
         }),
         () => ({
@@ -211,7 +213,7 @@
           console.log('refetch relations');
           fetchMoreRelations({
             variables: {
-              limit: fabricdefaults.canvas.relationLimit,
+              limit: 25,
               skip: 0,
               searchValue: {
                 value: '',
@@ -220,12 +222,17 @@
                 randomize: false,
                 key: 'title',
                 has_mediafile: true,
+                skip_relations: true,
               },
             },
             updateQuery: (previousData, { fetchMoreResult: queryResult }) => {
-              let relatedEntities: Entity[] = queryResult.Entities.results.filter(
-                (entity: Entity) => !entity?.mediafiles?.[0]?.mediatype?.audio,
+              let relatedEntities: Entity[] = getRandomAssetsHelper(
+                fabricdefaults.canvas.relationLimit,
+                queryResult.Entities.results.filter(
+                  (entity: Entity) => !entity?.mediafiles?.[0]?.mediatype?.audio,
+                ),
               );
+
               if (relatedEntities && fabricService.value) {
                 fabricService.value
                   .generateSecondaryImageFrames(relatedEntities, entity.id)
@@ -241,7 +248,7 @@
                         if (entityRelatedIds) {
                           fetchMoreRelations({
                             variables: {
-                              limit: fabricdefaults.canvas.relationLimit,
+                              limit: 25,
                               skip: 0,
                               searchValue: {
                                 value: '',
@@ -249,6 +256,7 @@
                                 relation_filter: entityRelatedIds,
                                 randomize: false,
                                 key: 'title',
+                                skip_relations: true,
                                 has_mediafile: true,
                               },
                             },
@@ -256,11 +264,14 @@
                               previousData,
                               { fetchMoreResult: relatedEntitiesResult },
                             ) => {
-                              relatedEntitiesResult =
+                              relatedEntitiesResult = getRandomAssetsHelper(
+                                fabricdefaults.canvas.relationLimit,
                                 relatedEntitiesResult?.Entities?.results.filter(
                                   (entity: Entity) =>
                                     !entity?.mediafiles?.[0]?.mediatype?.audio,
-                                );
+                                ),
+                              );
+
                               if (relatedEntitiesResult && fabricService.value) {
                                 fabricService.value
                                   .generateSecondaryImageFrames(
