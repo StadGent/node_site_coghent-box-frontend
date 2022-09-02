@@ -27,7 +27,7 @@
       </div>
     </nav>
     <main class="bg-background-light h-auto min-h-screen p-24">
-      <div v-if="!loadingActiveBoxResult && activeBoxResult">
+      <div v-if="!loadingActiveBoxResult && activeBoxResult && !loadingCustomStory">
         <div
           v-for="(storyAsset, index) in storyAssets"
           :key="storyAsset.id"
@@ -108,7 +108,7 @@
       const storyResults = ref<Array<StoryResult>>([]);
       const storyAssets = ref<Array<Entity>>([]);
       const lastSeenStoryId = ref<any>();
-      const colors = [...Colors().storyCss(), 'bg-stories-orange'];
+      const colors = [...Colors().storyCss()];
       const router = useRouter();
       const { isFirstStoryOverview, updateIsFirstStoryOverview } = useTouchTable();
       const { resetOnBoardingState } = useOnBoarding();
@@ -229,7 +229,8 @@
           let result: Entity = customStoryResult.value.GetStoryById;
           result = setFirstFrameTitleAsStoryTitle(result);
           if (!storyAssets.value.find((asset: Entity) => asset.id === result.id)) {
-            storyAssets.value = [...storyAssets.value, result];
+            colors.unshift('bg-stories-orange');
+            storyAssets.value = [result, ...storyAssets.value];
             setStories(storyAssets.value);
           }
         },
