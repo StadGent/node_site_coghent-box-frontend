@@ -16,12 +16,12 @@ const HelperText = (): {
         0,
       ),
       'Ga dan op de bol staan van je huidige verhaal.': new Vector3(
-        position.x - 220,
+        position.x - 300,
         position.y,
         0,
       ),
       'Je kan ook een nieuw verhaal kiezen.': new Vector3(
-        position.x - 50,
+        position.x - 200,
         position.y - 50,
         0,
       ),
