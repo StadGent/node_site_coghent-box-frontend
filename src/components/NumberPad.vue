@@ -70,15 +70,15 @@
         type: Array as PropType<Key[]>,
         required: false,
         default: () => [
-          { type: 'number', value: '7' },
-          { type: 'number', value: '8' },
-          { type: 'number', value: '9' },
-          { type: 'number', value: '4' },
-          { type: 'number', value: '5' },
-          { type: 'number', value: '6' },
           { type: 'number', value: '1' },
           { type: 'number', value: '2' },
           { type: 'number', value: '3' },
+          { type: 'number', value: '4' },
+          { type: 'number', value: '5' },
+          { type: 'number', value: '6' },
+          { type: 'number', value: '7' },
+          { type: 'number', value: '8' },
+          { type: 'number', value: '9' },
           { type: 'spacer', value: '' },
           { type: 'number', value: '0' },
           { type: 'icon', value: 'arrowLeft', backKey: true },
@@ -99,10 +99,10 @@
     setup: (props, { emit }) => {
       const { updateNumberPad, undoNumberPad, resetNumberPad, NumberPadState } =
         useNumberPad();
-      const containerStyles: string = `grid grid-cols-${props.columns} w-1/2`;
+      const containerStyles: string = `grid grid-cols-${props.columns} w-4/10`;
       const spacerStyles: string = '';
       const keyStyles: string =
-        'flex justify-center items-center bg-background-light p-5 m-5 text-3xl font-bold rounded-md cursor-pointer select-none w-24 h-24';
+        'flex justify-center items-center bg-background-light p-5 m-2 text-3xl font-bold rounded-md cursor-pointer select-none w-24 h-24';
 
       const addCharacterToResultArray = (key: Key) => {
         if (key.backKey) {
