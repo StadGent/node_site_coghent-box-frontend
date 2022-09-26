@@ -1,4 +1,4 @@
-import { BoxVisiter, Entity, Metadata } from 'coghent-vue-3-component-library'
+import { BoxVisiter, Entity, Metadata, Relation, RelationType } from 'coghent-vue-3-component-library'
 
 const useCustomStory = (_stories: Array<typeof Entity>, _boxVisiter: typeof BoxVisiter) => {
 
@@ -17,10 +17,21 @@ const useCustomStory = (_stories: Array<typeof Entity>, _boxVisiter: typeof BoxV
     return checks.indexOf(false) === -1
   }
 
+  const getStoriesFromBoxVisiterRelations = (): Array<typeof Relation> => {
+    const storyAndStoryboxes = [];
+    for (const relation of _boxVisiter.relations) {
+      if (relation.type === RelationType.Stories) {
+        storyAndStoryboxes.push(relation)
+      }
+    }
+    return storyAndStoryboxes;
+  }
+
   const hasOneStory = (): Promise<boolean> => {
     return new Promise((resolve, reject) => {
-      if (_boxVisiter.relations) {
-        _boxVisiter.relations.length === 1 ? resolve(true) : resolve(false)
+      const relations = getStoriesFromBoxVisiterRelations();
+      if (relations) {
+        relations.length === 1 ? resolve(true) : resolve(false)
       }
     })
   }
