@@ -29,11 +29,9 @@ export default class SubtitleService {
   async downloadSRTFile(_url: string, _convertToJson = true) {
     let data: string | Array<srtObject> | null = null;
     if (_url) {
-      if (!_url.includes('https')) {
-        _url = _url.replace('http', 'https');
-      }
+
       try {
-        const response = await axios.get(_url);
+        const response = await axios.get(window.location.origin + _url);
         data = response.data;
         if (_convertToJson) {
           data = this.srtToJsonObjects(data as string);
