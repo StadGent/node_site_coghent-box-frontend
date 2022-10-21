@@ -392,11 +392,10 @@ export default defineComponent({
         ++timingCount;
         showProgressOfFrame = true;
         if (
-          audio &&
           subtitleService.subtitles &&
           subtitleService.currentSubtitleIndex <= subtitleService.subtitles.length
         ) {
-          subtitles.value = subtitleService.getCurrentSubtitleText(audio.currentTime);
+          subtitles.value = subtitleService.getCurrentSubtitleText(timingCount);
         }
         let time = timingCount;
         if (audio != null && !isNaN(audio.duration)) {
@@ -456,13 +455,12 @@ export default defineComponent({
         : null;
       if (stateService.getCurrentState() != FlowState[4]) {
         stateService.changeState(FlowState.buildFrame);
-
         const subtitleLink = useFrame(
           globals.threeService as ThreeService,
         ).getSubtitleForFrame(
           storyService.activeStory.frames?.[currentFrame] as unknown as Frame,
         );
-        await subtitleService.downloadSRTFile(subtitleLink as string);
+
         await subtitleService.downloadSRTFile(subtitleLink as string);
 
         let progress: Array<Group> = [];
