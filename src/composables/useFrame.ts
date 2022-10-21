@@ -97,7 +97,6 @@ const useFrame = (
         audio = audioFiles[0];
       }
     }
-    console.log({ audio });
     return audio;
   };
 

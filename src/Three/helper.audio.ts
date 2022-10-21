@@ -28,7 +28,7 @@ const AudioHelper = (threeService: ThreeService): AudioHelperFunctions => {
         activeStory.frames[currentFrameIndex] as unknown as Frame,
       );
       if (audioSrc) {
-        audio = new Audio(audioSrc);
+        audio = new Audio(window.location.origin +  audioSrc);
       }
     }
     return audio;

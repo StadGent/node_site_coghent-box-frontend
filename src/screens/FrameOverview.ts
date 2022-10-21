@@ -39,7 +39,6 @@ const FrameOverview = (
       );
 
       if (_mediafile.transcode_filename != null) {
-        console.log(`TRANSCODED FILENAME USED`, _mediafile.transcode_filename)
         schema.params.url = generateUrl(encodeURI(_mediafile.transcode_filename), 'full', 'max')
       } else {
         schema.params.url = generateUrl(filename, 'full', 'max');

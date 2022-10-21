@@ -95,6 +95,7 @@ const PrepareWall = () => {
               relationMetadata.push(...found)
             }
           }
+          relationMetadata.push(..._frame.relationMetadata.filter((relation: typeof Relation) => relation.key.includes('mediafiles')));
         }
         resolve(relationMetadata)
       }
