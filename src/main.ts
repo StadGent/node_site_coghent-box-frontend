@@ -33,6 +33,10 @@ async function main() {
     cache: new InMemoryCache(),
   });
 
+  //@ts-ignore
+  document.body.style.zoom = '80%';
+  document.body.style.backgroundColor = 'black';
+
   createApp(App)
     .use(router, FloatingVue)
     .use(i18n)
