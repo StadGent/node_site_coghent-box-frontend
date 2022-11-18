@@ -56,7 +56,7 @@
     components: { ViewPort, mqtt },
     setup() {
       //@ts-ignore
-      document.body.style.zoom = '80%';
+      document.body.style.zoom = '85%';
       document.body.style.backgroundColor = 'black';
       let stories = ref<Array<any>>();
       const storySelected = ref<string>(
