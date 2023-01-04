@@ -56,7 +56,7 @@ const useFrameAssetOverview = (
       const relationMetadata = useAsset(threeService).connectRelationMetadata(
         frame,
         asset,
-        i
+        i,
       );
       const position = new Vector3(0, 0, -1);
       if (relationMetadata?.position != null || undefined) {
@@ -69,7 +69,13 @@ const useFrameAssetOverview = (
         asset.primary_mediafile_location,
         frame.assets,
       );
-      const updatedMediafile = await useAsset(threeService).updateAssetMediafileToSetMediafile(asset, relationMetadata as Relation, mediafile as MediaFile)
+      const updatedMediafile = await useAsset(
+        threeService,
+      ).updateAssetMediafileToSetMediafile(
+        asset,
+        relationMetadata as Relation,
+        mediafile as MediaFile,
+      );
 
       if (updatedMediafile) {
         data[relationMetadata.timestamp_start] = position;
@@ -86,12 +92,14 @@ const useFrameAssetOverview = (
             0,
           );
         }
-        if (updatedMediafile?.original_file_location && updatedMediafile.mediatype?.video) {
-          if (Development().showVideoLogs())
-            console.log('| Asset is video', updatedMediafile.original_file_location);
+        const videoFile =
+          updatedMediafile?.transcode_file_location ||
+          updatedMediafile?.original_file_location;
+        if (videoFile && updatedMediafile.mediatype?.video) {
+          if (Development().showVideoLogs()) console.log('| Asset is video', videoFile);
           image = VideoHelper().videoElementAsCube(
             asset.id,
-            updatedMediafile.original_file_location,
+            videoFile,
             new Vector3(dimensions.x, dimensions.y, dimensions.z),
             position,
           );
@@ -290,7 +298,7 @@ const useFrameAssetOverview = (
         const relationMetadata = useAsset(threeService).connectRelationMetadata(
           activeStory.frames?.[currentFrame] as unknown as Frame,
           assets[index],
-          index
+          index,
         );
         if (relationMetadata.timestamp_start) {
           playBook.addToPlayBook(
