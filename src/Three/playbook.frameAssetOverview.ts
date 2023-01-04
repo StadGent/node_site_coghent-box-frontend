@@ -66,7 +66,7 @@ const useFrameAssetOverview = (
 
       const mediafile = useAsset(threeService).getMediaInfoForAsset(
         asset.id,
-        asset.primary_mediafile_location,
+        asset.primary_transcode_location,
         frame.assets,
       );
       const updatedMediafile = await useAsset(

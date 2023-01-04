@@ -49,7 +49,11 @@ const useAsset = (
     _primaryMediafile: string,
     _assets: Array<Asset>,
   ) => null | MediaFile;
-  updateAssetMediafileToSetMediafile: (_asset: Asset, _relationMetadata: Relation, _originalMediafile: MediaFile) => Promise<MediaFile>;
+  updateAssetMediafileToSetMediafile: (
+    _asset: Asset,
+    _relationMetadata: Relation,
+    _originalMediafile: MediaFile,
+  ) => Promise<MediaFile>;
 } => {
   const getTitle = (asset: Asset) => {
     return asset.title[0]?.value;
@@ -60,7 +64,7 @@ const useAsset = (
   };
 
   const getImage = (asset: Asset) => {
-    return asset.primary_mediafile_location;
+    return asset.primary_transcode_location || asset.primary_mediafile_location;
     // return asset.mediafiles?.[0]?.original_file_location
     //   ? asset.mediafiles?.[0]?.original_file_location
     //   : '';
@@ -186,26 +190,30 @@ const useAsset = (
     return activeStory.frames?.[frame]?.assets as Array<Entity>;
   };
 
-  const connectRelationMetadata = (parent: Frame | Story, child: Asset | Frame, _currentAssetIndex: number) => {
+  const connectRelationMetadata = (
+    parent: Frame | Story,
+    child: Asset | Frame,
+    _currentAssetIndex: number,
+  ) => {
     // console.log(`useAsset | connectRelationMetadata | Frame`, parent)
     // console.log(`useAsset | connectRelationMetadata | Child`, child)
-    const frame = parent as Frame
-    const assets = frame.assets as Array<Asset>
+    const frame = parent as Frame;
+    const assets = frame.assets as Array<Asset>;
     // console.log(`useAsset | connectRelationMetadata | Assets of frame`, assets)
-    const assetDuplicates = assets.filter(_asset => _asset.id === child.id)
+    const assetDuplicates = assets.filter((_asset) => _asset.id === child.id);
     // console.log(`useAsset | connectRelationMetadata | assetDuplicatesof assets`, assetDuplicates)
 
-    const indexes: Array<number> = []
-    let setMetadata = 0
+    const indexes: Array<number> = [];
+    let setMetadata = 0;
     if (assetDuplicates.length > 1) {
       for (const [index, asset] of assets.entries()) {
         if (asset.id === child.id) {
-          indexes.push(index)
+          indexes.push(index);
         }
       }
 
-      const itemToMatch = indexes.indexOf(_currentAssetIndex)
-      itemToMatch != -1 ? setMetadata = itemToMatch : null
+      const itemToMatch = indexes.indexOf(_currentAssetIndex);
+      itemToMatch != -1 ? (setMetadata = itemToMatch) : null;
     }
     // console.log(`useAsset | connectRelationMetadata | setMetadata`, setMetadata)
     const metadataForAsset = frame.relationMetadata.filter(
@@ -243,16 +251,20 @@ const useAsset = (
 
   // This overrride the mediafile if property setMediafile is set in the relationdata
   // Wanted to do this in the graphql by just setting the primary mediafile but this was not possible..
-  const updateAssetMediafileToSetMediafile = async (_asset: Asset, _relationMetadata: Relation, _originalMediafile: MediaFile): Promise<MediaFile> => {
+  const updateAssetMediafileToSetMediafile = async (
+    _asset: Asset,
+    _relationMetadata: Relation,
+    _originalMediafile: MediaFile,
+  ): Promise<MediaFile> => {
     return new Promise((resolve, reject) => {
       if (_relationMetadata.setMediafile && _relationMetadata.setMediafile !== null) {
-        const setMediafileIndex = _relationMetadata.setMediafile - 1
+        const setMediafileIndex = _relationMetadata.setMediafile - 1;
         if (_asset.mediafiles[setMediafileIndex]) {
-          resolve(_asset.mediafiles[setMediafileIndex])
+          resolve(_asset.mediafiles[setMediafileIndex]);
         }
-      } else resolve(_originalMediafile)
-    })
-  }
+      } else resolve(_originalMediafile);
+    });
+  };
 
   return {
     getTitle,

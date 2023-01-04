@@ -93,10 +93,11 @@ export type Asset = {
   primary_width: number;
   primary_height: number;
   primary_mediafile_location: string;
+  primary_transcode_location: string;
 };
 
 export type BoxVisiter = {
   id: string;
   type: string;
   qrCode: string;
-}
+};
